@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="Sprout.Core.Views.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Sprout.Core.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer
+            VerticalScrollBarVisibility="Auto"
+            Grid.Row="0"
+            Grid.RowSpan="3" >
+            <StackPanel x:Name="ButtonsContainer" Orientation="Vertical">
+                <!--<Button Name="btnSettings" Click="btnSettings_Click"  Content="Settings" HorizontalAlignment="Stretch" Height="50" FontSize="16" Margin="5, 5, 5, 0"/>
+            <Button Name="btnTFS" Click="btnTFS_Click"  Content="TFS" HorizontalAlignment="Stretch" Height="50" FontSize="16" Margin="5, 5, 5, 0"/>
+            <Button Name="btnNavigationEntries" HorizontalAlignment="Stretch" Content="Navigation" Height="50" FontSize="16" Margin="5, 5, 5, 0" Click="btnNavigationEntries_Click"/>
+            <Button Name="btnGridGenerator" Click="btnGridGenerator_Click" Content="Grids" HorizontalAlignment="Stretch" Height="50"  FontSize="16" Margin="5, 5, 5, 0"/>
+            <Button Name="btnModelManager" Click="btnModelManager_Click" Content="Models" HorizontalAlignment="Stretch" Height="50"  FontSize="16" Margin="5, 5, 5, 0"/>
+            <Button Name="btnTestPage" Click="btnTestPage_Click" Content="TestPage" HorizontalAlignment="Stretch" Height="50"  FontSize="16" Margin="5, 5, 5, 0"/>
+            <Button Name="btnQueryEditor" Click="btnQueryEditor_Click" Content="Query" HorizontalAlignment="Stretch" Height="50"  FontSize="16" Margin="5, 5, 5, 0"/>
+            <Button Name="btnTranslatePage" Click="btnTranslatePage_Click" Content="Translate" HorizontalAlignment="Stretch" Height="50"  FontSize="16" Margin="5, 5, 5, 0"/>-->
+            </StackPanel>
+        </ScrollViewer>
+        <TabControl Name="MyTabControl" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" >
+        </TabControl>
+    </Grid>
+</UserControl>
