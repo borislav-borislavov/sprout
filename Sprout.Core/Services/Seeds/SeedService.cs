@@ -1,5 +1,6 @@
 ﻿using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Configurations;
+using Sprout.Core.Services.MainViews;
 using Sprout.Core.Services.Menus;
 using Sprout.Core.Views;
 using System;
@@ -20,26 +21,27 @@ namespace Sprout.Core.Services.Seeds
         private Window _mainWindow;
 
         private IConfigurationService _configurationService;
-        private IMenuService _menuService;
-
+        private IMainViewService _mainViewService;
+        private readonly IMenuService _menuService;
         private SproutConfiguration configuration;
 
         public SeedService(
             IConfigurationService configurationService,
+            IMainViewService mainViewService,
             IMenuService menuService)
         {
             _configurationService = configurationService;
+            _mainViewService = mainViewService;
             _menuService = menuService;
         }
 
         public void Sprout(Window mainWindow)
         {
-            _mainWindow = mainWindow;
-            _mainWindow.Content = _menuService.MainView;
-
             configuration = _configurationService.Load();
 
-            _menuService.CrerateMenu(configuration);
+            _mainWindow = mainWindow;
+            _mainWindow.Content = _mainViewService.MainView;
+            _menuService.Create(configuration);
         }
     }
 }

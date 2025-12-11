@@ -1,6 +1,6 @@
-﻿using Sprout.Core.Models.Configurations;
+﻿using Sprout.Core.Factories;
+using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services;
-using Sprout.Core.Services.PageUIs;
 using Sprout.Core.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -24,15 +24,14 @@ namespace Sprout.Core.Views
     /// </summary>
     public partial class SproutPage : UserControl
     {
-        private IPageUIService _pageUIService;
+        private Dictionary<string, UIElement> _controls = [];
 
-        public SproutPage(IPageUIService pageUIService, SproutPageConfiguration pageConfig)
+        public SproutPage(SproutPageConfiguration pageConfig)
         {
-            _pageUIService = pageUIService;
             InitializeComponent();
+            this.Content = SproutControlFactory.GetControl(pageConfig.Root, _controls);
             DataContext = new SproutPageVM(pageConfig);
 
-            this.Content = _pageUIService.CreateUI(pageConfig);
         }
     }
 }

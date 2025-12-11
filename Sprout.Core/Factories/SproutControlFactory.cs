@@ -11,14 +11,15 @@ namespace Sprout.Core.Factories
 {
     public static class SproutControlFactory
     {
-        public static UIElement GetControl(SproutConfig sControl)
+        public static UIElement GetControl(SproutConfig sControl, 
+            Dictionary<string, UIElement> controls)
         {
             switch (sControl)
             {
                 case GridConfig gridConfig:
-                    return GridFactory.GenerateGrid(gridConfig);
+                    return GridFactory.GenerateGrid(gridConfig, controls);
                 case ButtonConfig buttonConfig:
-                    return ButtonFactory.GenerateButton(buttonConfig);
+                    return ButtonFactory.GenerateButton(buttonConfig, controls);
                 default:
                     return null;
             }

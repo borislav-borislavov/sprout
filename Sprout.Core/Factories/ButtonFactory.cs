@@ -9,14 +9,16 @@ using System.Windows.Controls;
 
 namespace Sprout.Core.Factories
 {
-    public static class ButtonFactory
+    public class ButtonFactory : BaseSproutControlFactory
     {
-        public static UIElement GenerateButton(ButtonConfig buttonConfig)
+        public static UIElement GenerateButton(ButtonConfig buttonConfig, Dictionary<string, UIElement> controls)
         {
             var button = new System.Windows.Controls.Button
             {
                 Content = buttonConfig.Content ?? "Button"
             };
+
+            AddControl(button, controls);
 
             Grid.SetRow(button, buttonConfig.Row);
             Grid.SetRowSpan(button, buttonConfig.RowSpan);

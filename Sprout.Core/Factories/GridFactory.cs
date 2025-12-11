@@ -9,11 +9,15 @@ using System.Windows.Controls;
 
 namespace Sprout.Core.Factories
 {
-    public class GridFactory
+    public class GridFactory : BaseSproutControlFactory
     {
-        public static UIElement GenerateGrid(GridConfig gridConfig)
+
+        public static UIElement GenerateGrid(GridConfig gridConfig, Dictionary<string, UIElement> controls)
         {
             var grid = new Grid();
+            
+            AddControl(grid, controls);
+
             grid.ShowGridLines = true;
 
             foreach (var colSize in gridConfig.Columns)
@@ -30,7 +34,7 @@ namespace Sprout.Core.Factories
 
             foreach (var sproutControl in gridConfig.Children)
             {
-                grid.Children.Add(SproutControlFactory.GetControl(sproutControl));
+                grid.Children.Add(SproutControlFactory.GetControl(sproutControl, controls));
             }
 
             return grid;

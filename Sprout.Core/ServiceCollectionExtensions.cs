@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Sprout.Core.Factories;
 using Sprout.Core.Services.Configurations;
+using Sprout.Core.Services.MainViews;
 using Sprout.Core.Services.Menus;
-using Sprout.Core.Services.PageUIs;
 using Sprout.Core.Services.Seeds;
 using Sprout.Core.Views;
 using System;
@@ -19,10 +19,10 @@ namespace Sprout.Core
         {
             services.AddTransient<ISeedService, SeedService>();
             services.AddTransient<IConfigurationService, JsonConfigurationService>();
-            services.AddSingleton<IMenuService, MenuService>();
-            services.AddTransient<IPageUIService, PageUIService>();
+            services.AddSingleton<IMainViewService, MainViewService>();
             services.AddTransient<SproutPage>();
             services.AddTransient<IPageFactory, PageFactory>();
+            services.AddTransient<IMenuService, MenuService>();
         }
     }
 }
