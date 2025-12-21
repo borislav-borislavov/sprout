@@ -71,6 +71,7 @@ namespace Sprout.Core.Models.Queries
         public string PropertyName { get; set; }
         public object Value { get; set; }
         public string[] Extra { get; internal set; }
+        public string PropertyPath { get; internal set; }
     }
 
 #warning QueryCommandTypes might be redundant

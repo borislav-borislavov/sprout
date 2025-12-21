@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Sprout.Core.ViewModels
 {
@@ -53,20 +54,20 @@ namespace Sprout.Core.ViewModels
                         {
 
                             var x = UiStateRegistry.Get<BaseUIState>(dependency.ControlName);
-                            var propInfo = x.GetType().GetProperty(change.PropertyName);
-                            //propInfo.SetValue(x, );
 
-                            if (dependency.PropertyName == nameof(SproutGridUIState.Selected))
-                            {
-                                var dataRowView = propInfo.GetValue(x) as DataRowView;
-                                dependency.Value = dataRowView[dependency.Extra[0]];
-                            }
-                            else
-                            {
-                                dependency.Value = propInfo.GetValue(x);
-                            }
+                            #warning Ideally this has to be stress tested with something that accepts more then 1 dependencies
+                            var evaluator = new BindingEvaluator();
 
-                            
+                            BindingOperations.SetBinding(
+                                evaluator,
+                                BindingEvaluator.ValueProperty,
+                                new Binding
+                                {
+                                    Source = x,
+                                    Path = new PropertyPath(dependency.PropertyPath)
+                                });
+
+                            dependency.Value = evaluator.Value;
 
                             dependencyHasChanged = true;
                         }
@@ -130,6 +131,22 @@ namespace Sprout.Core.ViewModels
             {
                 QueryService.ExecuteQueryAction(gridAction, Queries);
             }
+        }
+    }
+
+    public sealed class BindingEvaluator : DependencyObject
+    {
+        public static readonly DependencyProperty ValueProperty =
+            DependencyProperty.Register(
+                nameof(Value),
+                typeof(object),
+                typeof(BindingEvaluator),
+                new PropertyMetadata(null));
+
+        public object Value
+        {
+            get => GetValue(ValueProperty);
+            set => SetValue(ValueProperty, value);
         }
     }
 }

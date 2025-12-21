@@ -44,7 +44,7 @@ namespace Sprout.Core.Models.Queries
                 var chunks = scope.Split('.', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
                 dependency.ControlName = chunks[0].TrimStart('@');
-
+                dependency.PropertyPath = string.Join(".", chunks[1..]);
                 dependency.PropertyName = chunks[1];
 
                 if (chunks.Length > 2)
