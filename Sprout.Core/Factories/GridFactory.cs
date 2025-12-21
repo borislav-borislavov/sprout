@@ -18,7 +18,7 @@ namespace Sprout.Core.Factories
             
             AddControl(grid, controls);
 
-            grid.ShowGridLines = true;
+            //grid.ShowGridLines = true;
 
             foreach (var colSize in gridConfig.Columns)
             {

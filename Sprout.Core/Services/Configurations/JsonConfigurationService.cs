@@ -17,8 +17,8 @@ namespace Sprout.Core.Services.Configurations
     {
         public SproutConfiguration Load()
         {
-            //return GetDummy();
-            return LoadFromJson();
+            return GetDummy();
+            //return LoadFromJson();
         }
 
         private static string GetConfigFilePath()
@@ -65,7 +65,7 @@ namespace Sprout.Core.Services.Configurations
                 //TODO: logging
                 return false;
             }
-            
+
         }
 
         private SproutConfiguration GetSproutConfiguration()
@@ -87,22 +87,68 @@ namespace Sprout.Core.Services.Configurations
                             Columns = [ "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*"],
                             Rows = [ "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*"],
 
-                            Children = new List<SproutConfig>
+                            Children = new List<SproutControlConfig>
                             {
-                                new ButtonConfig
+                                new SproutDataGridConfig
                                 {
-                                    Content = "Click Me",
-                                    Column = 4,
-                                    Row = 4,
-                                    ColumnSpan = 2,
-                                    RowSpan = 2
+                                    Name = "users",
+                                    QueryName = "users",
+                                    Column = 0,
+                                    Row = 0,
+                                    ColumnSpan = 5,
+                                    RowSpan = 10,
+                                    AllowInsert = true,
+                                    Columns = [
+                                        new(){ BindingPath = "UserID", Header = "UserID" },
+                                        new(){ BindingPath = "Name", Header = "Name" },
+                                        new(){ BindingPath = "UserName", Header = "UserName" },
+                                        new(){ BindingPath = "LanguageID", Header = "LanguageID" },
+                                        ]
                                 },
 
-                                new GridConfig
+                                new SproutDataGridConfig
                                 {
-                                    Columns = [ "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*"],
-                                    Rows = [ "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*"],
+                                    Name = "WebApiLogs",
+                                    QueryName = "WebApiLogs",
+                                    Column = 5,
+                                    ColumnSpan = 5,
+                                    Row = 0,
+                                    RowSpan = 10,
+                                    Columns = [
+                                        new(){ BindingPath = "ID", Header = "ID" },
+                                        new(){ BindingPath = "Message", Header = "Message" },
+                                        new(){ BindingPath = "Route", Header = "Route" },
+                                        ]
                                 }
+                            }
+                        },
+                        Queries = new List<QueryConfig>
+                        {
+                            new QueryConfig
+                            {
+                                Name = "users",
+                                Text = "SELECT * FROM Users",
+                                ConnectionString = "Server=.;Database=ROOrdering;Trusted_Connection=True;TrustServerCertificate=Yes",
+
+                                InsertCommand = new TableOperationCommand
+                                {
+                                    Text = "INSERT INTO Users (Name, Username, LanguageID) VALUES ({@Name}, {@UserName}, {@LanguageID})",
+                                    DefaultValues = new()
+                                    {
+                                        { "Name", "New User" },
+                                        { "UserName", "newuser" }
+                                    }
+                                },
+                                UpdateCommand = new TableOperationCommand
+                                {
+                                    Text = "UPDATE Users SET Name={@Name}, Username={@Username}, LanguageID={@LanguageID} WHERE UserID = {@UserID}"
+                                }
+                            },
+                            new QueryConfig
+                            {
+                                Name = "WebApiLogs",
+                                Text = "SELECT * FROM WebApiLogs WHERE UserID = {@users.Selected.UserID}",
+                                ConnectionString = "Server=.;Database=ROOrdering;Trusted_Connection=True;TrustServerCertificate=Yes",
                             }
                         }
                     }
@@ -120,7 +166,7 @@ namespace Sprout.Core.Services.Configurations
             var configTypes = Assembly.GetCallingAssembly()
                 .GetTypes()
                 .Where(t =>
-                    typeof(SproutConfig).IsAssignableFrom(t) &&   // implements the interface
+                    typeof(SproutControlConfig).IsAssignableFrom(t) &&   // implements the interface
                     t.IsClass &&                            // is a class
                     !t.IsAbstract);                         // not abstract
 
@@ -141,7 +187,7 @@ namespace Sprout.Core.Services.Configurations
                 {
                     ti =>
                     {
-                        if (ti.Type == typeof(SproutConfig))
+                        if (ti.Type == typeof(SproutControlConfig))
                         {
                             ti.PolymorphismOptions = polymorphismOptions;
                         }
