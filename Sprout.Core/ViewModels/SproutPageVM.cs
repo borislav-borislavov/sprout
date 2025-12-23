@@ -49,27 +49,11 @@ namespace Sprout.Core.ViewModels
 
                     foreach (var dependency in query.Dependencies)
                     {
-                        if (dependency.ControlName == change.ControlName
-                            /*&& dependency.PropertyName == change.PropertyName*/)
+                        if (dependency.ControlName == change.ControlName)
                         {
-
-                            var x = UiStateRegistry.Get<BaseUIState>(dependency.ControlName);
-
-                            #warning Ideally this has to be stress tested with something that accepts more then 1 dependencies
-                            var evaluator = new BindingEvaluator();
-
-                            BindingOperations.SetBinding(
-                                evaluator,
-                                BindingEvaluator.ValueProperty,
-                                new Binding
-                                {
-                                    Source = x,
-                                    Path = new PropertyPath(dependency.PropertyPath)
-                                });
-
-                            dependency.Value = evaluator.Value;
-
                             dependencyHasChanged = true;
+
+                            var debug = dependency.Value;
                         }
                     }
 
@@ -81,45 +65,21 @@ namespace Sprout.Core.ViewModels
             };
         }
 
-        private void CreateQueries()
+        public void CreateQueries()
         {
             foreach (var queryConfig in _pageConfig.Queries)
             {
-                var query = QueryService.CreateQuery(queryConfig);
-                Queries[queryConfig.Name] = query;
-            }
-        }
-
-        private void BindQueryDependencies()
-        {
-            foreach (var query in Queries.Values)
-            {
-                foreach (var dependency in query.Dependencies)
-                {
-                    var uiState = UiStateRegistry[dependency.ControlName];
-
-#warning the big question here is should i bind to SelectedRow.UserID or interpret every time the UiStateChanged event is fired
-
-
-
-                    if (uiState != null)
-                    {
-                        //uiState.PropertyChanged += (_, e) =>
-                        //{
-                        //    if (e.PropertyName == dependency.PropertyName)
-                        //    {
-                        //        ExecuteQuery(query);
-                        //    }
-                        //};
-                    }
-                }
+                Queries[queryConfig.Name] = QueryService.CreateQuery(queryConfig);
             }
         }
 
         public void OnLoaded()
         {
+#warning prevent execution of defined queries that are never used?
             foreach (var kvp in Queries)
             {
+                //query dependencies have to be done after all controls are created and before all queries are executed
+                QueryService.BindDependencies(kvp.Value, UiStateRegistry);
                 QueryService.ExecuteQuery(kvp.Value);
             }
         }
@@ -131,22 +91,6 @@ namespace Sprout.Core.ViewModels
             {
                 QueryService.ExecuteQueryAction(gridAction, Queries);
             }
-        }
-    }
-
-    public sealed class BindingEvaluator : DependencyObject
-    {
-        public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register(
-                nameof(Value),
-                typeof(object),
-                typeof(BindingEvaluator),
-                new PropertyMetadata(null));
-
-        public object Value
-        {
-            get => GetValue(ValueProperty);
-            set => SetValue(ValueProperty, value);
         }
     }
 }

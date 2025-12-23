@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Sprout.Core.Services.Queries;
 using System.ComponentModel;
 using System.Data;
+using System.Windows;
 
 namespace Sprout.Core.Models.Queries
 {
@@ -64,14 +65,27 @@ namespace Sprout.Core.Models.Queries
         public IEnumerable<QueryDependency> Dependencies { get; internal set; } = [];
     }
 
-    public class QueryDependency
+    public class QueryDependency : DependencyObject
     {
         public string RawDependency { get; set; }
         public string ControlName { get; set; }
         public string PropertyName { get; set; }
-        public object Value { get; set; }
         public string[] Extra { get; internal set; }
         public string PropertyPath { get; internal set; }
+
+        public static readonly DependencyProperty ValueProperty =
+            DependencyProperty.Register(
+                name: nameof(Value),
+                propertyType: typeof(string),
+                ownerType: typeof(DependencyProperty),
+                typeMetadata: null
+            );
+
+        public object Value
+        {
+            get => (string)GetValue(ValueProperty);
+            set => SetValue(ValueProperty, value);
+        }
     }
 
 #warning QueryCommandTypes might be redundant

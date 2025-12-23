@@ -93,7 +93,6 @@ namespace Sprout.Core.Views
                     vm.UiStateRegistry.Register(sproutDataGrid.UIState.Name, sproutDataGrid.UIState);
                 }
             }
-
         }
 
         private void SproutPage_Loaded(object sender, RoutedEventArgs e)

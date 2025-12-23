@@ -6,6 +6,8 @@ using Sprout.Core.Factories;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
+using Sprout.Core.UIStates;
+using Sprout.Core.ViewModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,6 +15,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
 
 namespace Sprout.Core.Services.Queries
 {
@@ -92,6 +96,21 @@ namespace Sprout.Core.Services.Queries
             AssignCommandIfAvailable(queryConfig.DeleteCommand, query.DeleteCommand);
 
             return query;
+        }
+
+        public static void BindDependencies(Query query, UiStateRegistry uiStateRegistry)
+        {
+            foreach (var dep in query.Dependencies)
+            {
+                BindingOperations.SetBinding(
+                    target: dep,
+                    QueryDependency.ValueProperty,
+                    new Binding
+                    {
+                        Source = uiStateRegistry,
+                        Path = new PropertyPath($"[{dep.ControlName}].{dep.PropertyPath}")
+                    });
+            }
         }
 
         private static void ValidateQueryConfig(QueryConfig queryConfig)
