@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.UIStates;
 using System;

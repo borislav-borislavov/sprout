@@ -2,15 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace Sprout.Core.Models.Configurations
 {
-    public class SproutConfiguration
+    public class SproutPageConfiguration
     {
-        public IEnumerable<SproutPageConfiguration> Pages { get; set; }
+        public string Title { get; set; }
+
+        public SproutControlConfig Root { get; set; }
+
+        public List<QueryConfig> Queries { get; set; } = [];
     }
 }

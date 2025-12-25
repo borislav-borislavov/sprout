@@ -1,4 +1,5 @@
 ﻿using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Services;
 using System;
 using System.Collections.Generic;

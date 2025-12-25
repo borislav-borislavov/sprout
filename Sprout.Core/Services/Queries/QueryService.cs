@@ -4,6 +4,7 @@ using Sprout.Core.Common;
 using Sprout.Core.Common.Models;
 using Sprout.Core.Factories;
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.Configurations.Queries;
 using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.UIStates;
