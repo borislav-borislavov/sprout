@@ -23,6 +23,8 @@ namespace Sprout.Core.Factories
                     return ButtonFactory.GenerateButton(buttonConfig, controls);
                 case SproutDataGridConfig sproutGridConfig:
                     return SproutDataGridFactory.GenerateSproutGrid(sproutGridConfig, controls);
+                case SproutComboConfig sproutComboConfig:
+                    return SproutComboFactory.Create(sproutComboConfig, controls);
                 default:
                     throw new NotImplementedException();
             }

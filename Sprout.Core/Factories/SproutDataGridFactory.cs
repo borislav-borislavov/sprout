@@ -2,6 +2,7 @@
 using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.UIStates;
 using Sprout.Core.Views;
+using Sprout.Core.Views.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace Sprout.Core.Factories
                 {
                     Header = colConfig.Header,
                     Binding = new System.Windows.Data.Binding(colConfig.BindingPath),
-                    Width = DataGridLength.Auto 
+                    Width = DataGridLength.Auto
                 };
 
                 sproutDataGrid.dataGrid.Columns.Add(col);
@@ -37,11 +38,7 @@ namespace Sprout.Core.Factories
 
             AddControl(sproutDataGrid, controls);
 
-            Grid.SetRow(sproutDataGrid, sproutGridConfig.Row);
-            Grid.SetRowSpan(sproutDataGrid, sproutGridConfig.RowSpan);
-
-            Grid.SetColumn(sproutDataGrid, sproutGridConfig.Column);
-            Grid.SetColumnSpan(sproutDataGrid, sproutGridConfig.ColumnSpan);
+            SetGridPosition(sproutDataGrid, sproutGridConfig);
 
             var gridUIState = new SproutGridUIState();
             gridUIState.SetUpState(sproutDataGrid);

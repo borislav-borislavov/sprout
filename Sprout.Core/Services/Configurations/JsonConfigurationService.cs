@@ -91,12 +91,24 @@ namespace Sprout.Core.Services.Configurations
 
                             Children = new List<SproutControlConfig>
                             {
+                                new SproutComboConfig
+                                {
+                                    Name = "languageSelector",
+                                    QueryName = "languages",
+                                    Column = 0,
+                                    ColumnSpan = 2,
+                                    Row = 0,
+                                    DisplayColumn = "Name",
+                                    ValueColumn = "LanguageID",
+                                    VerticalAlignment = "top"
+                                },
+
                                 new SproutDataGridConfig
                                 {
                                     Name = "users",
                                     QueryName = "users",
                                     Column = 0,
-                                    Row = 0,
+                                    Row = 1,
                                     ColumnSpan = 5,
                                     RowSpan = 10,
                                     AllowInsert = true,
@@ -124,12 +136,19 @@ namespace Sprout.Core.Services.Configurations
                                 }
                             }
                         },
+
                         Queries = new List<QueryConfig>
                         {
                             new QueryConfig
                             {
                                 Name = "users",
-                                Text = "SELECT * FROM Users",
+                                Text = """
+                                SELECT * 
+                                FROM Users 
+                                WHERE 
+                                    LanguageID = COALESCE({@languageSelector.Selected.LanguageID}, LanguageID)
+                                
+                                """,
                                 ConnectionString = "Server=.;Database=ROOrdering;Trusted_Connection=True;TrustServerCertificate=Yes",
 
                                 InsertCommand = new TableOperationCommand
@@ -150,6 +169,16 @@ namespace Sprout.Core.Services.Configurations
                             {
                                 Name = "WebApiLogs",
                                 Text = "SELECT * FROM WebApiLogs WHERE UserID = {@users.Selected.UserID}",
+                                ConnectionString = "Server=.;Database=ROOrdering;Trusted_Connection=True;TrustServerCertificate=Yes",
+                            },
+                            new QueryConfig
+                            {
+                                Name = "languages",
+                                Text = """
+                                SELECT CAST(NULL AS INT) LanguageID, 'All' AS Name
+                                UNION ALL
+                                SELECT * FROM Languages
+                                """,
                                 ConnectionString = "Server=.;Database=ROOrdering;Trusted_Connection=True;TrustServerCertificate=Yes",
                             }
                         }

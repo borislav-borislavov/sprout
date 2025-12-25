@@ -21,7 +21,8 @@ namespace Sprout.Core.Models.Queries
                 {
                     Name = scope.TrimStart('@').TrimEnd('?', '!'),
                     IsMandatory = scope.EndsWith("!"),
-                    RawPatameter = scope
+                    RawPatameter = scope,
+
                 });
             }
 
@@ -45,12 +46,6 @@ namespace Sprout.Core.Models.Queries
 
                 dependency.ControlName = chunks[0].TrimStart('@');
                 dependency.PropertyPath = string.Join(".", chunks[1..]);
-                dependency.PropertyName = chunks[1];
-
-                if (chunks.Length > 2)
-                    dependency.Extra = chunks[2..];
-                else
-                    dependency.Extra = Array.Empty<string>();
 
                 dependencies.Add(dependency);
             }

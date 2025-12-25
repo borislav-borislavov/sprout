@@ -69,8 +69,6 @@ namespace Sprout.Core.Models.Queries
     {
         public string RawDependency { get; set; }
         public string ControlName { get; set; }
-        public string PropertyName { get; set; }
-        public string[] Extra { get; internal set; }
         public string PropertyPath { get; internal set; }
 
         public static readonly DependencyProperty ValueProperty =

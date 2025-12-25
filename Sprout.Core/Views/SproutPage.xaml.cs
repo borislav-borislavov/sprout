@@ -6,6 +6,7 @@ using Sprout.Core.Services;
 using Sprout.Core.Services.Queries;
 using Sprout.Core.UIStates;
 using Sprout.Core.ViewModels;
+using Sprout.Core.Views.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,6 +92,17 @@ namespace Sprout.Core.Views
                     }
 
                     vm.UiStateRegistry.Register(sproutDataGrid.UIState.Name, sproutDataGrid.UIState);
+                }
+
+                if (kvp.Value is SproutCombo sproutCombo)
+                {
+                    sproutCombo.comboBox.SetBinding(ComboBox.ItemsSourceProperty,
+                        new Binding($"Queries[{sproutCombo.QueryName}].Data")
+                        {
+                            Mode = BindingMode.OneWay
+                        });
+
+                    vm.UiStateRegistry.Register(sproutCombo.UIState.Name, sproutCombo.UIState);
                 }
             }
         }

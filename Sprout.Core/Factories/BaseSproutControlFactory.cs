@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Sprout.Core.Models.Configurations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Sprout.Core.Factories
 {
@@ -27,6 +29,14 @@ namespace Sprout.Core.Factories
             }
 
             controls[control.Name] = control;
+        }
+
+        protected static void SetGridPosition(FrameworkElement control, SproutControlConfig config)
+        {
+            Grid.SetRow(control, config.Row);
+            Grid.SetColumn(control, config.Column);
+            Grid.SetRowSpan(control, config.RowSpan);
+            Grid.SetColumnSpan(control, config.ColumnSpan);
         }
     }
 }
