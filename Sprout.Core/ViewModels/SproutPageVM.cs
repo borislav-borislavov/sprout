@@ -23,7 +23,7 @@ namespace Sprout.Core.ViewModels
 {
     public partial class SproutPageVM : ObservableObject
     {
-        private SproutPageConfiguration _pageConfig;
+        public SproutPageConfiguration PageConfig { get; private set; }
 
         public Dictionary<string, Dictionary<string, GridAction>> GridActions { get; set; } = [];
 
@@ -33,7 +33,7 @@ namespace Sprout.Core.ViewModels
 
         public SproutPageVM(SproutPageConfiguration pageConfig)
         {
-            _pageConfig = pageConfig;
+            PageConfig = pageConfig;
 
             CreateQueries();
 
@@ -67,7 +67,7 @@ namespace Sprout.Core.ViewModels
 
         public void CreateQueries()
         {
-            foreach (var queryConfig in _pageConfig.Queries)
+            foreach (var queryConfig in PageConfig.Queries)
             {
                 Queries[queryConfig.Name] = QueryService.CreateQuery(queryConfig);
             }

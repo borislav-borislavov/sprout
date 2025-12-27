@@ -31,15 +31,15 @@ namespace Sprout.Core.Views
     {
         private Dictionary<string, UIElement> _controls = [];
 
-        public SproutPage(SproutPageConfiguration pageConfig)
+        public SproutPage()
         {
             InitializeComponent();
+        }
 
-            var vm = new SproutPageVM(pageConfig);
-            DataContext = vm;
-
+        private void InitializePage(SproutPageVM vm)
+        {
             //step 1 - generate UI controls
-            this.Content = SproutControlFactory.GetControl(pageConfig.Root, _controls);
+            this.Content = SproutControlFactory.GetControl(vm.PageConfig.Root, _controls);
 
             //step 2 - hook up control bindings (move this to a better place)
             foreach (var kvp in _controls)
@@ -109,6 +109,12 @@ namespace Sprout.Core.Views
 
         private void SproutPage_Loaded(object sender, RoutedEventArgs e)
         {
+            if (this.DataContext is not SproutPageVM vm)
+            {
+                return;
+            }
+
+            InitializePage(vm);
             //step 3 - load the data
             ((SproutPageVM)DataContext).OnLoaded();
         }

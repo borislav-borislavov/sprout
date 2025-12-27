@@ -4,8 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Sprout.Core.Views"
+             xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
+             Name="MainViewControl"
+             
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -18,22 +22,41 @@
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
 
-        <ScrollViewer
-            VerticalScrollBarVisibility="Auto"
-            Grid.Row="0"
-            Grid.RowSpan="3" >
-            <StackPanel x:Name="ButtonsContainer" Orientation="Vertical">
-                <!--<Button Name="btnSettings" Click="btnSettings_Click"  Content="Settings" HorizontalAlignment="Stretch" Height="50" FontSize="16" Margin="5, 5, 5, 0"/>
-            <Button Name="btnTFS" Click="btnTFS_Click"  Content="TFS" HorizontalAlignment="Stretch" Height="50" FontSize="16" Margin="5, 5, 5, 0"/>
-            <Button Name="btnNavigationEntries" HorizontalAlignment="Stretch" Content="Navigation" Height="50" FontSize="16" Margin="5, 5, 5, 0" Click="btnNavigationEntries_Click"/>
-            <Button Name="btnGridGenerator" Click="btnGridGenerator_Click" Content="Grids" HorizontalAlignment="Stretch" Height="50"  FontSize="16" Margin="5, 5, 5, 0"/>
-            <Button Name="btnModelManager" Click="btnModelManager_Click" Content="Models" HorizontalAlignment="Stretch" Height="50"  FontSize="16" Margin="5, 5, 5, 0"/>
-            <Button Name="btnTestPage" Click="btnTestPage_Click" Content="TestPage" HorizontalAlignment="Stretch" Height="50"  FontSize="16" Margin="5, 5, 5, 0"/>
-            <Button Name="btnQueryEditor" Click="btnQueryEditor_Click" Content="Query" HorizontalAlignment="Stretch" Height="50"  FontSize="16" Margin="5, 5, 5, 0"/>
-            <Button Name="btnTranslatePage" Click="btnTranslatePage_Click" Content="Translate" HorizontalAlignment="Stretch" Height="50"  FontSize="16" Margin="5, 5, 5, 0"/>-->
-            </StackPanel>
-        </ScrollViewer>
-        <TabControl Name="MyTabControl" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" >
+        <ItemsControl x:Name="ButtonsList"
+                      Grid.Column="0"
+                      Grid.Row="0"
+                      Grid.RowSpan="3"
+                      ItemsSource="{Binding PageConfigs}" >
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button
+                        Content="{Binding Title}"
+                        Command="{Binding ElementName=MainViewControl, Path=DataContext.OpenPageCommand }"
+                        CommandParameter="{Binding}"
+                        />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <TabControl Name="MyTabControl" 
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    Grid.RowSpan="3"
+                    ItemsSource="{Binding Tabs}"
+                    SelectedItem="{Binding SelectedTab}">
+
+            <TabControl.Resources>
+                <DataTemplate DataType="{x:Type viewModels:SproutPageVM}">
+                    <local:SproutPage />
+                </DataTemplate>
+            </TabControl.Resources>
+
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding PageConfig.Title}" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+
         </TabControl>
     </Grid>
 </UserControl>

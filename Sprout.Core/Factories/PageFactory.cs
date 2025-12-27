@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Sprout.Core.Models.Configurations;
-using Sprout.Core.Services.Menus;
 using Sprout.Core.Views;
 using System;
 using System.Collections.Generic;

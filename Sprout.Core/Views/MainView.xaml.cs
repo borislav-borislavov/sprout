@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sprout.Core.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,10 @@ namespace Sprout.Core.Views
     /// </summary>
     public partial class MainView : UserControl
     {
-        public MainView()
+        public MainView(MainViewVM vm)
         {
             InitializeComponent();
+            DataContext = vm;
         }
     }
 }
