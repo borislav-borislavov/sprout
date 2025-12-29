@@ -9,7 +9,6 @@ namespace Sprout.Core.Models.Configurations.DataGrid
     public class SproutDataGridConfig : SproutControlConfig
     {
         public string QueryName { get; set; }
-        public string Name { get; internal set; }
 
         public bool AllowInsert { get; set; }
         public bool AllowUpdate { get; set; }
