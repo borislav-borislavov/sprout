@@ -1,23 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Win32;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.Queries;
 using Sprout.Core.UIStates;
-using Sprout.Core.Views;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace Sprout.Core.ViewModels
 {
@@ -39,10 +26,6 @@ namespace Sprout.Core.ViewModels
 
             UiStateRegistry.UiStateChanged += (_, change) =>
             {
-                //var affectedQueries = _dependencyGraph.Resolve(change);
-                //foreach (var query in affectedQueries)
-                //    ExecuteQuery(query);
-
                 foreach (var query in Queries.Values)
                 {
                     var dependencyHasChanged = false;

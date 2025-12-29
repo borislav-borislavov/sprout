@@ -24,9 +24,6 @@ using System.Windows.Shapes;
 
 namespace Sprout.Core.Views
 {
-    /// <summary>
-    /// Interaction logic for SproutPage.xaml
-    /// </summary>
     public partial class SproutPage : UserControl
     {
         private Dictionary<string, UIElement> _controls = [];
