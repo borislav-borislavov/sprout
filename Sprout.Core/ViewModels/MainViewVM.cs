@@ -26,7 +26,6 @@ namespace Sprout.Core.ViewModels
             _configService = configService;
             _dialogService = dialogService;
             var sproutConfig = _configService.Load();
-            _configService.Save(sproutConfig);
 
             PageConfigs = new ObservableCollection<SproutPageConfiguration>(sproutConfig.Pages);
         }
