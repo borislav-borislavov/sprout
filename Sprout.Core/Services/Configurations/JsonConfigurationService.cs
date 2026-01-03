@@ -19,8 +19,8 @@ namespace Sprout.Core.Services.Configurations
     {
         public SproutConfiguration Load()
         {
-            return GetDummy();
-            //return LoadFromJson();
+            //return GetDummy();
+            return LoadFromJson();
         }
 
         private static string GetConfigFilePath()

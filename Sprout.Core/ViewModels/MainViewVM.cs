@@ -51,5 +51,11 @@ namespace Sprout.Core.ViewModels
         }
 
         private bool CanEditPage() => SelectedTab is not null;
+
+        [RelayCommand]
+        private void EditMenu()
+        {
+            _dialogService.ShowEditMenu(PageConfigs, _configService);
+        }
     }
 }

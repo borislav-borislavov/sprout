@@ -13,7 +13,6 @@ namespace Sprout.Core
         {
             services.AddTransient<IConfigurationService, JsonConfigurationService>();
             services.AddTransient<IDialogService, DialogService>();
-            //services.AddTransient<IPageFactory, PageFactory>();
 
             services.AddTransient<MainViewVM>();
             services.AddTransient<MainView>();

@@ -24,7 +24,12 @@
         </Grid.ColumnDefinitions>
 
         <Menu Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1">
-            <MenuItem Header="Edit" Command="{Binding EditPageCommand}"/>
+            <MenuItem Header="Config">
+                <MenuItem Header="Menu" Command="{Binding EditMenuCommand}"/>
+                <MenuItem Header="Page" Command="{Binding EditPageCommand}"/>
+            </MenuItem>
+
+            <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>
         </Menu>
 
         <ItemsControl x:Name="ButtonsList"
