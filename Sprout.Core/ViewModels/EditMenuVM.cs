@@ -23,6 +23,8 @@ namespace Sprout.Core.ViewModels
 
         private SproutConfiguration _sproutConfig;
 
+        public bool IsSaved { get; internal set; }
+
         public EditMenuVM(IConfigurationService configurationService)
         {
             _configurationService = configurationService;
@@ -71,6 +73,8 @@ namespace Sprout.Core.ViewModels
             _sproutConfig.Pages = PageConfigs.ToList();
 
             _configurationService.Save(_sproutConfig);
+
+            IsSaved = true;
         }
     }
 }

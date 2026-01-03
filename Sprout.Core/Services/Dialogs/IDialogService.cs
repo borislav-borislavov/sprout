@@ -6,7 +6,7 @@ namespace Sprout.Core.Services.Dialogs
 {
     public interface IDialogService
     {
-        void ShowEditMenu(
+        bool ShowEditMenu(
             ObservableCollection<SproutPageConfiguration> pageConfigs,
             IConfigurationService configService);
 

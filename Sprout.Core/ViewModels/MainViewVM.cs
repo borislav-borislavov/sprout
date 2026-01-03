@@ -55,7 +55,13 @@ namespace Sprout.Core.ViewModels
         [RelayCommand]
         private void EditMenu()
         {
-            _dialogService.ShowEditMenu(PageConfigs, _configService);
+            var isSaved = _dialogService.ShowEditMenu(PageConfigs, _configService);
+
+            if (isSaved)
+            {
+                var sproutConfig = _configService.Load();
+                PageConfigs = new ObservableCollection<SproutPageConfiguration>(sproutConfig.Pages);
+            }
         }
     }
 }

@@ -13,11 +13,13 @@ namespace Sprout.Core.Services.Dialogs
 {
     public class DialogService : IDialogService
     {
-        public void ShowEditMenu(ObservableCollection<SproutPageConfiguration> pageConfigs, IConfigurationService configService)
+        public bool ShowEditMenu(ObservableCollection<SproutPageConfiguration> pageConfigs, IConfigurationService configService)
         {
             var vm = new EditMenuVM(configService);
             var editMenu = new EditMenu { DataContext = vm };
             editMenu.ShowDialog();
+
+            return vm.IsSaved;
         }
 
         public void ShowEditPage(SproutPageConfiguration pageConfig, IConfigurationService configService)
