@@ -96,7 +96,6 @@
                             FontFamily="Segoe Fluent Icons"
                             FontSize="25"
                             Text="&#xE948;"
-                            
                             Margin="3"/>
                 </Button>
 
@@ -104,7 +103,8 @@
                     HorizontalAlignment="Left"
                     Margin="2"
                     BorderThickness="0"
-                    Background="Transparent">
+                    Background="Transparent"
+                    Command="{Binding DeleteSelectedCommand}" >
                     <TextBlock
                             FontFamily="Segoe Fluent Icons"
                             FontSize="25"

@@ -76,5 +76,14 @@ namespace Sprout.Core.ViewModels
 
             IsSaved = true;
         }
+
+        [RelayCommand]
+        private void DeleteSelected()
+        {
+            if (SelectedPageConfig != null)
+            {
+                PageConfigs.Remove(SelectedPageConfig);
+            }
+        }
     }
 }
