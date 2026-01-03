@@ -12,6 +12,7 @@
              d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
@@ -21,6 +22,10 @@
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
+
+        <Menu Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1">
+            <MenuItem Header="Edit" Command="{Binding EditPageCommand}"/>
+        </Menu>
 
         <ItemsControl x:Name="ButtonsList"
                       Grid.Column="0"
@@ -40,20 +45,53 @@
 
         <TabControl Name="MyTabControl" 
                     Grid.Column="1"
-                    Grid.Row="0"
+                    Grid.Row="1"
                     Grid.RowSpan="3"
                     ItemsSource="{Binding Tabs}"
                     SelectedItem="{Binding SelectedTab}">
 
-            <TabControl.Resources>
+            <!--<TabControl.Resources>
                 <DataTemplate DataType="{x:Type viewModels:SproutPageVM}">
                     <local:SproutPage />
                 </DataTemplate>
-            </TabControl.Resources>
+            </TabControl.Resources>-->
+
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <ContentPresenter Content="{Binding DynamicViewInstance}" />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
 
             <TabControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding PageConfig.Title}" />
+                    
+                    <StackPanel Name="TabHeaderStackPanel" Orientation="Horizontal" MouseDown="TabHeaderStackPanel_MouseDown">
+                        <TextBlock Text="{Binding PageConfig.Title}" />
+                        <Grid MouseDown="Grid_MouseDown">
+                            <TextBlock
+                                 FontFamily="Segoe Fluent Icons"
+                                 Text="&#xef2c;"
+                                 FontWeight="Bold"
+                                 Margin="7,3,0,0"/>
+                            <TextBlock
+                                ToolTip="Close Tab"
+                                 FontFamily="Segoe Fluent Icons"
+                                 Foreground="Red"
+                                 Text="&#xef2c;"
+                                 Margin="7,3,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="LightBlue" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </StackPanel>
+                    
                 </DataTemplate>
             </TabControl.ItemTemplate>
 

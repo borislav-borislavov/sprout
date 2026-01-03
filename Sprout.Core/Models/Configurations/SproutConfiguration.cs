@@ -11,6 +11,6 @@ namespace Sprout.Core.Models.Configurations
 {
     public class SproutConfiguration
     {
-        public IEnumerable<SproutPageConfiguration> Pages { get; set; }
+        public List<SproutPageConfiguration> Pages { get; set; }
     }
 }

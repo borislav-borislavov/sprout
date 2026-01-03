@@ -86,6 +86,8 @@ namespace Sprout.Core.Services.Configurations
                         Title = "Home",
                         Root = new GridConfig
                         {
+                            Name = "rootGrid",
+
                             Columns = [ "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*"],
                             Rows = [ "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*"],
 
@@ -180,6 +182,64 @@ namespace Sprout.Core.Services.Configurations
                                 SELECT * FROM Languages
                                 """,
                                 ConnectionString = "Server=.;Database=ROOrdering;Trusted_Connection=True;TrustServerCertificate=Yes",
+                            }
+                        }
+                    },
+                    new SproutPageConfiguration
+                    {
+                        Title = "Page2",
+                        Root = new GridConfig
+                        {
+                            Name = "rootGrid",
+
+                            Columns = [ "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*"],
+                            Rows = [ "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*"],
+
+                            Children = new List<SproutControlConfig>
+                            {
+                                new SproutDataGridConfig
+                                {
+                                    Name = "users",
+                                    QueryName = "users",
+                                    Column = 0,
+                                    Row = 1,
+                                    ColumnSpan = 5,
+                                    RowSpan = 10,
+                                    AllowInsert = true,
+                                    Columns = [
+                                        new(){ BindingPath = "UserID", Header = "UserID" },
+                                        new(){ BindingPath = "Name", Header = "Name" },
+                                        new(){ BindingPath = "UserName", Header = "UserName" },
+                                        new(){ BindingPath = "LanguageID", Header = "LanguageID" },
+                                        ]
+                                },
+                            }
+                        },
+
+                        Queries = new List<QueryConfig>
+                        {
+                            new QueryConfig
+                            {
+                                Name = "users",
+                                Text = """
+                                SELECT * 
+                                FROM Users 
+                                """,
+                                ConnectionString = "Server=.;Database=ROOrdering;Trusted_Connection=True;TrustServerCertificate=Yes",
+
+                                InsertCommand = new TableOperationCommand
+                                {
+                                    Text = "INSERT INTO Users (Name, Username, LanguageID) VALUES ({@Name}, {@UserName}, {@LanguageID})",
+                                    DefaultValues = new()
+                                    {
+                                        { "Name", "New User" },
+                                        { "UserName", "newuser" }
+                                    }
+                                },
+                                UpdateCommand = new TableOperationCommand
+                                {
+                                    Text = "UPDATE Users SET Name={@Name}, Username={@Username}, LanguageID={@LanguageID} WHERE UserID = {@UserID}"
+                                }
                             }
                         }
                     }

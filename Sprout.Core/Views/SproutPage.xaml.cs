@@ -26,15 +26,22 @@ namespace Sprout.Core.Views
 {
     public partial class SproutPage : UserControl
     {
-        private Dictionary<string, UIElement> _controls = [];
-
         public SproutPage()
         {
             InitializeComponent();
         }
 
+        private bool _isInitialized = false;
+
         private void InitializePage(SproutPageVM vm)
         {
+            if (_isInitialized)
+            {
+                return;
+            }
+
+            Dictionary<string, UIElement> _controls = [];
+
             //step 1 - generate UI controls
             this.Content = SproutControlFactory.GetControl(vm.PageConfig.Root, _controls);
 
@@ -62,6 +69,7 @@ namespace Sprout.Core.Views
 
                         //create the grid action
                         vm.GridActions[sproutDataGrid.Name][nameof(AddRowGridAction)] = new AddRowGridAction(sproutDataGrid.QueryName);
+
 
                         //bind to the newly created grid action
                         sproutDataGrid.btnInsert.SetBinding(Button.CommandParameterProperty,
@@ -112,8 +120,14 @@ namespace Sprout.Core.Views
             }
 
             InitializePage(vm);
-            //step 3 - load the data
-            ((SproutPageVM)DataContext).OnLoaded();
+
+            if (!_isInitialized)
+            {
+                //step 3 - load the data
+                ((SproutPageVM)DataContext).OnLoaded(); 
+            }
+
+            _isInitialized = true;
         }
     }
 }

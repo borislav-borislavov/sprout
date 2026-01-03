@@ -1,0 +1,117 @@
+﻿<Window x:Class="Sprout.Core.Windows.EditPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Sprout.Core.Windows"
+        xmlns:config="clr-namespace:Sprout.Core.Models.Configurations"
+        xmlns:gridConfig="clr-namespace:Sprout.Core.Models.Configurations.DataGrid"
+        xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
+        xmlns:views="clr-namespace:Sprout.Core.Views"
+        xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+        
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance viewModels:EditPageVM}"
+        Title="EditPage" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.3*"/>
+            <ColumnDefinition Width="0.7*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid x:Name="ControlsGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Label Content="Controls" FontWeight="Bold" FontSize="16" Margin="10"/>
+
+            <TreeView
+                Name="ControlsTree"
+                Grid.Row="1"
+                Margin="5"
+                SelectedItemChanged="ControlsTree_SelectedItemChanged"
+                ItemsSource="{Binding Controls}">
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type config:GridConfig}" ItemsSource="{Binding Children}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                FontFamily="Segoe Fluent Icons"
+                                Text="&#xeca5;"
+                                Margin="3"/>
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+
+                    <HierarchicalDataTemplate DataType="{x:Type gridConfig:SproutDataGridConfig}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                FontFamily="Segoe Fluent Icons"
+                                Text="&#xf57a;"
+                                Margin="3"/>
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+
+                    </HierarchicalDataTemplate>
+
+                    <HierarchicalDataTemplate DataType="{x:Type config:SproutComboConfig}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                FontFamily="Segoe Fluent Icons"
+                                Text="&#xeda2;"
+                                Margin="3"/>
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.Resources>
+            </TreeView>
+
+            <Button Content="Save"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Padding="5"
+                    Command="{Binding SaveCommand}"
+                    HorizontalAlignment="Right"/>
+        </Grid>
+
+        <TabControl Grid.Row="1" Grid.Column="1" Margin="5" DataContext="{Binding SelectedNode}">
+            <TabControl.Resources>
+                <!--<DataTemplate DataType="{x:Type gridConfig:SproutDataGridConfig}">
+                    --><!--<StackPanel>
+                        <TextBlock Text="Hello world"/>
+                        <TextBlock Text="{Binding AllowInsert}"/>
+                    </StackPanel>--><!--
+                    <views:EditSproutDataGrid/>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type config:SproutComboConfig}">
+                    <StackPanel>
+                        <TextBlock Text="Combo Config Content"/>
+                    </StackPanel>
+                </DataTemplate>-->
+            </TabControl.Resources>
+
+            <TabItem Header="Control" Content="{Binding}"/>
+            
+            <TabItem Header="Layout">
+                <Grid>
+                    <Grid.Resources>
+                        <DataTemplate DataType="{x:Type config:SproutControlConfig}">
+                            <views:EditControlLayoutView/>
+                        </DataTemplate>
+
+                        <!--<DataTemplate DataType="{x:Type config:SproutComboConfig}">
+                            <TextBlock Text="SproutComboConfig Layout"/>
+                        </DataTemplate>-->
+                    </Grid.Resources>
+
+                    <ContentControl Content="{Binding}"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Query"/>
+        </TabControl>
+    </Grid>
+</Window>

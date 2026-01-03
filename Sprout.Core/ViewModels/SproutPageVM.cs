@@ -5,6 +5,7 @@ using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.Queries;
 using Sprout.Core.UIStates;
+using Sprout.Core.Views;
 
 namespace Sprout.Core.ViewModels
 {
@@ -17,6 +18,12 @@ namespace Sprout.Core.ViewModels
         public Dictionary<string, Query> Queries { get; set; } = [];
 
         public UiStateRegistry UiStateRegistry { get; } = new();
+
+        /// <summary>
+        /// Using virtualization to re-create views makes the re-binding the UI State too brittle
+        /// and it increases the complexity of the code and the chances for bugs. Code is a liability and this reduces greatly the code complexity.
+        /// </summary>
+        public SproutPage DynamicViewInstance { get; private set; }
 
         public SproutPageVM(SproutPageConfiguration pageConfig)
         {
@@ -46,6 +53,8 @@ namespace Sprout.Core.ViewModels
                     }
                 }
             };
+
+            DynamicViewInstance = new SproutPage{ DataContext = this };
         }
 
         public void CreateQueries()
