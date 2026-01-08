@@ -31,7 +31,7 @@
             <TreeView
                 Name="ControlsTree"
                 Grid.Row="1"
-                Margin="5"
+                Margin="5,5,5,0"
                 SelectedItemChanged="ControlsTree_SelectedItemChanged"
                 ItemsSource="{Binding Controls}">
                 <TreeView.Resources>
@@ -68,12 +68,39 @@
                 </TreeView.Resources>
             </TreeView>
 
-            <Button Content="Save"
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    Padding="5"
+            <StackPanel
+                Margin="5"
+                Grid.Row="2"
+                Grid.Column="0"
+                Orientation="Horizontal"
+                FlowDirection="RightToLeft" >
+                
+                <Button
+                    VerticalAlignment="Center"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ToolTip="Save"
                     Command="{Binding SaveCommand}"
-                    HorizontalAlignment="Right"/>
+                    Margin="5">
+                    <TextBlock
+                         FontFamily="Segoe Fluent Icons"
+                         FontSize="25"
+                         Text="&#xe74e;" />
+                </Button>
+
+                <Button
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ToolTip="Add Control"
+                    Command="{Binding AddControlCommand}"
+                    Margin="5">
+                    <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="25"
+                            Text="&#xE948;" />
+                </Button>
+            </StackPanel>
+
         </Grid>
 
         <TabControl Grid.Row="1" Grid.Column="1" Margin="5" DataContext="{Binding SelectedNode}">
@@ -111,7 +138,9 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Query"/>
+            <TabItem Header="Query">
+                <views:QueryManager DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext}" />
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

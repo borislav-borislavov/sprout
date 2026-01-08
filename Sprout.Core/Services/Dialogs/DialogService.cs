@@ -13,6 +13,15 @@ namespace Sprout.Core.Services.Dialogs
 {
     public class DialogService : IDialogService
     {
+        public SproutControlConfig ShowAddControl()
+        {
+            var vm = new AddControlVM();
+            var addControl = new AddControl { DataContext = vm };
+            addControl.ShowDialog();
+
+            return vm.NewControl;
+        }
+
         public bool ShowEditMenu(ObservableCollection<SproutPageConfiguration> pageConfigs, IConfigurationService configService)
         {
             var vm = new EditMenuVM(configService);
@@ -24,7 +33,7 @@ namespace Sprout.Core.Services.Dialogs
 
         public void ShowEditPage(SproutPageConfiguration pageConfig, IConfigurationService configService)
         {
-            var vm = new EditPageVM(configService);
+            var vm = new EditPageVM(configService, this);
             var editPage = new EditPage { DataContext = vm };
             vm.Initialize(pageConfig);
 

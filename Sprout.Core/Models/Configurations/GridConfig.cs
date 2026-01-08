@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,6 @@ namespace Sprout.Core.Models.Configurations
 
         public List<string> Columns { get; set; } = [];
 
-        public List<SproutControlConfig> Children { get; set; } = [];
+        public ObservableCollection<SproutControlConfig> Children { get; set; } = [];
     }
 }

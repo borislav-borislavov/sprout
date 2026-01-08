@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations.DataGrid
 {
-    public class SproutDataGridConfig : SproutControlConfig
+    public class SproutDataGridConfig : SproutControlConfig, IDataRetreiver
     {
         public string QueryName { get; set; }
 

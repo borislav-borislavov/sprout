@@ -43,12 +43,33 @@ namespace Sprout.Core.Services.Configurations
 
                 var debug = JsonSerializer.Deserialize<SproutConfiguration>(json, CreateJsonOptions());
 
+                foreach (var page in debug.Pages)
+                {
+                    if (page.Root == null) continue;
+
+                    if (page.Root is not GridConfig gridConfig) continue;
+
+                    SetNavigationProperties(gridConfig, page);
+                }
+
                 return debug;
             }
             catch (Exception ex)
             {
                 //TODO: logging
                 return GetSproutConfiguration();
+            }
+        }
+
+        private void SetNavigationProperties(GridConfig gridConfig, SproutPageConfiguration page)
+        {
+            foreach (var child in gridConfig.Children)
+            {
+                //child.Parent = gridConfig;
+                //if (child is GridConfig childGrid)
+                //{
+                //    SetNavigationProperties(childGrid);
+                //}
             }
         }
 
@@ -91,7 +112,7 @@ namespace Sprout.Core.Services.Configurations
                             Columns = [ "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*"],
                             Rows = [ "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*"],
 
-                            Children = new List<SproutControlConfig>
+                            Children = new System.Collections.ObjectModel.ObservableCollection<SproutControlConfig>
                             {
                                 new SproutComboConfig
                                 {
@@ -195,7 +216,7 @@ namespace Sprout.Core.Services.Configurations
                             Columns = [ "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*"],
                             Rows = [ "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*", "1*"],
 
-                            Children = new List<SproutControlConfig>
+                            Children = new System.Collections.ObjectModel.ObservableCollection<SproutControlConfig>
                             {
                                 new SproutDataGridConfig
                                 {

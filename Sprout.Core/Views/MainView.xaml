@@ -23,8 +23,11 @@
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
 
-        <Menu Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1">
-            <MenuItem Header="Config">
+        <Menu Grid.Row="0"
+              Grid.Column="1"
+              Grid.ColumnSpan="1"
+              Background="Transparent">
+            <MenuItem Header="Configure">
                 <MenuItem Header="Menu" Command="{Binding EditMenuCommand}"/>
                 <MenuItem Header="Page" Command="{Binding EditPageCommand}"/>
             </MenuItem>
@@ -40,6 +43,8 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button
+                        Background="Transparent"
+                        BorderThickness="0"
                         Content="{Binding Title}"
                         Command="{Binding ElementName=MainViewControl, Path=DataContext.OpenPageCommand }"
                         CommandParameter="{Binding}"
