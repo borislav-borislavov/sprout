@@ -20,7 +20,6 @@ namespace Sprout.Core.Factories
             var sproutDataGrid = new SproutDataGrid
             {
                 Name = sproutGridConfig.Name,
-                QueryName = sproutGridConfig.QueryName,
                 Config = sproutGridConfig,
             };
 

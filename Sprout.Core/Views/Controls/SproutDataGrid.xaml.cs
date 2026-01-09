@@ -27,7 +27,7 @@ namespace Sprout.Core.Views.Controls
     public partial class SproutDataGrid : UserControl
     {
         public SproutDataGridConfig Config { get; set; }
-        public string? QueryName { get; internal set; }
+        //public string? QueryName { get; internal set; }
 
         public SproutGridUIState UIState { get; set; }
 

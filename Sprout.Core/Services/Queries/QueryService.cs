@@ -45,63 +45,63 @@ namespace Sprout.Core.Services.Queries
 
         }
 
-#warning move this to a factory for consistency with the design
-        public static Query CreateQuery(QueryConfig queryConfig)
-        {
-            ValidateQueryConfig(queryConfig);
+		//#warning move this to a factory for consistency with the design
+		//        public static Query CreateQuery(QueryConfig queryConfig)
+		//        {
+		//            ValidateQueryConfig(queryConfig);
 
-            var query = new Query
-            {
-                Name = queryConfig.Name,
-                Text = queryConfig.Text,
-                TableName = queryConfig.TableName,
-                ConnectionString = queryConfig.ConnectionString
-            };
+		//            var query = new Query
+		//            {
+		//                Name = queryConfig.ProviderName,
+		//                Text = queryConfig.Text,
+		//                TableName = queryConfig.TableName,
+		//                ConnectionString = queryConfig.ConnectionString
+		//            };
 
-            query.Dependencies = ParameterParser.ParseDependencies(query.Text);
+		//            query.Dependencies = ParameterParser.ParseDependencies(query.Text);
 
-            AssignCommandIfAvailable(queryConfig.InsertCommand, query.InsertCommand);
-            AssignCommandIfAvailable(queryConfig.UpdateCommand, query.UpdateCommand);
-            AssignCommandIfAvailable(queryConfig.DeleteCommand, query.DeleteCommand);
+		//            AssignCommandIfAvailable(queryConfig.InsertCommand, query.InsertCommand);
+		//            AssignCommandIfAvailable(queryConfig.UpdateCommand, query.UpdateCommand);
+		//            AssignCommandIfAvailable(queryConfig.DeleteCommand, query.DeleteCommand);
 
-            return query;
-        }
+		//            return query;
+		//        }
 
-        public static void BindDependencies(Query query, UiStateRegistry uiStateRegistry)
-        {
-            foreach (var dep in query.Dependencies)
-            {
-                BindingOperations.SetBinding(
-                    target: dep,
-                    QueryDependency.ValueProperty,
-                    new Binding
-                    {
-                        Source = uiStateRegistry,
-                        Path = new PropertyPath($"[{dep.ControlName}].{dep.PropertyPath}")
-                    });
-            }
-        }
+		//public static void BindDependencies(Query query, UiStateRegistry uiStateRegistry)
+		//{
+		//    foreach (var dep in query.Dependencies)
+		//    {
+		//        BindingOperations.SetBinding(
+		//            target: dep,
+		//            DataProviderDependency.ValueProperty,
+		//            new Binding
+		//            {
+		//                Source = uiStateRegistry,
+		//                Path = new PropertyPath($"[{dep.ControlName}].{dep.PropertyPath}")
+		//            });
+		//    }
+		//}
 
-        private static void ValidateQueryConfig(QueryConfig queryConfig)
-        {
-            ArgumentNullException.ThrowIfNull(queryConfig, nameof(QueryConfig.Name));
-        }
+		//private static void ValidateQueryConfig(QueryConfig queryConfig)
+		//{
+		//    ArgumentNullException.ThrowIfNull(queryConfig, nameof(QueryConfig.ProviderName));
+		//}
 
-        private static void AssignCommandIfAvailable(TableOperationCommand tableOperationCommand, QueryCommand queryCommand)
-        {
-            if (tableOperationCommand == null) return;
+		//private static void AssignCommandIfAvailable(TableOperationCommand tableOperationCommand, QueryCommand queryCommand)
+		//{
+		//    if (tableOperationCommand == null) return;
 
-            queryCommand.Text = tableOperationCommand.Text;
-            queryCommand.DefaultValues = tableOperationCommand.DefaultValues;
-        }
+		//    queryCommand.Text = tableOperationCommand.Text;
+		//    queryCommand.DefaultValues = tableOperationCommand.DefaultValues;
+		//}
 
-        public static void ExecuteQueryAction(GridAction gridAction, Dictionary<string, Query> _pageQueries)
-        {
+		public static void ExecuteQueryAction(GridAction gridAction, Dictionary<string, IDataProvider> dataProviders)
+		{
 
-            gridAction.Perform(_pageQueries);
-        }
+			gridAction.Perform(dataProviders);
+		}
 
-        public class QueryParameter
+		public class QueryParameter
         {
             public string Name { get; set; }
             public string Path { get; set; }

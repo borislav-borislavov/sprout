@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Sprout.Core.Factories;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
+using Sprout.Core.Services.DataProviders;
 using Sprout.Core.Services.Queries;
 using Sprout.Core.UIStates;
 using Sprout.Core.Views;
@@ -15,7 +17,7 @@ namespace Sprout.Core.ViewModels
 
         public Dictionary<string, Dictionary<string, GridAction>> GridActions { get; set; } = [];
 
-        public Dictionary<string, Query> Queries { get; set; } = [];
+        public Dictionary<string, IDataProvider> DataProviders { get; set; } = [];
 
         public UiStateRegistry UiStateRegistry { get; } = new();
 
@@ -33,11 +35,11 @@ namespace Sprout.Core.ViewModels
 
             UiStateRegistry.UiStateChanged += (_, change) =>
             {
-                foreach (var query in Queries.Values)
+                foreach (var dataProvider in DataProviders.Values)
                 {
                     var dependencyHasChanged = false;
 
-                    foreach (var dependency in query.Dependencies)
+                    foreach (var dependency in dataProvider.Dependencies)
                     {
                         if (dependency.ControlName == change.ControlName)
                         {
@@ -49,7 +51,7 @@ namespace Sprout.Core.ViewModels
 
                     if (dependencyHasChanged)
                     {
-                        QueryService.ExecuteQuery(query);
+                        new DataProviderService().ProvideData(dataProvider);
                     }
                 }
             };
@@ -59,30 +61,42 @@ namespace Sprout.Core.ViewModels
 
         public void CreateQueries()
         {
-            foreach (var queryConfig in PageConfig.Queries)
+            foreach (var dataProvider in PageConfig.GetDataProviders())
             {
-                Queries[queryConfig.Name] = QueryService.CreateQuery(queryConfig);
+                DataProviders[dataProvider.ProviderName] = DataProviderFactory.Create(dataProvider);
             }
         }
 
         public void OnLoaded()
         {
+            var dataProviderService = new DataProviderService();
+
 #warning prevent execution of defined queries that are never used?
-            foreach (var kvp in Queries)
+            foreach (var kvp in DataProviders)
             {
                 //query dependencies have to be done after all controls are created and before all queries are executed
-                QueryService.BindDependencies(kvp.Value, UiStateRegistry);
-                QueryService.ExecuteQuery(kvp.Value);
+                //QueryService.BindDependencies(kvp.Value, UiStateRegistry);
+                dataProviderService.BindDependencies(kvp.Value, UiStateRegistry);
+
+                //QueryService.ExecuteQuery(kvp.Value);
+                dataProviderService.ProvideData(kvp.Value);
             }
         }
 
         [RelayCommand]
         private void PerformAction(object parameter)
         {
-            if (parameter is GridAction gridAction)
-            {
-                QueryService.ExecuteQueryAction(gridAction, Queries);
-            }
+			try
+			{
+				if (parameter is GridAction gridAction)
+				{
+					QueryService.ExecuteQueryAction(gridAction, DataProviders);
+				}
+			}
+			catch (Exception ex)
+			{
+				throw;
+			}
         }
     }
 }

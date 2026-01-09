@@ -84,7 +84,7 @@ namespace Sprout.Core.ViewModels
                 return;
             }
             
-            SelectedQuery = PageConfig?.Queries?.FirstOrDefault(q => q.Name == dataRetreiver.QueryName);
+            //SelectedQuery = PageConfig?.Queries?.FirstOrDefault(q => q.Name == dataRetreiver.QueryName);
         }
     }
 }

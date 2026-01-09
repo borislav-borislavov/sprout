@@ -1,5 +1,4 @@
-﻿using Sprout.Core.Models.Queries;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations
 {
-    public interface IDataRetreiver
+    public interface IDataProviderConfig
     {
-        IDataProviderConfig DataProviderConfig { get; set; }
+        string ProviderName { get; }
     }
 }

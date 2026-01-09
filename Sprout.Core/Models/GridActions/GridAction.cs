@@ -9,6 +9,6 @@ namespace Sprout.Core.Models.GridActions
 {
     public abstract class GridAction
     {
-        public abstract void Perform(Dictionary<string, Query> queries);
+        public abstract void Perform(Dictionary<string, IDataProvider> dataProviders);
     }
 }

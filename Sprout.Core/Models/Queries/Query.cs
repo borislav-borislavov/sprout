@@ -62,10 +62,11 @@ namespace Sprout.Core.Models.Queries
         }
 
         public string ConnectionString { get; internal set; }
-        public IEnumerable<QueryDependency> Dependencies { get; internal set; } = [];
+
+        public IEnumerable<DataProviderDependency> Dependencies { get; internal set; } = [];
     }
 
-    public class QueryDependency : DependencyObject
+    public class DataProviderDependency : DependencyObject
     {
         public string RawDependency { get; set; }
         public string ControlName { get; set; }
@@ -119,5 +120,7 @@ namespace Sprout.Core.Models.Queries
     public interface IDataProvider
     {
         DataTable Data { get; set; }
+
+        IEnumerable<DataProviderDependency> Dependencies { get; /*set;*/ }
     }
 }

@@ -50,11 +50,14 @@ namespace Sprout.Core.Views
             {
                 if (kvp.Value is SproutDataGrid sproutDataGrid)
                 {
-                    sproutDataGrid.dataGrid.SetBinding(DataGrid.ItemsSourceProperty,
-                        new Binding($"Queries[{sproutDataGrid.QueryName}].Data")
-                        {
-                            Mode = BindingMode.OneWay
-                        });
+                    if (!string.IsNullOrEmpty(sproutDataGrid.Config.DataProviderConfig?.ProviderName))
+                    {
+                        sproutDataGrid.dataGrid.SetBinding(DataGrid.ItemsSourceProperty,
+                            new Binding($"DataProviders[{sproutDataGrid.Config.DataProviderConfig?.ProviderName}].Data")
+                            {
+                                Mode = BindingMode.OneWay
+                            });
+                    }
 
                     //initialize grid actions
                     vm.GridActions.Add(sproutDataGrid.Name, []);
@@ -68,7 +71,7 @@ namespace Sprout.Core.Views
                             });
 
                         //create the grid action
-                        vm.GridActions[sproutDataGrid.Name][nameof(AddRowGridAction)] = new AddRowGridAction(sproutDataGrid.QueryName);
+                        vm.GridActions[sproutDataGrid.Name][nameof(AddRowGridAction)] = new AddRowGridAction(sproutDataGrid.Config.DataProviderConfig.ProviderName);
 
 
                         //bind to the newly created grid action
@@ -87,7 +90,7 @@ namespace Sprout.Core.Views
                                 Mode = BindingMode.OneWay
                             });
 
-                        vm.GridActions[sproutDataGrid.Name][nameof(SaveGridAction)] = new SaveGridAction(sproutDataGrid.QueryName);
+                        vm.GridActions[sproutDataGrid.Name][nameof(SaveGridAction)] = new SaveGridAction(sproutDataGrid.Config.DataProviderConfig.ProviderName);
 
                         sproutDataGrid.btnSave.SetBinding(Button.CommandParameterProperty,
                               new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(SaveGridAction)}]")
@@ -102,7 +105,7 @@ namespace Sprout.Core.Views
                 if (kvp.Value is SproutCombo sproutCombo)
                 {
                     sproutCombo.comboBox.SetBinding(ComboBox.ItemsSourceProperty,
-                        new Binding($"Queries[{sproutCombo.QueryName}].Data")
+                        new Binding($"DataProviders[{sproutCombo.Config.DataProviderConfig.ProviderName}].Data")
                         {
                             Mode = BindingMode.OneWay
                         });

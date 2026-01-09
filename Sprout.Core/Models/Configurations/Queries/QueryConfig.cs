@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations.Queries
 {
-    public class QueryConfig
+    public class QueryConfig : IDataProviderConfig
     {
-        public string Name { get; set; }
+        [Obsolete("Because every DataProvider will belong to a control the control name could be used instead")]
+        public string ProviderName { get; set; }
         public string Text { get; set; }
         public string TableName { get; set; }
 

@@ -16,9 +16,9 @@ namespace Sprout.Core.Models.GridActions
             this.gridQueryName = gridQueryName;
         }
 
-        public override void Perform(Dictionary<string, Query> queries)
+        public override void Perform(Dictionary<string, IDataProvider> dataProviders)
         {
-            if (!queries.TryGetValue(gridQueryName, out var ownQuery))
+            if (!dataProviders.TryGetValue(gridQueryName, out var ownQuery))
             {
                 //find a nice way to route logs to the screen
 

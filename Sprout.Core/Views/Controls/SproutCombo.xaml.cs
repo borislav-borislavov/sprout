@@ -22,7 +22,6 @@ namespace Sprout.Core.Views.Controls
     /// </summary>
     public partial class SproutCombo : UserControl
     {
-        public string? QueryName { get; internal set; }
         internal SproutComboConfig Config { get; set; }
         public SproutComboUIState UIState { get; internal set; }
 

@@ -29,16 +29,16 @@ namespace Sprout.Core.Models.Queries
             return parameters;
         }
 
-        public static IEnumerable<QueryDependency> ParseDependencies(string text)
+        public static IEnumerable<DataProviderDependency> ParseDependencies(string text)
         {
-            List<QueryDependency> dependencies = new();
+            List<DataProviderDependency> dependencies = new();
 
             foreach (var scope in GetScopes(text))
             {
                 var periodIdx = scope.IndexOf('.');
                 if (periodIdx == -1) continue;
 
-                var dependency = new QueryDependency();
+                var dependency = new DataProviderDependency();
 
                 dependency.RawDependency = scope;
 

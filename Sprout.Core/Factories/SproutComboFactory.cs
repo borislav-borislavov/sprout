@@ -19,7 +19,6 @@ namespace Sprout.Core.Factories
             var sproutCombo = new SproutCombo
             {
                 Name = sproutComboConfig.Name,
-                QueryName = sproutComboConfig.QueryName,
                 Config = sproutComboConfig,
             };
 
