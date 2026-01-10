@@ -1,6 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
 using Sprout.Core.Common;
 using Sprout.Core.Common.Models;
+using Sprout.Core.Models.DataAdapters;
+using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.DataProviders;
 using Sprout.Core.Services.Queries;
@@ -17,16 +19,16 @@ namespace Sprout.Core.Models.GridActions
 {
 	public class SaveGridAction : GridAction
 	{
-		private readonly string _dataProviderName;
+		private readonly string _ownControlName;
 
-		public SaveGridAction(string dataProviderName)
+		public SaveGridAction(string ownControlName)
 		{
-			_dataProviderName = dataProviderName;
+			_ownControlName = ownControlName;
 		}
 
-		public override void Perform(Dictionary<string, IDataProvider> dataProviders)
+		public override void Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters)
 		{
-			if (!dataProviders.TryGetValue(_dataProviderName, out var dataProvider))
+			if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
 			{
 				//find a nice way to route logs to the screen
 
@@ -34,43 +36,42 @@ namespace Sprout.Core.Models.GridActions
 			}
 
 			// Implementation for saving the query changes to the database
-			foreach (DataRow dataRow in dataProvider.Data.Rows)
+			foreach (System.Data.DataRow dataRow in ownDataAdapter.DataProvider.Data.Rows)
 			{
 #warning add try catch block here to not crash the whole app if something goes wrong
 				switch (dataRow.RowState)
 				{
 					case DataRowState.Detached:
 						break;
-					case DataRowState.Unchanged:
+                    case DataRowState.Unchanged:
 						break;
 					case DataRowState.Added:
-						AddNew(dataProvider, dataRow);
+						AddNew(ownDataAdapter.InsertCommand, dataRow);
 						break;
 					case DataRowState.Deleted:
 						break;
 					case DataRowState.Modified:
-						Modify(dataProvider, dataRow);
+						Modify(ownDataAdapter.UpdateCommand, dataRow);
 						break;
 					default:
 						break;
 				}
 			}
 
-			new DataProviderService().ProvideData(dataProvider);
-			//QueryService.ExecuteQuery(dataProvider);
+			new DataProviderService().ProvideData(ownDataAdapter.DataProvider);
 		}
 
-		private static void AddNew(IDataProvider dataProvider, DataRow dataRow)
+		private static void AddNew(IEditCommand editCommand, DataRow dataRow)
 		{
-			if (dataProvider is not Query query)
-				throw new Exception();
+            if (editCommand is not SqlServerEditCommand sqlEditCommand)
+                throw new NotImplementedException();
 
-			var command = query.InsertCommand.Text;
+            var command = sqlEditCommand.Text;
 
 			if (string.IsNullOrWhiteSpace(command))
 				throw new Exception("Insert command not set");
 
-			var requestedParameters = ParameterParser.ParseQueryParameters(query.InsertCommand.Text);
+			var requestedParameters = ParameterParser.ParseQueryParameters(sqlEditCommand.Text);
 
 			List<SqlParameter> sqlParams = [];
 
@@ -94,7 +95,7 @@ namespace Sprout.Core.Models.GridActions
 #warning maybe have different command types for stored procedure vs text
 			command += "; SELECT SCOPE_IDENTITY();";
 
-			using (var conn = new SqlConnection(query.ConnectionString))
+			using (var conn = new SqlConnection(sqlEditCommand.ConnectionString))
 			using (var cmd = new SqlCommand(command, conn))
 			{
 				AttachParameters(cmd, sqlParams);
@@ -102,25 +103,21 @@ namespace Sprout.Core.Models.GridActions
 
 				var insertedId = cmd.ExecuteScalar();
 
-				//dataRow["TODO: Key"] = insertedId;
-
-				//dataRow.SetAdded();
-
 				conn.Close();
 			}
 		}
 
-		private void Modify(IDataProvider dataProvider, DataRow dataRow)
+		private void Modify(IEditCommand editCommand, System.Data.DataRow dataRow)
 		{
-			if (dataProvider is not Query query)
-				throw new Exception();
+			if (editCommand is not SqlServerEditCommand sqlEditCommand)
+				throw new NotImplementedException();
 
-			var command = query.UpdateCommand.Text;
+			var command = sqlEditCommand.Text;
 
 			if (string.IsNullOrWhiteSpace(command))
 				throw new Exception("Update command not set");
 
-			var requestedParameters = ParameterParser.ParseQueryParameters(query.UpdateCommand.Text);
+			var requestedParameters = ParameterParser.ParseQueryParameters(sqlEditCommand.Text);
 
 			List<SqlParameter> sqlParams = [];
 
@@ -142,7 +139,7 @@ namespace Sprout.Core.Models.GridActions
 #warning maybe have different command types for stored procedure vs text
 
 #warning better to use a single connection for all operations
-			using (var conn = new SqlConnection(query.ConnectionString))
+			using (var conn = new SqlConnection(sqlEditCommand.ConnectionString))
 			using (var cmd = new SqlCommand(command, conn))
 			{
 				AttachParameters(cmd, sqlParams);
@@ -159,7 +156,7 @@ namespace Sprout.Core.Models.GridActions
 			foreach (SqlParameter p in commandParameters)
 			{
 				//check for derived output value with no value assigned
-				if ((p.Direction == ParameterDirection.InputOutput) && (p.Value == null))
+				if ((p.Direction == System.Data.ParameterDirection.InputOutput) && (p.Value == null))
 				{
 					p.Value = DBNull.Value;
 				}
@@ -168,7 +165,7 @@ namespace Sprout.Core.Models.GridActions
 			}
 		}
 
-		private static void SetQueryParam(QueryParameter queryParam, DataRow dataRow)
+		private static void SetQueryParam(QueryParameter queryParam, System.Data.DataRow dataRow)
 		{
 			var value = dataRow[queryParam.Name];
 
@@ -181,5 +178,5 @@ namespace Sprout.Core.Models.GridActions
 				queryParam.Value = value;
 			}
 		}
-	}
+    }
 }

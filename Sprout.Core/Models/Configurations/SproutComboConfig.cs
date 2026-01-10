@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations
 {
-    public class SproutComboConfig : SproutControlConfig, IDataRetreiver
-    {
-        public string DisplayColumn { get; set; }
-        public string ValueColumn { get; set; }
+	public class SproutComboConfig : SproutControlConfig, IDataAdapterControlConfig
+	{
+		public string DisplayColumn { get; set; }
+		public string ValueColumn { get; set; }
 
-        public string VerticalAlignment { get; set; }
-        public IDataProviderConfig DataProviderConfig { get; set; }
-    }
+		public string VerticalAlignment { get; set; }
+		public IDataAdapterConfig DataAdapter { get; set; }
+	}
 }

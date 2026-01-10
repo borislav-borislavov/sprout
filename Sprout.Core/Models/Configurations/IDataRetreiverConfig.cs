@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations
 {
-    public interface IDataRetreiver
-    {
-        IDataProviderConfig DataProviderConfig { get; set; }
-    }
+    //public interface IDataRetreiverConfig
+    //{
+        
+    //}
 }

@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations.DataGrid
 {
-    public class SproutDataGridConfig : SproutControlConfig, IDataRetreiver
-    {
-        public bool AllowInsert { get; set; }
-        public bool AllowUpdate { get; set; }
-        public bool AllowDelete { get; set; }
+	public class SproutDataGridConfig : SproutControlConfig, IDataAdapterControlConfig
+	{
+		public IDataAdapterConfig DataAdapter { get; set; }
 
-        public bool ShowSave => AllowInsert || AllowUpdate || AllowDelete;
+		public bool AllowInsert => DataAdapter?.InsertCommand != null;
+		public bool AllowUpdate => DataAdapter?.UpdateCommand != null;
+		public bool AllowDelete => DataAdapter?.DeleteCommand != null;
 
-        public List<SproutDataGridColumnConfig> Columns { get; set; }
+		public bool ShowSave => AllowInsert || AllowUpdate || AllowDelete;
 
-        public IDataProviderConfig DataProviderConfig { get; set; }
-    }
+		public List<SproutDataGridColumnConfig> Columns { get; set; }
+	}
 }

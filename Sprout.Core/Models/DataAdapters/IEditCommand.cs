@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sprout.Core.Models.Configurations
+namespace Sprout.Core.Models.DataAdapters
 {
-    public interface IDataProviderConfig
-    {
+	public interface IEditCommand
+	{
 
-    }
+	}
 }

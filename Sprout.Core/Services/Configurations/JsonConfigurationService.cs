@@ -1,6 +1,5 @@
 ﻿using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
-using Sprout.Core.Models.Configurations.Queries;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -118,16 +117,20 @@ namespace Sprout.Core.Services.Configurations
 								new SproutComboConfig
 								{
 									Name = "languageSelector",
-									DataProviderConfig = new QueryConfig
+									DataAdapter = new SqlServerDataAdapterConfig
 									{
-										ProviderName = "languages",
-										Text = """
-                                                SELECT CAST(NULL AS INT) LanguageID, 'All' AS Name
-                                                UNION ALL
-                                                SELECT * FROM Languages
-                                                """,
 										ConnectionString = "Server=.;Database=ROOrdering;Trusted_Connection=True;TrustServerCertificate=Yes",
+
+										DataProvider = new SqlServerDataProviderConfig
+										{
+											Text = """
+													SELECT CAST(NULL AS INT) LanguageID, 'All' AS Name
+													UNION ALL
+													SELECT * FROM Languages
+													"""
+										}
 									},
+
 									Column = 0,
 									ColumnSpan = 2,
 									Row = 0,
@@ -139,31 +142,29 @@ namespace Sprout.Core.Services.Configurations
 								new SproutDataGridConfig
 								{
 									Name = "users",
-									DataProviderConfig = new QueryConfig
+									DataAdapter = new SqlServerDataAdapterConfig
 									{
-										ProviderName = "Users",
 										ConnectionString = "Server=.;Database=ROOrdering;Trusted_Connection=True;TrustServerCertificate=Yes",
-										Text = "SELECT * FROM Users WHERE LanguageID = COALESCE({@languageSelector.Selected.LanguageID}, LanguageID)",
 
-										InsertCommand = new TableOperationCommand
+										DataProvider = new SqlServerDataProviderConfig
+										{
+											Text = "SELECT * FROM Users WHERE LanguageID = COALESCE({@languageSelector.Selected.LanguageID}, LanguageID)",
+										},
+
+										InsertCommand = new SqlServerEditCommandConfig
 										{
 											Text = "INSERT INTO Users (Name, Username, LanguageID) VALUES ({@Name}, {@UserName}, {@LanguageID})",
-											DefaultValues = new()
-											{
-												{ "Name", "New User" },
-												{ "UserName", "newuser" }
-											}
 										},
-										UpdateCommand = new TableOperationCommand
+										UpdateCommand = new SqlServerEditCommandConfig
 										{
 											Text = "UPDATE Users SET Name={@Name}, Username={@Username}, LanguageID={@LanguageID} WHERE UserID = {@UserID}"
 										}
 									},
+
 									Column = 0,
 									Row = 1,
 									ColumnSpan = 5,
 									RowSpan = 10,
-									AllowInsert = true,
 									Columns = [
 										new(){ BindingPath = "UserID", Header = "UserID" },
 										new(){ BindingPath = "Name", Header = "Name" },
@@ -175,12 +176,16 @@ namespace Sprout.Core.Services.Configurations
 								new SproutDataGridConfig
 								{
 									Name = "WebApiLogs",
-									DataProviderConfig = new QueryConfig
+									DataAdapter = new SqlServerDataAdapterConfig
 									{
-										ProviderName = "WebApiLogs",
-										ConnectionString = "Server=.;Database=ROOrdering;Trusted_Connection=True;TrustServerCertificate=Yes",
-										Text = "SELECT * FROM WebApiLogs WHERE UserID = {@users.Selected.UserID}",
-									},
+                                        ConnectionString = "Server=.;Database=ROOrdering;Trusted_Connection=True;TrustServerCertificate=Yes",
+
+                                        DataProvider = new SqlServerDataProviderConfig
+										{
+											Text = "SELECT * FROM WebApiLogs WHERE UserID = {@users.Selected.UserID}",
+										}
+                                    },
+	
 									Column = 5,
 									ColumnSpan = 5,
 									Row = 0,

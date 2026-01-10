@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Sprout.Core.Models.Configurations;
-using Sprout.Core.Models.Configurations.Queries;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialogs;
@@ -19,7 +18,7 @@ namespace Sprout.Core.ViewModels
         public SproutPageConfiguration PageConfig { get; set; }
 
         [ObservableProperty]
-        private QueryConfig _selectedQuery;
+        private SqlServerDataProviderConfig _selectedQuery;
 
         [ObservableProperty]
         private ObservableCollection<SproutControlConfig> _controls = [];
@@ -78,7 +77,7 @@ namespace Sprout.Core.ViewModels
 
         partial void OnSelectedNodeChanged(SproutControlConfig value)
         {
-            if (value is not IDataRetreiver dataRetreiver)
+            if (value is not IDataAdapterConfig dataAdapterConfig)
             {
                 SelectedQuery = null;
                 return;

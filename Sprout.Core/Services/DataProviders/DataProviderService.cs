@@ -1,4 +1,5 @@
-﻿using Sprout.Core.Models.Queries;
+﻿using Sprout.Core.Models.DataAdapters.DataProviders;
+using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.Queries;
 using Sprout.Core.UIStates;
 using System;
@@ -15,7 +16,7 @@ namespace Sprout.Core.Services.DataProviders
     {
         public void ProvideData(IDataProvider dataProvider)
         {
-            if (dataProvider is Query sqlServerDataProvider)
+            if (dataProvider is SqlServerDataProvider sqlServerDataProvider)
             {
                 QueryService.ExecuteQuery(sqlServerDataProvider);
             }

@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using Sprout.Core.Factories;
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.DataAdapters;
+using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.DataProviders;
@@ -17,6 +19,7 @@ namespace Sprout.Core.ViewModels
 
         public Dictionary<string, Dictionary<string, GridAction>> GridActions { get; set; } = [];
 
+        public Dictionary<string, IDataAdapter> DataAdapters { get; set; } = [];
         public Dictionary<string, IDataProvider> DataProviders { get; set; } = [];
 
         public UiStateRegistry UiStateRegistry { get; } = new();
@@ -31,7 +34,7 @@ namespace Sprout.Core.ViewModels
         {
             PageConfig = pageConfig;
 
-            CreateQueries();
+            CreateDataAdapters();
 
             UiStateRegistry.UiStateChanged += (_, change) =>
             {
@@ -59,11 +62,17 @@ namespace Sprout.Core.ViewModels
             DynamicViewInstance = new SproutPage{ DataContext = this };
         }
 
-        public void CreateQueries()
+        public void CreateDataAdapters()
         {
-            foreach (var dataProvider in PageConfig.GetDataProviders())
+            foreach (var kvp in PageConfig.GetDataAdapterConfigs())
             {
-                DataProviders[dataProvider.ProviderName] = DataProviderFactory.Create(dataProvider);
+                DataAdapters[kvp.Key] = DataAdapterFactory.Create(kvp.Value);
+
+                //done for convenience
+                if (DataAdapters[kvp.Key].DataProvider != null)
+                {
+                    DataProviders[kvp.Key] = DataAdapters[kvp.Key].DataProvider;
+                }
             }
         }
 
@@ -90,8 +99,10 @@ namespace Sprout.Core.ViewModels
 			{
 				if (parameter is GridAction gridAction)
 				{
-					QueryService.ExecuteQueryAction(gridAction, DataProviders);
-				}
+
+                    gridAction.Perform(DataAdapters);
+                    //QueryService.ExecuteQueryAction(gridAction, DataAdapters);
+                }
 			}
 			catch (Exception ex)
 			{

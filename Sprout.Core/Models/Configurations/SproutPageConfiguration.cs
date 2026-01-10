@@ -1,48 +1,41 @@
-﻿using Sprout.Core.Models.Configurations.Queries;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sprout.Core.Models.Configurations
+﻿namespace Sprout.Core.Models.Configurations
 {
-    public class SproutPageConfiguration
-    {
-        public string Title { get; set; }
+	public class SproutPageConfiguration
+	{
+		public string Title { get; set; }
 
-        public SproutControlConfig Root { get; set; }
+		public SproutControlConfig Root { get; set; }
 
-        public List<IDataProviderConfig> GetDataProviders()
-        {
-            var dataProviders = new List<IDataProviderConfig>();
-            if (Root is null || Root is not GridConfig rootGridConfig)
-            {
-                return dataProviders;
-            }
+		public Dictionary<string, IDataAdapterConfig> GetDataAdapterConfigs()
+		{
+			Dictionary<string, IDataAdapterConfig> dataAdapterConfigs = [];
 
-            GetDataProvidersRecursive(Root, dataProviders);
-            return dataProviders;
-        }
+			if (Root is null || Root is not GridConfig rootGridConfig)
+			{
+				return dataAdapterConfigs;
+			}
 
-        private void GetDataProvidersRecursive(
-            SproutControlConfig control,
-            List<IDataProviderConfig> dataProviders)
-        {
-            if (control is GridConfig grid)
-            {
-                foreach (var child in grid.Children)
-                {
-                    GetDataProvidersRecursive(child, dataProviders);
-                }
-            }
-            else if (control is IDataRetreiver dataRetreiverControl)
-            {
-                if (dataRetreiverControl.DataProviderConfig is not null)
-                {
-                    dataProviders.Add(dataRetreiverControl.DataProviderConfig);
-                }
-            }
-        }
-    }
+			GetDataAdapterConfigsRecursive(Root, dataAdapterConfigs);
+			return dataAdapterConfigs;
+		}
+
+		private void GetDataAdapterConfigsRecursive(
+			SproutControlConfig control, Dictionary<string, IDataAdapterConfig> dataAdapterConfigs)
+		{
+			if (control is GridConfig grid)
+			{
+				foreach (var child in grid.Children)
+				{
+					GetDataAdapterConfigsRecursive(child, dataAdapterConfigs);
+				}
+			}
+			else if (control is IDataAdapterControlConfig dataAdapterControlConfig)
+			{
+				if (dataAdapterControlConfig.DataAdapter is not null)
+				{
+					dataAdapterConfigs.Add(control.Name, dataAdapterControlConfig.DataAdapter);
+				}
+			}
+		}
+	}
 }

@@ -1,5 +1,6 @@
 ﻿using Sprout.Core.Common;
 using Sprout.Core.Common.Models;
+using Sprout.Core.Models.DataAdapters.DataProviders;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations
 {
-    public interface IDataProviderConfig
-    {
-
-    }
+	public interface IDataAdapterControlConfig
+	{
+		IDataAdapterConfig DataAdapter { get; set; }
+	}
 }

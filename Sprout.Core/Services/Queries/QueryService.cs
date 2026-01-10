@@ -1,16 +1,12 @@
 ﻿using Microsoft.Data.SqlClient;
-using Sprout.Core.Models.Configurations.Queries;
+using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.GridActions;
-using Sprout.Core.Models.Queries;
-using Sprout.Core.UIStates;
-using System.Windows;
-using System.Windows.Data;
 
 namespace Sprout.Core.Services.Queries
 {
     public class QueryService
     {
-        public static void ExecuteQuery(Query query)
+        public static void ExecuteQuery(SqlServerDataProvider query)
         {
             var queryText = query.Text;
 
@@ -95,11 +91,11 @@ namespace Sprout.Core.Services.Queries
 		//    queryCommand.DefaultValues = tableOperationCommand.DefaultValues;
 		//}
 
-		public static void ExecuteQueryAction(GridAction gridAction, Dictionary<string, IDataProvider> dataProviders)
-		{
+		//public static void ExecuteQueryAction(GridAction gridAction, Dictionary<string, IDataProvider> dataProviders)
+		//{
 
-			gridAction.Perform(dataProviders);
-		}
+		//	gridAction.Perform(dataProviders);
+		//}
 
 		public class QueryParameter
         {
