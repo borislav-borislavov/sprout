@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations
 {
-	internal class SqlServerDataAdapterConfig : IDataAdapterConfig
+	public class SqlServerDataAdapterConfig : IDataAdapterConfig
 	{
 		public string ConnectionString { get; set; }
 

@@ -18,7 +18,7 @@ namespace Sprout.Core.ViewModels
         public SproutPageConfiguration PageConfig { get; set; }
 
         [ObservableProperty]
-        private SqlServerDataProviderConfig _selectedQuery;
+        private IDataAdapterConfig _selectedDataAdapter;
 
         [ObservableProperty]
         private ObservableCollection<SproutControlConfig> _controls = [];
@@ -27,6 +27,14 @@ namespace Sprout.Core.ViewModels
         private SproutControlConfig _selectedNode;
         private readonly IConfigurationService _configService;
         private readonly IDialogService _dialogService;
+
+        public string[] AdapterTypes { get; set; } = ["SqlServer", "SQLite", "Excel"];
+
+        [ObservableProperty]
+        private string _selectedAdapterType;
+
+        [ObservableProperty]
+        private ObservableObject _selectedAdapterViewModel;
 
         public EditPageVM(IConfigurationService configService, IDialogService dialogService)
         {
@@ -77,13 +85,50 @@ namespace Sprout.Core.ViewModels
 
         partial void OnSelectedNodeChanged(SproutControlConfig value)
         {
-            if (value is not IDataAdapterConfig dataAdapterConfig)
+            if (value is IDataAdapterControlConfig dataAdapterControlConfig)
             {
-                SelectedQuery = null;
-                return;
+                SelectedDataAdapter = dataAdapterControlConfig.DataAdapter;
+
+                if (dataAdapterControlConfig.DataAdapter is SqlServerDataAdapterConfig sqlServerDataAdapterConfig)
+                {
+                    SelectedAdapterType = "SqlServer";
+                    SelectedAdapterViewModel = new SqlServerDataAdapterVM(sqlServerDataAdapterConfig);
+                }
+                else 
+                {
+                    SelectedAdapterType = null;
+                    SelectedAdapterViewModel = null;
+                }
             }
-            
-            //SelectedQuery = PageConfig?.Queries?.FirstOrDefault(q => q.Name == dataRetreiver.QueryName);
+            else
+            {
+                SelectedAdapterType = null;
+                SelectedAdapterViewModel = null;
+            }
+        }
+
+        partial void OnSelectedAdapterTypeChanged(string value)
+        {
+            //if (value == "SqlServer" 
+            //    && SelectedQuery is IDataAdapterConfig dataAdapter 
+            //    && dataAdapter is SqlServerDataAdapterConfig sqlServerDataAdapterConfig)
+            //{
+            //    SelectedAdapterViewModel = new SqlServerDataAdapterVM(sqlServerDataAdapterConfig);
+            //}
+            //else if (value == "SQLite")
+            //{
+            //    //SelectedAdapterViewModel = new SQLiteDataAdapterVM();
+            //    SelectedAdapterViewModel = null;
+            //}
+            //else if (value == "Excel")
+            //{
+            //    //SelectedAdapterViewModel = new ExcelDataAdapterVM();
+            //    SelectedAdapterViewModel = null;
+            //}
+            //else
+            //{
+            //    SelectedAdapterViewModel = null;
+            //}
         }
     }
 }
