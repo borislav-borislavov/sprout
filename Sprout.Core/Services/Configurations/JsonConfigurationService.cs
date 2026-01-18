@@ -102,7 +102,6 @@ namespace Sprout.Core.Services.Configurations
                 //TODO: logging
                 return false;
             }
-
         }
 
         private SproutConfiguration GetSproutConfiguration()
@@ -215,81 +214,6 @@ namespace Sprout.Core.Services.Configurations
                     },
                 }
             };
-        }
-
-        private static JsonSerializerOptions CreateJsonOptions()
-        {
-            var options = new JsonSerializerOptions();
-            options.AllowTrailingCommas = true;
-            options.PropertyNameCaseInsensitive = true;
-            options.WriteIndented = true;
-
-            var controlConfigTypes = Assembly.GetCallingAssembly()
-                .GetTypes()
-                .Where(t =>
-                    typeof(SproutControlConfig).IsAssignableFrom(t) &&   // implements the interface
-                    t.IsClass &&                            // is a class
-                    !t.IsAbstract);                         // not abstract
-
-
-            var derivedTypes = controlConfigTypes
-                .Select(type => new JsonDerivedType(type, GetControlName(type)))
-                .ToList();
-
-            var polymorphismOptions = new JsonPolymorphismOptions();
-            polymorphismOptions.TypeDiscriminatorPropertyName = "$type";
-
-            foreach (var derivedType in derivedTypes)
-            {
-                polymorphismOptions.DerivedTypes.Add(derivedType);
-            }
-
-            #region AdapterConfigPolymorphism
-            var dataAdapterConfigTypes = Assembly.GetCallingAssembly()
-                .GetTypes()
-                .Where(t =>
-                    typeof(IDataAdapterConfig).IsAssignableFrom(t) &&   // implements the interface
-                    t.IsClass &&                            // is a class
-                    !t.IsAbstract);                         // not abstract
-
-            var adapterConfigDerivedTypes = dataAdapterConfigTypes
-                .Select(type => new JsonDerivedType(type, GetControlName(type)))
-                .ToList();
-
-            var adapterConfigPolymorphismOptions = new JsonPolymorphismOptions();
-            adapterConfigPolymorphismOptions.TypeDiscriminatorPropertyName = "$adapterType";
-
-            foreach (var derivedType in adapterConfigDerivedTypes)
-            {
-                adapterConfigPolymorphismOptions.DerivedTypes.Add(derivedType);
-            }
-            #endregion
-
-            options.TypeInfoResolver = new DefaultJsonTypeInfoResolver
-            {
-                Modifiers =
-                {
-                    ti =>
-                    {
-                        if (ti.Type == typeof(SproutControlConfig))
-                        {
-                            ti.PolymorphismOptions = polymorphismOptions;
-                        }
-
-                        if (ti.Type == typeof(IDataAdapterConfig))
-                        {
-                            ti.PolymorphismOptions = adapterConfigPolymorphismOptions;
-                        }
-                    }
-                }
-            };
-
-            return options;
-        }
-
-        private static string GetControlName(Type type)
-        {
-            return type.Name.Replace("Config", "").ToLower();
         }
     }
 }

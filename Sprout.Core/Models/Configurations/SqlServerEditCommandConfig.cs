@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations
 {
-	internal class SqlServerEditCommandConfig : IEditCommandConfig
+	public class SqlServerEditCommandConfig : IEditCommandConfig
 	{
 		public string Text { get; set; }
 	}

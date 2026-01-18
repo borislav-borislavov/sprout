@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,17 @@ namespace Sprout.Core.Models.Configurations
 		public IDataProviderConfig DataProvider { get; set; }
 
 		public IEditCommandConfig InsertCommand { get; set; }
-		public IEditCommandConfig UpdateCommand { get; set; }
-		public IEditCommandConfig DeleteCommand { get; set; }
-	}
+
+        [JsonIgnore]
+        public SqlServerEditCommandConfig Insert => (SqlServerEditCommandConfig)InsertCommand;
+
+        public IEditCommandConfig UpdateCommand { get; set; }
+        [JsonIgnore]
+        public SqlServerEditCommandConfig Update => (SqlServerEditCommandConfig)UpdateCommand;
+
+        public IEditCommandConfig DeleteCommand { get; set; }
+        [JsonIgnore]
+        public SqlServerEditCommandConfig Delete => (SqlServerEditCommandConfig)DeleteCommand;
+
+    }
 }
