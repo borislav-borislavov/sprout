@@ -1,6 +1,7 @@
 ﻿using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
+using Sprout.Core.UIStates;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,6 @@ namespace Sprout.Core.Models.GridActions
 {
     public abstract class GridAction
     {
-        public abstract void Perform(Dictionary<string, IDataAdapter> dataAdapters);
+        public abstract void Perform(Dictionary<string, IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry);
     }
 }

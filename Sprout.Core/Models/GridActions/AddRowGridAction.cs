@@ -1,5 +1,6 @@
 ﻿using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
+using Sprout.Core.UIStates;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -18,9 +19,9 @@ namespace Sprout.Core.Models.GridActions
             _ownControlName = ownControlName;
         }
 
-        public override void Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataProviders)
+        public override void Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry)
         {
-            if (!dataProviders.TryGetValue(_ownControlName, out var ownDataAdapter))
+            if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
             {
                 //find a nice way to route logs to the screen
 

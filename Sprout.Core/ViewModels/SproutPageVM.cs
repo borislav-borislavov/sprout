@@ -116,7 +116,7 @@ namespace Sprout.Core.ViewModels
 			{
 				if (parameter is GridAction gridAction)
 				{
-                    gridAction.Perform(DataAdapters);
+                    gridAction.Perform(DataAdapters, UiStateRegistry);
                 }
 			}
 			catch (Exception ex)

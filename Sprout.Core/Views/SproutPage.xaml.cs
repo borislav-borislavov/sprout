@@ -82,6 +82,25 @@ namespace Sprout.Core.Views
                             });
                     }
 
+                    if (sproutDataGrid.Config.AllowDelete)
+                    {
+                        sproutDataGrid.btnDelete.SetBinding(Button.CommandProperty,
+                                    new Binding(nameof(SproutPageVM.PerformActionCommand))
+                                    {
+                                        Mode = BindingMode.OneWay
+                                    });
+
+                        //create the grid action
+                        vm.GridActions[sproutDataGrid.Name][nameof(MarkDeletedGridAction)] = new MarkDeletedGridAction(sproutDataGrid.Name);
+
+                        //bind to the newly created grid action
+                        sproutDataGrid.btnDelete.SetBinding(Button.CommandParameterProperty,
+                            new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(MarkDeletedGridAction)}]")
+                            {
+                                Mode = BindingMode.OneWay
+                            });
+                    }
+
                     if (sproutDataGrid.Config.ShowSave)
                     {
                         sproutDataGrid.btnSave.SetBinding(Button.CommandProperty,

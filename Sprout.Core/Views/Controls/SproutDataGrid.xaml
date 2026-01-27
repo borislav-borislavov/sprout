@@ -45,14 +45,14 @@
     </UserControl.Resources>
 
     <Border BorderThickness="0.8" BorderBrush="DarkSlateGray">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="1*"/>
-        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <Button x:Name="btnInsert"
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <Button x:Name="btnInsert"
                 ToolTip="Add new row"
                 Template="{StaticResource asd}"
                 Visibility="{Binding Config.AllowInsert,
@@ -62,19 +62,19 @@
                 Margin="2"
                 BorderThickness="0"
                 Background="Transparent">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock
                         FontFamily="Segoe Fluent Icons"
                         FontSize="20"
                         Text="&#xE948;"
                         Foreground="DarkSlateGray"
                         Margin="3"/>
 
-                    <!--<TextBlock Text="Add" FontSize="15" Margin="0,0,5,3" Foreground="DarkSlateGray" VerticalAlignment="Center"/>-->
-                </StackPanel>
-            </Button>
+                        <!--<TextBlock Text="Add" FontSize="15" Margin="0,0,5,3" Foreground="DarkSlateGray" VerticalAlignment="Center"/>-->
+                    </StackPanel>
+                </Button>
 
-            <Button x:Name="btnSave"
+                <Button x:Name="btnSave"
                 ToolTip="Save grid changes"
                 Template="{StaticResource asd}"
                 Visibility="{Binding Config.ShowSave,
@@ -84,20 +84,40 @@
                 Margin="2"
                 BorderThickness="0"
                 Background="Transparent">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock
                         FontFamily="Segoe Fluent Icons"
                         FontSize="20"
                         Text="&#xe74e;"
                         Foreground="DarkSlateGray"
                         Margin="3"/>
-                    
-                    <!--<TextBlock Text="Add" FontSize="15" Margin="0,0,5,3" Foreground="DarkSlateGray" VerticalAlignment="Center"/>-->
-                </StackPanel>
-            </Button>
-        </StackPanel>
 
-        <DataGrid
+                        <!--<TextBlock Text="Add" FontSize="15" Margin="0,0,5,3" Foreground="DarkSlateGray" VerticalAlignment="Center"/>-->
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="btnDelete"
+                    ToolTip="Delete row"
+                    Template="{StaticResource asd}"
+                    Visibility="{Binding Config.ShowSave,
+                                    RelativeSource={RelativeSource AncestorType=local:SproutDataGrid},
+                                    Converter={StaticResource BoolToVis}}"
+                    HorizontalAlignment="Left"
+                    Margin="2"
+                    BorderThickness="0"
+                    Background="Transparent">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock
+                        FontFamily="Segoe Fluent Icons"
+                        FontSize="20"
+                        Text="&#xe74d;"
+                        Foreground="DarkSlateGray"
+                        Margin="3"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <DataGrid
               x:Name="dataGrid"
 			  Grid.Row="1"
 			  AutoGenerateColumns="False"
@@ -109,13 +129,32 @@
               BorderBrush="DarkSlateGray" 
               HeadersVisibility="Column"
               Foreground="DarkSlateGray">
-            <!--<DataGrid.Columns>
-                <DataGridTextColumn Header="UserID" Binding="{Binding UserID}" Width="Auto"/>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto"/>
-                <DataGridTextColumn Header="UserName" Binding="{Binding UserName}" Width="Auto"/>
-                <DataGridTextColumn Header="LanguageID" Binding="{Binding LanguageID}" Width="Auto"/>
-            </DataGrid.Columns>-->
-        </DataGrid>
-    </Grid>
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridCell">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Row.RowState}" Value="Deleted">
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="BorderBrush" Value="Transparent" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Row.RowState}" Value="Deleted">
+                                <Setter Property="Background" Value="#FFFFCCCC" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Row.RowState}" Value="Added">
+                                <Setter Property="Background" Value="#cdf7e1" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+
+            </DataGrid>
+        </Grid>
     </Border>
 </UserControl>

@@ -152,7 +152,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Query">
+            <TabItem Header="DataAdapter">
                 <views:QueryManager DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext}" />
             </TabItem>
         </TabControl>

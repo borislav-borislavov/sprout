@@ -6,6 +6,7 @@ using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.DataProviders;
 using Sprout.Core.Services.Queries;
+using Sprout.Core.UIStates;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace Sprout.Core.Models.GridActions
 			_ownControlName = ownControlName;
 		}
 
-		public override void Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters)
+		public override void Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry)
 		{
 			if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
 			{
@@ -49,6 +50,7 @@ namespace Sprout.Core.Models.GridActions
 						AddNew(ownDataAdapter.InsertCommand, dataRow);
 						break;
 					case DataRowState.Deleted:
+						Delete(ownDataAdapter.DeleteCommand, dataRow);
 						break;
 					case DataRowState.Modified:
 						Modify(ownDataAdapter.UpdateCommand, dataRow);
@@ -61,7 +63,51 @@ namespace Sprout.Core.Models.GridActions
 			new DataProviderService().ProvideData(ownDataAdapter.DataProvider);
 		}
 
-		private static void AddNew(IEditCommand editCommand, DataRow dataRow)
+        private void Delete(IEditCommand editCommand, DataRow dataRow)
+        {
+            if (editCommand is not SqlServerEditCommand sqlEditCommand)
+                throw new NotImplementedException();
+
+            var command = sqlEditCommand.Text;
+
+            if (string.IsNullOrWhiteSpace(command))
+                throw new Exception("Delete command not set");
+
+            var requestedParameters = ParameterParser.ParseQueryParameters(sqlEditCommand.Text);
+
+            List<SqlParameter> sqlParams = [];
+
+            foreach (var queryParam in requestedParameters)
+            {
+                SetQueryParam(queryParam, dataRow);
+
+                var param = new SqlParameter
+                {
+                    ParameterName = $"@{queryParam.Name}",
+                    Value = queryParam.Value ?? DBNull.Value
+                };
+
+                sqlParams.Add(param);
+
+                command = command.Replace($"{{{queryParam.RawPatameter}}}", $"{param.ParameterName}", StringComparison.CurrentCultureIgnoreCase);
+            }
+
+#warning maybe have different command types for stored procedure vs text
+
+#warning better to use a single connection for all operations
+            using (var conn = new SqlConnection(sqlEditCommand.ConnectionString))
+            using (var cmd = new SqlCommand(command, conn))
+            {
+                AttachParameters(cmd, sqlParams);
+                conn.Open();
+
+                cmd.ExecuteNonQuery();
+
+                conn.Close();
+            }
+        }
+
+        private static void AddNew(IEditCommand editCommand, DataRow dataRow)
 		{
             if (editCommand is not SqlServerEditCommand sqlEditCommand)
                 throw new NotImplementedException();
@@ -167,16 +213,21 @@ namespace Sprout.Core.Models.GridActions
 
 		private static void SetQueryParam(QueryParameter queryParam, System.Data.DataRow dataRow)
 		{
-			var value = dataRow[queryParam.Name];
+            // Check if the row is deleted first to avoid the exception
+            var version = dataRow.RowState == DataRowState.Deleted
+                          ? DataRowVersion.Original
+                          : DataRowVersion.Current;
 
-			if (value == DBNull.Value)
-			{
-				//check for defaul value
-			}
-			else
-			{
-				queryParam.Value = value;
-			}
-		}
+            var value = dataRow[queryParam.Name, version];
+
+            if (value == DBNull.Value)
+            {
+                // check for default value
+            }
+            else
+            {
+                queryParam.Value = value;
+            }
+        }
     }
 }
