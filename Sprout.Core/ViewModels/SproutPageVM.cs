@@ -7,6 +7,7 @@ using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.DataProviders;
+using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Queries;
 using Sprout.Core.UIStates;
 using Sprout.Core.Views;
@@ -15,6 +16,8 @@ namespace Sprout.Core.ViewModels
 {
     public partial class SproutPageVM : ObservableObject
     {
+        private readonly IDialogService _dialogService;
+
         public SproutPageConfiguration PageConfig { get; private set; }
 
         public Dictionary<string, Dictionary<string, GridAction>> GridActions { get; set; } = [];
@@ -30,36 +33,44 @@ namespace Sprout.Core.ViewModels
         /// </summary>
         public SproutPage DynamicViewInstance { get; private set; }
 
-        public SproutPageVM(SproutPageConfiguration pageConfig)
+        public SproutPageVM(SproutPageConfiguration pageConfig, IDialogService dialogService)
         {
             PageConfig = pageConfig;
+            _dialogService = dialogService;
 
-            CreateDataAdapters();
-
-            UiStateRegistry.UiStateChanged += (_, change) =>
+            try
             {
-                foreach (var dataProvider in DataProviders.Values)
+                CreateDataAdapters();
+
+                UiStateRegistry.UiStateChanged += (_, change) =>
                 {
-                    var dependencyHasChanged = false;
-
-                    foreach (var dependency in dataProvider.Dependencies)
+                    foreach (var dataProvider in DataProviders.Values)
                     {
-                        if (dependency.ControlName == change.ControlName)
-                        {
-                            dependencyHasChanged = true;
+                        var dependencyHasChanged = false;
 
-                            var debug = dependency.Value;
+                        foreach (var dependency in dataProvider.Dependencies)
+                        {
+                            if (dependency.ControlName == change.ControlName)
+                            {
+                                dependencyHasChanged = true;
+
+                                var debug = dependency.Value;
+                            }
+                        }
+
+                        if (dependencyHasChanged)
+                        {
+                            new DataProviderService().ProvideData(dataProvider);
                         }
                     }
+                };
 
-                    if (dependencyHasChanged)
-                    {
-                        new DataProviderService().ProvideData(dataProvider);
-                    }
-                }
-            };
-
-            DynamicViewInstance = new SproutPage{ DataContext = this };
+                DynamicViewInstance = new SproutPage { DataContext = this };
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+            }
         }
 
         public void CreateDataAdapters()
@@ -78,17 +89,23 @@ namespace Sprout.Core.ViewModels
 
         public void OnLoaded()
         {
-            var dataProviderService = new DataProviderService();
+            try
+            {
+                var dataProviderService = new DataProviderService();
 
 #warning prevent execution of defined queries that are never used?
-            foreach (var kvp in DataProviders)
-            {
-                //query dependencies have to be done after all controls are created and before all queries are executed
-                //QueryService.BindDependencies(kvp.Value, UiStateRegistry);
-                dataProviderService.BindDependencies(kvp.Value, UiStateRegistry);
+                foreach (var kvp in DataProviders)
+                {
+                    //query dependencies have to be done after all controls are created and before all queries are executed
+                    //QueryService.BindDependencies(kvp.Value, UiStateRegistry);
+                    dataProviderService.BindDependencies(kvp.Value, UiStateRegistry);
 
-                //QueryService.ExecuteQuery(kvp.Value);
-                dataProviderService.ProvideData(kvp.Value);
+                    dataProviderService.ProvideData(kvp.Value);
+                }
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
             }
         }
 
@@ -99,15 +116,13 @@ namespace Sprout.Core.ViewModels
 			{
 				if (parameter is GridAction gridAction)
 				{
-
                     gridAction.Perform(DataAdapters);
-                    //QueryService.ExecuteQueryAction(gridAction, DataAdapters);
                 }
 			}
 			catch (Exception ex)
 			{
-				throw;
-			}
+                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+            }
         }
     }
 }

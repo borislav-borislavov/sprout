@@ -2,7 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Configurations;
-using Sprout.Core.Services.Dialogs;
+using Sprout.Core.Services.Dialog;
+using Sprout.Core.Services.Navigation;
 using System.Collections.ObjectModel;
 
 namespace Sprout.Core.ViewModels
@@ -10,6 +11,7 @@ namespace Sprout.Core.ViewModels
     public partial class MainViewVM : ObservableObject
     {
         private readonly IConfigurationService _configService;
+        private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
         [ObservableProperty]
         private ObservableCollection<SproutPageConfiguration> _pageConfigs;
@@ -21,10 +23,14 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private SproutPageVM _selectedTab;
 
-        public MainViewVM(IConfigurationService configService, IDialogService dialogService)
+        public MainViewVM(IConfigurationService configService,
+            INavigationService navigationService,
+            IDialogService dialogService)
         {
             _configService = configService;
+            _navigationService = navigationService;
             _dialogService = dialogService;
+
             var sproutConfig = _configService.Load();
 
             PageConfigs = new ObservableCollection<SproutPageConfiguration>(sproutConfig.Pages);
@@ -33,7 +39,7 @@ namespace Sprout.Core.ViewModels
         [RelayCommand(CanExecute = nameof(CanExecuteOpenPage))]
         private void OpenPage(SproutPageConfiguration pageConfig)
         {
-            SelectedTab = new SproutPageVM(pageConfig);
+            SelectedTab = new SproutPageVM(pageConfig, _dialogService);
             Tabs.Add(SelectedTab);
         }
 
@@ -47,7 +53,7 @@ namespace Sprout.Core.ViewModels
         [RelayCommand(CanExecute = nameof(CanEditPage))]
         private void EditPage()
         {
-            _dialogService.ShowEditPage(SelectedTab.PageConfig, _configService);
+            _navigationService.ShowEditPage(SelectedTab.PageConfig, _configService, _dialogService);
         }
 
         private bool CanEditPage() => SelectedTab is not null;
@@ -55,7 +61,7 @@ namespace Sprout.Core.ViewModels
         [RelayCommand]
         private void EditMenu()
         {
-            var isSaved = _dialogService.ShowEditMenu(PageConfigs, _configService);
+            var isSaved = _navigationService.ShowEditMenu(PageConfigs, _configService);
 
             if (isSaved)
             {

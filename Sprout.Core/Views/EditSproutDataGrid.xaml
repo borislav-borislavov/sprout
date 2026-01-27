@@ -4,20 +4,40 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Sprout.Core.Views"
+             xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
+             
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:EditPageVM}"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        
-        
+
+
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Add"
+                    Height="35"
+                    Width="50"
+                    Margin="5"
+                    Command="{Binding AddColumnCommand}"
+                    VerticalAlignment="Top"/>
+
+            <Button Content="Remove"
+                    Height="35"
+                    Width="50"
+                    Margin="5"
+                    Command="{Binding DeleteColumnCommand}"
+                    VerticalAlignment="Top"/>
+        </StackPanel>
         
         <DataGrid
             Grid.Row="1"
             Margin="5"
-            ItemsSource="{Binding Columns}">
+            CanUserAddRows="False"
+            SelectedItem="{Binding SelectedColumn}"
+            ItemsSource="{Binding SelectedNode.Columns}">
             
         </DataGrid>
     </Grid>

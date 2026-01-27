@@ -26,10 +26,11 @@
         <Menu Grid.Row="0"
               Grid.Column="1"
               Grid.ColumnSpan="1"
+              Opacity="0.9"
               Background="Transparent">
             <MenuItem Header="Configure">
-                <MenuItem Header="Menu" Command="{Binding EditMenuCommand}"/>
-                <MenuItem Header="Page" Command="{Binding EditPageCommand}"/>
+                <MenuItem Opacity="0.9" Header="Menu" Command="{Binding EditMenuCommand}"/>
+                <MenuItem Opacity="0.9" Header="Page" Command="{Binding EditPageCommand}"/>
             </MenuItem>
 
             <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>
@@ -57,6 +58,7 @@
                     Grid.Column="1"
                     Grid.Row="1"
                     Grid.RowSpan="3"
+                    Margin="0 5 0 0"
                     ItemsSource="{Binding Tabs}"
                     SelectedItem="{Binding SelectedTab}">
 

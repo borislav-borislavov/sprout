@@ -2,6 +2,6 @@
 {
     public class SproutConfiguration
     {
-        public List<SproutPageConfiguration> Pages { get; set; }
+        public List<SproutPageConfiguration> Pages { get; set; } = [];
     }
 }

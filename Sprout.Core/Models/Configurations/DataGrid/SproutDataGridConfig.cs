@@ -1,6 +1,7 @@
 ﻿using Sprout.Core.Models.Queries;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,6 @@ namespace Sprout.Core.Models.Configurations.DataGrid
 
 		public bool ShowSave => AllowInsert || AllowUpdate || AllowDelete;
 
-		public List<SproutDataGridColumnConfig> Columns { get; set; }
+		public ObservableCollection<SproutDataGridColumnConfig> Columns { get; set; } = [];
 	}
 }

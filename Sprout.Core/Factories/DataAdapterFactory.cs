@@ -72,7 +72,7 @@ namespace Sprout.Core.Factories
 
             if (sqlServerAdapterConfig.DeleteCommand != null)
             {
-                throw new NotImplementedException("DeleteCommand creation is not implemented yet in DataAdapterFactory.");
+                //throw new NotImplementedException("DeleteCommand creation is not implemented yet in DataAdapterFactory.");
             }
 
             return dataAdapter;

@@ -49,13 +49,15 @@ namespace Sprout.Core.ViewModels
                 case SproutControlType.Grid:
                     NewControl = new GridConfig()
                     {
-                        Name = ControlName
+                        Name = ControlName,
+                        Children = []
                     };
                     break;
                 case SproutControlType.DataGrid:
                     NewControl = new SproutDataGridConfig()
                     {
-                        Name = ControlName
+                        Name = ControlName,
+                        Columns = []
                     };
                     break;
                 case SproutControlType.ComboBox:

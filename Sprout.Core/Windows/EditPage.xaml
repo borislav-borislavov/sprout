@@ -120,7 +120,21 @@
                 </DataTemplate>-->
             </TabControl.Resources>
 
-            <TabItem Header="Control" Content="{Binding}"/>
+            <TabItem Header="Control">
+                <Grid>
+                    <Grid.Resources>
+                        <DataTemplate DataType="{x:Type gridConfig:SproutDataGridConfig}">
+                            <views:EditSproutDataGrid DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext}"/>
+                        </DataTemplate>
+
+                        <DataTemplate DataType="{x:Type config:SproutComboConfig}">
+                            <views:EditSproutCombo/>
+                        </DataTemplate>
+                    </Grid.Resources>
+
+                    <ContentControl Content="{Binding}"/>
+                </Grid>
+            </TabItem>
             
             <TabItem Header="Layout">
                 <Grid>

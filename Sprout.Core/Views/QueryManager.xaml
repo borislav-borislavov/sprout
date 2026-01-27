@@ -16,18 +16,10 @@
             <ColumnDefinition Width="0.7*"/>
         </Grid.ColumnDefinitions>
 
-        <!--<ComboBox
-            Grid.Column="0"
-            Margin="5"
-            VerticalAlignment="Top"
-            ItemsSource="{Binding PageConfig.Queries}"
-            SelectedItem="{Binding SelectedQuery}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Name}"/>
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
         <ComboBox Name="AdapterTypes"
                   Grid.Column="0"
@@ -36,7 +28,16 @@
                   ItemsSource="{Binding AdapterTypes}"
                   SelectedItem="{Binding SelectedAdapterType}"/>
 
-        <Grid Name="ViewSwitcher" Grid.Column="1">
+        <Button Content="Change Adapter"
+                HorizontalAlignment="Left"
+                Margin="5"
+                Command="{Binding ChangeAdapterCommand}"
+                Grid.Column="1"/>
+
+        <Grid Name="ViewSwitcher"
+              Grid.Row="1"
+              Grid.Column="0"
+              Grid.ColumnSpan="2">
             <Grid.Resources>
                 <DataTemplate DataType="{x:Type viewModels:SqlServerDataAdapterVM}">
                     <views:SqlServerDataAdapterView />

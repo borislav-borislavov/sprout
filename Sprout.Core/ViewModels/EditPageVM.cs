@@ -3,7 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.Configurations;
-using Sprout.Core.Services.Dialogs;
+using Sprout.Core.Services.Dialog;
+using Sprout.Core.Services.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,6 +27,7 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private SproutControlConfig _selectedNode;
         private readonly IConfigurationService _configService;
+        private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
 
         public string[] AdapterTypes { get; set; } = ["SqlServer", "SQLite", "Excel"];
@@ -36,9 +38,12 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private ObservableObject _selectedAdapterViewModel;
 
-        public EditPageVM(IConfigurationService configService, IDialogService dialogService)
+        public EditPageVM(IConfigurationService configService,
+            INavigationService navigationService,
+            IDialogService dialogService)
         {
             _configService = configService;
+            _navigationService = navigationService;
             _dialogService = dialogService;
         }
 
@@ -57,78 +62,106 @@ namespace Sprout.Core.ViewModels
         [RelayCommand]
         private void Save()
         {
-            var debug = PageConfig;
+            try
+            {
+                var debug = PageConfig;
 
-            var sproutConfig = _configService.Load();
-            var foundPage = sproutConfig.Pages.FirstOrDefault(p => p.Title == PageConfig.Title);
-            var pageIndex = sproutConfig.Pages.IndexOf(foundPage);
-            sproutConfig.Pages.Remove(foundPage);
-            sproutConfig.Pages.Insert(pageIndex, PageConfig);
+                var sproutConfig = _configService.Load();
+                var foundPage = sproutConfig.Pages.FirstOrDefault(p => p.Title == PageConfig.Title);
+                var pageIndex = sproutConfig.Pages.IndexOf(foundPage);
+                sproutConfig.Pages.Remove(foundPage);
+                sproutConfig.Pages.Insert(pageIndex, PageConfig);
 
-            _configService.Save(sproutConfig);
-
+                _configService.Save(sproutConfig);
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+            }
         }
 
         [RelayCommand]
         private void AddControl()
         {
-            SproutControlConfig newControl = _dialogService.ShowAddControl();
+            try
+            {
+                SproutControlConfig newControl = _navigationService.ShowAddControl();
 
-            if (newControl == null) return;
+                if (newControl == null) return;
 
 #warning create interface to mark containers
-            if (SelectedNode is GridConfig gridConfig)
+                if (SelectedNode is GridConfig gridConfig)
+                {
+                    gridConfig.Children.Add(newControl);
+                }
+            }
+            catch (Exception ex)
             {
-                gridConfig.Children.Add(newControl);
+                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
             }
         }
 
         partial void OnSelectedNodeChanged(SproutControlConfig value)
         {
-            if (value is IDataAdapterControlConfig dataAdapterControlConfig)
+            try
             {
-                SelectedDataAdapter = dataAdapterControlConfig.DataAdapter;
-
-                if (dataAdapterControlConfig.DataAdapter is SqlServerDataAdapterConfig sqlServerDataAdapterConfig)
+                if (value is IDataAdapterControlConfig dataAdapterControlConfig)
                 {
-                    SelectedAdapterType = "SqlServer";
-                    SelectedAdapterViewModel = new SqlServerDataAdapterVM(sqlServerDataAdapterConfig);
+                    SelectedDataAdapter = dataAdapterControlConfig.DataAdapter;
+
+                    if (dataAdapterControlConfig.DataAdapter is SqlServerDataAdapterConfig sqlServerDataAdapterConfig)
+                    {
+                        SelectedAdapterType = "SqlServer";
+                        SelectedAdapterViewModel = new SqlServerDataAdapterVM(sqlServerDataAdapterConfig);
+                    }
+                    else
+                    {
+                        SelectedAdapterType = null;
+                        SelectedAdapterViewModel = null;
+                    }
                 }
-                else 
+                else
                 {
                     SelectedAdapterType = null;
                     SelectedAdapterViewModel = null;
                 }
             }
-            else
+            catch (Exception ex)
             {
-                SelectedAdapterType = null;
-                SelectedAdapterViewModel = null;
+                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
             }
         }
 
-        partial void OnSelectedAdapterTypeChanged(string value)
+        [RelayCommand]
+        private void ChangeAdapter()
         {
-            //if (value == "SqlServer" 
-            //    && SelectedQuery is IDataAdapterConfig dataAdapter 
-            //    && dataAdapter is SqlServerDataAdapterConfig sqlServerDataAdapterConfig)
-            //{
-            //    SelectedAdapterViewModel = new SqlServerDataAdapterVM(sqlServerDataAdapterConfig);
-            //}
-            //else if (value == "SQLite")
-            //{
-            //    //SelectedAdapterViewModel = new SQLiteDataAdapterVM();
-            //    SelectedAdapterViewModel = null;
-            //}
-            //else if (value == "Excel")
-            //{
-            //    //SelectedAdapterViewModel = new ExcelDataAdapterVM();
-            //    SelectedAdapterViewModel = null;
-            //}
-            //else
-            //{
-            //    SelectedAdapterViewModel = null;
-            //}
+            try
+            {
+                if (SelectedNode is not IDataAdapterControlConfig adapterControl) return;
+
+                if (SelectedAdapterType == "SqlServer")
+                {
+                    adapterControl.DataAdapter = new SqlServerDataAdapterConfig
+                    {
+                        DataProvider = new SqlServerDataProviderConfig
+                        {
+                            Text = string.Empty
+                        },
+
+                        InsertCommand = new SqlServerEditCommandConfig(),
+                        UpdateCommand = new SqlServerEditCommandConfig(),
+                        DeleteCommand = new SqlServerEditCommandConfig(),
+                    };
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+            }
         }
     }
 }

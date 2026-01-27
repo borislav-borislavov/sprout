@@ -8,32 +8,6 @@
 			 d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <ResourceDictionary>
-            <!--<Style x:Key="RoundedButton" TargetType="Button">
-                <Setter Property="Background" Value="#007ACC"/>
-                <Setter Property="Foreground" Value="White"/>
-                <Setter Property="Padding" Value="12,6"/>
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="BorderBrush" Value="#005A9E"/>
-
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <Border
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="6">
-
-                                <ContentPresenter
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        RecognizesAccessKey="True"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>-->
-
             <ControlTemplate x:Key="asd" TargetType="Button">
                 <Border x:Name="Border"
                     Background="{TemplateBinding Background}"
@@ -69,7 +43,8 @@
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
         </ResourceDictionary>
     </UserControl.Resources>
-    
+
+    <Border BorderThickness="0.8" BorderBrush="DarkSlateGray">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -90,9 +65,9 @@
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock
                         FontFamily="Segoe Fluent Icons"
-                        FontSize="25"
+                        FontSize="20"
                         Text="&#xE948;"
-                        Foreground="#14de5b"
+                        Foreground="DarkSlateGray"
                         Margin="3"/>
 
                     <!--<TextBlock Text="Add" FontSize="15" Margin="0,0,5,3" Foreground="DarkSlateGray" VerticalAlignment="Center"/>-->
@@ -112,9 +87,9 @@
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock
                         FontFamily="Segoe Fluent Icons"
-                        FontSize="25"
+                        FontSize="20"
                         Text="&#xe74e;"
-                        Foreground="#14de5b"
+                        Foreground="DarkSlateGray"
                         Margin="3"/>
                     
                     <!--<TextBlock Text="Add" FontSize="15" Margin="0,0,5,3" Foreground="DarkSlateGray" VerticalAlignment="Center"/>-->
@@ -122,13 +97,17 @@
             </Button>
         </StackPanel>
 
-        <DataGrid x:Name="dataGrid"
+        <DataGrid
+              x:Name="dataGrid"
 			  Grid.Row="1"
 			  AutoGenerateColumns="False"
 			  CanUserAddRows="False"
 			  CanUserDeleteRows="False"
 			  SelectionMode="Single"
 			  SelectionUnit="FullRow"
+              BorderThickness="0,0.8,0,0"
+              BorderBrush="DarkSlateGray" 
+              HeadersVisibility="Column"
               Foreground="DarkSlateGray">
             <!--<DataGrid.Columns>
                 <DataGridTextColumn Header="UserID" Binding="{Binding UserID}" Width="Auto"/>
@@ -138,4 +117,5 @@
             </DataGrid.Columns>-->
         </DataGrid>
     </Grid>
+    </Border>
 </UserControl>
