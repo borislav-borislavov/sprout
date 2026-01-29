@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Sprout.Core.Common;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.Configurations;
@@ -49,9 +50,9 @@ namespace Sprout.Core.ViewModels
 
         public void Initialize(SproutPageConfiguration pageConfig)
         {
-            PageConfig = pageConfig;
+            PageConfig = pageConfig.Clone();
 
-            if (pageConfig.Root is not GridConfig gridConfig)
+            if (PageConfig.Root is not GridConfig gridConfig)
             {
                 return;
             }
@@ -143,6 +144,8 @@ namespace Sprout.Core.ViewModels
                 {
                     adapterControl.DataAdapter = new SqlServerDataAdapterConfig
                     {
+                        ConnectionString = "Server=.;Database=DbName;Trusted_Connection=True;TrustServerCertificate=Yes",
+
                         DataProvider = new SqlServerDataProviderConfig
                         {
                             Text = string.Empty

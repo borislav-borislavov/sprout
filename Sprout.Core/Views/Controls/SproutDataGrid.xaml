@@ -75,15 +75,14 @@
                 </Button>
 
                 <Button x:Name="btnSave"
-                ToolTip="Save grid changes"
-                Template="{StaticResource asd}"
-                Visibility="{Binding Config.ShowSave,
-                             RelativeSource={RelativeSource AncestorType=local:SproutDataGrid},
-                             Converter={StaticResource BoolToVis}}"
-                HorizontalAlignment="Left"
-                Margin="2"
-                BorderThickness="0"
-                Background="Transparent">
+                        ToolTip="Save grid changes"
+                        Template="{StaticResource asd}"
+                        Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
+                        HorizontalAlignment="Left"
+                        Margin="2"
+                        BorderThickness="0"
+                        Background="Transparent">
+                    
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock
                         FontFamily="Segoe Fluent Icons"
@@ -113,6 +112,27 @@
                         Text="&#xe74d;"
                         Foreground="DarkSlateGray"
                         Margin="3"/>
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="btnRefresh"
+                        ToolTip="Refresh data"
+                        Template="{StaticResource asd}"
+                        Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
+                        HorizontalAlignment="Left"
+                        Margin="2"
+                        BorderThickness="0"
+                        Background="Transparent">
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock
+                        FontFamily="Segoe Fluent Icons"
+                        FontSize="20"
+                        Text="&#xe72c;"
+                        Foreground="DarkSlateGray"
+                        Margin="3"/>
+
+                        <!--<TextBlock Text="Add" FontSize="15" Margin="0,0,5,3" Foreground="DarkSlateGray" VerticalAlignment="Center"/>-->
                     </StackPanel>
                 </Button>
             </StackPanel>

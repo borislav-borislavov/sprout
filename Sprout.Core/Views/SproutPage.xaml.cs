@@ -62,6 +62,21 @@ namespace Sprout.Core.Views
                     //initialize grid actions
                     vm.GridActions.Add(sproutDataGrid.Name, []);
 
+                    sproutDataGrid.btnRefresh.SetBinding(Button.CommandProperty,
+                        new Binding(nameof(SproutPageVM.PerformActionCommand))
+                        {
+                            Mode = BindingMode.OneWay
+                        });
+
+                    //create the grid action
+                    vm.GridActions[sproutDataGrid.Name][nameof(RefreshDataGridAction)] = new RefreshDataGridAction(sproutDataGrid.Name);
+
+                    sproutDataGrid.btnRefresh.SetBinding(Button.CommandParameterProperty,
+                        new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(RefreshDataGridAction)}]")
+                        {
+                            Mode = BindingMode.OneWay
+                        });
+
                     if (sproutDataGrid.Config.AllowInsert)
                     {
                         sproutDataGrid.btnInsert.SetBinding(Button.CommandProperty,

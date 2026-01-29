@@ -53,7 +53,19 @@ namespace Sprout.Core.ViewModels
         [RelayCommand(CanExecute = nameof(CanEditPage))]
         private void EditPage()
         {
+            var pageTitle = SelectedTab.PageConfig.Title;
+
             _navigationService.ShowEditPage(SelectedTab.PageConfig, _configService, _dialogService);
+
+            Tabs.Remove(SelectedTab);
+
+            var sproutConfig = _configService.Load();
+            PageConfigs = new ObservableCollection<SproutPageConfiguration>(sproutConfig.Pages);
+
+            var currentPageConfig = PageConfigs.FirstOrDefault(pc => pc.Title == pageTitle);
+
+            SelectedTab = new SproutPageVM(currentPageConfig, _dialogService);
+            Tabs.Add(SelectedTab);
         }
 
         private bool CanEditPage() => SelectedTab is not null;

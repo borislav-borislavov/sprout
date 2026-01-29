@@ -26,7 +26,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Label Content="Controls" FontWeight="Bold" FontSize="16" Margin="10"/>
+            <Label Content="Controls" FontWeight="Bold" FontSize="16" Margin="10" Foreground="DarkSlateGray"/>
 
             <TreeView
                 Name="ControlsTree"

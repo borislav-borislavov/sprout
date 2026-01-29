@@ -30,6 +30,13 @@
                     Margin="5"
                     Command="{Binding DeleteColumnCommand}"
                     VerticalAlignment="Top"/>
+
+            <Button Content="Completecolumns"
+                    Height="35"
+                    Width="110"
+                    Margin="5"
+                    Command="{Binding CompleteColumnsCommand}"
+                    VerticalAlignment="Top"/>
         </StackPanel>
         
         <DataGrid

@@ -24,6 +24,12 @@ namespace Sprout.Core.Windows
         public EditPage()
         {
             InitializeComponent();
+
+            this.Width = SystemParameters.PrimaryScreenWidth * 0.85;
+            this.Height = SystemParameters.PrimaryScreenHeight * 0.85;
+
+            // Optional: Center the window on the screen
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
         private void ControlsTree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)

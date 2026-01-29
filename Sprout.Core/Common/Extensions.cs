@@ -1,4 +1,5 @@
-﻿using Sprout.Core.Common.Models;
+﻿using Newtonsoft.Json;
+using Sprout.Core.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,6 +13,23 @@ namespace Sprout.Core.Common
 {
     public static class Extensions
     {
+        public static T Clone<T>(this T source)
+        {
+            if (source == null)
+            {
+                return default;
+            }
+
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                Formatting = Formatting.Indented
+            };
+
+            var serialized = JsonConvert.SerializeObject(source, settings);
+
+            return JsonConvert.DeserializeObject<T>(serialized, settings);
+        }
 
         public static string PurifyTableName(this string tableName)
         {
