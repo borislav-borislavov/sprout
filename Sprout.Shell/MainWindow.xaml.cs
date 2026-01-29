@@ -12,8 +12,8 @@ namespace Sprout.Shell
             Content = mainView;
 
             // Calculate 90% of the Primary Screen resolution
-            this.Width = SystemParameters.PrimaryScreenWidth * 0.9;
-            this.Height = SystemParameters.PrimaryScreenHeight * 0.9;
+            this.Width = SystemParameters.PrimaryScreenWidth * 0.85;
+            this.Height = SystemParameters.PrimaryScreenHeight * 0.85;
 
             // Optional: Center the window on the screen
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;

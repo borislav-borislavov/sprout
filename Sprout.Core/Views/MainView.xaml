@@ -10,6 +10,40 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
+    <UserControl.Resources>
+
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#DDD"/>
+            <Setter Property="Foreground" Value="DarkSlateGray"/>
+            <Setter Property="Padding" Value="10,5"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                            Background="{TemplateBinding Background}" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            CornerRadius="5" 
+                            SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="#DDD"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="#DDD"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -19,8 +53,8 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="0.15*"/>
+            <ColumnDefinition Width="0.85*"/>
         </Grid.ColumnDefinitions>
 
         <Menu Grid.Row="0"
@@ -36,37 +70,53 @@
             <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>
         </Menu>
 
-        <ItemsControl x:Name="ButtonsList"
-                      Grid.Column="0"
-                      Grid.Row="0"
-                      Grid.RowSpan="3"
-                      ItemsSource="{Binding PageConfigs}" >
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Content="{Binding Title}"
-                        Command="{Binding ElementName=MainViewControl, Path=DataContext.OpenPageCommand }"
-                        CommandParameter="{Binding}"
+        <Border Background="White"
+                Padding="5"
+                Margin="5"
+                Grid.Row="0"
+                Grid.RowSpan="4"
+                CornerRadius="4">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="3" Opacity="0.3" />
+            </Border.Effect>
+
+            <ItemsControl x:Name="ButtonsList"
+                          Grid.Column="0"
+                          ItemsSource="{Binding PageConfigs}" >
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button
+                            Style="{StaticResource RoundedButtonStyle}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Focusable="False"
+                            Content="{Binding Title}"
+                            Command="{Binding ElementName=MainViewControl, Path=DataContext.OpenPageCommand }"
+                            CommandParameter="{Binding}"
                         />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
-        <TabControl Name="MyTabControl" 
-                    Grid.Column="1"
-                    Grid.Row="1"
-                    Grid.RowSpan="3"
-                    Margin="0 5 0 0"
-                    ItemsSource="{Binding Tabs}"
-                    SelectedItem="{Binding SelectedTab}">
+        </Border>
 
-            <!--<TabControl.Resources>
-                <DataTemplate DataType="{x:Type viewModels:SproutPageVM}">
-                    <local:SproutPage />
-                </DataTemplate>
-            </TabControl.Resources>-->
+        <GridSplitter Grid.Row="0"
+                      Grid.RowSpan="4"
+                      Grid.Column="0"
+                      Width="5"
+                      Margin="0,5,0,5"
+                      Focusable="False"
+                      ShowsPreview="True"
+                      Background="Transparent"
+                      />
+        
+        <TabControl Name="MyTabControl"
+                         Grid.Column="1"
+                         Grid.Row="1"
+                         Grid.RowSpan="3"
+                        Margin="0 5 5 5"
+                        ItemsSource="{Binding Tabs}"
+                        SelectedItem="{Binding SelectedTab}">
 
             <TabControl.ContentTemplate>
                 <DataTemplate>
@@ -76,21 +126,24 @@
 
             <TabControl.ItemTemplate>
                 <DataTemplate>
-                    
-                    <StackPanel Name="TabHeaderStackPanel" Orientation="Horizontal" MouseDown="TabHeaderStackPanel_MouseDown">
+                    <StackPanel Name="TabHeaderStackPanel"
+                                Orientation="Horizontal"
+                                MouseDown="TabHeaderStackPanel_MouseDown">
+                        
                         <TextBlock Text="{Binding PageConfig.Title}" />
+                        
                         <Grid MouseDown="Grid_MouseDown">
-                            <TextBlock
-                                 FontFamily="Segoe Fluent Icons"
-                                 Text="&#xef2c;"
-                                 FontWeight="Bold"
-                                 Margin="7,3,0,0"/>
-                            <TextBlock
-                                ToolTip="Close Tab"
-                                 FontFamily="Segoe Fluent Icons"
-                                 Foreground="Red"
-                                 Text="&#xef2c;"
-                                 Margin="7,3,0,0">
+                            <TextBlock FontFamily="Segoe Fluent Icons"
+                                       Text="&#xef2c;"
+                                       FontWeight="Bold"
+                                       Margin="7,3,0,0"/>
+                            
+                            <TextBlock ToolTip="Close Tab"
+                                       FontFamily="Segoe Fluent Icons"
+                                       Foreground="Red"
+                                       Text="&#xef2c;"
+                                       Margin="7,3,0,0">
+                                
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Style.Triggers>
@@ -103,10 +156,11 @@
                             </TextBlock>
                         </Grid>
                     </StackPanel>
-                    
+
                 </DataTemplate>
             </TabControl.ItemTemplate>
 
         </TabControl>
+
     </Grid>
 </UserControl>
