@@ -1,5 +1,7 @@
 ﻿using Sprout.Core.Factories;
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.DataAdapters.DataProviders;
+using Sprout.Core.Models.DataAdapters.Filters;
 using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services;
@@ -131,6 +133,46 @@ namespace Sprout.Core.Views
                               {
                                   Mode = BindingMode.OneWay
                               });
+                    }
+
+                    if (sproutDataGrid.Config.DataAdapter != null)
+                    {
+                        if (sproutDataGrid.Config.DataAdapter is SqlServerDataAdapterConfig sqlServerDataAdapterConfig)
+                        {
+                            var dataProvider = sqlServerDataAdapterConfig.DataProvider as SqlServerDataProviderConfig;
+
+                            if (dataProvider.FilterConfigs.Any())
+                            {
+                                //i should add a general apply filters button the dataGrid UI
+                                foreach (var filterConfig in dataProvider.FilterConfigs)
+                                {
+                                    //UI
+                                    var filterView = SproutDataGridFilterFactory.GetFilter(filterConfig);
+
+                                    sproutDataGrid.spFilters.Children.Add(filterView);
+
+                                    var filter = vm.DataProviders[sproutDataGrid.Name].Filters[filterConfig.Title];
+
+                                    if (filterView is SproutDataGridTextFilter textFilter)
+                                    {
+                                        textFilter.tbFilterValue.SetBinding(TextBox.TextProperty,
+                                            new Binding($"DataProviders[{sproutDataGrid.Name}].Filters[{filterConfig.Title}].{nameof(IFilter.StartValue)}")
+                                            {
+                                                Mode = BindingMode.OneWayToSource,
+                                                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                                            });
+                                    }
+                                }
+
+                                sproutDataGrid.btnApplyFilters.SetBinding(Button.CommandProperty,
+                                    new Binding(nameof(SproutPageVM.FilterCommand))
+                                    {
+                                        Mode = BindingMode.OneWay
+                                    });
+                            }
+                        }
+                        else 
+                            throw new NotImplementedException();
                     }
 
                     vm.UiStateRegistry.Register(sproutDataGrid.UIState.Name, sproutDataGrid.UIState);

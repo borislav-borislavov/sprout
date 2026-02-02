@@ -13,6 +13,10 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModels:EditPageVM}"
         Title="EditPage" Height="450" Width="800">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.3*"/>
@@ -106,10 +110,12 @@
         <TabControl Grid.Row="1" Grid.Column="1" Margin="5" DataContext="{Binding SelectedNode}">
             <TabControl.Resources>
                 <!--<DataTemplate DataType="{x:Type gridConfig:SproutDataGridConfig}">
-                    --><!--<StackPanel>
+                    -->
+                <!--<StackPanel>
                         <TextBlock Text="Hello world"/>
                         <TextBlock Text="{Binding AllowInsert}"/>
-                    </StackPanel>--><!--
+                    </StackPanel>-->
+                <!--
                     <views:EditSproutDataGrid/>
                 </DataTemplate>
 
@@ -135,7 +141,7 @@
                     <ContentControl Content="{Binding}"/>
                 </Grid>
             </TabItem>
-            
+
             <TabItem Header="Layout">
                 <Grid>
                     <Grid.Resources>
@@ -154,6 +160,15 @@
 
             <TabItem Header="DataAdapter">
                 <views:QueryManager DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext}" />
+            </TabItem>
+
+            <TabItem Header="Filters"
+                     Visibility="{Binding 
+                        RelativeSource={RelativeSource AncestorType=Window},
+                        Path=DataContext.AreFiltersVisible,
+                        Converter={StaticResource BoolToVis}}">
+
+                <views:EditDataGridFilters DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext}"/>
             </TabItem>
         </TabControl>
     </Grid>

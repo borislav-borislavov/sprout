@@ -1,6 +1,7 @@
 ﻿using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
+using Sprout.Core.Models.DataAdapters.Filters;
 using Sprout.Core.Models.Queries;
 using System;
 using System.Collections.Generic;
@@ -36,10 +37,13 @@ namespace Sprout.Core.Factories
             if (dataProviderConfig is null)
                 throw new Exception($"DataAdapter DataProvider type missmatch! Expected DataProvider is {nameof(SqlServerDataProviderConfig)}");
 
-            dataAdapter.DataProvider = new SqlServerDataProvider(dataAdapter)
+            var dataProvider = new SqlServerDataProvider(dataAdapter)
             {
                 Text = dataProviderConfig.Text
             };
+
+            dataAdapter.DataProvider = dataProvider;
+;
 
 #warning polish this
             (dataAdapter.DataProvider as SqlServerDataProvider).Dependencies = ParameterParser.ParseDependencies(dataProviderConfig.Text);
@@ -78,6 +82,19 @@ namespace Sprout.Core.Factories
                 {
                     Text = deleteCommandConfig.Text
                 };
+            }
+
+
+            if (dataProviderConfig.FilterConfigs.Count > 0)
+            {
+                foreach (var filterConfig in dataProviderConfig.FilterConfigs)
+                {
+                    dataProvider.Filters[filterConfig.Title] = new SqlServerFilter
+                    {
+                        Title = filterConfig.Title,
+                        Text = filterConfig.Text,
+                    };
+                }
             }
 
             return dataAdapter;

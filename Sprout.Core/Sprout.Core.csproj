@@ -8,15 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\DataAdapters\NewFolder\**" />
-    <EmbeddedResource Remove="Models\DataAdapters\NewFolder\**" />
-    <None Remove="Models\DataAdapters\NewFolder\**" />
-    <Page Remove="Models\DataAdapters\NewFolder\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="6.2.1" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />

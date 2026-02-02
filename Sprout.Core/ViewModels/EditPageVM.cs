@@ -2,10 +2,12 @@
 using CommunityToolkit.Mvvm.Input;
 using Sprout.Core.Common;
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Navigation;
+using Sprout.Core.Views.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,6 +29,7 @@ namespace Sprout.Core.ViewModels
 
         [ObservableProperty]
         private SproutControlConfig _selectedNode;
+
         private readonly IConfigurationService _configService;
         private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
@@ -38,6 +41,9 @@ namespace Sprout.Core.ViewModels
 
         [ObservableProperty]
         private ObservableObject _selectedAdapterViewModel;
+
+        [ObservableProperty]
+        private bool _areFiltersVisible;
 
         public EditPageVM(IConfigurationService configService,
             INavigationService navigationService,
@@ -106,6 +112,15 @@ namespace Sprout.Core.ViewModels
         {
             try
             {
+                if (value is SproutDataGridConfig dataGridConfig && dataGridConfig.DataAdapter is SqlServerDataAdapterConfig)
+                {
+                    AreFiltersVisible = true;
+                }
+                else
+                {
+                    AreFiltersVisible = false;
+                }
+
                 if (value is IDataAdapterControlConfig dataAdapterControlConfig)
                 {
                     SelectedDataAdapter = dataAdapterControlConfig.DataAdapter;

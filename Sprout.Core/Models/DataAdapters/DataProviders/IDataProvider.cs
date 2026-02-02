@@ -1,4 +1,5 @@
-﻿using Sprout.Core.Models.Queries;
+﻿using Sprout.Core.Models.DataAdapters.Filters;
+using Sprout.Core.Models.Queries;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,5 +14,7 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
 		DataTable Data { get; set; }
 
 		IEnumerable<DataProviderDependency> Dependencies { get; /*set;*/ }
-	}
+
+		Dictionary<string, IFilter> Filters { get; set; }
+    }
 }

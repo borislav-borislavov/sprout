@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Sprout.Core.Models.DataAdapters.Filters;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -22,7 +23,9 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
 		[ObservableProperty]
 		private DataTable _data = new();
 
-		private SqlServerDataAdapter _parentAdapter;
+		public Dictionary<string, IFilter> Filters { get; set; } = [];
+
+        private SqlServerDataAdapter _parentAdapter;
 
         public SqlServerDataProvider(SqlServerDataAdapter parentAdapter)
         {

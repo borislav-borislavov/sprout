@@ -4,8 +4,13 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Sprout.Core.Views.Controls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="800">
+			 d:DesignHeight="450" d:DesignWidth="800"
+             >
+
+    <!--d:DataContext="{d:DesignInstance viewModels:EditPageVM}"-->
     <UserControl.Resources>
         <ResourceDictionary>
             <ControlTemplate x:Key="asd" TargetType="Button">
@@ -49,9 +54,26 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="1*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <StackPanel x:Name="gridButtonsPanel" Grid.Row="0" Orientation="Horizontal">
+
+                <Button x:Name="btnFilters"
+                        ToolTip="Filter data"
+                        Template="{StaticResource asd}"
+                        Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
+                        HorizontalAlignment="Left"
+                        Click="btnFilters_Click"
+                        Margin="2"
+                        BorderThickness="0"
+                        Background="Transparent">
+
+                    <iconPacks:PackIconMaterialLight  Kind="Magnify" Width="24" Height="24" Foreground="DarkSlateGray" />
+                </Button>
+
+                <Rectangle Width="1" Height="25" Fill="Gray" Margin="5,0"/>
+
                 <Button x:Name="btnInsert"
                 ToolTip="Add new row"
                 Template="{StaticResource asd}"
@@ -62,16 +84,8 @@
                 Margin="2"
                 BorderThickness="0"
                 Background="Transparent">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock
-                        FontFamily="Segoe Fluent Icons"
-                        FontSize="20"
-                        Text="&#xE948;"
-                        Foreground="DarkSlateGray"
-                        Margin="3"/>
+                    <iconPacks:PackIconMaterialLight Kind="Plus" Width="20" Height="20" Foreground="DarkSlateGray" />
 
-                        <!--<TextBlock Text="Add" FontSize="15" Margin="0,0,5,3" Foreground="DarkSlateGray" VerticalAlignment="Center"/>-->
-                    </StackPanel>
                 </Button>
 
                 <Button x:Name="btnSave"
@@ -82,17 +96,7 @@
                         Margin="2"
                         BorderThickness="0"
                         Background="Transparent">
-                    
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock
-                        FontFamily="Segoe Fluent Icons"
-                        FontSize="20"
-                        Text="&#xe74e;"
-                        Foreground="DarkSlateGray"
-                        Margin="3"/>
-
-                        <!--<TextBlock Text="Add" FontSize="15" Margin="0,0,5,3" Foreground="DarkSlateGray" VerticalAlignment="Center"/>-->
-                    </StackPanel>
+                    <iconPacks:PackIconMaterialLight Kind="ContentSave" Width="20" Height="20" Foreground="DarkSlateGray" />
                 </Button>
 
                 <Button x:Name="btnDelete"
@@ -105,14 +109,7 @@
                     Margin="2"
                     BorderThickness="0"
                     Background="Transparent">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock
-                        FontFamily="Segoe Fluent Icons"
-                        FontSize="20"
-                        Text="&#xe74d;"
-                        Foreground="DarkSlateGray"
-                        Margin="3"/>
-                    </StackPanel>
+                    <iconPacks:PackIconMaterialLight Kind="Delete" Width="20" Height="20" Foreground="DarkSlateGray" />
                 </Button>
 
                 <Button x:Name="btnRefresh"
@@ -124,18 +121,61 @@
                         BorderThickness="0"
                         Background="Transparent">
 
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock
-                        FontFamily="Segoe Fluent Icons"
-                        FontSize="20"
-                        Text="&#xe72c;"
-                        Foreground="DarkSlateGray"
-                        Margin="3"/>
-
-                        <!--<TextBlock Text="Add" FontSize="15" Margin="0,0,5,3" Foreground="DarkSlateGray" VerticalAlignment="Center"/>-->
-                    </StackPanel>
+                    <iconPacks:PackIconMaterialLight Kind="Refresh" Width="20" Height="20" Foreground="DarkSlateGray" />
                 </Button>
             </StackPanel>
+
+            <Border
+                x:Name="filtersBorder"
+                Visibility="Collapsed"
+                BorderThickness="0, 0, 0 0.8"
+                BorderBrush="DarkSlateBlue">
+            <StackPanel x:Name="filtersButtonPanel"
+                        Grid.Row="0"
+                        Visibility="Collapsed"
+                        Orientation="Horizontal">
+
+                <Button
+                    ToolTip="Filter data"
+                    Template="{StaticResource asd}"
+                    Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
+                    HorizontalAlignment="Left"
+                    Click="btnFilters_Click"
+                    Margin="2"
+                    BorderThickness="0"
+                    Background="Transparent">
+
+                    <iconPacks:PackIconMaterialLight  Kind="Magnify" Width="24" Height="24" Foreground="DarkSlateGray" />
+
+                </Button>
+
+                <Button
+                    x:Name="btnApplyFilters"
+                    ToolTip="Apply filters"
+                    Template="{StaticResource asd}"
+                    Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
+                    HorizontalAlignment="Left"
+                    Margin="2"
+                    BorderThickness="0"
+                    Background="Transparent">
+
+                    <iconPacks:PackIconMaterialLight  Kind="Check" Width="24" Height="24" Foreground="DarkSlateGray" />
+
+                </Button>
+            </StackPanel>
+            </Border>
+
+            <Grid x:Name="FiltersGrid"
+                  Grid.Row="1"
+                  Visibility="Collapsed">
+                <ScrollViewer
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Auto">
+                    <StackPanel Name="spFilters">
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
 
             <DataGrid
               x:Name="dataGrid"
@@ -175,6 +215,24 @@
                 </DataGrid.RowStyle>
 
             </DataGrid>
+
+            <Border Grid.Row="2" BorderThickness="0,0.8,0,0" BorderBrush="DarkSlateGray" >
+                <StatusBar >
+                    <StatusBar.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#F0F0F0" Offset="0"/>
+                            <GradientStop Color="#D0D0D0" Offset="1"/>
+                        </LinearGradientBrush>
+                    </StatusBar.Background>
+
+                    <StatusBarItem>
+                        <TextBlock x:Name="txtStatusBar"
+                               Foreground="DarkSlateGray"
+                               Text="{Binding Items.Count, ElementName=dataGrid, StringFormat={}{0:N0} rows}"
+                               />
+                    </StatusBarItem>
+                </StatusBar>
+            </Border>
         </Grid>
     </Border>
 </UserControl>

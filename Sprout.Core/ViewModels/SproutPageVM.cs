@@ -11,6 +11,7 @@ using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Queries;
 using Sprout.Core.UIStates;
 using Sprout.Core.Views;
+using System.Reflection.Metadata;
 
 namespace Sprout.Core.ViewModels
 {
@@ -69,7 +70,7 @@ namespace Sprout.Core.ViewModels
             }
             catch (Exception ex)
             {
-                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+                _dialogService.ShowMessage(ex.Message, "Ctor Error", DialogButton.OK, DialogImage.Error);
             }
         }
 
@@ -105,7 +106,7 @@ namespace Sprout.Core.ViewModels
             }
             catch (Exception ex)
             {
-                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+                _dialogService.ShowMessage(ex.Message, "Load Error", DialogButton.OK, DialogImage.Error);
             }
         }
 
@@ -121,7 +122,20 @@ namespace Sprout.Core.ViewModels
 			}
 			catch (Exception ex)
 			{
-                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+                _dialogService.ShowMessage(ex.Message, "Action Error", DialogButton.OK, DialogImage.Error);
+            }
+        }
+
+        [RelayCommand]
+        private void Filter()
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowMessage(ex.Message, "Filter Error", DialogButton.OK, DialogImage.Error);
             }
         }
     }
