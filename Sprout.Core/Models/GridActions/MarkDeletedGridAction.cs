@@ -1,4 +1,5 @@
-﻿using Sprout.Core.UIStates;
+﻿using Sprout.Core.Common;
+using Sprout.Core.UIStates;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -33,20 +34,12 @@ namespace Sprout.Core.Models.GridActions
                 throw new Exception($"Failed to find SproutGridUIState for {_ownControlName}");
 
             if (gridUiState.Selected is not DataRowView selectedRowView)
-            {
                 return;
-            }
 
-            if (selectedRowView.Row.RowState != DataRowState.Deleted)
-            {
-                selectedRowView.Row["_IsDeleted"] = true;
-                selectedRowView.Delete();
+            if (selectedRowView.Row[Const.BuiltInDataTableColumns._IsDeleted] is not bool isDeleted)
+                return;
 
-            }
-            else
-            {
-                
-            }
+            selectedRowView.Row[Const.BuiltInDataTableColumns._IsDeleted] = !isDeleted;
         }
     }
 }

@@ -155,6 +155,7 @@
               Foreground="DarkSlateGray">
                 <DataGrid.Resources>
                     <conv:RowDeletedToOpacityConverter x:Key="DeletedConverter"/>
+                    <conv:RowColorConverter x:Key="RowColorConverter"/>
                 </DataGrid.Resources>
 
                 <DataGrid.RowStyle>
@@ -162,11 +163,28 @@
                         <Setter Property="Opacity">
                             <Setter.Value>
                                 <MultiBinding Converter="{StaticResource DeletedConverter}" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding Path="." />
-                                    <Binding Path="[_IsDeleted]" />
+                                    <Binding Path="." /> <!--this triggers the converter when the view comes back in to view--> 
+                                    <Binding Path="[_IsDeleted]" /> <!--This triggers the converter instantly after the value changed-->
                                 </MultiBinding>
                             </Setter.Value>
                         </Setter>
+
+                        <Setter Property="Background" Value="White" />
+
+                        <Setter Property="Background">
+                            <Setter.Value>
+                                <MultiBinding Converter="{StaticResource RowColorConverter}">
+                                    <Binding Path="." />
+                                    <Binding Path="[_RowBackColor]" />
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
                 </DataGrid.RowStyle>
             </DataGrid>

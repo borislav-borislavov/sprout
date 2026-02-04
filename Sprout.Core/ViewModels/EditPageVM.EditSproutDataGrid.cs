@@ -74,6 +74,9 @@ namespace Sprout.Core.ViewModels
 
                 foreach (var queryParam in requestedParameters)
                 {
+                    if (string.IsNullOrEmpty(queryParam.Name))
+                        continue;
+
                     var safeParamName = $"@{queryParam.Name.Replace(".", "_")}";
 
                     var param = new SqlParameter

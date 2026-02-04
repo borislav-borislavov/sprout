@@ -38,24 +38,18 @@ namespace Sprout.Core.Models.GridActions
 
 			foreach (System.Data.DataRow dataRow in ownDataAdapter.DataProvider.Data.Rows)
 			{
-				switch (dataRow.RowState)
+				if (dataRow.RowState == DataRowState.Added)
 				{
-					case DataRowState.Detached:
-						break;
-                    case DataRowState.Unchanged:
-						break;
-					case DataRowState.Added:
-						AddNew(ownDataAdapter.InsertCommand, dataRow);
-						break;
-					case DataRowState.Deleted:
-						Delete(ownDataAdapter.DeleteCommand, dataRow);
-						break;
-					case DataRowState.Modified:
-						Modify(ownDataAdapter.UpdateCommand, dataRow);
-						break;
-					default:
-						break;
-				}
+                    AddNew(ownDataAdapter.InsertCommand, dataRow);
+                }
+				else if (dataRow[nameof(Const.BuiltInDataTableColumns._IsDeleted)] is bool isDeleted && isDeleted)
+                {
+                    Delete(ownDataAdapter.DeleteCommand, dataRow);
+                }
+                else if (dataRow.RowState == DataRowState.Modified)
+                {
+                    Modify(ownDataAdapter.UpdateCommand, dataRow);
+                }
 			}
 
 			new DataProviderService().ProvideData(ownDataAdapter.DataProvider);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sprout.Core.Common;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -18,11 +19,7 @@ namespace Sprout.Core.Converters
 
             if (values[0] is DataRowView drv)
             {
-                if (drv.Row.RowState == DataRowState.Deleted) //this is checked when scrolling back to a row
-                {
-                    return 0.3;
-                }
-                else if (drv.Row["_IsDeleted"] is bool isDeleted && isDeleted) //this triggers instantly when the value is flagged but before the row state is set
+                if (drv.Row[Const.BuiltInDataTableColumns._IsDeleted] is bool isDeleted && isDeleted) //this triggers instantly when the value is flagged but before the row state is set
                 {
                     return 0.3;
                 }

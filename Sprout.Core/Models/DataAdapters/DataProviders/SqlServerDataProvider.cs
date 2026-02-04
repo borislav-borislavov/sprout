@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Sprout.Core.Common;
 using Sprout.Core.Models.DataAdapters.Filters;
 using System;
 using System.Collections.Generic;
@@ -34,24 +35,22 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
             #region This logic transcends the SqlServerDataProvider, it should be available to all DataProviders
             Data = new DataTable();
 
-			//make sure that deleted rows are Visible to the user
-			Data.DefaultView.RowStateFilter = DataViewRowState.CurrentRows | DataViewRowState.Deleted;
+			var isDeletedCol = Data.Columns.Add(Const.BuiltInDataTableColumns._IsDeleted, typeof(bool));
+			isDeletedCol.DefaultValue = false; 
 
-			var col = Data.Columns.Add("_IsDeleted", typeof(bool));
-			col.DefaultValue = false; 
+			Data.Columns.Add(Const.BuiltInDataTableColumns._RowBackColor, typeof(string));
 			#endregion
 		}
 
         partial void OnDataChanged(DataTable value)
 		{
-			if (value == null) return;
+            if (value == null) return;
 
 			value.ColumnChanged += Data_ColumnChanged;
 		}
 
 		private void Data_ColumnChanged(object sender, DataColumnChangeEventArgs e)
 		{
-#warning investigate if this is firing multiple times per change
             var row = e.Row;
 			var column = e.Column!.ColumnName;
 			var newValue = e.ProposedValue;
