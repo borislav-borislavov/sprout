@@ -21,7 +21,7 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
 		public string Text { get; set; }
 
 		[ObservableProperty]
-		private DataTable _data = new();
+		private DataTable _data;
 
 		public Dictionary<string, IFilter> Filters { get; set; } = [];
 
@@ -30,7 +30,17 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
         public SqlServerDataProvider(SqlServerDataAdapter parentAdapter)
         {
             _parentAdapter = parentAdapter;
-        }
+
+            #region This logic transcends the SqlServerDataProvider, it should be available to all DataProviders
+            Data = new DataTable();
+
+			//make sure that deleted rows are Visible to the user
+			Data.DefaultView.RowStateFilter = DataViewRowState.CurrentRows | DataViewRowState.Deleted;
+
+			var col = Data.Columns.Add("_IsDeleted", typeof(bool));
+			col.DefaultValue = false; 
+			#endregion
+		}
 
         partial void OnDataChanged(DataTable value)
 		{
@@ -41,7 +51,8 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
 
 		private void Data_ColumnChanged(object sender, DataColumnChangeEventArgs e)
 		{
-			var row = e.Row;
+#warning investigate if this is firing multiple times per change
+            var row = e.Row;
 			var column = e.Column!.ColumnName;
 			var newValue = e.ProposedValue;
 			var oldValue = row[column, DataRowVersion.Original];

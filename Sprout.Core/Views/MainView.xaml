@@ -14,7 +14,6 @@
 
         <Style x:Key="RoundedButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#DDD"/>
-            <Setter Property="Foreground" Value="DarkSlateGray"/>
             <Setter Property="Padding" Value="10,5"/>
 
             <Setter Property="Template">
@@ -70,11 +69,16 @@
             <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>
         </Menu>
 
+        <!--to remove blurryness of text i added UseLayoutRounding="True" SnapsToDevicePixels="True"-->
         <Border Background="White"
                 Padding="5"
                 Margin="5"
                 Grid.Row="0"
                 Grid.RowSpan="4"
+                
+                UseLayoutRounding="True" 
+                SnapsToDevicePixels="True"
+                
                 CornerRadius="4">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="15" ShadowDepth="3" Opacity="0.3" />

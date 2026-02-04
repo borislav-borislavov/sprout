@@ -36,10 +36,8 @@ namespace Sprout.Core.Models.GridActions
 				throw new NotImplementedException();
 			}
 
-			// Implementation for saving the query changes to the database
 			foreach (System.Data.DataRow dataRow in ownDataAdapter.DataProvider.Data.Rows)
 			{
-#warning add try catch block here to not crash the whole app if something goes wrong
 				switch (dataRow.RowState)
 				{
 					case DataRowState.Detached:
@@ -137,17 +135,13 @@ namespace Sprout.Core.Models.GridActions
 
 			}
 
-#warning how will this work when called after stored procedure?
-#warning maybe have different command types for stored procedure vs text
-			command += "; SELECT SCOPE_IDENTITY();";
-
 			using (var conn = new SqlConnection(sqlEditCommand.ConnectionString))
 			using (var cmd = new SqlCommand(command, conn))
 			{
 				AttachParameters(cmd, sqlParams);
 				conn.Open();
 
-				var insertedId = cmd.ExecuteScalar();
+				cmd.ExecuteScalar();
 
 				conn.Close();
 			}

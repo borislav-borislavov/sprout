@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Sprout.Core.Models.GridActions
 {
@@ -36,11 +37,15 @@ namespace Sprout.Core.Models.GridActions
                 return;
             }
 
-            selectedRowView.Row.Table.DefaultView.RowStateFilter = DataViewRowState.CurrentRows | DataViewRowState.Deleted;
-
             if (selectedRowView.Row.RowState != DataRowState.Deleted)
             {
+                selectedRowView.Row["_IsDeleted"] = true;
                 selectedRowView.Delete();
+
+            }
+            else
+            {
+                
             }
         }
     }

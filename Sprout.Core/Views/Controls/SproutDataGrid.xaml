@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Sprout.Core.Views.Controls"
+			 xmlns:conv="clr-namespace:Sprout.Core.Converters"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              
 			 mc:Ignorable="d" 
@@ -13,38 +14,6 @@
     <!--d:DataContext="{d:DesignInstance viewModels:EditPageVM}"-->
     <UserControl.Resources>
         <ResourceDictionary>
-            <ControlTemplate x:Key="asd" TargetType="Button">
-                <Border x:Name="Border"
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="6">
-                    <ContentPresenter
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"/>
-                </Border>
-
-                <ControlTemplate.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter TargetName="Border"
-                    Property="Background"
-                    Value="#ebfaf0"/>
-                    </Trigger>
-
-                    <Trigger Property="IsPressed" Value="True">
-                        <Setter TargetName="Border"
-                            Property="Background"
-                            Value="#c8fad9"/>
-                    </Trigger>
-
-                    <Trigger Property="IsEnabled" Value="False">
-                        <Setter TargetName="Border"
-                    Property="Opacity"
-                    Value="0.5"/>
-                    </Trigger>
-                </ControlTemplate.Triggers>
-            </ControlTemplate>
-
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
         </ResourceDictionary>
     </UserControl.Resources>
@@ -61,67 +30,55 @@
 
                 <Button x:Name="btnFilters"
                         ToolTip="Filter data"
-                        Template="{StaticResource asd}"
+                        Style="{StaticResource FlatRoundButtonStyle}"
                         Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
                         HorizontalAlignment="Left"
                         Click="btnFilters_Click"
-                        Margin="2"
-                        BorderThickness="0"
-                        Background="Transparent">
+                        Margin="2">
 
-                    <iconPacks:PackIconMaterialLight  Kind="Magnify" Width="24" Height="24" Foreground="DarkSlateGray" />
+                    <iconPacks:PackIconMaterialLight  Kind="Magnify"/>
                 </Button>
 
-                <Rectangle Width="1" Height="25" Fill="Gray" Margin="5,0"/>
+                <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
 
                 <Button x:Name="btnInsert"
-                ToolTip="Add new row"
-                Template="{StaticResource asd}"
-                Visibility="{Binding Config.AllowInsert,
-                             RelativeSource={RelativeSource AncestorType=local:SproutDataGrid},
-                             Converter={StaticResource BoolToVis}}"
-                HorizontalAlignment="Left"
-                Margin="2"
-                BorderThickness="0"
-                Background="Transparent">
-                    <iconPacks:PackIconMaterialLight Kind="Plus" Width="20" Height="20" Foreground="DarkSlateGray" />
-
+                        ToolTip="Add new row"
+                        Style="{StaticResource FlatRoundButtonStyle}"
+                        Visibility="{Binding Config.AllowInsert,
+                                     RelativeSource={RelativeSource AncestorType=local:SproutDataGrid},
+                                     Converter={StaticResource BoolToVis}}"
+                        HorizontalAlignment="Left"
+                        Margin="2">
+                    <iconPacks:PackIconMaterialLight Kind="Plus" />
                 </Button>
 
                 <Button x:Name="btnSave"
                         ToolTip="Save grid changes"
-                        Template="{StaticResource asd}"
+                        Style="{StaticResource FlatRoundButtonStyle}"
                         Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
                         HorizontalAlignment="Left"
-                        Margin="2"
-                        BorderThickness="0"
-                        Background="Transparent">
-                    <iconPacks:PackIconMaterialLight Kind="ContentSave" Width="20" Height="20" Foreground="DarkSlateGray" />
+                        Margin="2">
+                    <iconPacks:PackIconMaterialLight Kind="ContentSave" />
                 </Button>
 
                 <Button x:Name="btnDelete"
-                    ToolTip="Delete row"
-                    Template="{StaticResource asd}"
-                    Visibility="{Binding Config.ShowSave,
-                                    RelativeSource={RelativeSource AncestorType=local:SproutDataGrid},
-                                    Converter={StaticResource BoolToVis}}"
-                    HorizontalAlignment="Left"
-                    Margin="2"
-                    BorderThickness="0"
-                    Background="Transparent">
-                    <iconPacks:PackIconMaterialLight Kind="Delete" Width="20" Height="20" Foreground="DarkSlateGray" />
+                        ToolTip="Delete row"
+                        Style="{StaticResource FlatRoundButtonStyle}"
+                        Visibility="{Binding Config.ShowSave,
+                                        RelativeSource={RelativeSource AncestorType=local:SproutDataGrid},
+                                        Converter={StaticResource BoolToVis}}"
+                        HorizontalAlignment="Left"
+                        Margin="2">
+                    <iconPacks:PackIconMaterialLight Kind="Delete" />
                 </Button>
 
                 <Button x:Name="btnRefresh"
                         ToolTip="Refresh data"
-                        Template="{StaticResource asd}"
+                        Style="{StaticResource FlatRoundButtonStyle}"
                         Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
                         HorizontalAlignment="Left"
-                        Margin="2"
-                        BorderThickness="0"
-                        Background="Transparent">
-
-                    <iconPacks:PackIconMaterialLight Kind="Refresh" Width="20" Height="20" Foreground="DarkSlateGray" />
+                        Margin="2">
+                    <iconPacks:PackIconMaterialLight Kind="Refresh" />
                 </Button>
             </StackPanel>
 
@@ -129,7 +86,7 @@
                 x:Name="filtersBorder"
                 Visibility="Collapsed"
                 BorderThickness="0, 0, 0 0.8"
-                BorderBrush="DarkSlateBlue">
+                BorderBrush="DarkSlateGray">
             <StackPanel x:Name="filtersButtonPanel"
                         Grid.Row="0"
                         Visibility="Collapsed"
@@ -137,29 +94,25 @@
 
                 <Button
                     ToolTip="Filter data"
-                    Template="{StaticResource asd}"
+                    Style="{StaticResource FlatRoundButtonStyle}"
                     Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
                     HorizontalAlignment="Left"
                     Click="btnFilters_Click"
-                    Margin="2"
-                    BorderThickness="0"
-                    Background="Transparent">
+                    Margin="2">
 
-                    <iconPacks:PackIconMaterialLight  Kind="Magnify" Width="24" Height="24" Foreground="DarkSlateGray" />
+                    <iconPacks:PackIconMaterialLight Kind="Magnify" />
 
                 </Button>
 
                 <Button
                     x:Name="btnApplyFilters"
                     ToolTip="Apply filters"
-                    Template="{StaticResource asd}"
+                    Style="{StaticResource FlatRoundButtonStyle}"
                     Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
                     HorizontalAlignment="Left"
-                    Margin="2"
-                    BorderThickness="0"
-                    Background="Transparent">
+                    Margin="2">
 
-                    <iconPacks:PackIconMaterialLight  Kind="Check" Width="24" Height="24" Foreground="DarkSlateGray" />
+                    <iconPacks:PackIconMaterialLight Kind="Check"/>
 
                 </Button>
             </StackPanel>
@@ -179,6 +132,17 @@
 
             <DataGrid
               x:Name="dataGrid"
+                
+              VirtualizingStackPanel.IsVirtualizing="True"
+              VirtualizingStackPanel.VirtualizationMode="Recycling"
+              EnableRowVirtualization="True"
+              EnableColumnVirtualization="True"
+              ScrollViewer.IsDeferredScrollingEnabled="True"
+                
+              HorizontalGridLinesBrush="#E2E2E2" 
+              VerticalGridLinesBrush="#E2E2E2" 
+              GridLinesVisibility="All"
+                
 			  Grid.Row="1"
 			  AutoGenerateColumns="False"
 			  CanUserAddRows="False"
@@ -190,30 +154,21 @@
               HeadersVisibility="Column"
               Foreground="DarkSlateGray">
                 <DataGrid.Resources>
-                    <Style TargetType="DataGridCell">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Row.RowState}" Value="Deleted">
-                                <Setter Property="Background" Value="Transparent" />
-                                <Setter Property="BorderBrush" Value="Transparent" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
+                    <conv:RowDeletedToOpacityConverter x:Key="DeletedConverter"/>
                 </DataGrid.Resources>
 
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Row.RowState}" Value="Deleted">
-                                <Setter Property="Background" Value="#FFFFCCCC" />
-                            </DataTrigger>
-
-                            <DataTrigger Binding="{Binding Row.RowState}" Value="Added">
-                                <Setter Property="Background" Value="#cdf7e1" />
-                            </DataTrigger>
-                        </Style.Triggers>
+                        <Setter Property="Opacity">
+                            <Setter.Value>
+                                <MultiBinding Converter="{StaticResource DeletedConverter}" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding Path="." />
+                                    <Binding Path="[_IsDeleted]" />
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
                     </Style>
                 </DataGrid.RowStyle>
-
             </DataGrid>
 
             <Border Grid.Row="2" BorderThickness="0,0.8,0,0" BorderBrush="DarkSlateGray" >
@@ -227,7 +182,6 @@
 
                     <StatusBarItem>
                         <TextBlock x:Name="txtStatusBar"
-                               Foreground="DarkSlateGray"
                                Text="{Binding Items.Count, ElementName=dataGrid, StringFormat={}{0:N0} rows}"
                                />
                     </StatusBarItem>
