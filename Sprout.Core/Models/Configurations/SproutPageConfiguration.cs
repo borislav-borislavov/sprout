@@ -4,7 +4,9 @@
 	{
 		public string Title { get; set; }
 
-		public SproutControlConfig Root { get; set; }
+        public bool AddToMenu { get; set; }
+
+        public SproutControlConfig Root { get; set; }
 
 		public Dictionary<string, IDataAdapterConfig> GetDataAdapterConfigs()
 		{

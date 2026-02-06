@@ -31,9 +31,15 @@ namespace Sprout.Core.ViewModels
             _navigationService = navigationService;
             _dialogService = dialogService;
 
+            LoadMenuPages();
+        }
+
+        private void LoadMenuPages()
+        {
             var sproutConfig = _configService.Load();
 
-            PageConfigs = new ObservableCollection<SproutPageConfiguration>(sproutConfig.Pages);
+            var visiblePages = sproutConfig.Pages.Where(p => p.AddToMenu);
+            PageConfigs = new ObservableCollection<SproutPageConfiguration>(visiblePages);
         }
 
         [RelayCommand(CanExecute = nameof(CanExecuteOpenPage))]
@@ -77,8 +83,7 @@ namespace Sprout.Core.ViewModels
 
             if (isSaved)
             {
-                var sproutConfig = _configService.Load();
-                PageConfigs = new ObservableCollection<SproutPageConfiguration>(sproutConfig.Pages);
+                LoadMenuPages();
             }
         }
     }

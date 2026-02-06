@@ -53,6 +53,7 @@ namespace Sprout.Core.ViewModels
             var pageConfig = new SproutPageConfiguration
             {
                 Title = "New Page",
+                AddToMenu = true,
                 Root = new GridConfig()
                 {
                     Name = "RootGrid",

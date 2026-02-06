@@ -130,6 +130,8 @@
             <StackPanel>
                 <TextBlock Text="Title"/>
                 <TextBox Text="{Binding SelectedPageConfig.Title, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+
+                <CheckBox Content="AddToMenu" IsChecked="{Binding SelectedPageConfig.AddToMenu}" Margin="5" />
             </StackPanel>
 
             <Button Content="Save"
