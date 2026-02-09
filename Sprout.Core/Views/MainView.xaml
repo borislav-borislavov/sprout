@@ -66,7 +66,7 @@
                 <MenuItem Opacity="0.9" Header="Page" Command="{Binding EditPageCommand}"/>
             </MenuItem>
 
-            <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>
+            <!--<MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>-->
         </Menu>
 
         <!--to remove blurryness of text i added UseLayoutRounding="True" SnapsToDevicePixels="True"-->

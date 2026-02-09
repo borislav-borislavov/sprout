@@ -37,6 +37,17 @@
                     Margin="5"
                     Command="{Binding CompleteColumnsCommand}"
                     VerticalAlignment="Top"/>
+
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Available Views" Margin="5"/>
+                <ComboBox Name="AvailableViews"
+                          ItemsSource="{Binding NonMenuPages}"
+                          SelectedValuePath="Title"
+                          DisplayMemberPath="Title"
+                          SelectedValue="{Binding SelectedDataGrid.ItemDisplayPage.Title, Mode=TwoWay}"
+                          />
+                <Button Content="Select" />
+            </StackPanel>
         </StackPanel>
         
         <DataGrid

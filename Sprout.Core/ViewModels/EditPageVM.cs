@@ -45,6 +45,8 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private bool _areFiltersVisible;
 
+        public ObservableCollection<SproutPageConfiguration> NonMenuPages { get; set; }
+
         public EditPageVM(IConfigurationService configService,
             INavigationService navigationService,
             IDialogService dialogService)
@@ -52,6 +54,11 @@ namespace Sprout.Core.ViewModels
             _configService = configService;
             _navigationService = navigationService;
             _dialogService = dialogService;
+
+
+            var nonMenuPages = _configService.Load().Pages.Where(p => p.AddToMenu == false);
+            NonMenuPages = new ObservableCollection<SproutPageConfiguration>(nonMenuPages);
+            NonMenuPages.Insert(0, new SproutPageConfiguration { Title = "NULL"});
         }
 
         public void Initialize(SproutPageConfiguration pageConfig)
@@ -115,10 +122,12 @@ namespace Sprout.Core.ViewModels
                 if (value is SproutDataGridConfig dataGridConfig && dataGridConfig.DataAdapter is SqlServerDataAdapterConfig)
                 {
                     AreFiltersVisible = true;
+                    SelectedDataGrid = dataGridConfig;
                 }
                 else
                 {
                     AreFiltersVisible = false;
+                    SelectedDataGrid = null;
                 }
 
                 if (value is IDataAdapterControlConfig dataAdapterControlConfig)

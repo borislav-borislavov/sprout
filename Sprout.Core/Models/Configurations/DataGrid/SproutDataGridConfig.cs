@@ -20,6 +20,8 @@ namespace Sprout.Core.Models.Configurations.DataGrid
 
 		public bool ShowSave => AllowInsert || AllowUpdate || AllowDelete;
 
-		public ObservableCollection<SproutDataGridColumnConfig> Columns { get; set; } = [];
+        public SproutPageConfiguration ItemDisplayPage { get; set; }
+
+        public ObservableCollection<SproutDataGridColumnConfig> Columns { get; set; } = [];
 	}
 }

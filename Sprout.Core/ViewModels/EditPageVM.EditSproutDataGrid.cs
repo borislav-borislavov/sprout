@@ -21,10 +21,14 @@ namespace Sprout.Core.ViewModels
 {
     public partial class EditPageVM : ObservableObject
     {
-        private SproutDataGridConfig SelectedDataGrid => this.SelectedNode as SproutDataGridConfig;
+        [ObservableProperty]
+        private SproutDataGridConfig _selectedDataGrid;
 
         [ObservableProperty]
         private SproutDataGridColumnConfig _selectedColumn;
+
+        //[ObservableProperty]
+        //private SproutPageConfiguration _selectedNonMenuPage;
 
         [RelayCommand]
         private void AddColumn()
