@@ -171,7 +171,7 @@ namespace Sprout.Core.Views
                                     });
                             }
                         }
-                        else 
+                        else
                             throw new NotImplementedException();
                     }
 
@@ -203,10 +203,11 @@ namespace Sprout.Core.Views
             if (!_isInitialized)
             {
                 //step 3 - load the data
-                ((SproutPageVM)DataContext).OnLoaded(); 
-            }
 
-            _isInitialized = true;
+                vm.OnLoaded();
+
+                _isInitialized = true;
+            }
         }
     }
 }

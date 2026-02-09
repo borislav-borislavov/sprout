@@ -12,6 +12,7 @@ using Sprout.Core.Services.Queries;
 using Sprout.Core.UIStates;
 using Sprout.Core.Views;
 using System.Reflection.Metadata;
+using System.Windows;
 
 namespace Sprout.Core.ViewModels
 {
@@ -43,8 +44,9 @@ namespace Sprout.Core.ViewModels
             {
                 CreateDataAdapters();
 
-                UiStateRegistry.UiStateChanged += (_, change) =>
+                UiStateRegistry.UiStateChanged += async (_, change) =>
                 {
+                    #warning add try catch here!!!
                     foreach (var dataProvider in DataProviders.Values)
                     {
                         var dependencyHasChanged = false;
@@ -61,7 +63,7 @@ namespace Sprout.Core.ViewModels
 
                         if (dependencyHasChanged)
                         {
-                            new DataProviderService().ProvideData(dataProvider);
+                            await new DataProviderService().ProvideData(dataProvider);
                         }
                     }
                 };
@@ -88,20 +90,20 @@ namespace Sprout.Core.ViewModels
             }
         }
 
-        public void OnLoaded()
+        public async void OnLoaded()
         {
             try
             {
                 var dataProviderService = new DataProviderService();
 
-#warning prevent execution of defined queries that are never used?
                 foreach (var kvp in DataProviders)
                 {
-                    //query dependencies have to be done after all controls are created and before all queries are executed
-                    //QueryService.BindDependencies(kvp.Value, UiStateRegistry);
                     dataProviderService.BindDependencies(kvp.Value, UiStateRegistry);
+                }
 
-                    dataProviderService.ProvideData(kvp.Value);
+                foreach (var kvp in DataProviders)
+                {
+                    await dataProviderService.ProvideData(kvp.Value);
                 }
             }
             catch (Exception ex)

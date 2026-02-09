@@ -1,78 +1,43 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Sprout.Core.Common;
+using Sprout.Core.Factories;
 using Sprout.Core.Models.DataAdapters.Filters;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.DataAdapters.DataProviders
 {
-	public partial class SqlServerDataProvider : ObservableObject, IDataProvider
-	{
-		public string Name { get; set; }
+    public partial class SqlServerDataProvider : ObservableObject, IDataProvider
+    {
+        public string Name { get; set; }
 
-		/// <summary>
-		/// The Root table name of the query. Used for automatic updates.
-		/// </summary>
-		public string TableName { get; set; }
-		public List<string> PrimaryKeys { get; set; } = [];
-		public string Text { get; set; }
+        /// <summary>
+        /// The Root table name of the query. Used for automatic updates.
+        /// </summary>
+        public string TableName { get; set; }
+        public List<string> PrimaryKeys { get; set; } = [];
+        public string Text { get; set; }
 
-		[ObservableProperty]
-		private DataTable _data;
+        [ObservableProperty]
+        private DataTable _data;
 
-		public Dictionary<string, IFilter> Filters { get; set; } = [];
+        public Dictionary<string, IFilter> Filters { get; set; } = [];
 
         private SqlServerDataAdapter _parentAdapter;
 
         public SqlServerDataProvider(SqlServerDataAdapter parentAdapter)
         {
             _parentAdapter = parentAdapter;
+        }
 
-            #region This logic transcends the SqlServerDataProvider, it should be available to all DataProviders
-            Data = new DataTable();
-
-			var isDeletedCol = Data.Columns.Add(Const.BuiltInDataTableColumns._IsDeleted, typeof(bool));
-			isDeletedCol.DefaultValue = false; 
-
-			Data.Columns.Add(Const.BuiltInDataTableColumns._RowBackColor, typeof(string));
-			#endregion
-		}
-
-        partial void OnDataChanged(DataTable value)
-		{
-            if (value == null) return;
-
-			value.ColumnChanged += Data_ColumnChanged;
-		}
-
-		private void Data_ColumnChanged(object sender, DataColumnChangeEventArgs e)
-		{
-            var row = e.Row;
-			var column = e.Column!.ColumnName;
-			var newValue = e.ProposedValue;
-			var oldValue = row[column, DataRowVersion.Original];
-
-			// Guard: ignore unchanged values
-			if (Equals(oldValue, newValue))
-				return;
-
-#warning left off here
-			//avoid the granular updates, use bulk changes instead
-
-			//UpdateDatabase(
-			//    id: row["Id"],
-			//    column: column,
-			//    value: newValue
-			//);
-		}
-
-		public string ConnectionString => _parentAdapter.ConnectionString;
+        public string ConnectionString => _parentAdapter.ConnectionString;
 
 
         public IEnumerable<DataProviderDependency> Dependencies { get; internal set; } = [];
-	}
+    }
 }

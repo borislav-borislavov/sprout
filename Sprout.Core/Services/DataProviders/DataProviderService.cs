@@ -14,11 +14,11 @@ namespace Sprout.Core.Services.DataProviders
 {
     public class DataProviderService
     {
-        public void ProvideData(IDataProvider dataProvider)
+        public async Task ProvideData(IDataProvider dataProvider)
         {
             if (dataProvider is SqlServerDataProvider sqlServerDataProvider)
             {
-                QueryService.ExecuteQuery(sqlServerDataProvider);
+                await QueryService.ExecuteQuery(sqlServerDataProvider);
             }
             else
             {

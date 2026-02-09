@@ -1,14 +1,14 @@
 ﻿using Microsoft.Data.SqlClient;
+using Sprout.Core.Factories;
 using Sprout.Core.Models.DataAdapters.DataProviders;
-using Sprout.Core.Models.GridActions;
-using System.Linq;
 
 namespace Sprout.Core.Services.Queries
 {
     public class QueryService
     {
-        public static void ExecuteQuery(SqlServerDataProvider dataProvider)
+        public static async Task ExecuteQuery(SqlServerDataProvider dataProvider)
         {
+            #warning separate query building from query execution
             var queryText = dataProvider.Text;
 
             var dependencyParameters = new List<SqlParameter>();
@@ -27,7 +27,6 @@ namespace Sprout.Core.Services.Queries
 
             if (dataProvider.Filters.Count > 0)
             {
-                //TODO: implement filtering
                 int filterIdx = 0;
 
                 foreach (var filter in dataProvider.Filters.Values)
@@ -102,81 +101,26 @@ namespace Sprout.Core.Services.Queries
                 }
             }
 
-
             using (var conn = new SqlConnection(dataProvider.ConnectionString))
             using (var cmd = new SqlCommand(queryText, conn))
             {
                 cmd.Parameters.AddRange(dependencyParameters.ToArray());
 
-                using (var da = new SqlDataAdapter(cmd))
-                {
-                    //cmd.Parameters.AddRange(AddDependencyParameters(query).ToArray());
-                    //if (parameters != null && parameters.Length > 0)
-                    //    cmd.Parameters.AddRange(parameters);
+                //prevents the UI from freezing if the connection is slow
+                await conn.OpenAsync();
 
-                    conn.Open();
-                    dataProvider.Data.Clear();
-                    da.Fill(dataProvider.Data);
+                var dt = DataTableFactory.Create();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    // Move the CPU-heavy loading to a background thread
+                    // This prevents the UI from freezing during the data parsing
+                    await Task.Run(() => dt.Load(reader));
+
+                    dataProvider.Data = dt;
                 }
             }
-
         }
-
-        //#warning move this to a factory for consistency with the design
-        //        public static Query CreateQuery(QueryConfig queryConfig)
-        //        {
-        //            ValidateQueryConfig(queryConfig);
-
-        //            var query = new Query
-        //            {
-        //                Name = queryConfig.ProviderName,
-        //                Text = queryConfig.Text,
-        //                TableName = queryConfig.TableName,
-        //                ConnectionString = queryConfig.ConnectionString
-        //            };
-
-        //            query.Dependencies = ParameterParser.ParseDependencies(query.Text);
-
-        //            AssignCommandIfAvailable(queryConfig.InsertCommand, query.InsertCommand);
-        //            AssignCommandIfAvailable(queryConfig.UpdateCommand, query.UpdateCommand);
-        //            AssignCommandIfAvailable(queryConfig.DeleteCommand, query.DeleteCommand);
-
-        //            return query;
-        //        }
-
-        //public static void BindDependencies(Query query, UiStateRegistry uiStateRegistry)
-        //{
-        //    foreach (var dep in query.Dependencies)
-        //    {
-        //        BindingOperations.SetBinding(
-        //            target: dep,
-        //            DataProviderDependency.ValueProperty,
-        //            new Binding
-        //            {
-        //                Source = uiStateRegistry,
-        //                Path = new PropertyPath($"[{dep.ControlName}].{dep.PropertyPath}")
-        //            });
-        //    }
-        //}
-
-        //private static void ValidateQueryConfig(QueryConfig queryConfig)
-        //{
-        //    ArgumentNullException.ThrowIfNull(queryConfig, nameof(QueryConfig.ProviderName));
-        //}
-
-        //private static void AssignCommandIfAvailable(TableOperationCommand tableOperationCommand, QueryCommand queryCommand)
-        //{
-        //    if (tableOperationCommand == null) return;
-
-        //    queryCommand.Text = tableOperationCommand.Text;
-        //    queryCommand.DefaultValues = tableOperationCommand.DefaultValues;
-        //}
-
-        //public static void ExecuteQueryAction(GridAction gridAction, Dictionary<string, IDataProvider> dataProviders)
-        //{
-
-        //	gridAction.Perform(dataProviders);
-        //}
 
         public class QueryParameter
         {
