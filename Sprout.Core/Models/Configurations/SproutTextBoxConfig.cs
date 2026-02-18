@@ -16,6 +16,8 @@ namespace Sprout.Core.Models.Configurations
 
         public double? Width { get; set; }
 
+        public string Margin { get; set; }
+
         /// <summary>
         /// Binding expression using the syntax {@ctrlName.Property.Path}
         /// </summary>

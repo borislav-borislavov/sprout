@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Sprout.Core.Factories
 {
@@ -36,6 +37,14 @@ namespace Sprout.Core.Factories
             {
                 sproutTextBox.lblTitle.Text = config.Title;
                 sproutTextBox.lblTitle.Visibility = Visibility.Visible;
+            }
+
+            if (!string.IsNullOrWhiteSpace(config.Margin))
+            {
+                if (new ThicknessConverter().ConvertFromString(config.Margin) is Thickness margin)
+                {
+                    sproutTextBox.Margin = margin;
+                }
             }
 
             AddControl(sproutTextBox, controls);
