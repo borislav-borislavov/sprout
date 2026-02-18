@@ -45,6 +45,11 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private bool _areFiltersVisible;
 
+        [ObservableProperty]
+        private ObservableCollection<GridConfig> _moveParentOptions = [];
+
+        private SproutControlConfig _moveSourceNode;
+
         public ObservableCollection<SproutPageConfiguration> NonMenuPages { get; set; }
 
         public EditPageVM(IConfigurationService configService,
@@ -152,6 +157,77 @@ namespace Sprout.Core.ViewModels
             }
 
             return null;
+        }
+
+        public void PrepareMove(SproutControlConfig source)
+        {
+            _moveSourceNode = source;
+            MoveParentOptions.Clear();
+
+            if (source == null) return;
+
+            // Don't allow moving the root node
+            if (FindParent(Controls, source) == null) return;
+
+            foreach (var grid in GetAllGridConfigs(Controls))
+            {
+                // Can't move a node into itself
+                if (source == grid) continue;
+
+                // Can't move a GridConfig into one of its own descendants
+                if (source is GridConfig sourceGrid && IsDescendant(sourceGrid, grid)) continue;
+
+                MoveParentOptions.Add(grid);
+            }
+        }
+
+        [RelayCommand]
+        private void MoveToParent(GridConfig newParent)
+        {
+            try
+            {
+                if (_moveSourceNode == null || newParent == null) return;
+
+                var currentParent = FindParent(Controls, _moveSourceNode);
+                if (currentParent == null || currentParent == newParent) return;
+
+                currentParent.Children.Remove(_moveSourceNode);
+                newParent.Children.Add(_moveSourceNode);
+                SelectedNode = _moveSourceNode;
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+            }
+        }
+
+        private static IEnumerable<GridConfig> GetAllGridConfigs(IEnumerable<SproutControlConfig> nodes)
+        {
+            foreach (var node in nodes)
+            {
+                if (node is GridConfig gridConfig)
+                {
+                    yield return gridConfig;
+
+                    foreach (var childGrid in GetAllGridConfigs(gridConfig.Children))
+                    {
+                        yield return childGrid;
+                    }
+                }
+            }
+        }
+
+        private static bool IsDescendant(GridConfig root, SproutControlConfig target)
+        {
+            foreach (var child in root.Children)
+            {
+                if (child == target) return true;
+
+                if (child is GridConfig childGrid && IsDescendant(childGrid, target))
+                    return true;
+            }
+
+            return false;
         }
 
         partial void OnSelectedNodeChanged(SproutControlConfig value)

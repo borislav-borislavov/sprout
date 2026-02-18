@@ -37,7 +37,13 @@
                 Grid.Row="1"
                 Margin="5,5,5,0"
                 SelectedItemChanged="ControlsTree_SelectedItemChanged"
+                ContextMenuOpening="ControlsTree_ContextMenuOpening"
                 ItemsSource="{Binding Controls}">
+                <TreeView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Move to" Name="MoveToMenuItem"/>
+                    </ContextMenu>
+                </TreeView.ContextMenu>
                 <TreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type config:GridConfig}" ItemsSource="{Binding Children}">
                         <StackPanel Orientation="Horizontal">
