@@ -47,6 +47,28 @@ namespace Sprout.Core.ViewModels
             }
         }
 
+        [RelayCommand]
+        private void MoveColumnUp()
+        {
+            if (SelectedDataGrid == null || SelectedColumn == null) return;
+
+            var index = SelectedDataGrid.Columns.IndexOf(SelectedColumn);
+            if (index <= 0) return;
+
+            SelectedDataGrid.Columns.Move(index, index - 1);
+        }
+
+        [RelayCommand]
+        private void MoveColumnDown()
+        {
+            if (SelectedDataGrid == null || SelectedColumn == null) return;
+
+            var index = SelectedDataGrid.Columns.IndexOf(SelectedColumn);
+            if (index < 0 || index >= SelectedDataGrid.Columns.Count - 1) return;
+
+            SelectedDataGrid.Columns.Move(index, index + 1);
+        }
+
         private static void AttachParameters(SqlCommand command, IEnumerable<SqlParameter> commandParameters)
         {
             foreach (SqlParameter p in commandParameters)

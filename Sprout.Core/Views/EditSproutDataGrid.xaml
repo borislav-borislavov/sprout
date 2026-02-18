@@ -38,6 +38,20 @@
                     Command="{Binding CompleteColumnsCommand}"
                     VerticalAlignment="Top"/>
 
+            <Button Content="Up"
+                    Height="35"
+                    Width="50"
+                    Margin="5"
+                    Command="{Binding MoveColumnUpCommand}"
+                    VerticalAlignment="Top"/>
+
+            <Button Content="Down"
+                    Height="35"
+                    Width="50"
+                    Margin="5"
+                    Command="{Binding MoveColumnDownCommand}"
+                    VerticalAlignment="Top"/>
+
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Available Views" Margin="5"/>
                 <ComboBox Name="AvailableViews"
