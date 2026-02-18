@@ -54,9 +54,8 @@ namespace Sprout.Core.Services.Configurations
                 {
                     if (page.Root == null) continue;
 
-                    if (page.Root is not GridConfig gridConfig) continue;
-
-                    SetNavigationProperties(gridConfig, page);
+                    if (page.Root is not GridConfig gridConfig) 
+                        throw new Exception("For now only the grid is supported as a root");
                 }
 
                 return debug;
@@ -65,18 +64,6 @@ namespace Sprout.Core.Services.Configurations
             {
                 //TODO: logging
                 return GetSproutConfiguration();
-            }
-        }
-
-        private void SetNavigationProperties(GridConfig gridConfig, SproutPageConfiguration page)
-        {
-            foreach (var child in gridConfig.Children)
-            {
-                //child.Parent = gridConfig;
-                //if (child is GridConfig childGrid)
-                //{
-                //    SetNavigationProperties(childGrid);
-                //}
             }
         }
 

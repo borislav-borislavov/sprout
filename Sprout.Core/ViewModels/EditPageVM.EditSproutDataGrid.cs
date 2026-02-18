@@ -122,7 +122,8 @@ namespace Sprout.Core.ViewModels
                                         {
                                             BindingPath = column.ColumnName,
                                             Header = column.ColumnName,
-                                            ColumnType = ColumnType.Text
+                                            ColumnType = ColumnType.Text,
+                                            IsReadOnly = column.IsReadOnly == true || column.IsAutoIncrement == true
                                         });
                                     }
                                 }

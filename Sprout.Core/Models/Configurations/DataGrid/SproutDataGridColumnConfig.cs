@@ -16,6 +16,7 @@ namespace Sprout.Core.Models.Configurations.DataGrid
         public string BindingPath { get; set; }
 
         public ColumnType ColumnType { get; set; }
+        public bool IsReadOnly { get; set; }
     }
 
     public enum ColumnType

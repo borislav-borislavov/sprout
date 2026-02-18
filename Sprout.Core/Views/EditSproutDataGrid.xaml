@@ -31,7 +31,7 @@
                     Command="{Binding DeleteColumnCommand}"
                     VerticalAlignment="Top"/>
 
-            <Button Content="Completecolumns"
+            <Button Content="CompleteColumns"
                     Height="35"
                     Width="110"
                     Margin="5"
@@ -42,11 +42,10 @@
                 <TextBlock Text="Available Views" Margin="5"/>
                 <ComboBox Name="AvailableViews"
                           ItemsSource="{Binding NonMenuPages}"
-                          SelectedValuePath="Title"
                           DisplayMemberPath="Title"
-                          SelectedValue="{Binding SelectedDataGrid.ItemDisplayPage.Title, Mode=TwoWay}"
+                          SelectedValuePath="ID"
+                          SelectedValue="{Binding SelectedDataGrid.ItemDisplayPage, Mode=TwoWay}"
                           />
-                <Button Content="Select" />
             </StackPanel>
         </StackPanel>
         

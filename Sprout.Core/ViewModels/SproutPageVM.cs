@@ -1,6 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Sprout.Core.Factories;
+using Sprout.Core.Messages;
+using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
@@ -21,6 +24,11 @@ namespace Sprout.Core.ViewModels
         private readonly IDialogService _dialogService;
 
         public SproutPageConfiguration PageConfig { get; private set; }
+
+        /// <summary>
+        /// The starting args that a page receives when started as a child page
+        /// </summary>
+        public SproutPageUIState SproutPageUIState { get; } = new();
 
         public Dictionary<string, Dictionary<string, GridAction>> GridActions { get; set; } = [];
 
@@ -74,6 +82,11 @@ namespace Sprout.Core.ViewModels
             {
                 _dialogService.ShowMessage(ex.Message, "Ctor Error", DialogButton.OK, DialogImage.Error);
             }
+        }
+
+        public void RegisterOwnUIState()
+        {
+            UiStateRegistry.Register("Page", SproutPageUIState);
         }
 
         public void CreateDataAdapters()
@@ -139,6 +152,35 @@ namespace Sprout.Core.ViewModels
             {
                 _dialogService.ShowMessage(ex.Message, "Filter Error", DialogButton.OK, DialogImage.Error);
             }
+        }
+
+        [RelayCommand]
+        private void DisplayItemPage(object parameter)
+        {
+            if (parameter is not ItemDisplayPageInfo itemDisplayInfo)
+                return;
+
+            var sproutGridUiState = UiStateRegistry.Get<SproutGridUIState>(itemDisplayInfo.GridName);
+
+            if (sproutGridUiState == null)
+            {
+                //TODO
+                return;
+            }
+
+            if (sproutGridUiState.Selected == null)
+            {
+                //TODO
+                return;
+            }
+
+            var args = new OpenTabMessageArgs()
+            {
+                PageConfigID = itemDisplayInfo.ItemDisplayPageID,
+                Parameter = sproutGridUiState.Selected
+            };
+
+            WeakReferenceMessenger.Default.Send(new OpenTabMessage(args));
         }
     }
 }

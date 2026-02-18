@@ -25,14 +25,31 @@ namespace Sprout.Core.Factories
 
             foreach (var colConfig in sproutGridConfig.Columns ?? [])
             {
-                var col = new DataGridTextColumn()
+                DataGridColumn col = null;
+
+                if (colConfig.ColumnType == ColumnType.Check)
                 {
-                    Header = colConfig.Header,
-                    Binding = new System.Windows.Data.Binding(colConfig.BindingPath),
-                    Width = DataGridLength.Auto
-                };
+                    col = new DataGridCheckBoxColumn()
+                    {
+                        Header = colConfig.Header,
+                        Binding = new System.Windows.Data.Binding(colConfig.BindingPath),
+                        Width = DataGridLength.Auto,
+                        IsReadOnly = colConfig.IsReadOnly
+                    };
+                }
+                else
+                {
+                    col = new DataGridTextColumn()
+                    {
+                        Header = colConfig.Header,
+                        Binding = new System.Windows.Data.Binding(colConfig.BindingPath),
+                        Width = DataGridLength.Auto,
+                        IsReadOnly = colConfig.IsReadOnly
+                    };
+                }
 
                 sproutDataGrid.dataGrid.Columns.Add(col);
+
             }
 
             AddControl(sproutDataGrid, controls);

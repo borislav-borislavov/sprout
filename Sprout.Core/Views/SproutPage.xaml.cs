@@ -1,4 +1,6 @@
-﻿using Sprout.Core.Factories;
+﻿using Sprout.Core.Behaviours;
+using Sprout.Core.Factories;
+using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.DataAdapters.Filters;
@@ -79,60 +81,77 @@ namespace Sprout.Core.Views
                             Mode = BindingMode.OneWay
                         });
 
-                    if (sproutDataGrid.Config.AllowInsert)
+                    if (sproutDataGrid.Config.ItemDisplayPage != Guid.Empty)
                     {
-                        sproutDataGrid.btnInsert.SetBinding(Button.CommandProperty,
-                            new Binding(nameof(SproutPageVM.PerformActionCommand))
-                            {
-                                Mode = BindingMode.OneWay
-                            });
+                        sproutDataGrid.dataGrid.IsReadOnly = true;
 
-                        //create the grid action
-                        vm.GridActions[sproutDataGrid.Name][nameof(AddRowGridAction)] = new AddRowGridAction(sproutDataGrid.Name);
+                        DataGridDoubleClickBehavior.SetDoubleClickCommand(sproutDataGrid.dataGrid, vm.DisplayItemPageCommand);
+                        var itemDisplayPageInfo = new ItemDisplayPageInfo
+                        {
+                            GridName = sproutDataGrid.Name,
+                            ItemDisplayPageID = sproutDataGrid.Config.ItemDisplayPage
+                        };
 
+                        DataGridDoubleClickBehavior.SetDoubleClickCommandParameter(sproutDataGrid.dataGrid, itemDisplayPageInfo);
 
-                        //bind to the newly created grid action
-                        sproutDataGrid.btnInsert.SetBinding(Button.CommandParameterProperty,
-                            new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(AddRowGridAction)}]")
-                            {
-                                Mode = BindingMode.OneWay
-                            });
                     }
-
-                    if (sproutDataGrid.Config.AllowDelete)
+                    else
                     {
-                        sproutDataGrid.btnDelete.SetBinding(Button.CommandProperty,
-                                    new Binding(nameof(SproutPageVM.PerformActionCommand))
-                                    {
-                                        Mode = BindingMode.OneWay
-                                    });
+                        if (sproutDataGrid.Config.AllowInsert)
+                        {
+                            sproutDataGrid.btnInsert.SetBinding(Button.CommandProperty,
+                                new Binding(nameof(SproutPageVM.PerformActionCommand))
+                                {
+                                    Mode = BindingMode.OneWay
+                                });
 
-                        //create the grid action
-                        vm.GridActions[sproutDataGrid.Name][nameof(MarkDeletedGridAction)] = new MarkDeletedGridAction(sproutDataGrid.Name);
+                            //create the grid action
+                            vm.GridActions[sproutDataGrid.Name][nameof(AddRowGridAction)] = new AddRowGridAction(sproutDataGrid.Name);
 
-                        //bind to the newly created grid action
-                        sproutDataGrid.btnDelete.SetBinding(Button.CommandParameterProperty,
-                            new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(MarkDeletedGridAction)}]")
-                            {
-                                Mode = BindingMode.OneWay
-                            });
-                    }
 
-                    if (sproutDataGrid.Config.ShowSave)
-                    {
-                        sproutDataGrid.btnSave.SetBinding(Button.CommandProperty,
-                            new Binding(nameof(SproutPageVM.PerformActionCommand))
-                            {
-                                Mode = BindingMode.OneWay
-                            });
+                            //bind to the newly created grid action
+                            sproutDataGrid.btnInsert.SetBinding(Button.CommandParameterProperty,
+                                new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(AddRowGridAction)}]")
+                                {
+                                    Mode = BindingMode.OneWay
+                                });
+                        }
 
-                        vm.GridActions[sproutDataGrid.Name][nameof(SaveGridAction)] = new SaveGridAction(sproutDataGrid.Config.Name);
+                        if (sproutDataGrid.Config.AllowDelete)
+                        {
+                            sproutDataGrid.btnDelete.SetBinding(Button.CommandProperty,
+                                        new Binding(nameof(SproutPageVM.PerformActionCommand))
+                                        {
+                                            Mode = BindingMode.OneWay
+                                        });
 
-                        sproutDataGrid.btnSave.SetBinding(Button.CommandParameterProperty,
-                              new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(SaveGridAction)}]")
-                              {
-                                  Mode = BindingMode.OneWay
-                              });
+                            //create the grid action
+                            vm.GridActions[sproutDataGrid.Name][nameof(MarkDeletedGridAction)] = new MarkDeletedGridAction(sproutDataGrid.Name);
+
+                            //bind to the newly created grid action
+                            sproutDataGrid.btnDelete.SetBinding(Button.CommandParameterProperty,
+                                new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(MarkDeletedGridAction)}]")
+                                {
+                                    Mode = BindingMode.OneWay
+                                });
+                        }
+
+                        if (sproutDataGrid.Config.ShowSave)
+                        {
+                            sproutDataGrid.btnSave.SetBinding(Button.CommandProperty,
+                                new Binding(nameof(SproutPageVM.PerformActionCommand))
+                                {
+                                    Mode = BindingMode.OneWay
+                                });
+
+                            vm.GridActions[sproutDataGrid.Name][nameof(SaveGridAction)] = new SaveGridAction(sproutDataGrid.Config.Name);
+
+                            sproutDataGrid.btnSave.SetBinding(Button.CommandParameterProperty,
+                                  new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(SaveGridAction)}]")
+                                  {
+                                      Mode = BindingMode.OneWay
+                                  });
+                        }
                     }
 
                     if (sproutDataGrid.Config.DataAdapter != null)
@@ -189,6 +208,8 @@ namespace Sprout.Core.Views
                     vm.UiStateRegistry.Register(sproutCombo.UIState.Name, sproutCombo.UIState);
                 }
             }
+
+            vm.RegisterOwnUIState();
         }
 
         private void SproutPage_Loaded(object sender, RoutedEventArgs e)

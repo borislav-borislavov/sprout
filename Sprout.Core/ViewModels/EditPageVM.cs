@@ -58,7 +58,7 @@ namespace Sprout.Core.ViewModels
 
             var nonMenuPages = _configService.Load().Pages.Where(p => p.AddToMenu == false);
             NonMenuPages = new ObservableCollection<SproutPageConfiguration>(nonMenuPages);
-            NonMenuPages.Insert(0, new SproutPageConfiguration { Title = "NULL"});
+            NonMenuPages.Insert(0, new SproutPageConfiguration { Title = "NULL", ID = Guid.Empty });
         }
 
         public void Initialize(SproutPageConfiguration pageConfig)

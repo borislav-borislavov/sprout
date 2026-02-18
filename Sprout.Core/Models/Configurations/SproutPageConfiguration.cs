@@ -4,6 +4,8 @@
 	{
 		public string Title { get; set; }
 
+        public Guid ID { get; set; }
+
         public bool AddToMenu { get; set; }
 
         public SproutControlConfig Root { get; set; }
