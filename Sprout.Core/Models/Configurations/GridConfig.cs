@@ -15,6 +15,10 @@ namespace Sprout.Core.Models.Configurations
 
         public bool ShowGridLines { get; set; }
 
+        public string Background { get; set; }
+
+        public string Margin { get; set; }
+
         public ObservableCollection<SproutControlConfig> Children { get; set; } = [];
     }
 }

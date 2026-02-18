@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Sprout.Core.Factories
 {
@@ -19,6 +20,22 @@ namespace Sprout.Core.Factories
             AddControl(grid, controls);
 
             grid.ShowGridLines = gridConfig.ShowGridLines;
+
+            if (!string.IsNullOrWhiteSpace(gridConfig.Background))
+            {
+                if (ColorConverter.ConvertFromString(gridConfig.Background) is Color color)
+                {
+                    grid.Background = new SolidColorBrush(color);
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(gridConfig.Margin))
+            {
+                if (new ThicknessConverter().ConvertFromString(gridConfig.Margin) is Thickness margin)
+                {
+                    grid.Margin = margin;
+                }
+            }
 
             foreach (var colSize in gridConfig.Columns)
             {
