@@ -69,6 +69,16 @@
                             <TextBlock Text="{Binding Name}"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
+
+                    <HierarchicalDataTemplate DataType="{x:Type config:SproutTextBoxConfig}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                FontFamily="Segoe Fluent Icons"
+                                Text="&#xe8d2;"
+                                Margin="3"/>
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
                 </TreeView.Resources>
             </TreeView>
 
@@ -103,6 +113,18 @@
                             FontSize="25"
                             Text="&#xE948;" />
                 </Button>
+
+                <Button
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ToolTip="Remove Control"
+                    Command="{Binding RemoveControlCommand}"
+                    Margin="5">
+                    <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="25"
+                            Text="&#xE74D;" />
+                </Button>
             </StackPanel>
 
         </Grid>
@@ -135,6 +157,14 @@
 
                         <DataTemplate DataType="{x:Type config:SproutComboConfig}">
                             <views:EditSproutCombo/>
+                        </DataTemplate>
+
+                        <DataTemplate DataType="{x:Type config:GridConfig}">
+                            <views:EditGridConfig/>
+                        </DataTemplate>
+
+                        <DataTemplate DataType="{x:Type config:SproutTextBoxConfig}">
+                            <views:EditSproutTextBox/>
                         </DataTemplate>
                     </Grid.Resources>
 

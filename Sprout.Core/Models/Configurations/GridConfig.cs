@@ -13,6 +13,8 @@ namespace Sprout.Core.Models.Configurations
 
         public List<string> Columns { get; set; } = [];
 
+        public bool ShowGridLines { get; set; }
+
         public ObservableCollection<SproutControlConfig> Children { get; set; } = [];
     }
 }

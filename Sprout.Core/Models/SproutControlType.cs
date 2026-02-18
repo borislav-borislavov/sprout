@@ -12,5 +12,6 @@ namespace Sprout.Core.Models
         DataGrid,
         ComboBox,
         Button,
+        TextBox,
     }
 }

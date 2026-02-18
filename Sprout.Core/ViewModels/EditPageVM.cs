@@ -115,6 +115,45 @@ namespace Sprout.Core.ViewModels
             }
         }
 
+        [RelayCommand]
+        private void RemoveControl()
+        {
+            try
+            {
+                if (SelectedNode == null) return;
+
+                var parent = FindParent(Controls, SelectedNode);
+
+                if (parent == null) return;
+
+                parent.Children.Remove(SelectedNode);
+                SelectedNode = null;
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+            }
+        }
+
+        private static GridConfig FindParent(IEnumerable<SproutControlConfig> nodes, SproutControlConfig target)
+        {
+            foreach (var node in nodes)
+            {
+                if (node is GridConfig gridConfig)
+                {
+                    if (gridConfig.Children.Contains(target))
+                    {
+                        return gridConfig;
+                    }
+
+                    var result = FindParent(gridConfig.Children, target);
+                    if (result != null) return result;
+                }
+            }
+
+            return null;
+        }
+
         partial void OnSelectedNodeChanged(SproutControlConfig value)
         {
             try

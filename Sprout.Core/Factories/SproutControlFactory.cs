@@ -25,6 +25,8 @@ namespace Sprout.Core.Factories
                     return SproutDataGridFactory.GenerateSproutGrid(sproutGridConfig, controls);
                 case SproutComboConfig sproutComboConfig:
                     return SproutComboFactory.Create(sproutComboConfig, controls);
+                case SproutTextBoxConfig sproutTextBoxConfig:
+                    return SproutTextBoxFactory.Create(sproutTextBoxConfig, controls);
                 default:
                     throw new NotImplementedException();
             }

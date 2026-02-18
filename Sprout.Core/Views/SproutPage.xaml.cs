@@ -39,177 +39,206 @@ namespace Sprout.Core.Views
 
         private void InitializePage(SproutPageVM vm)
         {
-            if (_isInitialized)
+            try
             {
-                return;
-            }
-
-            Dictionary<string, UIElement> _controls = [];
-
-            //step 1 - generate UI controls
-            this.Content = SproutControlFactory.GetControl(vm.PageConfig.Root, _controls);
-
-            //step 2 - hook up control bindings (move this to a better place)
-            foreach (var kvp in _controls)
-            {
-                if (kvp.Value is SproutDataGrid sproutDataGrid)
+                if (_isInitialized)
                 {
-                    if (!string.IsNullOrEmpty(sproutDataGrid.Name))
+                    return;
+                }
+
+                Dictionary<string, UIElement> _controls = [];
+
+                //step 1 - generate UI controls
+                this.Content = SproutControlFactory.GetControl(vm.PageConfig.Root, _controls);
+
+                vm.RegisterOwnUIState();
+
+                //step 2 - hook up control bindings (move this to a better place)
+                foreach (var kvp in _controls)
+                {
+                    if (kvp.Value is SproutDataGrid sproutDataGrid)
                     {
-                        sproutDataGrid.dataGrid.SetBinding(DataGrid.ItemsSourceProperty,
-                            new Binding($"DataProviders[{sproutDataGrid.Name}].Data")
+                        if (!string.IsNullOrEmpty(sproutDataGrid.Name))
+                        {
+                            sproutDataGrid.dataGrid.SetBinding(DataGrid.ItemsSourceProperty,
+                                new Binding($"DataProviders[{sproutDataGrid.Name}].Data")
+                                {
+                                    Mode = BindingMode.OneWay
+                                });
+                        }
+
+                        //initialize grid actions
+                        vm.GridActions.Add(sproutDataGrid.Name, []);
+
+                        sproutDataGrid.btnRefresh.SetBinding(Button.CommandProperty,
+                            new Binding(nameof(SproutPageVM.PerformActionCommand))
                             {
                                 Mode = BindingMode.OneWay
                             });
-                    }
 
-                    //initialize grid actions
-                    vm.GridActions.Add(sproutDataGrid.Name, []);
+                        //create the grid action
+                        vm.GridActions[sproutDataGrid.Name][nameof(RefreshDataGridAction)] = new RefreshDataGridAction(sproutDataGrid.Name);
 
-                    sproutDataGrid.btnRefresh.SetBinding(Button.CommandProperty,
-                        new Binding(nameof(SproutPageVM.PerformActionCommand))
-                        {
-                            Mode = BindingMode.OneWay
-                        });
-
-                    //create the grid action
-                    vm.GridActions[sproutDataGrid.Name][nameof(RefreshDataGridAction)] = new RefreshDataGridAction(sproutDataGrid.Name);
-
-                    sproutDataGrid.btnRefresh.SetBinding(Button.CommandParameterProperty,
-                        new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(RefreshDataGridAction)}]")
-                        {
-                            Mode = BindingMode.OneWay
-                        });
-
-                    if (sproutDataGrid.Config.ItemDisplayPage != Guid.Empty)
-                    {
-                        sproutDataGrid.dataGrid.IsReadOnly = true;
-
-                        DataGridDoubleClickBehavior.SetDoubleClickCommand(sproutDataGrid.dataGrid, vm.DisplayItemPageCommand);
-                        var itemDisplayPageInfo = new ItemDisplayPageInfo
-                        {
-                            GridName = sproutDataGrid.Name,
-                            ItemDisplayPageID = sproutDataGrid.Config.ItemDisplayPage
-                        };
-
-                        DataGridDoubleClickBehavior.SetDoubleClickCommandParameter(sproutDataGrid.dataGrid, itemDisplayPageInfo);
-
-                    }
-                    else
-                    {
-                        if (sproutDataGrid.Config.AllowInsert)
-                        {
-                            sproutDataGrid.btnInsert.SetBinding(Button.CommandProperty,
-                                new Binding(nameof(SproutPageVM.PerformActionCommand))
-                                {
-                                    Mode = BindingMode.OneWay
-                                });
-
-                            //create the grid action
-                            vm.GridActions[sproutDataGrid.Name][nameof(AddRowGridAction)] = new AddRowGridAction(sproutDataGrid.Name);
-
-
-                            //bind to the newly created grid action
-                            sproutDataGrid.btnInsert.SetBinding(Button.CommandParameterProperty,
-                                new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(AddRowGridAction)}]")
-                                {
-                                    Mode = BindingMode.OneWay
-                                });
-                        }
-
-                        if (sproutDataGrid.Config.AllowDelete)
-                        {
-                            sproutDataGrid.btnDelete.SetBinding(Button.CommandProperty,
-                                        new Binding(nameof(SproutPageVM.PerformActionCommand))
-                                        {
-                                            Mode = BindingMode.OneWay
-                                        });
-
-                            //create the grid action
-                            vm.GridActions[sproutDataGrid.Name][nameof(MarkDeletedGridAction)] = new MarkDeletedGridAction(sproutDataGrid.Name);
-
-                            //bind to the newly created grid action
-                            sproutDataGrid.btnDelete.SetBinding(Button.CommandParameterProperty,
-                                new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(MarkDeletedGridAction)}]")
-                                {
-                                    Mode = BindingMode.OneWay
-                                });
-                        }
-
-                        if (sproutDataGrid.Config.ShowSave)
-                        {
-                            sproutDataGrid.btnSave.SetBinding(Button.CommandProperty,
-                                new Binding(nameof(SproutPageVM.PerformActionCommand))
-                                {
-                                    Mode = BindingMode.OneWay
-                                });
-
-                            vm.GridActions[sproutDataGrid.Name][nameof(SaveGridAction)] = new SaveGridAction(sproutDataGrid.Config.Name);
-
-                            sproutDataGrid.btnSave.SetBinding(Button.CommandParameterProperty,
-                                  new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(SaveGridAction)}]")
-                                  {
-                                      Mode = BindingMode.OneWay
-                                  });
-                        }
-                    }
-
-                    if (sproutDataGrid.Config.DataAdapter != null)
-                    {
-                        if (sproutDataGrid.Config.DataAdapter is SqlServerDataAdapterConfig sqlServerDataAdapterConfig)
-                        {
-                            var dataProvider = sqlServerDataAdapterConfig.DataProvider as SqlServerDataProviderConfig;
-
-                            if (dataProvider.FilterConfigs.Any())
+                        sproutDataGrid.btnRefresh.SetBinding(Button.CommandParameterProperty,
+                            new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(RefreshDataGridAction)}]")
                             {
-                                //i should add a general apply filters button the dataGrid UI
-                                foreach (var filterConfig in dataProvider.FilterConfigs)
-                                {
-                                    //UI
-                                    var filterView = SproutDataGridFilterFactory.GetFilter(filterConfig);
+                                Mode = BindingMode.OneWay
+                            });
 
-                                    sproutDataGrid.spFilters.Children.Add(filterView);
+                        if (sproutDataGrid.Config.ItemDisplayPage != Guid.Empty)
+                        {
+                            sproutDataGrid.dataGrid.IsReadOnly = true;
 
-                                    var filter = vm.DataProviders[sproutDataGrid.Name].Filters[filterConfig.Title];
+                            DataGridDoubleClickBehavior.SetDoubleClickCommand(sproutDataGrid.dataGrid, vm.DisplayItemPageCommand);
+                            var itemDisplayPageInfo = new ItemDisplayPageInfo
+                            {
+                                GridName = sproutDataGrid.Name,
+                                ItemDisplayPageID = sproutDataGrid.Config.ItemDisplayPage
+                            };
 
-                                    if (filterView is SproutDataGridTextFilter textFilter)
+                            DataGridDoubleClickBehavior.SetDoubleClickCommandParameter(sproutDataGrid.dataGrid, itemDisplayPageInfo);
+
+                        }
+                        else
+                        {
+                            if (sproutDataGrid.Config.AllowInsert)
+                            {
+                                sproutDataGrid.btnInsert.SetBinding(Button.CommandProperty,
+                                    new Binding(nameof(SproutPageVM.PerformActionCommand))
                                     {
-                                        textFilter.tbFilterValue.SetBinding(TextBox.TextProperty,
-                                            new Binding($"DataProviders[{sproutDataGrid.Name}].Filters[{filterConfig.Title}].{nameof(IFilter.StartValue)}")
-                                            {
-                                                Mode = BindingMode.OneWayToSource,
-                                                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-                                            });
-                                    }
-                                }
+                                        Mode = BindingMode.OneWay
+                                    });
 
-                                sproutDataGrid.btnApplyFilters.SetBinding(Button.CommandProperty,
-                                    new Binding(nameof(SproutPageVM.FilterCommand))
+                                //create the grid action
+                                vm.GridActions[sproutDataGrid.Name][nameof(AddRowGridAction)] = new AddRowGridAction(sproutDataGrid.Name);
+
+
+                                //bind to the newly created grid action
+                                sproutDataGrid.btnInsert.SetBinding(Button.CommandParameterProperty,
+                                    new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(AddRowGridAction)}]")
                                     {
                                         Mode = BindingMode.OneWay
                                     });
                             }
+
+                            if (sproutDataGrid.Config.AllowDelete)
+                            {
+                                sproutDataGrid.btnDelete.SetBinding(Button.CommandProperty,
+                                            new Binding(nameof(SproutPageVM.PerformActionCommand))
+                                            {
+                                                Mode = BindingMode.OneWay
+                                            });
+
+                                //create the grid action
+                                vm.GridActions[sproutDataGrid.Name][nameof(MarkDeletedGridAction)] = new MarkDeletedGridAction(sproutDataGrid.Name);
+
+                                //bind to the newly created grid action
+                                sproutDataGrid.btnDelete.SetBinding(Button.CommandParameterProperty,
+                                    new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(MarkDeletedGridAction)}]")
+                                    {
+                                        Mode = BindingMode.OneWay
+                                    });
+                            }
+
+                            if (sproutDataGrid.Config.ShowSave)
+                            {
+                                sproutDataGrid.btnSave.SetBinding(Button.CommandProperty,
+                                    new Binding(nameof(SproutPageVM.PerformActionCommand))
+                                    {
+                                        Mode = BindingMode.OneWay
+                                    });
+
+                                vm.GridActions[sproutDataGrid.Name][nameof(SaveGridAction)] = new SaveGridAction(sproutDataGrid.Config.Name);
+
+                                sproutDataGrid.btnSave.SetBinding(Button.CommandParameterProperty,
+                                      new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(SaveGridAction)}]")
+                                      {
+                                          Mode = BindingMode.OneWay
+                                      });
+                            }
                         }
-                        else
-                            throw new NotImplementedException();
+
+                        if (sproutDataGrid.Config.DataAdapter != null)
+                        {
+                            if (sproutDataGrid.Config.DataAdapter is SqlServerDataAdapterConfig sqlServerDataAdapterConfig)
+                            {
+                                var dataProvider = sqlServerDataAdapterConfig.DataProvider as SqlServerDataProviderConfig;
+
+                                if (dataProvider.FilterConfigs.Any())
+                                {
+                                    //i should add a general apply filters button the dataGrid UI
+                                    foreach (var filterConfig in dataProvider.FilterConfigs)
+                                    {
+                                        //UI
+                                        var filterView = SproutDataGridFilterFactory.GetFilter(filterConfig);
+
+                                        sproutDataGrid.spFilters.Children.Add(filterView);
+
+                                        var filter = vm.DataProviders[sproutDataGrid.Name].Filters[filterConfig.Title];
+
+                                        if (filterView is SproutDataGridTextFilter textFilter)
+                                        {
+                                            textFilter.tbFilterValue.SetBinding(TextBox.TextProperty,
+                                                new Binding($"DataProviders[{sproutDataGrid.Name}].Filters[{filterConfig.Title}].{nameof(IFilter.StartValue)}")
+                                                {
+                                                    Mode = BindingMode.OneWayToSource,
+                                                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                                                });
+                                        }
+                                    }
+
+                                    sproutDataGrid.btnApplyFilters.SetBinding(Button.CommandProperty,
+                                        new Binding(nameof(SproutPageVM.FilterCommand))
+                                        {
+                                            Mode = BindingMode.OneWay
+                                        });
+                                }
+                            }
+                            else
+                                throw new NotImplementedException();
+                        }
+
+                        vm.UiStateRegistry.Register(sproutDataGrid.UIState.Name, sproutDataGrid.UIState);
                     }
 
-                    vm.UiStateRegistry.Register(sproutDataGrid.UIState.Name, sproutDataGrid.UIState);
-                }
+                    if (kvp.Value is SproutCombo sproutCombo)
+                    {
+                        sproutCombo.comboBox.SetBinding(ComboBox.ItemsSourceProperty,
+                            new Binding($"DataProviders[{sproutCombo.Name}].Data")
+                            {
+                                Mode = BindingMode.OneWay
+                            });
 
-                if (kvp.Value is SproutCombo sproutCombo)
-                {
-                    sproutCombo.comboBox.SetBinding(ComboBox.ItemsSourceProperty,
-                        new Binding($"DataProviders[{sproutCombo.Name}].Data")
+                        vm.UiStateRegistry.Register(sproutCombo.UIState.Name, sproutCombo.UIState);
+                    }
+
+                    if (kvp.Value is SproutTextBox sproutTextBox)
+                    {
+                        if (!string.IsNullOrEmpty(sproutTextBox.Config.Binding))
                         {
-                            Mode = BindingMode.OneWay
-                        });
+                            var dependency = ParameterParser.ParseDependencies(sproutTextBox.Config.Binding).FirstOrDefault();
 
-                    vm.UiStateRegistry.Register(sproutCombo.UIState.Name, sproutCombo.UIState);
+                            if (dependency != null)
+                            {
+                                sproutTextBox.textBox.SetBinding(
+                                    TextBox.TextProperty,
+                                    new Binding
+                                    {
+                                        Source = vm.UiStateRegistry,
+                                        Path = new PropertyPath($"[{dependency.ControlName}].{dependency.PropertyPath}"),
+                                        Mode = BindingMode.TwoWay
+                                    });
+                            }
+                        }
+
+                        vm.UiStateRegistry.Register(sproutTextBox.UIState.Name, sproutTextBox.UIState);
+                    }
                 }
             }
-
-            vm.RegisterOwnUIState();
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Error");
+            }
         }
 
         private void SproutPage_Loaded(object sender, RoutedEventArgs e)

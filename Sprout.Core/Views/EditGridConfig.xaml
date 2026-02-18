@@ -1,0 +1,149 @@
+<UserControl x:Class="Sprout.Core.Views.EditGridConfig"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Sprout.Core.Views"
+             xmlns:config="clr-namespace:Sprout.Core.Models.Configurations"
+             
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance config:GridConfig}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <!--Name-->
+        <TextBlock
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="5"
+            VerticalAlignment="Top"
+            Text="Name"
+            FontWeight="Bold"
+            FontSize="16"/>
+
+        <TextBox
+            Grid.Row="0"
+            Grid.Column="1"
+            VerticalAlignment="Top"
+            Margin="5"
+            Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!--ShowGridLines-->
+        <TextBlock
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="5"
+            VerticalAlignment="Center"
+            Text="Show Grid Lines"
+            FontWeight="Bold"
+            FontSize="16"/>
+
+        <CheckBox
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="5"
+            VerticalAlignment="Center"
+            IsChecked="{Binding ShowGridLines, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!--Rows-->
+        <TextBlock
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Margin="5"
+            VerticalAlignment="Top"
+            Text="Rows"
+            FontWeight="Bold"
+            FontSize="16"/>
+
+        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <DataGrid
+                Name="RowsGrid"
+                AutoGenerateColumns="False"
+                CanUserAddRows="False"
+                HeadersVisibility="Column"
+                Margin="0,0,5,0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Row Definition" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <TextBlock
+                Grid.Row="1"
+                Margin="5,2,5,0"
+                Text="{Binding Items.Count, ElementName=RowsGrid, StringFormat='Total: {0}'}"/>
+
+            <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Top">
+                <Button Content="Add" Height="30" Width="60" Margin="5" Click="AddRow_Click"/>
+                <Button Content="Remove" Height="30" Width="60" Margin="5" Click="RemoveRow_Click"/>
+            </StackPanel>
+        </Grid>
+
+        <!--Columns-->
+        <TextBlock
+            Grid.Row="4"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Margin="5"
+            VerticalAlignment="Top"
+            Text="Columns"
+            FontWeight="Bold"
+            FontSize="16"/>
+
+        <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <DataGrid
+                Name="ColumnsGrid"
+                AutoGenerateColumns="False"
+                CanUserAddRows="False"
+                HeadersVisibility="Column"
+                Margin="0,0,5,0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Column Definition" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <TextBlock
+                Grid.Row="1"
+                Margin="5,2,5,0"
+                Text="{Binding Items.Count, ElementName=ColumnsGrid, StringFormat='Total: {0}'}"/>
+
+            <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Top">
+                <Button Content="Add" Height="30" Width="60" Margin="5" Click="AddColumn_Click"/>
+                <Button Content="Remove" Height="30" Width="60" Margin="5" Click="RemoveColumn_Click"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
