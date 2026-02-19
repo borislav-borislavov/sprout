@@ -68,7 +68,7 @@
             Margin="5"
             CanUserAddRows="False"
             SelectedItem="{Binding SelectedColumn}"
-            ItemsSource="{Binding SelectedNode.Columns}">
+            ItemsSource="{Binding SelectedDataGrid.Columns}">
             
         </DataGrid>
     </Grid>

@@ -26,7 +26,7 @@
                      Grid.Column="0"
                      Grid.Row="0"
                      SelectedItem="{Binding SelectedFilter}"
-                     ItemsSource="{Binding SelectedNode.DataAdapter.DataProvider.FilterConfigs}">
+                     ItemsSource="{Binding SelectedDataGrid.DataAdapter.DataProvider.FilterConfigs}">
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>

@@ -194,7 +194,11 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="DataAdapter">
+            <TabItem Header="DataAdapter"
+                     Visibility="{Binding 
+                        RelativeSource={RelativeSource AncestorType=Window},
+                        Path=DataContext.IsDataAdapterVisible,
+                        Converter={StaticResource BoolToVis}}">
                 <views:QueryManager DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext}" />
             </TabItem>
 

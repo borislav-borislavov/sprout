@@ -46,6 +46,9 @@ namespace Sprout.Core.ViewModels
         private bool _areFiltersVisible;
 
         [ObservableProperty]
+        private bool _isDataAdapterVisible;
+
+        [ObservableProperty]
         private ObservableCollection<GridConfig> _moveParentOptions = [];
 
         private SproutControlConfig _moveSourceNode;
@@ -247,6 +250,7 @@ namespace Sprout.Core.ViewModels
 
                 if (value is IDataAdapterControlConfig dataAdapterControlConfig)
                 {
+                    IsDataAdapterVisible = true;
                     SelectedDataAdapter = dataAdapterControlConfig.DataAdapter;
 
                     if (dataAdapterControlConfig.DataAdapter is SqlServerDataAdapterConfig sqlServerDataAdapterConfig)
@@ -262,6 +266,7 @@ namespace Sprout.Core.ViewModels
                 }
                 else
                 {
+                    IsDataAdapterVisible = false;
                     SelectedAdapterType = null;
                     SelectedAdapterViewModel = null;
                 }
