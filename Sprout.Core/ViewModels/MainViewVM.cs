@@ -19,11 +19,12 @@ namespace Sprout.Core.ViewModels
         private ObservableCollection<SproutPageConfiguration> _pageConfigs;
 
         [ObservableProperty]
-        private ObservableCollection<SproutPageVM> _tabs = [];
+
+        private ObservableCollection<ObservableObject> _tabs = [];
 
         [NotifyCanExecuteChangedFor(nameof(EditPageCommand))]
         [ObservableProperty]
-        private SproutPageVM _selectedTab;
+        private ObservableObject _selectedTab;
 
         private SproutConfiguration _sproutConfig;
 
@@ -69,14 +70,30 @@ namespace Sprout.Core.ViewModels
 
         private void OpenTab(SproutPageConfiguration pageConfig, object? parameter)
         {
-            SelectedTab = new SproutPageVM(pageConfig, _dialogService);
+            var tab = new SproutPageVM(pageConfig, _dialogService);
 
             if (parameter != null)
             {
-                SelectedTab.SproutPageUIState.Data = parameter;
+                tab.SproutPageUIState.Data = parameter;
             }
 
-            Tabs.Add(SelectedTab);
+            SelectedTab = tab;
+            Tabs.Add(tab);
+        }
+
+        [RelayCommand]
+        private void OpenSettings()
+        {
+            var existing = Tabs.OfType<SettingsVM>().FirstOrDefault();
+            if (existing != null)
+            {
+                SelectedTab = existing;
+                return;
+            }
+
+            var settingsVM = new SettingsVM(_configService, _dialogService);
+            Tabs.Add(settingsVM);
+            SelectedTab = settingsVM;
         }
 
         private bool CanExecuteOpenPage(SproutPageConfiguration pageConfig)
@@ -89,25 +106,27 @@ namespace Sprout.Core.ViewModels
         [RelayCommand(CanExecute = nameof(CanEditPage))]
         private void EditPage()
         {
-            var pageId = SelectedTab.PageConfig.ID;
+            if (SelectedTab is not SproutPageVM selectedPageVM) return;
 
-            _navigationService.ShowEditPage(SelectedTab.PageConfig, _configService, _dialogService);
+            var pageId = selectedPageVM.PageConfig.ID;
 
-            var uiState = SelectedTab.SproutPageUIState;
+            _navigationService.ShowEditPage(selectedPageVM.PageConfig, _configService, _dialogService);
 
-            Tabs.Remove(SelectedTab);
+            var uiState = selectedPageVM.SproutPageUIState;
+
+            Tabs.Remove(selectedPageVM);
 
             LoadMenuPages();
 
             var currentPageConfig = _sproutConfig.Pages.FirstOrDefault(pc => pc.ID == pageId);
 
-            SelectedTab = new SproutPageVM(currentPageConfig, _dialogService);
-            SelectedTab.SproutPageUIState.Data = uiState.Data;
-
-            Tabs.Add(SelectedTab);
+            var newTab = new SproutPageVM(currentPageConfig, _dialogService);
+            newTab.SproutPageUIState.Data = uiState.Data;
+            Tabs.Add(newTab);
+            SelectedTab = newTab;
         }
 
-        private bool CanEditPage() => SelectedTab is not null;
+        private bool CanEditPage() => SelectedTab is SproutPageVM;
 
         [RelayCommand]
         private void EditMenu()

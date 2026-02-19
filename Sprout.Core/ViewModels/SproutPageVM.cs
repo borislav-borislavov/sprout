@@ -25,6 +25,8 @@ namespace Sprout.Core.ViewModels
 
         public SproutPageConfiguration PageConfig { get; private set; }
 
+        public string Title => PageConfig?.Title;
+
         /// <summary>
         /// The starting args that a page receives when started as a child page
         /// </summary>

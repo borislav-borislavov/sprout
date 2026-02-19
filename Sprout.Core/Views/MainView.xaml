@@ -1,15 +1,15 @@
 ﻿<UserControl x:Class="Sprout.Core.Views.MainView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Sprout.Core.Views"
-             xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
-             Name="MainViewControl"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+xmlns:local="clr-namespace:Sprout.Core.Views"
+xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
+Name="MainViewControl"
              
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
-             d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
+mc:Ignorable="d" 
+d:DesignHeight="450" d:DesignWidth="800"
+d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
     <UserControl.Resources>
 
         <Style x:Key="RoundedButtonStyle" TargetType="Button">
@@ -66,7 +66,7 @@
                 <MenuItem Opacity="0.9" Header="Page" Command="{Binding EditPageCommand}"/>
             </MenuItem>
 
-            <!--<MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>-->
+            <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>
         </Menu>
 
         <!--to remove blurryness of text i added UseLayoutRounding="True" SnapsToDevicePixels="True"-->
@@ -122,11 +122,14 @@
                         ItemsSource="{Binding Tabs}"
                         SelectedItem="{Binding SelectedTab}">
 
-            <TabControl.ContentTemplate>
-                <DataTemplate>
+            <TabControl.Resources>
+                <DataTemplate DataType="{x:Type viewModels:SproutPageVM}">
                     <ContentPresenter Content="{Binding DynamicViewInstance}" />
                 </DataTemplate>
-            </TabControl.ContentTemplate>
+                <DataTemplate DataType="{x:Type viewModels:SettingsVM}">
+                    <local:SettingsView />
+                </DataTemplate>
+            </TabControl.Resources>
 
             <TabControl.ItemTemplate>
                 <DataTemplate>
@@ -134,7 +137,8 @@
                                 Orientation="Horizontal"
                                 MouseDown="TabHeaderStackPanel_MouseDown">
                         
-                        <TextBlock Text="{Binding PageConfig.Title}" />
+                        <TextBlock Text="{Binding Title}" />
+                        
                         
                         <Grid MouseDown="Grid_MouseDown">
                             <TextBlock FontFamily="Segoe Fluent Icons"

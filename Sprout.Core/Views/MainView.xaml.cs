@@ -1,4 +1,5 @@
-﻿using Sprout.Core.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Sprout.Core.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -24,7 +25,7 @@ namespace Sprout.Core.Views
         private void CloseTab(object sender)
         {
             if (sender is not FrameworkElement control
-                || control.DataContext is not SproutPageVM pageVM)
+                || control.DataContext is not ObservableObject tabVM)
             {
                 return;
             }
@@ -35,10 +36,10 @@ namespace Sprout.Core.Views
 
             Dispatcher.BeginInvoke(() =>
             {
-                viewModel.Tabs.Remove(pageVM);
+                viewModel.Tabs.Remove(tabVM);
 
                 // Update SelectedTab if it was the closed tab
-                if (viewModel.SelectedTab == pageVM)
+                if (viewModel.SelectedTab == tabVM)
                 {
                     viewModel.SelectedTab = viewModel.Tabs.Count > 0 ? viewModel.Tabs[0] : null;
                 }
