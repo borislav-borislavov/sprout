@@ -22,6 +22,7 @@ namespace Sprout.Core.ViewModels
     public partial class SproutPageVM : ObservableObject
     {
         private readonly IDialogService _dialogService;
+        private readonly IDataAdapterFactory _dataAdapterFactory;
 
         public SproutPageConfiguration PageConfig { get; private set; }
 
@@ -45,10 +46,11 @@ namespace Sprout.Core.ViewModels
         /// </summary>
         public SproutPage DynamicViewInstance { get; private set; }
 
-        public SproutPageVM(SproutPageConfiguration pageConfig, IDialogService dialogService)
+        public SproutPageVM(SproutPageConfiguration pageConfig, IDialogService dialogService, IDataAdapterFactory dataAdapterFactory)
         {
             PageConfig = pageConfig;
             _dialogService = dialogService;
+            _dataAdapterFactory = dataAdapterFactory;
 
             try
             {
@@ -95,7 +97,7 @@ namespace Sprout.Core.ViewModels
         {
             foreach (var kvp in PageConfig.GetDataAdapterConfigs())
             {
-                DataAdapters[kvp.Key] = DataAdapterFactory.Create(kvp.Value);
+                DataAdapters[kvp.Key] = _dataAdapterFactory.Create(kvp.Value);
 
                 //done for convenience
                 if (DataAdapters[kvp.Key].DataProvider != null)

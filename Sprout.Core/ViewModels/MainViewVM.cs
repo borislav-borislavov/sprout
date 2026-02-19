@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Sprout.Core.Factories;
 using Sprout.Core.Messages;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Configurations;
@@ -15,6 +16,7 @@ namespace Sprout.Core.ViewModels
         private readonly IConfigurationService _configService;
         private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
+        private readonly IDataAdapterFactory _dataAdapterFactory;
         [ObservableProperty]
         private ObservableCollection<SproutPageConfiguration> _pageConfigs;
 
@@ -30,11 +32,13 @@ namespace Sprout.Core.ViewModels
 
         public MainViewVM(IConfigurationService configService,
             INavigationService navigationService,
-            IDialogService dialogService)
+            IDialogService dialogService,
+            IDataAdapterFactory dataAdapterFactory)
         {
             _configService = configService;
             _navigationService = navigationService;
             _dialogService = dialogService;
+            _dataAdapterFactory = dataAdapterFactory;
 
             LoadMenuPages();
 
@@ -70,7 +74,7 @@ namespace Sprout.Core.ViewModels
 
         private void OpenTab(SproutPageConfiguration pageConfig, object? parameter)
         {
-            var tab = new SproutPageVM(pageConfig, _dialogService);
+            var tab = new SproutPageVM(pageConfig, _dialogService, _dataAdapterFactory);
 
             if (parameter != null)
             {
@@ -120,7 +124,7 @@ namespace Sprout.Core.ViewModels
 
             var currentPageConfig = _sproutConfig.Pages.FirstOrDefault(pc => pc.ID == pageId);
 
-            var newTab = new SproutPageVM(currentPageConfig, _dialogService);
+            var newTab = new SproutPageVM(currentPageConfig, _dialogService, _dataAdapterFactory);
             newTab.SproutPageUIState.Data = uiState.Data;
             Tabs.Add(newTab);
             SelectedTab = newTab;

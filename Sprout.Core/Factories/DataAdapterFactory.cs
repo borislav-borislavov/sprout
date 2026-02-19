@@ -3,6 +3,7 @@ using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.DataAdapters.Filters;
 using Sprout.Core.Models.Queries;
+using Sprout.Core.Services.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,16 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Factories
 {
-    public class DataAdapterFactory
+    public class DataAdapterFactory : IDataAdapterFactory
     {
-        public static IDataAdapter Create(IDataAdapterConfig dataAdapterConfig)
+        private readonly IConfigurationService _configurationService;
+
+        public DataAdapterFactory(IConfigurationService configurationService)
+        {
+            _configurationService = configurationService;
+        }
+
+        public IDataAdapter Create(IDataAdapterConfig dataAdapterConfig)
         {
             if (dataAdapterConfig is SqlServerDataAdapterConfig sqlServerAdapterConfig)
             {
@@ -25,11 +33,15 @@ namespace Sprout.Core.Factories
             }
         }
 
-        private static IDataAdapter CreateSqlServerDataAdapter(SqlServerDataAdapterConfig sqlServerAdapterConfig)
+        private IDataAdapter CreateSqlServerDataAdapter(SqlServerDataAdapterConfig sqlServerAdapterConfig)
         {
+            var connectionString = string.IsNullOrWhiteSpace(sqlServerAdapterConfig.ConnectionString)
+                ? _configurationService.Load().Settings.SqlServerConnectionString
+                : sqlServerAdapterConfig.ConnectionString;
+
             var dataAdapter = new SqlServerDataAdapter
             {
-                ConnectionString = sqlServerAdapterConfig.ConnectionString
+                ConnectionString = connectionString
             };
 
             var dataProviderConfig = sqlServerAdapterConfig.DataProvider as SqlServerDataProviderConfig;
@@ -43,7 +55,6 @@ namespace Sprout.Core.Factories
             };
 
             dataAdapter.DataProvider = dataProvider;
-;
 
 #warning polish this
             (dataAdapter.DataProvider as SqlServerDataProvider).Dependencies = ParameterParser.ParseDependencies(dataProviderConfig.Text);
@@ -84,7 +95,6 @@ namespace Sprout.Core.Factories
                 };
             }
 
-
             if (dataProviderConfig.FilterConfigs.Count > 0)
             {
                 foreach (var filterConfig in dataProviderConfig.FilterConfigs)
@@ -101,3 +111,4 @@ namespace Sprout.Core.Factories
         }
     }
 }
+
