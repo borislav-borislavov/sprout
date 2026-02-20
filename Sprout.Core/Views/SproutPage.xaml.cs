@@ -2,6 +2,7 @@
 using Sprout.Core.Factories;
 using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.DataAdapters.Filters;
 using Sprout.Core.Models.GridActions;

@@ -27,8 +27,60 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private SproutDataGridColumnConfig _selectedColumn;
 
+        [ObservableProperty]
+        private bool _isComboColumnSelected;
+
+        [ObservableProperty]
+        private ObservableObject _selectedColumnAdapterViewModel;
+
         //[ObservableProperty]
         //private SproutPageConfiguration _selectedNonMenuPage;
+
+        partial void OnSelectedColumnChanged(SproutDataGridColumnConfig value)
+        {
+            UpdateComboColumnState(value);
+        }
+
+        private void UpdateComboColumnState(SproutDataGridColumnConfig column)
+        {
+            if (column != null && column.ColumnType == ColumnType.Combo)
+            {
+                IsComboColumnSelected = true;
+
+                if (column.ComboDataAdapter is SqlServerDataAdapterConfig sqlConfig)
+                {
+                    SelectedColumnAdapterViewModel = new SqlServerReadOnlyDataAdapterVM(sqlConfig);
+                }
+                else
+                {
+                    SelectedColumnAdapterViewModel = null;
+                }
+            }
+            else
+            {
+                IsComboColumnSelected = false;
+                SelectedColumnAdapterViewModel = null;
+            }
+        }
+
+        [RelayCommand]
+        private void InitializeComboAdapter()
+        {
+            if (SelectedColumn == null || SelectedColumn.ColumnType != ColumnType.Combo) return;
+
+            if (SelectedColumn.ComboDataAdapter != null) return;
+
+            SelectedColumn.ComboDataAdapter = new SqlServerDataAdapterConfig
+            {
+                ConnectionString = string.Empty,
+                DataProvider = new SqlServerDataProviderConfig
+                {
+                    Text = string.Empty
+                }
+            };
+
+            UpdateComboColumnState(SelectedColumn);
+        }
 
         [RelayCommand]
         private void AddColumn()

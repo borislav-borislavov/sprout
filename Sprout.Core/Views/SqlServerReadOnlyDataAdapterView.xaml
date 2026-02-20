@@ -1,0 +1,55 @@
+<UserControl x:Class="Sprout.Core.Views.SqlServerReadOnlyDataAdapterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Sprout.Core.Views"
+             xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
+             xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+             
+             mc:Ignorable="d" 
+             Background="LightBlue"
+             d:DataContext="{d:DesignInstance viewModels:SqlServerReadOnlyDataAdapterVM}"
+             d:DesignHeight="350" d:DesignWidth="800">
+    <ScrollViewer>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Expander Header="SQL Server Data Adapter Settings"
+                  Grid.Row="0"
+                  IsExpanded="True"
+                  Margin="5">
+                <StackPanel Margin="10">
+                    <StackPanel Orientation="Vertical"
+                                Margin="0,0,0,5">
+                        <Label Content="Connection String:" Width="120"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"/>
+                        <TextBox MinWidth="200"
+                                 HorizontalAlignment="Left"
+                                 Text="{Binding DataAdapter.ConnectionString, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Expander>
+
+            <Expander
+                Header="Query"
+                ExpandDirection="Down"
+                IsExpanded="True"
+                Grid.Row="1"
+                Margin="5">
+                <Grid Margin="5">
+                    <avalonedit:TextEditor
+                        ShowLineNumbers="True"
+                        Document="{Binding DataProviderDocument}"
+                        SyntaxHighlighting="{Binding Highlighting}"
+                        MinHeight="150"
+                        />
+                </Grid>
+            </Expander>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

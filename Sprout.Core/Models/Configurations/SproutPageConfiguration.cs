@@ -1,4 +1,6 @@
-﻿namespace Sprout.Core.Models.Configurations
+﻿using Sprout.Core.Models.Configurations.DataGrid;
+
+namespace Sprout.Core.Models.Configurations
 {
 	public class SproutPageConfiguration
 	{
@@ -38,6 +40,18 @@
 				if (dataAdapterControlConfig.DataAdapter is not null)
 				{
 					dataAdapterConfigs.Add(control.Name, dataAdapterControlConfig.DataAdapter);
+				}
+
+				if (control is SproutDataGridConfig dataGridConfig)
+				{
+					foreach (var column in dataGridConfig.Columns ?? [])
+					{
+						if (column.ColumnType == ColumnType.Combo && column.ComboDataAdapter is not null)
+						{
+                            column.ComboAdapterKey = $"{control.Name}.Column.{column.BindingPath}";
+							dataAdapterConfigs.Add(column.ComboAdapterKey, column.ComboDataAdapter);
+						}
+					}
 				}
 			}
 		}
