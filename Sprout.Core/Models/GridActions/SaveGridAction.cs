@@ -1,11 +1,12 @@
 ﻿using Microsoft.Data.SqlClient;
 using Sprout.Core.Common;
 using Sprout.Core.Common.Models;
+using Sprout.Core.Factories;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.DataProviders;
-using Sprout.Core.Services.Queries;
+using Sprout.Core.Services.SqlServer;
 using Sprout.Core.UIStates;
 using System;
 using System.Collections;
@@ -14,7 +15,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Sprout.Core.Services.Queries.QueryService;
+using static Sprout.Core.Services.SqlServer.SqlServerDataService;
 
 namespace Sprout.Core.Models.GridActions
 {
@@ -27,195 +28,34 @@ namespace Sprout.Core.Models.GridActions
 			_ownControlName = ownControlName;
 		}
 
-		public override void Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry)
+		public override async Task Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
 		{
-			if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
+            if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
 			{
 				//find a nice way to route logs to the screen
-
 				throw new NotImplementedException();
 			}
 
-			foreach (System.Data.DataRow dataRow in ownDataAdapter.DataProvider.Data.Rows)
+			using (var dataService = dataServiceFactory.Create(ownDataAdapter))
 			{
-				if (dataRow.RowState == DataRowState.Added)
+				foreach (System.Data.DataRow dataRow in ownDataAdapter.DataProvider.Data.Rows)
 				{
-                    AddNew(ownDataAdapter.InsertCommand, dataRow);
-                }
-				else if (dataRow[nameof(Const.BuiltInDataTableColumns._IsDeleted)] is bool isDeleted && isDeleted)
-                {
-                    Delete(ownDataAdapter.DeleteCommand, dataRow);
-                }
-                else if (dataRow.RowState == DataRowState.Modified)
-                {
-                    Modify(ownDataAdapter.UpdateCommand, dataRow);
-                }
-			}
-
-			new DataProviderService().ProvideData(ownDataAdapter.DataProvider);
-		}
-
-        private void Delete(IEditCommand editCommand, DataRow dataRow)
-        {
-            if (editCommand is not SqlServerEditCommand sqlEditCommand)
-                throw new NotImplementedException();
-
-            var command = sqlEditCommand.Text;
-
-            if (string.IsNullOrWhiteSpace(command))
-                throw new Exception("Delete command not set");
-
-            var requestedParameters = ParameterParser.ParseQueryParameters(sqlEditCommand.Text);
-
-            List<SqlParameter> sqlParams = [];
-
-            foreach (var queryParam in requestedParameters)
-            {
-                SetQueryParam(queryParam, dataRow);
-
-                var param = new SqlParameter
-                {
-                    ParameterName = $"@{queryParam.Name}",
-                    Value = queryParam.Value ?? DBNull.Value
-                };
-
-                sqlParams.Add(param);
-
-                command = command.Replace($"{{{queryParam.RawPatameter}}}", $"{param.ParameterName}", StringComparison.CurrentCultureIgnoreCase);
-            }
-
-#warning maybe have different command types for stored procedure vs text
-
-#warning better to use a single connection for all operations
-            using (var conn = new SqlConnection(sqlEditCommand.ConnectionString))
-            using (var cmd = new SqlCommand(command, conn))
-            {
-                AttachParameters(cmd, sqlParams);
-                conn.Open();
-
-                cmd.ExecuteNonQuery();
-
-                conn.Close();
-            }
-        }
-
-        private static void AddNew(IEditCommand editCommand, DataRow dataRow)
-		{
-            if (editCommand is not SqlServerEditCommand sqlEditCommand)
-                throw new NotImplementedException();
-
-            var command = sqlEditCommand.Text;
-
-			if (string.IsNullOrWhiteSpace(command))
-				throw new Exception("Insert command not set");
-
-			var requestedParameters = ParameterParser.ParseQueryParameters(sqlEditCommand.Text);
-
-			List<SqlParameter> sqlParams = [];
-
-			foreach (var queryParam in requestedParameters)
-			{
-				SetQueryParam(queryParam, dataRow);
-
-				var param = new SqlParameter
-				{
-					ParameterName = $"@{queryParam.Name}",
-					Value = queryParam.Value ?? DBNull.Value
-				};
-
-				sqlParams.Add(param);
-
-				command = command.Replace($"{{{queryParam.RawPatameter}}}", $"{param.ParameterName}");
-
-			}
-
-			using (var conn = new SqlConnection(sqlEditCommand.ConnectionString))
-			using (var cmd = new SqlCommand(command, conn))
-			{
-				AttachParameters(cmd, sqlParams);
-				conn.Open();
-
-				cmd.ExecuteScalar();
-
-				conn.Close();
-			}
-		}
-
-		private void Modify(IEditCommand editCommand, System.Data.DataRow dataRow)
-		{
-			if (editCommand is not SqlServerEditCommand sqlEditCommand)
-				throw new NotImplementedException();
-
-			var command = sqlEditCommand.Text;
-
-			if (string.IsNullOrWhiteSpace(command))
-				throw new Exception("Update command not set");
-
-			var requestedParameters = ParameterParser.ParseQueryParameters(sqlEditCommand.Text);
-
-			List<SqlParameter> sqlParams = [];
-
-			foreach (var queryParam in requestedParameters)
-			{
-				SetQueryParam(queryParam, dataRow);
-
-				var param = new SqlParameter
-				{
-					ParameterName = $"@{queryParam.Name}",
-					Value = queryParam.Value ?? DBNull.Value
-				};
-
-				sqlParams.Add(param);
-
-				command = command.Replace($"{{{queryParam.RawPatameter}}}", $"{param.ParameterName}", StringComparison.CurrentCultureIgnoreCase);
-			}
-
-#warning maybe have different command types for stored procedure vs text
-
-#warning better to use a single connection for all operations
-			using (var conn = new SqlConnection(sqlEditCommand.ConnectionString))
-			using (var cmd = new SqlCommand(command, conn))
-			{
-				AttachParameters(cmd, sqlParams);
-				conn.Open();
-
-				cmd.ExecuteNonQuery();
-
-				conn.Close();
-			}
-		}
-
-		private static void AttachParameters(SqlCommand command, IEnumerable<SqlParameter> commandParameters)
-		{
-			foreach (SqlParameter p in commandParameters)
-			{
-				//check for derived output value with no value assigned
-				if ((p.Direction == System.Data.ParameterDirection.InputOutput) && (p.Value == null))
-				{
-					p.Value = DBNull.Value;
+					if (dataRow.RowState == DataRowState.Added)
+					{
+						await dataService.Insert(dataRow);
+					}
+					else if (dataRow[nameof(Const.BuiltInDataTableColumns._IsDeleted)] is bool isDeleted && isDeleted)
+					{
+                        await dataService.Delete(dataRow);
+					}
+					else if (dataRow.RowState == DataRowState.Modified)
+					{
+						await dataService.Update(dataRow);
+					}
 				}
 
-				command.Parameters.Add(p);
+				await dataService.ProvideData(); 
 			}
-		}
-
-		private static void SetQueryParam(QueryParameter queryParam, System.Data.DataRow dataRow)
-		{
-            // Check if the row is deleted first to avoid the exception
-            var version = dataRow.RowState == DataRowState.Deleted
-                          ? DataRowVersion.Original
-                          : DataRowVersion.Current;
-
-            var value = dataRow[queryParam.Name, version];
-
-            if (value == DBNull.Value)
-            {
-                // check for default value
-            }
-            else
-            {
-                queryParam.Value = value;
-            }
         }
     }
 }

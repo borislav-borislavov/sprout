@@ -1,4 +1,5 @@
-﻿using Sprout.Core.Models.DataAdapters;
+﻿using Sprout.Core.Factories;
+using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Services.DataProviders;
 using Sprout.Core.UIStates;
 using System;
@@ -18,7 +19,7 @@ namespace Sprout.Core.Models.GridActions
             _ownControlName = ownControlName;
         }
 
-        public override void Perform(Dictionary<string, IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry)
+        public override async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
             {
@@ -27,7 +28,10 @@ namespace Sprout.Core.Models.GridActions
                 throw new NotImplementedException();
             }
 
-            new DataProviderService().ProvideData(ownDataAdapter.DataProvider);
+            using(var dataService = dataServiceFactory.Create(ownDataAdapter))
+            {
+                await dataService.ProvideData();
+            }
         }
     }
 }

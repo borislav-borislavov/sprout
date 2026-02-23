@@ -39,5 +39,7 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
 
 
         public IEnumerable<DataProviderDependency> Dependencies { get; internal set; } = [];
+
+        public IDataAdapter Parent => _parentAdapter;
     }
 }

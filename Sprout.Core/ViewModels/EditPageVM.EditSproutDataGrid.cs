@@ -7,7 +7,7 @@ using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.Dialog;
-using Sprout.Core.Services.Queries;
+using Sprout.Core.Services.SqlServer;
 using System;
 using System.Collections;
 using System.Collections.Generic;

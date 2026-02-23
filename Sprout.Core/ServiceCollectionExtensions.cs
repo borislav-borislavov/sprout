@@ -16,6 +16,8 @@ namespace Sprout.Core
             services.AddTransient<INavigationService, NavigationService>();
             services.AddTransient<IDialogService, DialogService>();
             services.AddTransient<IDataAdapterFactory, DataAdapterFactory>();
+            services.AddTransient<IDataServiceFactory, DataServiceFactory>();
+            
 
             services.AddTransient<MainViewVM>();
             services.AddTransient<MainView>();

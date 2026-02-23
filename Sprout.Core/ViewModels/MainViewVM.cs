@@ -17,6 +17,7 @@ namespace Sprout.Core.ViewModels
         private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
         private readonly IDataAdapterFactory _dataAdapterFactory;
+        private readonly IDataServiceFactory _dataServiceFactory;
         [ObservableProperty]
         private ObservableCollection<SproutPageConfiguration> _pageConfigs;
 
@@ -33,12 +34,14 @@ namespace Sprout.Core.ViewModels
         public MainViewVM(IConfigurationService configService,
             INavigationService navigationService,
             IDialogService dialogService,
-            IDataAdapterFactory dataAdapterFactory)
+            IDataAdapterFactory dataAdapterFactory,
+            IDataServiceFactory dataServiceFactory)
         {
             _configService = configService;
             _navigationService = navigationService;
             _dialogService = dialogService;
             _dataAdapterFactory = dataAdapterFactory;
+            _dataServiceFactory = dataServiceFactory;
 
             LoadMenuPages();
 
@@ -74,7 +77,7 @@ namespace Sprout.Core.ViewModels
 
         private void OpenTab(SproutPageConfiguration pageConfig, object? parameter)
         {
-            var tab = new SproutPageVM(pageConfig, _dialogService, _dataAdapterFactory);
+            var tab = new SproutPageVM(pageConfig, _dialogService, _dataAdapterFactory, _dataServiceFactory);
 
             if (parameter != null)
             {
@@ -124,7 +127,7 @@ namespace Sprout.Core.ViewModels
 
             var currentPageConfig = _sproutConfig.Pages.FirstOrDefault(pc => pc.ID == pageId);
 
-            var newTab = new SproutPageVM(currentPageConfig, _dialogService, _dataAdapterFactory);
+            var newTab = new SproutPageVM(currentPageConfig, _dialogService, _dataAdapterFactory, _dataServiceFactory);
             newTab.SproutPageUIState.Data = uiState.Data;
             Tabs.Add(newTab);
             SelectedTab = newTab;

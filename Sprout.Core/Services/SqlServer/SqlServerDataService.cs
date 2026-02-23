@@ -1,0 +1,268 @@
+﻿using Microsoft.Data.SqlClient;
+using Sprout.Core.Factories;
+using Sprout.Core.Models.DataAdapters;
+using Sprout.Core.Models.DataAdapters.DataProviders;
+using Sprout.Core.Models.Queries;
+using Sprout.Core.Services.DataProviders;
+using System.Data;
+
+namespace Sprout.Core.Services.SqlServer
+{
+    public class SqlServerDataService : DataService
+    {
+        private SqlConnection _connection;
+        private SqlServerDataAdapter _dataAdapter;
+        private SqlServerDataProvider _dataProvider;
+
+        public SqlServerDataService(SqlServerDataAdapter dataAdapter) 
+        {
+            _connection = new SqlConnection(dataAdapter.ConnectionString);
+            _dataAdapter = dataAdapter;
+            _dataProvider = dataAdapter.DataProvider as SqlServerDataProvider;
+        }
+
+        public async Task Insert(DataRow dataRow)
+        {
+            if (_dataAdapter.InsertCommand is not SqlServerEditCommand sqlEditCommand)
+                throw new NotImplementedException();
+
+            var command = sqlEditCommand.Text;
+
+            if (string.IsNullOrWhiteSpace(command))
+                throw new Exception($"{nameof(_dataAdapter.InsertCommand)} not set");
+
+            await Change(sqlEditCommand, dataRow);
+        }
+
+        public async Task Update(DataRow dataRow)
+        {
+            if (_dataAdapter.UpdateCommand is not SqlServerEditCommand sqlEditCommand)
+                throw new NotImplementedException();
+
+            var command = sqlEditCommand.Text;
+
+            if (string.IsNullOrWhiteSpace(command))
+                throw new Exception($"{nameof(_dataAdapter.UpdateCommand)} not set");
+
+            await Change(sqlEditCommand, dataRow);
+        }
+
+        public async Task Delete(DataRow dataRow)
+        {
+            if (_dataAdapter.DeleteCommand is not SqlServerEditCommand sqlEditCommand)
+                throw new NotImplementedException();
+
+            var command = sqlEditCommand.Text;
+
+            if (string.IsNullOrWhiteSpace(command))
+                throw new Exception($"{nameof(_dataAdapter.DeleteCommand)} not set");
+
+            await Change(sqlEditCommand, dataRow);
+        }
+
+        private async Task Change(SqlServerEditCommand editCmd, DataRow dataRow)
+        {
+            if (_connection.State == ConnectionState.Closed)
+            {
+                await _connection.OpenAsync();
+            }
+
+            var command = editCmd.Text;
+
+            var requestedParameters = ParameterParser.ParseQueryParameters(editCmd.Text);
+
+            List<SqlParameter> sqlParams = [];
+
+            foreach (var queryParam in requestedParameters)
+            {
+                SetQueryParam(queryParam, dataRow);
+
+                var param = new SqlParameter
+                {
+                    ParameterName = $"@{queryParam.Name}",
+                    Value = queryParam.Value ?? DBNull.Value
+                };
+
+                if (!sqlParams.Any(p => string.Equals(p.ParameterName, param.ParameterName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    sqlParams.Add(param);
+                }
+
+                command = command.Replace($"{{{queryParam.RawPatameter}}}", $"{param.ParameterName}", StringComparison.OrdinalIgnoreCase);
+            }
+            
+            using (var cmd = new SqlCommand(command, _connection))
+            {
+                AttachParameters(cmd, sqlParams);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
+
+        public async Task ProvideData()
+        {
+#warning separate query building from query execution
+            var queryText = _dataProvider.Text;
+
+            var dependencyParameters = new List<SqlParameter>();
+            var idx = 0;
+
+            foreach (var item in _dataProvider.Dependencies)
+            {
+                var paramName = $"@depParam{idx}";
+                queryText = queryText.Replace($"{{{item.RawDependency}}}", paramName);
+                SqlParameter sqlParameter = new SqlParameter(paramName, item.Value ?? DBNull.Value);
+                dependencyParameters.Add(sqlParameter);
+                idx++;
+            }
+
+            var filterStatements = new List<string>();
+
+            if (_dataProvider.Filters.Count > 0)
+            {
+                int filterIdx = 0;
+
+                foreach (var filter in _dataProvider.Filters.Values)
+                {
+                    if (string.IsNullOrEmpty($"{filter.StartValue}") && string.IsNullOrEmpty($"{filter.EndValue}"))
+                    {
+                        continue;
+                    }
+
+                    var filterStatement = filter.Text;
+
+                    if (filter.IsRange)
+                    {
+                        var startParamName = $"@filter_{filterIdx}_Start{idx}";
+                        var sqlParameter = new SqlParameter(startParamName, filter.StartValue ?? DBNull.Value);
+                        dependencyParameters.Add(sqlParameter);
+                        idx++;
+
+                        var endParamName = $"@filter_{filterIdx}_End{idx}";
+                        sqlParameter = new SqlParameter(endParamName, filter.EndValue ?? DBNull.Value);
+                        dependencyParameters.Add(sqlParameter);
+                        idx++;
+
+                        filterStatement = string.Format(filter.Text, startParamName, endParamName);
+                    }
+                    else
+                    {
+                        var paramName = $"@filter_{filterIdx}_{idx}";
+                        var sqlParameter = new SqlParameter(paramName, filter.StartValue ?? DBNull.Value);
+                        dependencyParameters.Add(sqlParameter);
+                        idx++;
+
+                        filterStatement = string.Format(filter.Text, paramName);
+                    }
+
+                    filterStatements.Add(filterStatement);
+
+                    filterIdx++;
+                }
+            }
+
+            if (filterStatements.Count > 0 && (queryText.IndexOf("{!whereFilter}") == -1 && queryText.IndexOf("{!andFilter}") == -1))
+            {
+                throw new Exception("Filters are added but {!whereFilter} or {!andFilter} not used in query");
+            }
+
+            //replace WhereFilter syntax
+            if (queryText.IndexOf("{!whereFilter}") != -1)
+            {
+                if (filterStatements.Count == 0)
+                {
+                    queryText = queryText.Replace("{!whereFilter}", string.Empty, StringComparison.OrdinalIgnoreCase);
+                }
+                else
+                {
+                    var whereClause = $"WHERE {string.Join($"{Environment.NewLine}AND ", filterStatements)}";
+                    queryText = queryText.Replace("{!whereFilter}", whereClause, StringComparison.OrdinalIgnoreCase);
+                }
+            }
+
+            //replace AndFilter syntax
+            if (queryText.IndexOf("{!andFilter}") != -1)
+            {
+                if (filterStatements.Count == 0)
+                {
+                    queryText = queryText.Replace("{!andFilter}", string.Empty, StringComparison.OrdinalIgnoreCase);
+                }
+                else
+                {
+                    var whereClause = $" AND {string.Join($"{Environment.NewLine}AND ", filterStatements)}";
+                    queryText = queryText.Replace("{!andFilter}", whereClause, StringComparison.OrdinalIgnoreCase);
+                }
+            }
+
+            using (var cmd = new SqlCommand(queryText, _connection))
+            {
+                cmd.Parameters.AddRange(dependencyParameters.ToArray());
+
+                //prevents the UI from freezing if the connection is slow
+
+                if (_connection.State == ConnectionState.Closed)
+                {
+                    await _connection.OpenAsync();
+                }
+
+                var dt = DataTableFactory.Create();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    // Move the CPU-heavy loading to a background thread
+                    // This prevents the UI from freezing during the data parsing
+                    await Task.Run(() => dt.Load(reader));
+
+                    _dataProvider.Data = dt;
+                }
+            }
+        }
+
+        private static void SetQueryParam(QueryParameter queryParam, System.Data.DataRow dataRow)
+        {
+            // Check if the row is deleted first to avoid the exception
+            var version = dataRow.RowState == DataRowState.Deleted
+                          ? DataRowVersion.Original
+                          : DataRowVersion.Current;
+
+            var value = dataRow[queryParam.Name, version];
+
+            if (value == DBNull.Value)
+            {
+                // check for default value
+            }
+            else
+            {
+                queryParam.Value = value;
+            }
+        }
+
+        private static void AttachParameters(SqlCommand command, IEnumerable<SqlParameter> commandParameters)
+        {
+            foreach (SqlParameter p in commandParameters)
+            {
+                //check for derived output value with no value assigned
+                if ((p.Direction == System.Data.ParameterDirection.InputOutput) && (p.Value == null))
+                {
+                    p.Value = DBNull.Value;
+                }
+
+                command.Parameters.Add(p);
+            }
+        }
+
+        public void Dispose()
+        {
+            _connection?.Dispose();
+        }
+
+        public class QueryParameter
+        {
+            public string Name { get; set; }
+            public string Path { get; set; }
+            public object Value { get; set; }
+            public bool IsMandatory { get; set; }
+            public string RawPatameter { get; internal set; }
+        }
+    }
+}

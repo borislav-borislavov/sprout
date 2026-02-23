@@ -8,7 +8,7 @@ using Sprout.Core.Models.DataAdapters.Filters;
 using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services;
-using Sprout.Core.Services.Queries;
+using Sprout.Core.Services.SqlServer;
 using Sprout.Core.UIStates;
 using Sprout.Core.ViewModels;
 using Sprout.Core.Views.Controls;

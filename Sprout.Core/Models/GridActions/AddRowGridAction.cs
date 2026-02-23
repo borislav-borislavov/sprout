@@ -1,4 +1,5 @@
-﻿using Sprout.Core.Models.DataAdapters.DataProviders;
+﻿using Sprout.Core.Factories;
+using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.UIStates;
 using System;
@@ -19,7 +20,9 @@ namespace Sprout.Core.Models.GridActions
             _ownControlName = ownControlName;
         }
 
-        public override void Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry)
+        public override Task Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters,
+            UiStateRegistry uiStateRegistry,
+            IDataServiceFactory dataServiceFactory)
         {
             if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
             {
@@ -30,6 +33,8 @@ namespace Sprout.Core.Models.GridActions
 
             var newRow = ownDataAdapter.DataProvider.Data.NewRow();
             ownDataAdapter.DataProvider.Data.Rows.Add(newRow);
+
+            return Task.CompletedTask;
         }
     }
 }

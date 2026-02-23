@@ -1,4 +1,5 @@
 ﻿using Sprout.Core.Common;
+using Sprout.Core.Factories;
 using Sprout.Core.UIStates;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace Sprout.Core.Models.GridActions
             _ownControlName = ownControlName;
         }
 
-        public override void Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataProviders, UiStateRegistry uiStateRegistry)
+        public override Task Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataProviders, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             if (!dataProviders.TryGetValue(_ownControlName, out var ownDataAdapter))
             {
@@ -34,12 +35,14 @@ namespace Sprout.Core.Models.GridActions
                 throw new Exception($"Failed to find SproutGridUIState for {_ownControlName}");
 
             if (gridUiState.Selected is not DataRowView selectedRowView)
-                return;
+                return Task.CompletedTask;
 
             if (selectedRowView.Row[Const.BuiltInDataTableColumns._IsDeleted] is not bool isDeleted)
-                return;
+                return Task.CompletedTask;
 
             selectedRowView.Row[Const.BuiltInDataTableColumns._IsDeleted] = !isDeleted;
+
+            return Task.CompletedTask;
         }
     }
 }

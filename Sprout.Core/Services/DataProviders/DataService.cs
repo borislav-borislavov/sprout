@@ -1,9 +1,11 @@
-﻿using Sprout.Core.Models.DataAdapters.DataProviders;
+﻿using Sprout.Core.Models.DataAdapters;
+using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
-using Sprout.Core.Services.Queries;
+using Sprout.Core.Services.SqlServer;
 using Sprout.Core.UIStates;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,19 +14,13 @@ using System.Windows.Data;
 
 namespace Sprout.Core.Services.DataProviders
 {
-    public class DataProviderService
+    public interface DataService : IDisposable
     {
-        public async Task ProvideData(IDataProvider dataProvider)
-        {
-            if (dataProvider is SqlServerDataProvider sqlServerDataProvider)
-            {
-                await QueryService.ExecuteQuery(sqlServerDataProvider);
-            }
-            else
-            {
-                throw new NotImplementedException("DataProvider type not implemented");
-            }
-        }
+        Task ProvideData();
+
+        Task Insert(DataRow dataRow);
+        Task Update(DataRow dataRow);
+        Task Delete(DataRow dataRow);
 
         public void BindDependencies(IDataProvider dataProvider, UiStateRegistry uiStateRegistry)
         {

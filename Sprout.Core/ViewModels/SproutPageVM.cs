@@ -11,7 +11,7 @@ using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.DataProviders;
 using Sprout.Core.Services.Dialog;
-using Sprout.Core.Services.Queries;
+using Sprout.Core.Services.SqlServer;
 using Sprout.Core.UIStates;
 using Sprout.Core.Views;
 using System.Reflection.Metadata;
@@ -23,6 +23,7 @@ namespace Sprout.Core.ViewModels
     {
         private readonly IDialogService _dialogService;
         private readonly IDataAdapterFactory _dataAdapterFactory;
+        private readonly IDataServiceFactory _dataServiceFactory;
 
         public SproutPageConfiguration PageConfig { get; private set; }
 
@@ -46,11 +47,15 @@ namespace Sprout.Core.ViewModels
         /// </summary>
         public SproutPage DynamicViewInstance { get; private set; }
 
-        public SproutPageVM(SproutPageConfiguration pageConfig, IDialogService dialogService, IDataAdapterFactory dataAdapterFactory)
+        public SproutPageVM(SproutPageConfiguration pageConfig,
+            IDialogService dialogService,
+            IDataAdapterFactory dataAdapterFactory,
+            IDataServiceFactory dataServiceFactory)
         {
             PageConfig = pageConfig;
             _dialogService = dialogService;
             _dataAdapterFactory = dataAdapterFactory;
+            _dataServiceFactory = dataServiceFactory;
 
             try
             {
@@ -58,7 +63,7 @@ namespace Sprout.Core.ViewModels
 
                 UiStateRegistry.UiStateChanged += async (_, change) =>
                 {
-                    #warning add try catch here!!!
+#warning add try catch here!!!
                     foreach (var dataProvider in DataProviders.Values)
                     {
                         var dependencyHasChanged = false;
@@ -68,14 +73,15 @@ namespace Sprout.Core.ViewModels
                             if (dependency.ControlName == change.ControlName)
                             {
                                 dependencyHasChanged = true;
-
-                                var debug = dependency.Value;
                             }
                         }
 
                         if (dependencyHasChanged)
                         {
-                            await new DataProviderService().ProvideData(dataProvider);
+                            using (var dataService = _dataServiceFactory.Create(dataProvider.Parent))
+                            {
+                                await dataService.ProvideData();
+                            }
                         }
                     }
                 };
@@ -111,16 +117,17 @@ namespace Sprout.Core.ViewModels
         {
             try
             {
-                var dataProviderService = new DataProviderService();
-
                 foreach (var kvp in DataProviders)
                 {
-                    dataProviderService.BindDependencies(kvp.Value, UiStateRegistry);
+                    _dataServiceFactory.Create(kvp.Value.Parent).BindDependencies(kvp.Value, UiStateRegistry);
                 }
 
                 foreach (var kvp in DataProviders)
                 {
-                    await dataProviderService.ProvideData(kvp.Value);
+                    using (var dataservice = _dataServiceFactory.Create(kvp.Value.Parent))
+                    {
+                        await dataservice.ProvideData();
+                    }
                 }
             }
             catch (Exception ex)
@@ -132,15 +139,15 @@ namespace Sprout.Core.ViewModels
         [RelayCommand]
         private void PerformAction(object parameter)
         {
-			try
-			{
-				if (parameter is GridAction gridAction)
-				{
-                    gridAction.Perform(DataAdapters, UiStateRegistry);
+            try
+            {
+                if (parameter is GridAction gridAction)
+                {
+                    gridAction.Perform(DataAdapters, UiStateRegistry, _dataServiceFactory);
                 }
-			}
-			catch (Exception ex)
-			{
+            }
+            catch (Exception ex)
+            {
                 _dialogService.ShowMessage(ex.Message, "Action Error", DialogButton.OK, DialogImage.Error);
             }
         }

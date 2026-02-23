@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Sprout.Core.Services.Queries.QueryService;
+using static Sprout.Core.Services.SqlServer.SqlServerDataService;
 
 namespace Sprout.Core.Models.Queries
 {

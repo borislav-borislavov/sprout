@@ -11,6 +11,8 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
 {
 	public interface IDataProvider
 	{
+		IDataAdapter Parent { get; }
+
 		DataTable Data { get; set; }
 
 		IEnumerable<DataProviderDependency> Dependencies { get; /*set;*/ }
