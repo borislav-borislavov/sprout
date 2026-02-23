@@ -14,7 +14,7 @@ using System.Windows.Data;
 
 namespace Sprout.Core.Services.DataProviders
 {
-    public interface DataService : IDisposable
+    public interface IDataService : IDisposable
     {
         Task ProvideData();
 

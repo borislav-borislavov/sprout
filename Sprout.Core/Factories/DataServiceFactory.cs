@@ -11,7 +11,7 @@ namespace Sprout.Core.Factories
 {
     public class DataServiceFactory : IDataServiceFactory
     {
-        public DataService Create(IDataAdapter dataAdapter)
+        public IDataService Create(IDataAdapter dataAdapter)
         {
             if (dataAdapter is SqlServerDataAdapter sqlServerDataAdapter)
             {

@@ -8,7 +8,7 @@ using System.Data;
 
 namespace Sprout.Core.Services.SqlServer
 {
-    public class SqlServerDataService : DataService
+    public class SqlServerDataService : IDataService
     {
         private SqlConnection _connection;
         private SqlServerDataAdapter _dataAdapter;
