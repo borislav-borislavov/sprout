@@ -81,7 +81,7 @@ namespace Sprout.Core.Factories
 
             AddControl(sproutDataGrid, controls);
 
-            SetGridPosition(sproutDataGrid, sproutGridConfig);
+            SetPositionInGrid(sproutDataGrid, sproutGridConfig);
 
             var gridUIState = new SproutGridUIState();
             gridUIState.SetUpState(sproutDataGrid);

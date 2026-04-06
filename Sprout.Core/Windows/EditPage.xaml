@@ -85,6 +85,16 @@
                             <TextBlock Text="{Binding Name}"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
+
+                    <HierarchicalDataTemplate DataType="{x:Type config:SproutButtonConfig}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                FontFamily="Segoe Fluent Icons"
+                                Text="&#xf0e2;"
+                                Margin="3"/>
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
                 </TreeView.Resources>
             </TreeView>
 
@@ -172,6 +182,10 @@
                         <DataTemplate DataType="{x:Type config:SproutTextBoxConfig}">
                             <views:EditSproutTextBox/>
                         </DataTemplate>
+
+                        <DataTemplate DataType="{x:Type config:SproutButtonConfig}">
+                            <views:EditSproutButton DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext}"/>
+                        </DataTemplate>
                     </Grid.Resources>
 
                     <ContentControl Content="{Binding}"/>
@@ -210,6 +224,7 @@
 
                 <views:EditDataGridFilters DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext}"/>
             </TabItem>
+
         </TabControl>
     </Grid>
 </Window>

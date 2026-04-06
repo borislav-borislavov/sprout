@@ -4,7 +4,10 @@ using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.DataProviders;
+using Sprout.Core.UIStates;
 using System.Data;
+using System.Windows;
+using System.Windows.Data;
 
 namespace Sprout.Core.Services.SqlServer
 {
@@ -14,11 +17,14 @@ namespace Sprout.Core.Services.SqlServer
         private SqlServerDataAdapter _dataAdapter;
         private SqlServerDataProvider _dataProvider;
 
-        public SqlServerDataService(SqlServerDataAdapter dataAdapter) 
+        public UiStateRegistry UiStateRegistry { get; }
+
+        public SqlServerDataService(SqlServerDataAdapter dataAdapter, UiStateRegistry uiStateRegistry)
         {
             _connection = new SqlConnection(dataAdapter.ConnectionString);
             _dataAdapter = dataAdapter;
             _dataProvider = dataAdapter.DataProvider as SqlServerDataProvider;
+            UiStateRegistry = uiStateRegistry;
         }
 
         public async Task Insert(DataRow dataRow)
@@ -60,6 +66,30 @@ namespace Sprout.Core.Services.SqlServer
             await Change(sqlEditCommand, dataRow);
         }
 
+        public object ResolveBindingPath(object source, string path)
+        {
+            if (source == null) return null;
+
+            // 1. Create the dummy
+            var dummy = new FrameworkElement { DataContext = source };
+            var binding = new Binding(path) { Source = source };
+
+            try
+            {
+                // 2. Attach the binding
+                BindingOperations.SetBinding(dummy, FrameworkElement.TagProperty, binding);
+
+                // 3. Capture the value
+                return dummy.Tag;
+            }
+            finally
+            {
+                // 4. CLEAN UP: Explicitly break the link between the source and the dummy
+                BindingOperations.ClearBinding(dummy, FrameworkElement.TagProperty);
+                dummy.DataContext = null;
+            }
+        }
+
         private async Task Change(SqlServerEditCommand editCmd, DataRow dataRow)
         {
             if (_connection.State == ConnectionState.Closed)
@@ -75,11 +105,28 @@ namespace Sprout.Core.Services.SqlServer
 
             foreach (var queryParam in requestedParameters)
             {
-                SetQueryParam(queryParam, dataRow);
+                if (queryParam.IsFromUIState)
+                {
+                    var dep = ParameterParser.ParseDependency(queryParam.RawPatameter);
+
+                    var uiState = UiStateRegistry[dep.ControlName];
+
+                    if (uiState == null)
+                    {
+                        throw new Exception($"UI State with path {queryParam.Path} not found for parameter {queryParam.Name}");
+                    }
+
+                    queryParam.Value = ResolveBindingPath(uiState, dep.PropertyPath);
+                }
+                else
+                {
+                    SetQueryParamFromDataRow(queryParam, dataRow);
+                }
 
                 var param = new SqlParameter
                 {
-                    ParameterName = $"@{queryParam.Name}",
+                    //Replace is needed when the parameter is from the UIRegistry, then it contains multiple .
+                    ParameterName = $"@{queryParam.Name.Replace(".", "_")}",
                     Value = queryParam.Value ?? DBNull.Value
                 };
 
@@ -223,7 +270,7 @@ namespace Sprout.Core.Services.SqlServer
             }
         }
 
-        private static void SetQueryParam(QueryParameter queryParam, System.Data.DataRow dataRow)
+        private static void SetQueryParamFromDataRow(QueryParameter queryParam, System.Data.DataRow dataRow)
         {
             // Check if the row is deleted first to avoid the exception
             var version = dataRow.RowState == DataRowState.Deleted
@@ -268,6 +315,7 @@ namespace Sprout.Core.Services.SqlServer
             public object Value { get; set; }
             public bool IsMandatory { get; set; }
             public string RawPatameter { get; internal set; }
+            public bool IsFromUIState { get; internal set; }
         }
     }
 }

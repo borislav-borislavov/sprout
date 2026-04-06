@@ -41,7 +41,7 @@ namespace Sprout.Core.Factories
 
             AddControl(sproutCombo, controls);
 
-            SetGridPosition(sproutCombo, sproutComboConfig);
+            SetPositionInGrid(sproutCombo, sproutComboConfig);
 
             var uiState = new SproutComboUIState();
             uiState.SetUpState(sproutCombo);

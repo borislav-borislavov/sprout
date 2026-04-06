@@ -1,4 +1,5 @@
 ﻿using Sprout.Core.Models.Configurations;
+using Sprout.Core.Views.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,22 +12,21 @@ namespace Sprout.Core.Factories
 {
     public class ButtonFactory : BaseSproutControlFactory
     {
-        public static UIElement GenerateButton(ButtonConfig buttonConfig, Dictionary<string, UIElement> controls)
+        public static SproutButton GenerateSproutButton(SproutButtonConfig sproutButtonConfig, Dictionary<string, UIElement> controls)
         {
-            var button = new System.Windows.Controls.Button
+            var sproutButton = new SproutButton
             {
-                Content = buttonConfig.Content ?? "Button"
+                Name = sproutButtonConfig.Name,
+                Config = sproutButtonConfig,
             };
 
-            AddControl(button, controls);
+            sproutButton.button.Content = sproutButtonConfig.Content ?? "Button";
 
-            Grid.SetRow(button, buttonConfig.Row);
-            Grid.SetRowSpan(button, buttonConfig.RowSpan);
+            AddControl(sproutButton, controls);
 
-            Grid.SetColumn(button, buttonConfig.Column);
-            Grid.SetColumnSpan(button, buttonConfig.ColumnSpan);
+            SetPositionInGrid(sproutButton, sproutButtonConfig);
 
-            return button;
+            return sproutButton;
         }
     }
 }

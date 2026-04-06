@@ -16,6 +16,8 @@ namespace Sprout.Core.Services.DataProviders
 {
     public interface IDataService : IDisposable
     {
+        UiStateRegistry UiStateRegistry { get; }
+
         Task ProvideData();
 
         Task Insert(DataRow dataRow);

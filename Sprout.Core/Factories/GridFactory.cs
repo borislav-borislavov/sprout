@@ -54,7 +54,7 @@ namespace Sprout.Core.Factories
                 grid.Children.Add(SproutControlFactory.GetControl(sproutControl, controls));
             }
 
-            SetGridPosition(grid, gridConfig);
+            SetPositionInGrid(grid, gridConfig);
 
             return grid;
         }

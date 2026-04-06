@@ -234,6 +234,39 @@ namespace Sprout.Core.Views
 
                         vm.UiStateRegistry.Register(sproutTextBox.UIState.Name, sproutTextBox.UIState);
                     }
+
+                    if (kvp.Value is SproutButton sproutButton)
+                    {
+                        vm.GridActions.Add(sproutButton.Name, []);
+
+                        var compositeAction = new CompositeButtonAction();
+
+                        foreach (var actionConfig in sproutButton.Config.Actions)
+                        {
+                            if (actionConfig is ExecuteUpdateActionConfig)
+                            {
+                                compositeAction.Add(new ExecuteUpdateButtonAction(sproutButton.Name));
+                            }
+                            else if (actionConfig is RefreshDataGridActionConfig refreshConfig)
+                            {
+                                compositeAction.Add(new RefreshDataGridButtonAction(refreshConfig.TargetDataGridName));
+                            }
+                        }
+
+                        vm.GridActions[sproutButton.Name][nameof(CompositeButtonAction)] = compositeAction;
+
+                        sproutButton.button.SetBinding(Button.CommandProperty,
+                            new Binding(nameof(SproutPageVM.PerformActionCommand))
+                            {
+                                Mode = BindingMode.OneWay
+                            });
+
+                        sproutButton.button.SetBinding(Button.CommandParameterProperty,
+                            new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutButton.Name}][{nameof(CompositeButtonAction)}]")
+                            {
+                                Mode = BindingMode.OneWay
+                            });
+                    }
                 }
             }
             catch (Exception ex)

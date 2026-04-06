@@ -19,8 +19,8 @@ namespace Sprout.Core.Factories
             {
                 case GridConfig gridConfig:
                     return GridFactory.GenerateGrid(gridConfig, controls);
-                case ButtonConfig buttonConfig:
-                    return ButtonFactory.GenerateButton(buttonConfig, controls);
+                case SproutButtonConfig sproutButtonConfig:
+                    return ButtonFactory.GenerateSproutButton(sproutButtonConfig, controls);
                 case SproutDataGridConfig sproutGridConfig:
                     return SproutDataGridFactory.GenerateSproutGrid(sproutGridConfig, controls);
                 case SproutComboConfig sproutComboConfig:

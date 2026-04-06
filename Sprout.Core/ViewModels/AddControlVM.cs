@@ -67,9 +67,10 @@ namespace Sprout.Core.ViewModels
                     };
                     break;
                 case SproutControlType.Button:
-                    NewControl = new ButtonConfig()
+                    NewControl = new SproutButtonConfig()
                     {
-                        Name = ControlName
+                        Name = ControlName,
+                        Actions = []
                     };
                     break;
                 case SproutControlType.TextBox:

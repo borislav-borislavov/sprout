@@ -18,12 +18,14 @@ namespace Sprout.Core.Models.Queries
 
             foreach (var scope in GetScopes(text))
             {
+                var nrNavigations = scope.Count(c => c == '.');
+
                 parameters.Add(new QueryParameter
                 {
                     Name = scope.TrimStart('@').TrimEnd('?', '!'),
                     IsMandatory = scope.EndsWith("!"),
                     RawPatameter = scope,
-
+                    IsFromUIState = nrNavigations > 1
                 });
             }
 
@@ -39,19 +41,24 @@ namespace Sprout.Core.Models.Queries
                 var periodIdx = scope.IndexOf('.');
                 if (periodIdx == -1) continue;
 
-                var dependency = new DataProviderDependency();
-
-                dependency.RawDependency = scope;
-
-                var chunks = scope.Split('.', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-
-                dependency.ControlName = chunks[0].TrimStart('@');
-                dependency.PropertyPath = string.Join(".", chunks[1..]);
-
-                dependencies.Add(dependency);
+                dependencies.Add(ParseDependency(scope));
             }
 
             return dependencies;
+        }
+
+        public static DataProviderDependency ParseDependency(string text)
+        {
+            var dependency = new DataProviderDependency();
+
+            dependency.RawDependency = text;
+
+            var chunks = text.Split('.', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+            dependency.ControlName = chunks[0].TrimStart('@');
+            dependency.PropertyPath = string.Join(".", chunks[1..]);
+
+            return dependency;
         }
 
         public static IEnumerable<string> GetScopes(this string text)

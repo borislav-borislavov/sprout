@@ -168,7 +168,13 @@ namespace Sprout.Core.ViewModels
                     query = query.Replace($"{{{queryParam.RawPatameter}}}", safeParamName, StringComparison.CurrentCultureIgnoreCase);
                 }
 
-                using (var conn = new SqlConnection(adapterConfig.ConnectionString))
+                var connectionString = adapterConfig.ConnectionString;
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    connectionString = _configService.Load().Settings.SqlServerConnectionString;
+                }
+
+                using (var conn = new SqlConnection(connectionString))
                 using (var cmd = new SqlCommand(query, conn))
                 {
                     try

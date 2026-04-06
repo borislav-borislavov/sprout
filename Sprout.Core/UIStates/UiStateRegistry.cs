@@ -23,7 +23,7 @@ namespace Sprout.Core.UIStates
             }
         }
 
-        private readonly Dictionary<string, BaseUIState> _states = new();
+        private readonly Dictionary<string, BaseUIState> _states = new(StringComparer.InvariantCultureIgnoreCase);
 
         public void Register(string controlName, BaseUIState state)
         {

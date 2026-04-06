@@ -36,7 +36,7 @@ namespace Sprout.Core.Models.GridActions
 				throw new NotImplementedException();
 			}
 
-			using (var dataService = dataServiceFactory.Create(ownDataAdapter))
+			using (var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry))
 			{
 				foreach (System.Data.DataRow dataRow in ownDataAdapter.DataProvider.Data.Rows)
 				{

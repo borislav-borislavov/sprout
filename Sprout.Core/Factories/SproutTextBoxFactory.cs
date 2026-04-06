@@ -49,7 +49,7 @@ namespace Sprout.Core.Factories
 
             AddControl(sproutTextBox, controls);
 
-            SetGridPosition(sproutTextBox, config);
+            SetPositionInGrid(sproutTextBox, config);
 
             var uiState = new SproutTextBoxUIState();
             uiState.SetUpState(sproutTextBox);

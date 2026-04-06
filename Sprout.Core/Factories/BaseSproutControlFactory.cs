@@ -31,7 +31,7 @@ namespace Sprout.Core.Factories
             controls[control.Name] = control;
         }
 
-        protected static void SetGridPosition(FrameworkElement control, SproutControlConfig config)
+        protected static void SetPositionInGrid(FrameworkElement control, SproutControlConfig config)
         {
             Grid.SetRow(control, config.Row);
             Grid.SetColumn(control, config.Column);

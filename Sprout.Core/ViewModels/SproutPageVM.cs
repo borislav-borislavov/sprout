@@ -78,7 +78,7 @@ namespace Sprout.Core.ViewModels
 
                         if (dependencyHasChanged)
                         {
-                            using (var dataService = _dataServiceFactory.Create(dataProvider.Parent))
+                            using (var dataService = _dataServiceFactory.Create(dataProvider.Parent, UiStateRegistry))
                             {
                                 await dataService.ProvideData();
                             }
@@ -119,12 +119,12 @@ namespace Sprout.Core.ViewModels
             {
                 foreach (var kvp in DataProviders)
                 {
-                    _dataServiceFactory.Create(kvp.Value.Parent).BindDependencies(kvp.Value, UiStateRegistry);
+                    _dataServiceFactory.Create(kvp.Value.Parent, UiStateRegistry).BindDependencies(kvp.Value, UiStateRegistry);
                 }
 
                 foreach (var kvp in DataProviders)
                 {
-                    using (var dataservice = _dataServiceFactory.Create(kvp.Value.Parent))
+                    using (var dataservice = _dataServiceFactory.Create(kvp.Value.Parent, UiStateRegistry))
                     {
                         await dataservice.ProvideData();
                     }
@@ -137,13 +137,13 @@ namespace Sprout.Core.ViewModels
         }
 
         [RelayCommand]
-        private void PerformAction(object parameter)
+        private async Task PerformAction(object parameter)
         {
             try
             {
                 if (parameter is GridAction gridAction)
                 {
-                    gridAction.Perform(DataAdapters, UiStateRegistry, _dataServiceFactory);
+                    await gridAction.Perform(DataAdapters, UiStateRegistry, _dataServiceFactory);
                 }
             }
             catch (Exception ex)

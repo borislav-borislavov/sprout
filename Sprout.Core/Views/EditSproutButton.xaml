@@ -1,0 +1,134 @@
+<UserControl x:Class="Sprout.Core.Views.EditSproutButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Sprout.Core.Views"
+             xmlns:config="clr-namespace:Sprout.Core.Models.Configurations"
+             xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
+             
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance viewModels:EditPageVM}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <!--Name-->
+        <TextBlock
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="5"
+            VerticalAlignment="Top"
+            Text="Name"
+            FontWeight="Bold"
+            FontSize="16"/>
+
+        <TextBox
+            Grid.Row="0"
+            Grid.Column="1"
+            VerticalAlignment="Top"
+            Margin="5"
+            Text="{Binding SelectedButton.Name, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!--Content-->
+        <TextBlock
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="5"
+            VerticalAlignment="Top"
+            Text="Content"
+            FontWeight="Bold"
+            FontSize="16"/>
+
+        <TextBox
+            Grid.Row="1"
+            Grid.Column="1"
+            VerticalAlignment="Top"
+            Margin="5"
+            Text="{Binding SelectedButton.Content, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!--Actions Header-->
+        <TextBlock
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Margin="5,15,5,0"
+            Text="Actions"
+            FontWeight="Bold"
+            FontSize="16"/>
+
+        <!--Actions Toolbar-->
+        <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                    Orientation="Horizontal">
+            <ComboBox Width="200" Margin="5"
+                      ItemsSource="{Binding AvailableActionTypes}"
+                      SelectedItem="{Binding SelectedActionType}"/>
+
+            <Button Content="Add" Height="35" Width="50" Margin="5"
+                    Command="{Binding AddButtonActionCommand}"/>
+
+            <Button Content="Remove" Height="35" Width="60" Margin="5"
+                    Command="{Binding RemoveButtonActionCommand}"/>
+
+            <Button Content="Up" Height="35" Width="50" Margin="5"
+                    Command="{Binding MoveButtonActionUpCommand}"/>
+
+            <Button Content="Down" Height="35" Width="50" Margin="5"
+                    Command="{Binding MoveButtonActionDownCommand}"/>
+        </StackPanel>
+
+        <!--Actions List-->
+        <ListBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
+                 ItemsSource="{Binding SelectedButton.Actions}"
+                 SelectedItem="{Binding SelectedButtonAction}">
+            <ListBox.Resources>
+                <DataTemplate DataType="{x:Type config:ExecuteUpdateActionConfig}">
+                    <TextBlock Text="Execute Update Command" FontWeight="SemiBold"/>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type config:RefreshDataGridActionConfig}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Refresh DataGrid: " FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding TargetDataGridName}" Foreground="DarkSlateGray"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.Resources>
+        </ListBox>
+
+        <!--Selected Action Detail-->
+        <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
+            <Grid.Resources>
+                <DataTemplate DataType="{x:Type config:ExecuteUpdateActionConfig}">
+                    <StackPanel Margin="5">
+                        <TextBlock Text="This action executes the Update command configured in the DataAdapter tab."
+                                   TextWrapping="Wrap" Foreground="Gray"/>
+                        <Button Content="Initialize Data Adapter" Margin="0,10,0,0"
+                                HorizontalAlignment="Left" Padding="10,3"
+                                Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.InitializeButtonDataAdapterCommand}"/>
+                    </StackPanel>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type config:RefreshDataGridActionConfig}">
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <TextBlock Text="Target DataGrid Name:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <TextBox Width="200" Text="{Binding TargetDataGridName, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </Grid.Resources>
+
+            <ContentControl Content="{Binding SelectedButtonAction}"/>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -248,6 +248,16 @@ namespace Sprout.Core.ViewModels
                     SelectedDataGrid = null;
                 }
 
+                if (value is SproutButtonConfig sproutButtonConfig)
+                {
+                    SelectedButton = sproutButtonConfig;
+                }
+                else
+                {
+                    SelectedButton = null;
+                    SelectedButtonAction = null;
+                }
+
                 if (value is IDataAdapterControlConfig dataAdapterControlConfig)
                 {
                     IsDataAdapterVisible = true;
