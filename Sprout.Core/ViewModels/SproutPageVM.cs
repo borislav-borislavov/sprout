@@ -9,6 +9,7 @@ using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
+using Sprout.Core.Services;
 using Sprout.Core.Services.DataProviders;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.SqlServer;
@@ -119,7 +120,7 @@ namespace Sprout.Core.ViewModels
             {
                 foreach (var kvp in DataProviders)
                 {
-                    _dataServiceFactory.Create(kvp.Value.Parent, UiStateRegistry).BindDependencies(kvp.Value, UiStateRegistry);
+                    DependencyBinder.BindDependencies(kvp.Value, UiStateRegistry);
                 }
 
                 foreach (var kvp in DataProviders)

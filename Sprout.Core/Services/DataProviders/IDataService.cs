@@ -14,6 +14,13 @@ using System.Windows.Data;
 
 namespace Sprout.Core.Services.DataProviders
 {
+    /// <summary>
+    /// A contract for a data service that manages data operations and UI state integration.
+    /// </summary>
+    /// <remarks>Implementations of this interface provide methods for inserting, updating, and deleting data
+    /// rows. The interface also supports binding dependencies between
+    /// data providers and UI state, facilitating synchronization between data and user interface components. Consumers
+    /// should ensure proper disposal of resources by calling Dispose when the service is no longer needed.</remarks>
     public interface IDataService : IDisposable
     {
         UiStateRegistry UiStateRegistry { get; }
@@ -23,20 +30,5 @@ namespace Sprout.Core.Services.DataProviders
         Task Insert(DataRow dataRow);
         Task Update(DataRow dataRow);
         Task Delete(DataRow dataRow);
-
-        public void BindDependencies(IDataProvider dataProvider, UiStateRegistry uiStateRegistry)
-        {
-            foreach (var dep in dataProvider.Dependencies)
-            {
-                BindingOperations.SetBinding(
-                    target: dep,
-                    DataProviderDependency.ValueProperty,
-                    new Binding
-                    {
-                        Source = uiStateRegistry,
-                        Path = new PropertyPath($"[{dep.ControlName}].{dep.PropertyPath}")
-                    });
-            }
-        }
     }
 }
