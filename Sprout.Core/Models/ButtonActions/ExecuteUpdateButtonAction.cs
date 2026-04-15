@@ -14,9 +14,11 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.ButtonActions
 {
-    public class ExecuteUpdateButtonAction : IButtonAction
+    public class ExecuteUpdateButtonAction : IButtonAction, IButtonActionMessenger
     {
         private readonly string _ownControlName;
+
+        public List<ActionMessage> Messages { get; private set; } = [];
 
         public ExecuteUpdateButtonAction(string ownControlName)
         {
@@ -25,6 +27,8 @@ namespace Sprout.Core.Models.ButtonActions
 
         public async Task Perform(Dictionary<string, DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
+            ResetMessages();
+
             if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
             {
                 throw new Exception($"DataAdapter not found for control '{_ownControlName}'");
@@ -37,8 +41,16 @@ namespace Sprout.Core.Models.ButtonActions
 
             using (var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry))
             {
-                await dataService.Update(null);
+                var messages = await dataService.Update(null);
+
+                if (messages.Any())
+                    Messages.AddRange(messages);
             }
+        }
+
+        public void ResetMessages()
+        {
+            Messages.Clear();
         }
     }
 }

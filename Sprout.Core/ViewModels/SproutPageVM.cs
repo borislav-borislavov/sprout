@@ -11,6 +11,7 @@ using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services;
+using Sprout.Core.Services.ActionMessageService;
 using Sprout.Core.Services.DataProviders;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.SqlServer;
@@ -24,6 +25,7 @@ namespace Sprout.Core.ViewModels
     public partial class SproutPageVM : ObservableObject
     {
         private readonly IDialogService _dialogService;
+        private readonly IActionMessageService _actionMessageService;
         private readonly IDataAdapterFactory _dataAdapterFactory;
         private readonly IDataServiceFactory _dataServiceFactory;
 
@@ -51,11 +53,13 @@ namespace Sprout.Core.ViewModels
 
         public SproutPageVM(SproutPageConfiguration pageConfig,
             IDialogService dialogService,
+            IActionMessageService actionMessageService,
             IDataAdapterFactory dataAdapterFactory,
             IDataServiceFactory dataServiceFactory)
         {
             PageConfig = pageConfig;
             _dialogService = dialogService;
+            _actionMessageService = actionMessageService;
             _dataAdapterFactory = dataAdapterFactory;
             _dataServiceFactory = dataServiceFactory;
 
@@ -146,6 +150,9 @@ namespace Sprout.Core.ViewModels
                 if (parameter is IButtonAction buttonAction)
                 {
                     await buttonAction.Perform(DataAdapters, UiStateRegistry, _dataServiceFactory);
+
+                    if (parameter is IButtonActionMessenger messenge)
+                        _actionMessageService.Show(messenge);
                 }
             }
             catch (Exception ex)

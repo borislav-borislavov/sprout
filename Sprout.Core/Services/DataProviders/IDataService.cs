@@ -1,4 +1,5 @@
-﻿using Sprout.Core.Models.DataAdapters;
+﻿using Sprout.Core.Models;
+using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.SqlServer;
@@ -27,8 +28,8 @@ namespace Sprout.Core.Services.DataProviders
 
         Task ProvideData();
 
-        Task Insert(DataRow dataRow);
-        Task Update(DataRow dataRow);
-        Task Delete(DataRow dataRow);
+        Task<IEnumerable<ActionMessage>> Insert(DataRow dataRow);
+        Task<IEnumerable<ActionMessage>> Update(DataRow dataRow);
+        Task<IEnumerable<ActionMessage>> Delete(DataRow dataRow);
     }
 }

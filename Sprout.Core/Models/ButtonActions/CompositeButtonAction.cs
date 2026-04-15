@@ -10,9 +10,11 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.ButtonActions
 {
-    public class CompositeButtonAction : IButtonAction
+    public class CompositeButtonAction : IButtonAction, IButtonActionMessenger
     {
         private readonly List<IButtonAction> _actions = [];
+
+        public List<ActionMessage> Messages { get; } = [];
 
         public void Add(IButtonAction action)
         {
@@ -21,10 +23,20 @@ namespace Sprout.Core.Models.ButtonActions
 
         public async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
+            ResetMessages();
+
             foreach (var action in _actions)
             {
                 await action.Perform(dataAdapters, uiStateRegistry, dataServiceFactory);
+
+                if (action is IButtonActionMessenger messenger && messenger.Messages.Any())
+                    Messages.AddRange(messenger.Messages);
             }
+        }
+
+        public void ResetMessages()
+        {
+            Messages.Clear();
         }
     }
 }

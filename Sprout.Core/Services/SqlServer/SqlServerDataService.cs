@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Sprout.Core.Factories;
+using Sprout.Core.Models;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
@@ -27,7 +28,7 @@ namespace Sprout.Core.Services.SqlServer
             UiStateRegistry = uiStateRegistry;
         }
 
-        public async Task Insert(DataRow dataRow)
+        public async Task<IEnumerable<ActionMessage>> Insert(DataRow dataRow)
         {
             if (_dataAdapter.InsertCommand is not SqlServerEditCommand sqlEditCommand)
                 throw new NotImplementedException();
@@ -37,10 +38,10 @@ namespace Sprout.Core.Services.SqlServer
             if (string.IsNullOrWhiteSpace(command))
                 throw new Exception($"{nameof(_dataAdapter.InsertCommand)} not set");
 
-            await Change(sqlEditCommand, dataRow);
+            return await Change(sqlEditCommand, dataRow);
         }
 
-        public async Task Update(DataRow dataRow)
+        public async Task<IEnumerable<ActionMessage>> Update(DataRow dataRow)
         {
             if (_dataAdapter.UpdateCommand is not SqlServerEditCommand sqlEditCommand)
                 throw new NotImplementedException();
@@ -50,10 +51,10 @@ namespace Sprout.Core.Services.SqlServer
             if (string.IsNullOrWhiteSpace(command))
                 throw new Exception($"{nameof(_dataAdapter.UpdateCommand)} not set");
 
-            await Change(sqlEditCommand, dataRow);
+            return await Change(sqlEditCommand, dataRow);
         }
 
-        public async Task Delete(DataRow dataRow)
+        public async Task<IEnumerable<ActionMessage>> Delete(DataRow dataRow)
         {
             if (_dataAdapter.DeleteCommand is not SqlServerEditCommand sqlEditCommand)
                 throw new NotImplementedException();
@@ -63,7 +64,7 @@ namespace Sprout.Core.Services.SqlServer
             if (string.IsNullOrWhiteSpace(command))
                 throw new Exception($"{nameof(_dataAdapter.DeleteCommand)} not set");
 
-            await Change(sqlEditCommand, dataRow);
+            return await Change(sqlEditCommand, dataRow);
         }
 
         public object ResolveBindingPath(object source, string path)
@@ -90,14 +91,14 @@ namespace Sprout.Core.Services.SqlServer
             }
         }
 
-        private async Task Change(SqlServerEditCommand editCmd, DataRow dataRow)
+        private async Task<IEnumerable<ActionMessage>> Change(SqlServerEditCommand editCmd, DataRow dataRow)
         {
             if (_connection.State == ConnectionState.Closed)
             {
                 await _connection.OpenAsync();
             }
 
-            var command = editCmd.Text;
+            var commandText = editCmd.Text;
 
             var requestedParameters = ParameterParser.ParseQueryParameters(editCmd.Text);
 
@@ -135,15 +136,51 @@ namespace Sprout.Core.Services.SqlServer
                     sqlParams.Add(param);
                 }
 
-                command = command.Replace($"{{{queryParam.RawPatameter}}}", $"{param.ParameterName}", StringComparison.OrdinalIgnoreCase);
+                commandText = commandText.Replace($"{{{queryParam.RawPatameter}}}", $"{param.ParameterName}", StringComparison.OrdinalIgnoreCase);
             }
-            
-            using (var cmd = new SqlCommand(command, _connection))
+
+            if (editCmd.WithMessages)
+            {
+                commandText = CreateMessagesTable(commandText);
+            }
+
+            using (var cmd = new SqlCommand(commandText, _connection))
             {
                 AttachParameters(cmd, sqlParams);
 
-                await cmd.ExecuteNonQueryAsync();
+                if (editCmd.WithMessages)
+                {
+                    var messages = new List<ActionMessage>();
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            messages.Add(new(reader.GetString(0), reader.GetString(1)));
+                        }
+                    }
+
+                    return messages;
+                }
+                else
+                {
+                    await cmd.ExecuteNonQueryAsync();
+                    return [];
+                }
             }
+        }
+
+        private string CreateMessagesTable(string commandText)
+        {
+            commandText =
+                $"""
+                CREATE TABLE #Messages (Type VARCHAR(15), Message NVARCHAR(MAX));
+
+                {commandText}
+
+                SELECT * FROM #Messages
+                """;
+            return commandText;
         }
 
         public async Task ProvideData()

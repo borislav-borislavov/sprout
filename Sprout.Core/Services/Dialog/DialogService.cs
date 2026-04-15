@@ -33,5 +33,15 @@ namespace Sprout.Core.Services.Dialog
         {
             return ShowMessage(message, string.Empty, dialogButton);
         }
+
+        public DialogResult ShowError(string message)
+        {
+            return ShowMessage(message, "Error", DialogButton.OK, DialogImage.Error);
+        }
+
+        public DialogResult ShowWarning(string message)
+        {
+            return ShowMessage(message, "Warning", DialogButton.OK, DialogImage.Warning);
+        }
     }
 }

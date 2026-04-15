@@ -14,5 +14,7 @@ namespace Sprout.Core.Services.Dialog
         DialogResult ShowMessage(string message, string caption);
         DialogResult ShowMessage(string message, string caption, DialogButton dialogButton);
         DialogResult ShowMessage(string message, string caption, DialogButton dialogButton, DialogImage dialogImage);
+        DialogResult ShowError(string message);
+        DialogResult ShowWarning(string message);
     }
 }

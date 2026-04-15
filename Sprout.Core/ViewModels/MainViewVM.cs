@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Sprout.Core.Factories;
 using Sprout.Core.Messages;
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Services.ActionMessageService;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Navigation;
@@ -18,6 +19,7 @@ namespace Sprout.Core.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IDataAdapterFactory _dataAdapterFactory;
         private readonly IDataServiceFactory _dataServiceFactory;
+        private readonly IActionMessageService _actionMessageService;
         [ObservableProperty]
         private ObservableCollection<SproutPageConfiguration> _pageConfigs;
 
@@ -35,14 +37,15 @@ namespace Sprout.Core.ViewModels
             INavigationService navigationService,
             IDialogService dialogService,
             IDataAdapterFactory dataAdapterFactory,
-            IDataServiceFactory dataServiceFactory)
+            IDataServiceFactory dataServiceFactory,
+            IActionMessageService actionMessageService)
         {
             _configService = configService;
             _navigationService = navigationService;
             _dialogService = dialogService;
             _dataAdapterFactory = dataAdapterFactory;
             _dataServiceFactory = dataServiceFactory;
-
+            _actionMessageService = actionMessageService;
             LoadMenuPages();
 
             WeakReferenceMessenger.Default.Register<OpenTabMessage>(this, (r, msg) =>
@@ -77,7 +80,7 @@ namespace Sprout.Core.ViewModels
 
         private void OpenTab(SproutPageConfiguration pageConfig, object? parameter)
         {
-            var tab = new SproutPageVM(pageConfig, _dialogService, _dataAdapterFactory, _dataServiceFactory);
+            var tab = new SproutPageVM(pageConfig, _dialogService, _actionMessageService, _dataAdapterFactory, _dataServiceFactory);
 
             if (parameter != null)
             {
@@ -127,7 +130,7 @@ namespace Sprout.Core.ViewModels
 
             var currentPageConfig = _sproutConfig.Pages.FirstOrDefault(pc => pc.ID == pageId);
 
-            var newTab = new SproutPageVM(currentPageConfig, _dialogService, _dataAdapterFactory, _dataServiceFactory);
+            var newTab = new SproutPageVM(currentPageConfig, _dialogService, _actionMessageService, _dataAdapterFactory, _dataServiceFactory);
             newTab.SproutPageUIState.Data = uiState.Data;
             Tabs.Add(newTab);
             SelectedTab = newTab;
