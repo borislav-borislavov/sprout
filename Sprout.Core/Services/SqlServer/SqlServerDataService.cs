@@ -302,6 +302,8 @@ namespace Sprout.Core.Services.SqlServer
                     // This prevents the UI from freezing during the data parsing
                     await Task.Run(() => dt.Load(reader));
 
+                    DataTableFactory.PostLoadLogic(dt);
+
                     _dataProvider.Data = dt;
                 }
             }
