@@ -1,5 +1,6 @@
 using Sprout.Core.Factories;
 using Sprout.Core.Models.DataAdapters;
+using Sprout.Core.Models.GridActions;
 using Sprout.Core.UIStates;
 using System;
 using System.Collections.Generic;
@@ -7,18 +8,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sprout.Core.Models.GridActions
+namespace Sprout.Core.Models.ButtonActions
 {
-    public class CompositeButtonAction : GridAction
+    public class CompositeButtonAction : IButtonAction
     {
-        private readonly List<GridAction> _actions = [];
+        private readonly List<IButtonAction> _actions = [];
 
-        public void Add(GridAction action)
+        public void Add(IButtonAction action)
         {
             _actions.Add(action);
         }
 
-        public override async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             foreach (var action in _actions)
             {

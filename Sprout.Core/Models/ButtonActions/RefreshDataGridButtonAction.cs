@@ -1,5 +1,6 @@
 using Sprout.Core.Factories;
 using Sprout.Core.Models.DataAdapters;
+using Sprout.Core.Models.GridActions;
 using Sprout.Core.UIStates;
 using System;
 using System.Collections.Generic;
@@ -7,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sprout.Core.Models.GridActions
+namespace Sprout.Core.Models.ButtonActions
 {
-    public class RefreshDataGridButtonAction : GridAction
+    public class RefreshDataGridButtonAction : IButtonAction
     {
         private readonly string _targetDataGridName;
 
@@ -18,7 +19,7 @@ namespace Sprout.Core.Models.GridActions
             _targetDataGridName = targetDataGridName;
         }
 
-        public override async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             if (!dataAdapters.TryGetValue(_targetDataGridName, out var targetDataAdapter))
             {

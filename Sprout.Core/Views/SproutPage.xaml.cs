@@ -1,6 +1,7 @@
 ﻿using Sprout.Core.Behaviours;
 using Sprout.Core.Factories;
 using Sprout.Core.Models;
+using Sprout.Core.Models.ButtonActions;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.DataAdapters.DataProviders;
@@ -69,7 +70,7 @@ namespace Sprout.Core.Views
                         }
 
                         //initialize grid actions
-                        vm.GridActions.Add(sproutDataGrid.Name, []);
+                        vm.ButtonActions.Add(sproutDataGrid.Name, []);
 
                         sproutDataGrid.btnRefresh.SetBinding(Button.CommandProperty,
                             new Binding(nameof(SproutPageVM.PerformActionCommand))
@@ -78,10 +79,10 @@ namespace Sprout.Core.Views
                             });
 
                         //create the grid action
-                        vm.GridActions[sproutDataGrid.Name][nameof(RefreshDataGridAction)] = new RefreshDataGridAction(sproutDataGrid.Name);
+                        vm.ButtonActions[sproutDataGrid.Name][nameof(RefreshDataGridAction)] = new RefreshDataGridAction(sproutDataGrid.Name);
 
                         sproutDataGrid.btnRefresh.SetBinding(Button.CommandParameterProperty,
-                            new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(RefreshDataGridAction)}]")
+                            new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(RefreshDataGridAction)}]")
                             {
                                 Mode = BindingMode.OneWay
                             });
@@ -111,12 +112,12 @@ namespace Sprout.Core.Views
                                     });
 
                                 //create the grid action
-                                vm.GridActions[sproutDataGrid.Name][nameof(AddRowGridAction)] = new AddRowGridAction(sproutDataGrid.Name);
+                                vm.ButtonActions[sproutDataGrid.Name][nameof(AddRowGridAction)] = new AddRowGridAction(sproutDataGrid.Name);
 
 
                                 //bind to the newly created grid action
                                 sproutDataGrid.btnInsert.SetBinding(Button.CommandParameterProperty,
-                                    new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(AddRowGridAction)}]")
+                                    new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(AddRowGridAction)}]")
                                     {
                                         Mode = BindingMode.OneWay
                                     });
@@ -131,11 +132,11 @@ namespace Sprout.Core.Views
                                             });
 
                                 //create the grid action
-                                vm.GridActions[sproutDataGrid.Name][nameof(MarkDeletedGridAction)] = new MarkDeletedGridAction(sproutDataGrid.Name);
+                                vm.ButtonActions[sproutDataGrid.Name][nameof(MarkDeletedGridAction)] = new MarkDeletedGridAction(sproutDataGrid.Name);
 
                                 //bind to the newly created grid action
                                 sproutDataGrid.btnDelete.SetBinding(Button.CommandParameterProperty,
-                                    new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(MarkDeletedGridAction)}]")
+                                    new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(MarkDeletedGridAction)}]")
                                     {
                                         Mode = BindingMode.OneWay
                                     });
@@ -149,10 +150,10 @@ namespace Sprout.Core.Views
                                         Mode = BindingMode.OneWay
                                     });
 
-                                vm.GridActions[sproutDataGrid.Name][nameof(SaveGridAction)] = new SaveGridAction(sproutDataGrid.Config.Name);
+                                vm.ButtonActions[sproutDataGrid.Name][nameof(SaveGridAction)] = new SaveGridAction(sproutDataGrid.Config.Name);
 
                                 sproutDataGrid.btnSave.SetBinding(Button.CommandParameterProperty,
-                                      new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutDataGrid.Name}][{nameof(SaveGridAction)}]")
+                                      new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(SaveGridAction)}]")
                                       {
                                           Mode = BindingMode.OneWay
                                       });
@@ -237,7 +238,7 @@ namespace Sprout.Core.Views
 
                     if (kvp.Value is SproutButton sproutButton)
                     {
-                        vm.GridActions.Add(sproutButton.Name, []);
+                        vm.ButtonActions.Add(sproutButton.Name, []);
 
                         var compositeAction = new CompositeButtonAction();
 
@@ -253,7 +254,7 @@ namespace Sprout.Core.Views
                             }
                         }
 
-                        vm.GridActions[sproutButton.Name][nameof(CompositeButtonAction)] = compositeAction;
+                        vm.ButtonActions[sproutButton.Name][nameof(CompositeButtonAction)] = compositeAction;
 
                         sproutButton.button.SetBinding(Button.CommandProperty,
                             new Binding(nameof(SproutPageVM.PerformActionCommand))
@@ -262,7 +263,7 @@ namespace Sprout.Core.Views
                             });
 
                         sproutButton.button.SetBinding(Button.CommandParameterProperty,
-                            new Binding($"{nameof(SproutPageVM.GridActions)}[{sproutButton.Name}][{nameof(CompositeButtonAction)}]")
+                            new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutButton.Name}][{nameof(CompositeButtonAction)}]")
                             {
                                 Mode = BindingMode.OneWay
                             });

@@ -2,6 +2,7 @@
 using Sprout.Core.Common;
 using Sprout.Core.Common.Models;
 using Sprout.Core.Factories;
+using Sprout.Core.Models.ButtonActions;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
@@ -19,7 +20,7 @@ using static Sprout.Core.Services.SqlServer.SqlServerDataService;
 
 namespace Sprout.Core.Models.GridActions
 {
-	public class SaveGridAction : GridAction
+	public class SaveGridAction : IButtonAction
 	{
 		private readonly string _ownControlName;
 
@@ -28,7 +29,7 @@ namespace Sprout.Core.Models.GridActions
 			_ownControlName = ownControlName;
 		}
 
-		public override async Task Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+		public async Task Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
 		{
             if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
 			{

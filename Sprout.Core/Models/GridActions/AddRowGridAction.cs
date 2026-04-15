@@ -1,4 +1,5 @@
 ﻿using Sprout.Core.Factories;
+using Sprout.Core.Models.ButtonActions;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.UIStates;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.GridActions
 {
-    public class AddRowGridAction : GridAction
+    public class AddRowGridAction : IButtonAction
     {
         private readonly string _ownControlName;
 
@@ -20,7 +21,7 @@ namespace Sprout.Core.Models.GridActions
             _ownControlName = ownControlName;
         }
 
-        public override Task Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters,
+        public Task Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters,
             UiStateRegistry uiStateRegistry,
             IDataServiceFactory dataServiceFactory)
         {

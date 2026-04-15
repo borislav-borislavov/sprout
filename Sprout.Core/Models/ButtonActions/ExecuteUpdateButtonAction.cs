@@ -2,6 +2,7 @@ using Microsoft.Data.SqlClient;
 using Sprout.Core.Factories;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
+using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.UIStates;
 using System;
@@ -11,10 +12,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sprout.Core.Models.GridActions
+namespace Sprout.Core.Models.ButtonActions
 {
-    #warning This should not be a GridAction but a normal action
-    public class ExecuteUpdateButtonAction : GridAction
+    public class ExecuteUpdateButtonAction : IButtonAction
     {
         private readonly string _ownControlName;
 
@@ -23,7 +23,7 @@ namespace Sprout.Core.Models.GridActions
             _ownControlName = ownControlName;
         }
 
-        public override async Task Perform(Dictionary<string, DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(Dictionary<string, DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
             {
@@ -35,7 +35,7 @@ namespace Sprout.Core.Models.GridActions
                 throw new Exception($"UpdateCommand is not configured for control '{_ownControlName}'");
             }
 
-            using(var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry))
+            using (var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry))
             {
                 await dataService.Update(null);
             }

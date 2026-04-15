@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Sprout.Core.Factories;
 using Sprout.Core.Messages;
 using Sprout.Core.Models;
+using Sprout.Core.Models.ButtonActions;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
@@ -35,7 +36,7 @@ namespace Sprout.Core.ViewModels
         /// </summary>
         public SproutPageUIState SproutPageUIState { get; } = new();
 
-        public Dictionary<string, Dictionary<string, GridAction>> GridActions { get; set; } = [];
+        public Dictionary<string, Dictionary<string, IButtonAction>> ButtonActions { get; set; } = [];
 
         public Dictionary<string, IDataAdapter> DataAdapters { get; set; } = [];
         public Dictionary<string, IDataProvider> DataProviders { get; set; } = [];
@@ -142,9 +143,9 @@ namespace Sprout.Core.ViewModels
         {
             try
             {
-                if (parameter is GridAction gridAction)
+                if (parameter is IButtonAction buttonAction)
                 {
-                    await gridAction.Perform(DataAdapters, UiStateRegistry, _dataServiceFactory);
+                    await buttonAction.Perform(DataAdapters, UiStateRegistry, _dataServiceFactory);
                 }
             }
             catch (Exception ex)

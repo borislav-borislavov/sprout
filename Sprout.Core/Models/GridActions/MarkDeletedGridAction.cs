@@ -1,5 +1,6 @@
 ﻿using Sprout.Core.Common;
 using Sprout.Core.Factories;
+using Sprout.Core.Models.ButtonActions;
 using Sprout.Core.UIStates;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Windows;
 
 namespace Sprout.Core.Models.GridActions
 {
-    public class MarkDeletedGridAction : GridAction
+    public class MarkDeletedGridAction : IButtonAction
     {
         private readonly string _ownControlName;
 
@@ -20,7 +21,7 @@ namespace Sprout.Core.Models.GridActions
             _ownControlName = ownControlName;
         }
 
-        public override Task Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataProviders, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataProviders, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             if (!dataProviders.TryGetValue(_ownControlName, out var ownDataAdapter))
             {
