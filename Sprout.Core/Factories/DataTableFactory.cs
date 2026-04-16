@@ -32,6 +32,12 @@ namespace Sprout.Core.Factories
                 //if a collumn does not allow nulls, when creating a new row the app throws an error
                 //this code fixes this so that it is handled via sql
                 column.AllowDBNull = true;
+
+                //This prevents the DataTable from automatically assigning PK values
+                if (column.AutoIncrement)
+                {
+                    column.AutoIncrement = false;
+                }
             }
         }
     }
