@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Sprout.Core.Common;
 using Sprout.Core.Factories;
 using Sprout.Core.Models;
 using Sprout.Core.Models.DataAdapters;
@@ -176,8 +177,6 @@ namespace Sprout.Core.Services.SqlServer
             }
         }
 
-
-
         private string CreateMessagesTable(string commandText)
         {
             commandText =
@@ -258,36 +257,38 @@ namespace Sprout.Core.Services.SqlServer
                 }
             }
 
-            if (filterStatements.Count > 0 && (queryText.IndexOf("{!whereFilter}") == -1 && queryText.IndexOf("{!andFilter}") == -1))
+            if (filterStatements.Count > 0 
+                && (queryText.IndexOf(Const.SqlServer.WhereFilter) == -1 
+                && queryText.IndexOf(Const.SqlServer.AndFilter) == -1))
             {
-                throw new Exception("Filters are added but {!whereFilter} or {!andFilter} not used in query");
+                throw new Exception($"Filters are added but {Const.SqlServer.WhereFilter} or {Const.SqlServer.AndFilter} not used in query");
             }
 
             //replace WhereFilter syntax
-            if (queryText.IndexOf("{!whereFilter}") != -1)
+            if (queryText.IndexOf(Const.SqlServer.WhereFilter) != -1)
             {
                 if (filterStatements.Count == 0)
                 {
-                    queryText = queryText.Replace("{!whereFilter}", string.Empty, StringComparison.OrdinalIgnoreCase);
+                    queryText = queryText.Replace(Const.SqlServer.WhereFilter, string.Empty, StringComparison.OrdinalIgnoreCase);
                 }
                 else
                 {
                     var whereClause = $"WHERE {string.Join($"{Environment.NewLine}AND ", filterStatements)}";
-                    queryText = queryText.Replace("{!whereFilter}", whereClause, StringComparison.OrdinalIgnoreCase);
+                    queryText = queryText.Replace(Const.SqlServer.WhereFilter, whereClause, StringComparison.OrdinalIgnoreCase);
                 }
             }
 
             //replace AndFilter syntax
-            if (queryText.IndexOf("{!andFilter}") != -1)
+            if (queryText.IndexOf(Const.SqlServer.AndFilter) != -1)
             {
                 if (filterStatements.Count == 0)
                 {
-                    queryText = queryText.Replace("{!andFilter}", string.Empty, StringComparison.OrdinalIgnoreCase);
+                    queryText = queryText.Replace(Const.SqlServer.AndFilter, string.Empty, StringComparison.OrdinalIgnoreCase);
                 }
                 else
                 {
                     var whereClause = $" AND {string.Join($"{Environment.NewLine}AND ", filterStatements)}";
-                    queryText = queryText.Replace("{!andFilter}", whereClause, StringComparison.OrdinalIgnoreCase);
+                    queryText = queryText.Replace(Const.SqlServer.AndFilter, whereClause, StringComparison.OrdinalIgnoreCase);
                 }
             }
 
