@@ -9,6 +9,7 @@ using Sprout.Core.UIStates;
 using System.Data;
 using System.Windows;
 using System.Windows.Data;
+#nullable disable
 
 namespace Sprout.Core.Services.SqlServer
 {
@@ -154,10 +155,15 @@ namespace Sprout.Core.Services.SqlServer
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        while (await reader.ReadAsync())
-                        {
-                            messages.Add(new(reader.GetString(0), reader.GetString(1)));
-                        }
+                        //do
+                        //{
+                            //here i could identify if the columns of the reader match (reader.GetName())
+                            //the class signature to match them in a more robust way
+                            while (await reader.ReadAsync())
+                            {
+                                messages.Add(new(reader.GetString(0), reader.GetString(1)));
+                            }
+                        //} while (await reader.NextResultAsync());
                     }
 
                     return messages;
@@ -169,6 +175,8 @@ namespace Sprout.Core.Services.SqlServer
                 }
             }
         }
+
+
 
         private string CreateMessagesTable(string commandText)
         {
