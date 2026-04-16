@@ -30,7 +30,7 @@ namespace Sprout.Core.Services.SqlServer
             UiStateRegistry = uiStateRegistry;
         }
 
-        public async Task<IEnumerable<ActionMessage>> Insert(DataRow dataRow)
+        public async Task<ChangeResult> Insert(DataRow dataRow)
         {
             if (_dataAdapter.InsertCommand is not SqlServerEditCommand sqlEditCommand)
                 throw new NotImplementedException();
@@ -43,7 +43,7 @@ namespace Sprout.Core.Services.SqlServer
             return await Change(sqlEditCommand, dataRow);
         }
 
-        public async Task<IEnumerable<ActionMessage>> Update(DataRow dataRow)
+        public async Task<ChangeResult> Update(DataRow dataRow)
         {
             if (_dataAdapter.UpdateCommand is not SqlServerEditCommand sqlEditCommand)
                 throw new NotImplementedException();
@@ -56,7 +56,7 @@ namespace Sprout.Core.Services.SqlServer
             return await Change(sqlEditCommand, dataRow);
         }
 
-        public async Task<IEnumerable<ActionMessage>> Delete(DataRow dataRow)
+        public async Task<ChangeResult> Delete(DataRow dataRow)
         {
             if (_dataAdapter.DeleteCommand is not SqlServerEditCommand sqlEditCommand)
                 throw new NotImplementedException();
@@ -93,7 +93,7 @@ namespace Sprout.Core.Services.SqlServer
             }
         }
 
-        private async Task<IEnumerable<ActionMessage>> Change(SqlServerEditCommand editCmd, DataRow dataRow)
+        public async Task<ChangeResult> Change(SqlServerEditCommand editCmd, DataRow dataRow)
         {
             if (_connection.State == ConnectionState.Closed)
             {
@@ -146,35 +146,101 @@ namespace Sprout.Core.Services.SqlServer
                 commandText = CreateMessagesTable(commandText);
             }
 
+            var changeResult = new ChangeResult();
+
             using (var cmd = new SqlCommand(commandText, _connection))
             {
                 AttachParameters(cmd, sqlParams);
 
-                if (editCmd.WithMessages)
-                {
-                    var messages = new List<ActionMessage>();
+                var isNextResultFetched = false;
 
-                    using (var reader = await cmd.ExecuteReaderAsync())
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    do
                     {
-                        //do
-                        //{
-                            //here i could identify if the columns of the reader match (reader.GetName())
-                            //the class signature to match them in a more robust way
+                        if (isNextResultFetched)
+                            isNextResultFetched = false;
+
+                        if (IsMessages(reader))
+                        {
                             while (await reader.ReadAsync())
                             {
-                                messages.Add(new(reader.GetString(0), reader.GetString(1)));
+                                changeResult.Messages.Add(new(reader.GetString(0), reader.GetString(1)));
                             }
-                        //} while (await reader.NextResultAsync());
-                    }
+                        }
+                        else if (IsResult(reader))
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                var resultType = reader.GetFieldType(0);
 
-                    return messages;
+                                if (resultType == typeof(int))
+                                {
+                                    changeResult.Result = (bool)Convert.ChangeType(reader.GetFieldValue<int>(0), typeof(bool));
+                                }
+                                else if (resultType == typeof(bool))
+                                {
+                                    changeResult.Result = reader.GetFieldValue<bool>(0);
+                                }
+                                else
+                                {
+                                    throw new Exception($"Unsupported result type {resultType}.");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (changeResult.ExtraData != null)
+                                throw new Exception("You can return only one ExtraData result-set.");
+
+                            var dt = new DataTable();
+                            await Task.Run(() => dt.Load(reader));
+                            changeResult.ExtraData = dt;
+                            isNextResultFetched = true;
+                        }
+
+                    } while (isNextResultFetched || await reader.NextResultAsync());
                 }
-                else
-                {
-                    await cmd.ExecuteNonQueryAsync();
-                    return [];
-                }
+
+                return changeResult;
             }
+        }
+
+        private static bool IsMessages(SqlDataReader reader)
+        {
+            //ActionMessage has 2 properties
+            if (reader.FieldCount != 2)
+            {
+                return false;
+            }
+
+            if (reader.GetName(0) != "Type")
+            {
+                return false;
+            }
+
+            if (reader.GetName(1) != "Message")
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool IsResult(SqlDataReader reader)
+        {
+            //ActionMessage has 1 property
+            if (reader.FieldCount != 1)
+            {
+                return false;
+            }
+
+            if (reader.GetName(0) != "Result")
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private string CreateMessagesTable(string commandText)
@@ -257,8 +323,8 @@ namespace Sprout.Core.Services.SqlServer
                 }
             }
 
-            if (filterStatements.Count > 0 
-                && (queryText.IndexOf(Const.SqlServer.WhereFilter) == -1 
+            if (filterStatements.Count > 0
+                && (queryText.IndexOf(Const.SqlServer.WhereFilter) == -1
                 && queryText.IndexOf(Const.SqlServer.AndFilter) == -1))
             {
                 throw new Exception($"Filters are added but {Const.SqlServer.WhereFilter} or {Const.SqlServer.AndFilter} not used in query");

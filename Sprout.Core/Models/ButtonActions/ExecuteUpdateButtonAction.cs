@@ -41,10 +41,10 @@ namespace Sprout.Core.Models.ButtonActions
 
             using (var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry))
             {
-                var messages = await dataService.Update(null);
+                var changeResult = await dataService.Update(null);
 
-                if (messages.Any())
-                    Messages.AddRange(messages);
+                if (changeResult.Messages.Any())
+                    Messages.AddRange(changeResult.Messages);
             }
         }
 

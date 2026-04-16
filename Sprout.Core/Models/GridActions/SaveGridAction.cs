@@ -46,25 +46,25 @@ namespace Sprout.Core.Models.GridActions
 
             using (var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry))
             {
-                IEnumerable<ActionMessage> msgs = [];
+                ChangeResult changeResult = new();
 
                 foreach (System.Data.DataRow dataRow in ownDataAdapter.DataProvider.Data.Rows)
                 {
                     if (dataRow.RowState == DataRowState.Added)
                     {
-                        msgs = await dataService.Insert(dataRow);
+                        changeResult = await dataService.Insert(dataRow);
                     }
                     else if (dataRow[nameof(Const.BuiltInDataTableColumns._IsDeleted)] is bool isDeleted && isDeleted)
                     {
-                        msgs = await dataService.Delete(dataRow);
+                        changeResult = await dataService.Delete(dataRow);
                     }
                     else if (dataRow.RowState == DataRowState.Modified)
                     {
-                        msgs = await dataService.Update(dataRow);
+                        changeResult = await dataService.Update(dataRow);
                     }
 
-                    if (msgs.Any())
-                        allMessages.AddRange(msgs);
+                    if (changeResult.Messages.Any())
+                        allMessages.AddRange(changeResult.Messages);
                 }
 
                 await dataService.ProvideData();

@@ -28,8 +28,9 @@ namespace Sprout.Core.Services.DataProviders
 
         Task ProvideData();
 
-        Task<IEnumerable<ActionMessage>> Insert(DataRow dataRow);
-        Task<IEnumerable<ActionMessage>> Update(DataRow dataRow);
-        Task<IEnumerable<ActionMessage>> Delete(DataRow dataRow);
+        Task<ChangeResult> Insert(DataRow dataRow);
+        Task<ChangeResult> Update(DataRow dataRow);
+        Task<ChangeResult> Delete(DataRow dataRow);
+        Task<ChangeResult> Change(SqlServerEditCommand editCmd, DataRow dataRow);
     }
 }
