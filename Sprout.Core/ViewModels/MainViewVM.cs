@@ -17,9 +17,7 @@ namespace Sprout.Core.ViewModels
         private readonly IConfigurationService _configService;
         private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
-        private readonly IDataAdapterFactory _dataAdapterFactory;
-        private readonly IDataServiceFactory _dataServiceFactory;
-        private readonly IActionMessageService _actionMessageService;
+        private readonly ISproutPageVMFactory _sproutPageVMFactory;
         [ObservableProperty]
         private ObservableCollection<SproutPageConfiguration> _pageConfigs;
 
@@ -38,14 +36,13 @@ namespace Sprout.Core.ViewModels
             IDialogService dialogService,
             IDataAdapterFactory dataAdapterFactory,
             IDataServiceFactory dataServiceFactory,
-            IActionMessageService actionMessageService)
+            IActionMessageService actionMessageService,
+            ISproutPageVMFactory sproutPageVMFactory)
         {
             _configService = configService;
             _navigationService = navigationService;
             _dialogService = dialogService;
-            _dataAdapterFactory = dataAdapterFactory;
-            _dataServiceFactory = dataServiceFactory;
-            _actionMessageService = actionMessageService;
+            _sproutPageVMFactory = sproutPageVMFactory;
             LoadMenuPages();
 
             WeakReferenceMessenger.Default.Register<OpenTabMessage>(this, (r, msg) =>
@@ -80,15 +77,10 @@ namespace Sprout.Core.ViewModels
 
         private void OpenTab(SproutPageConfiguration pageConfig, object? parameter)
         {
-            var tab = new SproutPageVM(pageConfig, _dialogService, _actionMessageService, _dataAdapterFactory, _dataServiceFactory);
+            var sproutPageVM = _sproutPageVMFactory.Create(pageConfig, parameter);
 
-            if (parameter != null)
-            {
-                tab.SproutPageUIState.Data = parameter;
-            }
-
-            SelectedTab = tab;
-            Tabs.Add(tab);
+            SelectedTab = sproutPageVM;
+            Tabs.Add(sproutPageVM);
         }
 
         [RelayCommand]
@@ -130,8 +122,14 @@ namespace Sprout.Core.ViewModels
 
             var currentPageConfig = _sproutConfig.Pages.FirstOrDefault(pc => pc.ID == pageId);
 
-            var newTab = new SproutPageVM(currentPageConfig, _dialogService, _actionMessageService, _dataAdapterFactory, _dataServiceFactory);
-            newTab.SproutPageUIState.Data = uiState.Data;
+            if (currentPageConfig == null)
+            {
+                _dialogService.ShowError("Unable to find requested page");
+                return;
+            }
+
+            var newTab = _sproutPageVMFactory.Create(currentPageConfig, uiState.Data);
+
             Tabs.Add(newTab);
             SelectedTab = newTab;
         }
@@ -142,6 +140,17 @@ namespace Sprout.Core.ViewModels
         private void EditMenu()
         {
             var isSaved = _navigationService.ShowEditMenu(PageConfigs, _configService);
+
+            if (isSaved)
+            {
+                LoadMenuPages();
+            }
+        }
+
+        [RelayCommand]
+        private void EditLoginConfig()
+        {
+            var isSaved = _navigationService.ShowEditLoginConfig(_configService, _dialogService);
 
             if (isSaved)
             {

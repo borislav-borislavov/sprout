@@ -1,19 +1,34 @@
-﻿using Sprout.Core.Models.Configurations;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.ViewModels;
 using Sprout.Core.Windows;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sprout.Core.Services.Navigation
 {
     public class NavigationService : INavigationService
     {
+        private readonly IServiceProvider _serviceProvider;
+
+        public NavigationService(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+
+        public void ShowMainDashboard()
+        {
+            var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+            mainWindow.Show();
+        }
+
+        public void ShowLogin()
+        {
+            var mainWindow = _serviceProvider.GetRequiredService<LoginWindow>();
+            mainWindow.Show();
+        }
+
         public SproutControlConfig ShowAddControl()
         {
             var vm = new AddControlVM();
@@ -39,6 +54,15 @@ namespace Sprout.Core.Services.Navigation
             vm.Initialize(pageConfig);
 
             editPage.ShowDialog();
+        }
+
+        public bool ShowEditLoginConfig(IConfigurationService configService, IDialogService dialogService)
+        {
+            var vm = new EditLoginConfigVM(configService, dialogService);
+            var editLoginConfig = new EditLoginConfig { DataContext = vm };
+            editLoginConfig.ShowDialog();
+
+            return vm.IsSaved;
         }
     }
 }

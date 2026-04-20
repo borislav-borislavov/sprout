@@ -10,7 +10,6 @@ namespace Sprout.Core.Models.ButtonActions
     {
         List<ActionMessage> Messages { get; }
 
-
         void ResetMessages();
     }
 }

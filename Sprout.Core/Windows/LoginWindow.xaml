@@ -1,0 +1,60 @@
+﻿<Window x:Class="Sprout.Core.Windows.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Sprout.Core.Windows"
+        xmlns:vm="clr-namespace:Sprout.Core.ViewModels"
+        WindowStartupLocation="CenterScreen"
+        Title="Login" Height="450" Width="800"
+        
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance vm:LoginVM}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.35*"/>
+            <ColumnDefinition Width="0.3*"/>
+            <ColumnDefinition Width="0.35*"/>
+        </Grid.ColumnDefinitions>
+
+
+        <Grid Name="CenterGrid"
+              Grid.Row="1"
+              Grid.Column="1"
+              VerticalAlignment="Center"
+              FocusManager.FocusedElement="{Binding ElementName=txtUsername}"
+            >
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Username" Grid.Row="0" FontWeight="Bold"/>
+            <TextBox Name="txtUsername"
+                     Grid.Row="1"
+                     Margin="0 2 0 5"
+                     Text="{Binding UserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Text="Password" Grid.Row="2" FontWeight="Bold"/>
+            <PasswordBox Name="pwdBox" Grid.Row="3" Margin="0 2 0 5" PasswordChanged="pwdBox_PasswordChanged"/>
+
+            <Button Content="Login"
+                    Grid.Row="4"
+                    Margin="0 5 0 0"
+                    HorizontalAlignment="Center"
+                    Padding="10 5"
+                    Command="{Binding LoginCommand}" />
+        </Grid>
+    </Grid>
+</Window>

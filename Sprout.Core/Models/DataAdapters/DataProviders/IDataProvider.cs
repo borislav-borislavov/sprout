@@ -15,7 +15,7 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
 
 		DataTable Data { get; set; }
 
-		IEnumerable<DataProviderDependency> Dependencies { get; /*set;*/ }
+		IEnumerable<DataProviderDependency> Dependencies { get; }
 
 		Dictionary<string, IFilter> Filters { get; set; }
     }

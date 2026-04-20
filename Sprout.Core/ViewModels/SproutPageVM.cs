@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Sprout.Core.Common;
 using Sprout.Core.Factories;
 using Sprout.Core.Messages;
 using Sprout.Core.Models;
@@ -14,6 +15,7 @@ using Sprout.Core.Services;
 using Sprout.Core.Services.ActionMessageService;
 using Sprout.Core.Services.DataProviders;
 using Sprout.Core.Services.Dialog;
+using Sprout.Core.Services.Login;
 using Sprout.Core.Services.SqlServer;
 using Sprout.Core.UIStates;
 using Sprout.Core.Views;
@@ -28,6 +30,7 @@ namespace Sprout.Core.ViewModels
         private readonly IActionMessageService _actionMessageService;
         private readonly IDataAdapterFactory _dataAdapterFactory;
         private readonly IDataServiceFactory _dataServiceFactory;
+        private readonly ILoggedInUserService _loggedInUserService;
 
         public SproutPageConfiguration PageConfig { get; private set; }
 
@@ -51,17 +54,21 @@ namespace Sprout.Core.ViewModels
         /// </summary>
         public SproutPage DynamicViewInstance { get; private set; }
 
+        private LoginUIState _loginUIState = new();
+
         public SproutPageVM(SproutPageConfiguration pageConfig,
             IDialogService dialogService,
             IActionMessageService actionMessageService,
             IDataAdapterFactory dataAdapterFactory,
-            IDataServiceFactory dataServiceFactory)
+            IDataServiceFactory dataServiceFactory,
+            ILoggedInUserService loggedInUserService)
         {
             PageConfig = pageConfig;
             _dialogService = dialogService;
             _actionMessageService = actionMessageService;
             _dataAdapterFactory = dataAdapterFactory;
             _dataServiceFactory = dataServiceFactory;
+            _loggedInUserService = loggedInUserService;
 
             try
             {
@@ -93,6 +100,11 @@ namespace Sprout.Core.ViewModels
                 };
 
                 DynamicViewInstance = new SproutPage { DataContext = this };
+
+                if (_loggedInUserService?.UserDataAdapter?.DataProvider?.Data is System.Data.DataTable loginUserDt && loginUserDt.Rows.Count > 0)
+                {
+                    _loginUIState.User = loginUserDt.DefaultView[0];
+                }
             }
             catch (Exception ex)
             {
@@ -100,9 +112,10 @@ namespace Sprout.Core.ViewModels
             }
         }
 
-        public void RegisterOwnUIState()
+        public void RegisterExtraUIStates()
         {
-            UiStateRegistry.Register("Page", SproutPageUIState);
+            UiStateRegistry.Register(Const.Page, SproutPageUIState);
+            UiStateRegistry.Register(Const.Login, _loginUIState);
         }
 
         public void CreateDataAdapters()
@@ -116,6 +129,12 @@ namespace Sprout.Core.ViewModels
                 {
                     DataProviders[kvp.Key] = DataAdapters[kvp.Key].DataProvider;
                 }
+            }
+
+            //Add special data adapters
+            if (_loggedInUserService.UserDataAdapter != null)
+            {
+                DataAdapters[Const.Login] = _loggedInUserService.UserDataAdapter;
             }
         }
 
@@ -166,7 +185,7 @@ namespace Sprout.Core.ViewModels
         {
             try
             {
-
+                _dialogService.ShowMessage("Implement me");
             }
             catch (Exception ex)
             {

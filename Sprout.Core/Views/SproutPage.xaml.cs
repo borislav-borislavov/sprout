@@ -53,7 +53,7 @@ namespace Sprout.Core.Views
                 //step 1 - generate UI controls
                 this.Content = SproutControlFactory.GetControl(vm.PageConfig.Root, _controls);
 
-                vm.RegisterOwnUIState();
+                vm.RegisterExtraUIStates();
 
                 //step 2 - hook up control bindings (move this to a better place)
                 foreach (var kvp in _controls)

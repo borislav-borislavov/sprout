@@ -229,7 +229,7 @@ namespace Sprout.Core.Services.SqlServer
 
         private static bool IsResult(SqlDataReader reader)
         {
-            //ActionMessage has 1 property
+            //Result has 1 property
             if (reader.FieldCount != 1)
             {
                 return false;

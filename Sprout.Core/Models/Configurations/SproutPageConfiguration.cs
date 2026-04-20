@@ -22,6 +22,7 @@ namespace Sprout.Core.Models.Configurations
 			}
 
 			GetDataAdapterConfigsRecursive(Root, dataAdapterConfigs);
+
 			return dataAdapterConfigs;
 		}
 

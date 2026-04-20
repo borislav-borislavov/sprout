@@ -14,5 +14,10 @@ namespace Sprout.Core.Services.Navigation
             IConfigurationService configService);
 
         void ShowEditPage(SproutPageConfiguration pageConfig, IConfigurationService configService, IDialogService dialogService);
+
+        bool ShowEditLoginConfig(IConfigurationService configService, IDialogService dialogService);
+
+        void ShowMainDashboard();
+        void ShowLogin();
     }
 }

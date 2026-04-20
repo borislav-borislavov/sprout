@@ -64,6 +64,7 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
             <MenuItem Header="Configure">
                 <MenuItem Opacity="0.9" Header="Menu" Command="{Binding EditMenuCommand}"/>
                 <MenuItem Opacity="0.9" Header="Page" Command="{Binding EditPageCommand}"/>
+                <MenuItem Opacity="0.9" Header="Login" Command="{Binding EditLoginConfigCommand}"/>
             </MenuItem>
 
             <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>
