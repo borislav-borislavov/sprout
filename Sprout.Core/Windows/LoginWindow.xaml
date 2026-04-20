@@ -47,7 +47,7 @@
                      Text="{Binding UserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
             <TextBlock Text="Password" Grid.Row="2" FontWeight="Bold"/>
-            <PasswordBox Name="pwdBox" Grid.Row="3" Margin="0 2 0 5" PasswordChanged="pwdBox_PasswordChanged"/>
+            <PasswordBox Name="pwdBox" Grid.Row="3" Margin="0 2 0 5" PasswordChanged="pwdBox_PasswordChanged" KeyDown="pwdBox_KeyDown"/>
 
             <Button Content="Login"
                     Grid.Row="4"

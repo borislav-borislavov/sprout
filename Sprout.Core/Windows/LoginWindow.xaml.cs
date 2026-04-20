@@ -42,5 +42,17 @@ namespace Sprout.Core.Windows
 
             loginVM.Password = pwdBox.Password;
         }
+
+        private void pwdBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter)
+                return;
+
+            if (DataContext is not LoginVM loginVM)
+                return;
+
+            if (loginVM.LoginCommand.CanExecute(null))
+                loginVM.LoginCommand.Execute(null);
+        }
     }
 }
