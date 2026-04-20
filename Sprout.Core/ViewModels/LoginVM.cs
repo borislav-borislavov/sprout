@@ -51,6 +51,9 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private bool _isBusy;
 
+        [ObservableProperty]
+        private bool _showPassword;
+
         [RelayCommand(AllowConcurrentExecutions = false, CanExecute = nameof(CanExecuteLogin))]
         private async Task Login()
         {
@@ -76,7 +79,6 @@ namespace Sprout.Core.ViewModels
                     WeakReferenceMessenger.Default.Send(new CloseWindowMessage());
 
                     //throw new Exception("TODO:
-                    //save last successful login username,
                     //make a property for enabling login,
                     //make a preview password button,
                     //use the IsBusy to disable the page for the duration of the login");

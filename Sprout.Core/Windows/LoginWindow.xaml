@@ -5,11 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Sprout.Core.Windows"
         xmlns:vm="clr-namespace:Sprout.Core.ViewModels"
+        xmlns:conv="clr-namespace:Sprout.Core.Converters"
         WindowStartupLocation="CenterScreen"
         Title="Login" Height="450" Width="800"
         
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance vm:LoginVM}">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -47,7 +52,29 @@
                      Text="{Binding UserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
             <TextBlock Text="Password" Grid.Row="2" FontWeight="Bold"/>
-            <PasswordBox Name="pwdBox" Grid.Row="3" Margin="0 2 0 5" PasswordChanged="pwdBox_PasswordChanged" KeyDown="pwdBox_KeyDown"/>
+            <Grid Grid.Row="3" Margin="0 2 0 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <PasswordBox Name="pwdBox"
+                             Grid.Column="0"
+                             PasswordChanged="pwdBox_PasswordChanged"
+                             KeyDown="pwdBox_KeyDown"
+                             Visibility="{Binding ShowPassword, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+
+                <TextBox Grid.Column="0"
+                         Text="{Binding Password, Mode=OneWay}"
+                         IsReadOnly="True"
+                         Visibility="{Binding ShowPassword, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                <ToggleButton Grid.Column="1"
+                              Margin="4 0 0 0"
+                              Padding="6 0"
+                              Content="👁"
+                              IsChecked="{Binding ShowPassword, Mode=TwoWay}"/>
+            </Grid>
 
             <Button Content="Login"
                     Grid.Row="4"
