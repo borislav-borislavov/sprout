@@ -80,7 +80,6 @@ namespace Sprout.Core.ViewModels
 
                     //throw new Exception("TODO:
                     //make a property for enabling login,
-                    //make a preview password button,
                     //use the IsBusy to disable the page for the duration of the login");
                 }
                 else

@@ -38,13 +38,13 @@ namespace Sprout.Core.ViewModels
 
             if (config.Login?.DataAdapter is SqlServerDataAdapterConfig sqlAdapter)
             {
-                IsLoginEnabled = true;
+                IsLoginEnabled = config.Login.IsEnabled;
                 SelectedAdapterType = "SqlServer";
                 UpdateCommandText = sqlAdapter.Update?.Text ?? string.Empty;
             }
             else if (config.Login?.DataAdapter != null)
             {
-                IsLoginEnabled = true;
+                IsLoginEnabled = config.Login.IsEnabled;
                 SelectedAdapterType = "SQLite";
                 UpdateCommandText = string.Empty;
             }
@@ -90,12 +90,14 @@ namespace Sprout.Core.ViewModels
                     }
 
                     config.Login ??= new LoginConfiguration();
-                    config.Login.DataAdapter = adapter;
-                }
-                else
-                {
-                    config.Login = null;
-                }
+                        config.Login.IsEnabled = true;
+                        config.Login.DataAdapter = adapter;
+                    }
+                    else
+                    {
+                        if (config.Login != null)
+                            config.Login.IsEnabled = false;
+                    }
 
                 _configService.Save(config);
                 IsSaved = true;

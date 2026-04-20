@@ -34,6 +34,7 @@ namespace Sprout.Core
             var sproutConfig = serviceProvider.GetRequiredService<IConfigurationService>().Load();
 
             if (sproutConfig.Login is LoginConfiguration loginConfig
+                && loginConfig.IsEnabled
                 && loginConfig.DataAdapter != null)
             {
                 navigationService.ShowLogin();

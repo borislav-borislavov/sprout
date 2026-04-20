@@ -8,6 +8,7 @@ namespace Sprout.Core.Models.Configurations
 {
     public class LoginConfiguration : IDataAdapterControlConfig
     {
+        public bool IsEnabled { get; set; } = true;
         public IDataAdapterConfig DataAdapter { get; set; }
     }
 }
