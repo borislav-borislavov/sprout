@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Xaml.Behaviors.Core;
 using Sprout.Core.Messages;
+using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Login;
 using Sprout.Core.Services.Navigation;
@@ -14,13 +15,31 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.ViewModels
 {
-    public partial class LoginVM(
-        ILoginService _loginService,
-        ILoggedInUserService _loggedInUserService,
-        IDialogService _dialogService,
-        INavigationService _navigationService
-        ) : ObservableObject
+    public partial class LoginVM : ObservableObject
     {
+        private readonly ILoginService _loginService;
+        private readonly ILoggedInUserService _loggedInUserService;
+        private readonly IDialogService _dialogService;
+        private readonly INavigationService _navigationService;
+        private readonly IConfigurationService _configurationService;
+
+        public LoginVM(
+            ILoginService loginService,
+            ILoggedInUserService loggedInUserService,
+            IDialogService dialogService,
+            INavigationService navigationService,
+            IConfigurationService configurationService)
+        {
+            _loginService = loginService;
+            _loggedInUserService = loggedInUserService;
+            _dialogService = dialogService;
+            _navigationService = navigationService;
+            _configurationService = configurationService;
+
+            var config = _configurationService.Load();
+            UserName = config.Settings.LastUsername;
+        }
+
         [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
         [ObservableProperty]
         private string _userName;
@@ -48,6 +67,11 @@ namespace Sprout.Core.ViewModels
                 if (loginResult.Result)
                 {
                     _loggedInUserService.SetUserData(loginResult.LoginDataAdapter);
+
+                    var config = _configurationService.Load();
+                    config.Settings.LastUsername = UserName;
+                    _configurationService.Save(config);
+
                     _navigationService.ShowMainDashboard();
                     WeakReferenceMessenger.Default.Send(new CloseWindowMessage());
 

@@ -28,6 +28,12 @@ namespace Sprout.Core.Windows
             {
                 OnCloseWindow();
             });
+
+            Loaded += (s, e) =>
+            {
+                if (!string.IsNullOrEmpty(vm.UserName))
+                    pwdBox.Focus();
+            };
         }
 
         private void OnCloseWindow()
