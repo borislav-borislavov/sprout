@@ -87,8 +87,6 @@ namespace Sprout.Core.ViewModels
         {
             try
             {
-                var debug = PageConfig;
-
                 var sproutConfig = _configService.Load();
                 var foundPage = sproutConfig.Pages.FirstOrDefault(p => p.Title == PageConfig.Title);
                 var pageIndex = sproutConfig.Pages.IndexOf(foundPage);
@@ -99,7 +97,7 @@ namespace Sprout.Core.ViewModels
             }
             catch (Exception ex)
             {
-                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+                _dialogService.ShowError(ex.Message);
             }
         }
 
@@ -120,7 +118,7 @@ namespace Sprout.Core.ViewModels
             }
             catch (Exception ex)
             {
-                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+                _dialogService.ShowError(ex.Message);
             }
         }
 
@@ -140,7 +138,7 @@ namespace Sprout.Core.ViewModels
             }
             catch (Exception ex)
             {
-                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+                _dialogService.ShowError(ex.Message);
             }
         }
 
@@ -201,7 +199,7 @@ namespace Sprout.Core.ViewModels
             }
             catch (Exception ex)
             {
-                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+                _dialogService.ShowError(ex.Message);
             }
         }
 
@@ -284,7 +282,7 @@ namespace Sprout.Core.ViewModels
             }
             catch (Exception ex)
             {
-                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+                _dialogService.ShowError(ex.Message);
             }
         }
 
@@ -318,7 +316,7 @@ namespace Sprout.Core.ViewModels
             }
             catch (Exception ex)
             {
-                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+                _dialogService.ShowError(ex.Message);
             }
         }
     }
