@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Sprout.Core.Windows"
         xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
+        xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModels:EditLoginConfigVM}"
         Title="Edit Login Configuration" Height="450" Width="600">
@@ -38,13 +39,10 @@
                   Header="Update Command"
                   IsEnabled="{Binding IsLoginEnabled}"
                   Margin="0,0,0,10">
-            <TextBox Text="{Binding UpdateCommandText, UpdateSourceTrigger=PropertyChanged}"
-                     AcceptsReturn="True"
-                     AcceptsTab="True"
-                     VerticalScrollBarVisibility="Auto"
-                     HorizontalScrollBarVisibility="Auto"
-                     FontFamily="Consolas"
-                     FontSize="13"/>
+            <avalonedit:TextEditor
+                ShowLineNumbers="True"
+                Document="{Binding UpdateDocument}"
+                SyntaxHighlighting="{Binding Highlighting}"/>
         </GroupBox>
 
         <!-- Save Button -->

@@ -1,8 +1,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
+using System.Xml;
 
 namespace Sprout.Core.ViewModels
 {
@@ -19,8 +23,8 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private string _selectedAdapterType;
 
-        [ObservableProperty]
-        private string _updateCommandText;
+        public TextDocument UpdateDocument { get; } = new TextDocument();
+        public IHighlightingDefinition Highlighting { get; private set; }
 
         public bool IsSaved { get; private set; }
 
@@ -28,6 +32,11 @@ namespace Sprout.Core.ViewModels
         {
             _configService = configService;
             _dialogService = dialogService;
+
+            using var stream = GetType().Assembly
+                .GetManifestResourceStream("Sprout.Core.TSQL.xshd");
+            using var reader = XmlReader.Create(stream!);
+            Highlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
 
             Load();
         }
@@ -40,19 +49,19 @@ namespace Sprout.Core.ViewModels
             {
                 IsLoginEnabled = config.Login.IsEnabled;
                 SelectedAdapterType = "SqlServer";
-                UpdateCommandText = sqlAdapter.Update?.Text ?? string.Empty;
+                UpdateDocument.Text = sqlAdapter.Update?.Text ?? string.Empty;
             }
             else if (config.Login?.DataAdapter != null)
             {
                 IsLoginEnabled = config.Login.IsEnabled;
                 SelectedAdapterType = "SQLite";
-                UpdateCommandText = string.Empty;
+                UpdateDocument.Text = string.Empty;
             }
             else
             {
                 IsLoginEnabled = false;
                 SelectedAdapterType = "SqlServer";
-                UpdateCommandText = string.Empty;
+                UpdateDocument.Text = string.Empty;
             }
         }
 
@@ -65,7 +74,7 @@ namespace Sprout.Core.ViewModels
 
                 if (IsLoginEnabled)
                 {
-                    if (string.IsNullOrWhiteSpace(UpdateCommandText))
+                    if (string.IsNullOrWhiteSpace(UpdateDocument.Text))
                     {
                         _dialogService.ShowMessage("Update Command is required when login is enabled.", "Validation Error", DialogButton.OK, DialogImage.Warning);
                         return;
@@ -81,7 +90,7 @@ namespace Sprout.Core.ViewModels
                                 DataProvider = new SqlServerDataProviderConfig()
                             };
 
-                        sqlAdapter.UpdateCommand = new SqlServerEditCommandConfig { Text = UpdateCommandText };
+                        sqlAdapter.UpdateCommand = new SqlServerEditCommandConfig { Text = UpdateDocument.Text };
                         adapter = sqlAdapter;
                     }
                     else
