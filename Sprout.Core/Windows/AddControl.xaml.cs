@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Sprout.Core.Messages;
+using Sprout.Core.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace Sprout.Core.Windows
     /// </summary>
     public partial class AddControl : Window
     {
-        public AddControl()
+        public AddControl(AddControlVM vm)
         {
             InitializeComponent();
 
@@ -32,6 +33,8 @@ namespace Sprout.Core.Windows
                 //OnYourEvent(data);
                 OnCloseWindow();
             });
+
+            DataContext = vm;
         }
 
         private void OnCloseWindow()

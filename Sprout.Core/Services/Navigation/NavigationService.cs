@@ -31,38 +31,31 @@ namespace Sprout.Core.Services.Navigation
 
         public SproutControlConfig ShowAddControl()
         {
-            var vm = new AddControlVM();
-            var addControl = new AddControl { DataContext = vm };
+            var addControl = _serviceProvider.GetRequiredService<AddControl>();
             addControl.ShowDialog();
 
-            return vm.NewControl;
+            return (addControl.DataContext as AddControlVM).NewControl;
         }
 
-        public bool ShowEditMenu(ObservableCollection<SproutPageConfiguration> pageConfigs, IConfigurationService configService)
+        public bool ShowEditMenu()
         {
-            var vm = new EditMenuVM(configService);
-            var editMenu = new EditMenu { DataContext = vm };
+            var editMenu = _serviceProvider.GetRequiredService<EditMenu>();
             editMenu.ShowDialog();
-
-            return vm.IsSaved;
+            return editMenu.ViewModel.IsSaved;
         }
 
         public void ShowEditPage(SproutPageConfiguration pageConfig, IConfigurationService configService, IDialogService dialogService)
         {
-            var vm = new EditPageVM(configService, this, dialogService);
-            var editPage = new EditPage { DataContext = vm };
-            vm.Initialize(pageConfig);
-
+            var editPage = _serviceProvider.GetRequiredService<EditPage>();
+            editPage.InitializeVM(pageConfig);
             editPage.ShowDialog();
         }
 
-        public bool ShowEditLoginConfig(IConfigurationService configService, IDialogService dialogService)
+        public bool ShowEditLoginConfig()
         {
-            var vm = new EditLoginConfigVM(configService, dialogService);
-            var editLoginConfig = new EditLoginConfig { DataContext = vm };
+            var editLoginConfig = _serviceProvider.GetRequiredService<EditLoginConfig>();
             editLoginConfig.ShowDialog();
-
-            return vm.IsSaved;
+            return editLoginConfig.ViewModel.IsSaved;
         }
     }
 }

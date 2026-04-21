@@ -34,9 +34,6 @@ namespace Sprout.Core.ViewModels
         public MainViewVM(IConfigurationService configService,
             INavigationService navigationService,
             IDialogService dialogService,
-            IDataAdapterFactory dataAdapterFactory,
-            IDataServiceFactory dataServiceFactory,
-            IActionMessageService actionMessageService,
             ISproutPageVMFactory sproutPageVMFactory)
         {
             _configService = configService;
@@ -139,7 +136,7 @@ namespace Sprout.Core.ViewModels
         [RelayCommand]
         private void EditMenu()
         {
-            var isSaved = _navigationService.ShowEditMenu(PageConfigs, _configService);
+            var isSaved = _navigationService.ShowEditMenu();
 
             if (isSaved)
             {
@@ -150,7 +147,7 @@ namespace Sprout.Core.ViewModels
         [RelayCommand]
         private void EditLoginConfig()
         {
-            var isSaved = _navigationService.ShowEditLoginConfig(_configService, _dialogService);
+            var isSaved = _navigationService.ShowEditLoginConfig();
 
             if (isSaved)
             {

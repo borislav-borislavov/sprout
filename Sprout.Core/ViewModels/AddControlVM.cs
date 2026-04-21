@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.ViewModels
 {
-    internal partial class AddControlVM : ObservableObject
+    public partial class AddControlVM : ObservableObject
     {
         public SproutControlConfig NewControl { get; set; }
 

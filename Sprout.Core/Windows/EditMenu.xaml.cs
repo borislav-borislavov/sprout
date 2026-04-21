@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sprout.Core.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +20,13 @@ namespace Sprout.Core.Windows
     /// </summary>
     public partial class EditMenu : Window
     {
-        public EditMenu()
+        public EditMenuVM ViewModel { get; private set; }
+
+        public EditMenu(EditMenuVM vm)
         {
             InitializeComponent();
+            DataContext = vm;
+            ViewModel = vm;
         }
     }
 }

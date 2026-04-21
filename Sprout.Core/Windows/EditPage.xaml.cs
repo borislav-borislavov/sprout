@@ -21,7 +21,7 @@ namespace Sprout.Core.Windows
     /// </summary>
     public partial class EditPage : Window
     {
-        public EditPage()
+        public EditPage(EditPageVM vm)
         {
             InitializeComponent();
 
@@ -30,6 +30,8 @@ namespace Sprout.Core.Windows
 
             // Optional: Center the window on the screen
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+            DataContext = vm;
         }
 
         private void ControlsTree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -66,6 +68,14 @@ namespace Sprout.Core.Windows
                 };
                 MoveToMenuItem.Items.Add(menuItem);
             }
+        }
+
+        internal void InitializeVM(SproutPageConfiguration pageConfig)
+        {
+            if (DataContext is not EditPageVM vm)
+                throw new Exception($"ViewModel should be {nameof(EditPageVM)}");
+
+            vm.Initialize(pageConfig);
         }
     }
 }

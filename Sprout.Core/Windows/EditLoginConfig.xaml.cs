@@ -1,3 +1,4 @@
+using Sprout.Core.ViewModels;
 using System.Windows;
 
 namespace Sprout.Core.Windows
@@ -7,9 +8,13 @@ namespace Sprout.Core.Windows
     /// </summary>
     public partial class EditLoginConfig : Window
     {
-        public EditLoginConfig()
+        public EditLoginConfigVM ViewModel { get; private set; }
+
+        public EditLoginConfig(EditLoginConfigVM vm)
         {
             InitializeComponent();
+            DataContext = vm;
+            ViewModel = vm;
         }
     }
 }

@@ -9,13 +9,11 @@ namespace Sprout.Core.Services.Navigation
     {
         SproutControlConfig ShowAddControl();
 
-        bool ShowEditMenu(
-            ObservableCollection<SproutPageConfiguration> pageConfigs,
-            IConfigurationService configService);
+        bool ShowEditMenu();
 
         void ShowEditPage(SproutPageConfiguration pageConfig, IConfigurationService configService, IDialogService dialogService);
 
-        bool ShowEditLoginConfig(IConfigurationService configService, IDialogService dialogService);
+        bool ShowEditLoginConfig();
 
         void ShowMainDashboard();
         void ShowLogin();
