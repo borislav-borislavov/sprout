@@ -20,6 +20,9 @@ namespace Sprout.Core.ViewModels
         private SqlServerDataAdapterConfig _dataAdapter;
 
         public TextDocument DataProviderDocument { get; } = new TextDocument();
+        public TextDocument InsertDocument { get; } = new TextDocument();
+        public TextDocument UpdateDocument { get; } = new TextDocument();
+        public TextDocument DeleteDocument { get; } = new TextDocument();
 
         [ObservableProperty]
         private string _dataProviderText;
@@ -46,7 +49,28 @@ namespace Sprout.Core.ViewModels
             {
                 if ((DataAdapter.DataProvider as SqlServerDataProviderConfig).Text != DataProviderDocument.Text)
                     (DataAdapter.DataProvider as SqlServerDataProviderConfig).Text = DataProviderDocument.Text;
-            }; 
+            };
+
+            InsertDocument.Text = DataAdapter.Insert?.Text ?? string.Empty;
+            InsertDocument.TextChanged += (_, __) =>
+            {
+                if (DataAdapter.Insert.Text != InsertDocument.Text)
+                    DataAdapter.Insert.Text = InsertDocument.Text;
+            };
+
+            UpdateDocument.Text = DataAdapter.Update?.Text ?? string.Empty;
+            UpdateDocument.TextChanged += (_, __) =>
+            {
+                if (DataAdapter.Update.Text != UpdateDocument.Text)
+                    DataAdapter.Update.Text = UpdateDocument.Text;
+            };
+
+            DeleteDocument.Text = DataAdapter.Delete?.Text ?? string.Empty;
+            DeleteDocument.TextChanged += (_, __) =>
+            {
+                if (DataAdapter.Delete.Text != DeleteDocument.Text)
+                    DataAdapter.Delete.Text = DeleteDocument.Text;
+            };
         }
     }
 }

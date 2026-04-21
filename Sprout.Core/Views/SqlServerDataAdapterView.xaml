@@ -73,12 +73,11 @@
                 ExpandDirection="Down"
                 Margin="5"
                 Grid.Row="2">
-                <Grid>
-                    <TextBox AcceptsReturn="True"
-                         MinHeight="150"
-                         VerticalScrollBarVisibility="Auto"
-                         HorizontalScrollBarVisibility="Auto"
-                         Text="{Binding DataAdapter.Insert.Text, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <Grid Margin="5">
+                    <avalonedit:TextEditor
+                        ShowLineNumbers="True"
+                        Document="{Binding InsertDocument}"
+                        SyntaxHighlighting="{Binding Highlighting}"/>
                 </Grid>
             </Expander>
 
@@ -86,12 +85,11 @@
                   ExpandDirection="Down"
                    Margin="5"
                   Grid.Row="3">
-                <Grid>
-                    <TextBox AcceptsReturn="True"
-                         MinHeight="150"
-                         VerticalScrollBarVisibility="Auto"
-                         HorizontalScrollBarVisibility="Auto"
-                         Text="{Binding DataAdapter.Update.Text, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <Grid Margin="5">
+                    <avalonedit:TextEditor
+                        ShowLineNumbers="True"
+                        Document="{Binding UpdateDocument}"
+                        SyntaxHighlighting="{Binding Highlighting}"/>
                 </Grid>
             </Expander>
 
@@ -99,12 +97,11 @@
                   ExpandDirection="Down"
                    Margin="5"
                   Grid.Row="4">
-                <Grid>
-                    <TextBox AcceptsReturn="True"
-                         MinHeight="150"
-                         VerticalScrollBarVisibility="Auto"
-                         HorizontalScrollBarVisibility="Auto"
-                         Text="{Binding DataAdapter.Delete.Text, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <Grid Margin="5">
+                    <avalonedit:TextEditor
+                        ShowLineNumbers="True"
+                        Document="{Binding DeleteDocument}"
+                        SyntaxHighlighting="{Binding Highlighting}"/>
                 </Grid>
             </Expander>
         </Grid>
