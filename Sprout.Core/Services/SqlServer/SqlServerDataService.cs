@@ -165,7 +165,7 @@ namespace Sprout.Core.Services.SqlServer
                         {
                             while (await reader.ReadAsync())
                             {
-                                changeResult.Messages.Add(new(reader.GetString(0), reader.GetString(1)));
+                                changeResult.Messages.Add(new(reader.GetStringOrNull(0), reader.GetStringOrNull(1)));
                             }
                         }
                         else if (IsResult(reader))
@@ -176,11 +176,11 @@ namespace Sprout.Core.Services.SqlServer
 
                                 if (resultType == typeof(int))
                                 {
-                                    changeResult.Result = (bool)Convert.ChangeType(reader.GetFieldValue<int>(0), typeof(bool));
+                                    changeResult.Result = (bool)Convert.ChangeType(reader.GetIntOrNull(0), typeof(bool));
                                 }
                                 else if (resultType == typeof(bool))
                                 {
-                                    changeResult.Result = reader.GetFieldValue<bool>(0);
+                                    changeResult.Result = reader.GetBoolOrNull(0);
                                 }
                                 else
                                 {
@@ -194,7 +194,7 @@ namespace Sprout.Core.Services.SqlServer
                                 throw new Exception("You can return only one ExtraData result-set.");
 
                             var dt = new DataTable();
-                            await Task.Run(() => dt.Load(reader));
+                            await Task.Run(() => dt.Load(reader)); //This calls reader.NextResult()
                             changeResult.ExtraData = dt;
                             isNextResultFetched = true;
                         }
