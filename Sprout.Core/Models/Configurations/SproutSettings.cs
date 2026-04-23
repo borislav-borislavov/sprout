@@ -5,5 +5,6 @@ namespace Sprout.Core.Models.Configurations
         public string SqlServerConnectionString { get; set; } = string.Empty;
         public int CommandTimeout { get; set; } = 30;
         public string LastUsername { get; set; } = string.Empty;
+        public string MigrationsFolder { get; set; } = AppContext.BaseDirectory;
     }
 }

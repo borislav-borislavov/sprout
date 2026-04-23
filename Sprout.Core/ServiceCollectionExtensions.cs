@@ -4,6 +4,7 @@ using Sprout.Core.Services.ActionMessageService;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Login;
+using Sprout.Core.Services.Migration;
 using Sprout.Core.Services.Navigation;
 using Sprout.Core.ViewModels;
 using Sprout.Core.Views;
@@ -25,7 +26,7 @@ namespace Sprout.Core
             services.AddTransient<ILoginService, LoginService>();
             services.AddSingleton<ILoggedInUserService, LoggedInUserService>();
             services.AddTransient<ISproutPageVMFactory, SproutPageVMFactory>();
-            
+            services.AddTransient<ISqlServerMigrationService, SqlServerMigrationService>();
             
             //ViewModels
             services.AddTransient<LoginVM>();
