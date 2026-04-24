@@ -26,6 +26,7 @@ namespace Sprout.Core
             services.AddTransient<ILoginService, LoginService>();
             services.AddSingleton<ILoggedInUserService, LoggedInUserService>();
             services.AddTransient<ISproutPageVMFactory, SproutPageVMFactory>();
+            services.AddTransient<IVMFactory, VMFactory>();
             services.AddTransient<ISqlServerMigrationService, SqlServerMigrationService>();
             
             //ViewModels
