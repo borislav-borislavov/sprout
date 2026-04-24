@@ -32,6 +32,8 @@ namespace Sprout.Core
             //ViewModels
             services.AddTransient<LoginVM>();
             services.AddTransient<MainViewVM>();
+            services.AddTransient<MigrationVM>();
+            services.AddTransient<Func<MigrationVM>>(sp => () => sp.GetRequiredService<MigrationVM>());
             services.AddTransient<EditLoginConfigVM>();
             services.AddTransient<EditMenuVM>();
             services.AddTransient<EditPageVM>();
@@ -39,6 +41,7 @@ namespace Sprout.Core
 
             //Views
             services.AddTransient<MainView>();
+            services.AddTransient<MigrationView>();
 
             //windows
             //TODO: Splash screen

@@ -68,6 +68,7 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
             </MenuItem>
 
             <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>
+            <MenuItem Header="Migrations" Command="{Binding OpenMigrationsCommand}"/>
         </Menu>
 
         <!--to remove blurryness of text i added UseLayoutRounding="True" SnapsToDevicePixels="True"-->
@@ -129,6 +130,9 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type viewModels:SettingsVM}">
                     <local:SettingsView />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type viewModels:MigrationVM}">
+                    <local:MigrationView />
                 </DataTemplate>
             </TabControl.Resources>
 

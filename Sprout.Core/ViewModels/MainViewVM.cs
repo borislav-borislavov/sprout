@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using Sprout.Core.Factories;
 using Sprout.Core.Messages;
 using Sprout.Core.Models.Configurations;
@@ -18,6 +19,8 @@ namespace Sprout.Core.ViewModels
         private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
         private readonly ISproutPageVMFactory _sproutPageVMFactory;
+        private readonly IVMFactory _vmFactory;
+
         [ObservableProperty]
         private ObservableCollection<SproutPageConfiguration> _pageConfigs;
 
@@ -34,12 +37,14 @@ namespace Sprout.Core.ViewModels
         public MainViewVM(IConfigurationService configService,
             INavigationService navigationService,
             IDialogService dialogService,
-            ISproutPageVMFactory sproutPageVMFactory)
+            ISproutPageVMFactory sproutPageVMFactory,
+            IVMFactory vmFactory)
         {
             _configService = configService;
             _navigationService = navigationService;
             _dialogService = dialogService;
             _sproutPageVMFactory = sproutPageVMFactory;
+            _vmFactory = vmFactory;
             LoadMenuPages();
 
             WeakReferenceMessenger.Default.Register<OpenTabMessage>(this, (r, msg) =>
@@ -93,6 +98,22 @@ namespace Sprout.Core.ViewModels
             var settingsVM = new SettingsVM(_configService, _dialogService);
             Tabs.Add(settingsVM);
             SelectedTab = settingsVM;
+        }
+
+        [RelayCommand]
+        private void OpenMigrations()
+        {
+            var existing = Tabs.OfType<MigrationVM>().FirstOrDefault();
+            if (existing != null)
+            {
+                SelectedTab = existing;
+                return;
+            }
+            
+            var migrationVM = _vmFactory.Create<MigrationVM>();
+
+            Tabs.Add(migrationVM);
+            SelectedTab = migrationVM;
         }
 
         private bool CanExecuteOpenPage(SproutPageConfiguration pageConfig)
