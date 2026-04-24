@@ -211,6 +211,23 @@ namespace Sprout.Core.Views
                                 Mode = BindingMode.OneWay
                             });
 
+                        if (!string.IsNullOrEmpty(sproutCombo.Config.SelectedValue))
+                        {
+                            var dependency = ParameterParser.ParseDependencies(sproutCombo.Config.SelectedValue).FirstOrDefault();
+
+                            if (dependency != null)
+                            {
+                                sproutCombo.comboBox.SetBinding(
+                                    ComboBox.SelectedValueProperty,
+                                    new Binding
+                                    {
+                                        Source = vm.UiStateRegistry,
+                                        Path = new PropertyPath($"[{dependency.ControlName}].{dependency.PropertyPath}"),
+                                        Mode = BindingMode.TwoWay
+                                    });
+                            }
+                        }
+
                         vm.UiStateRegistry.Register(sproutCombo.UIState.Name, sproutCombo.UIState);
                     }
 

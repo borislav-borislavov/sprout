@@ -12,6 +12,7 @@ namespace Sprout.Core.Models.Configurations
 		public string ValueColumn { get; set; }
 
 		public string VerticalAlignment { get; set; }
+		public string SelectedValue { get; set; }
 		public IDataAdapterConfig DataAdapter { get; set; }
 	}
 }
