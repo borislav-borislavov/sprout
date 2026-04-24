@@ -9,8 +9,9 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModels:AddControlVM}"
         Title="AddControl"
-        Height="Auto"
-        Width="Auto">
+        WindowStartupLocation="CenterScreen"
+        Height="250"
+        Width="350">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
