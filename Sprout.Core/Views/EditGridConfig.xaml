@@ -5,10 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Sprout.Core.Views"
              xmlns:config="clr-namespace:Sprout.Core.Models.Configurations"
+             xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
              
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             d:DataContext="{d:DesignInstance config:GridConfig}">
+             d:DataContext="{d:DesignInstance viewModels:EditPageVM}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -41,7 +42,7 @@
             Grid.Column="1"
             VerticalAlignment="Top"
             Margin="5"
-            Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+            Text="{Binding SelectedGridConfig.Name, UpdateSourceTrigger=PropertyChanged}"/>
 
         <!--ShowGridLines-->
         <TextBlock
@@ -58,7 +59,7 @@
             Grid.Column="1"
             Margin="5"
             VerticalAlignment="Center"
-            IsChecked="{Binding ShowGridLines, UpdateSourceTrigger=PropertyChanged}"/>
+            IsChecked="{Binding SelectedGridConfig.ShowGridLines, UpdateSourceTrigger=PropertyChanged}"/>
 
         <!--Background-->
         <TextBlock
@@ -75,7 +76,7 @@
             Grid.Column="1"
             Margin="5"
             VerticalAlignment="Center"
-            Text="{Binding Background, UpdateSourceTrigger=PropertyChanged}"/>
+            Text="{Binding SelectedGridConfig.Background, UpdateSourceTrigger=PropertyChanged}"/>
 
         <!--Margin-->
         <TextBlock
@@ -92,7 +93,7 @@
             Grid.Column="1"
             Margin="5"
             VerticalAlignment="Center"
-            Text="{Binding Margin, UpdateSourceTrigger=PropertyChanged}"/>
+            Text="{Binding SelectedGridConfig.Margin, UpdateSourceTrigger=PropertyChanged}"/>
 
         <!--Rows-->
         <TextBlock
@@ -120,10 +121,31 @@
                 Name="RowsGrid"
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
-                HeadersVisibility="Column"
+                HeadersVisibility="All"
+                LoadingRow="DataGrid_LoadingRow"
+                ItemsSource="{Binding SelectedGridConfig.Rows}"
                 Margin="0,0,5,0">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Row Definition" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                    <DataGridTextColumn Header="Row Definition" Width="*">
+                        <DataGridTextColumn.Binding>
+                            <Binding Path="Value"
+                                 UpdateSourceTrigger="PropertyChanged"
+                                 ValidatesOnDataErrors="True"
+                                 NotifyOnValidationError="True" />
+                        </DataGridTextColumn.Binding>
+
+                        <DataGridTextColumn.EditingElementStyle>
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <Trigger Property="Validation.HasError" Value="True">
+                                        <Setter Property="ToolTip"
+                                            Value="{Binding RelativeSource={RelativeSource Self},
+                                            Path=(Validation.Errors)[0].ErrorContent}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.EditingElementStyle>
+                    </DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
 
@@ -133,8 +155,8 @@
                 Text="{Binding Items.Count, ElementName=RowsGrid, StringFormat='Total: {0}'}"/>
 
             <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Top">
-                <Button Content="Add" Height="30" Width="60" Margin="5" Click="AddRow_Click"/>
-                <Button Content="Remove" Height="30" Width="60" Margin="5" Click="RemoveRow_Click"/>
+                <Button Content="Add" Height="30" Width="60" Margin="5" Command="{Binding AddGridRowCommand}" />
+                <Button Content="Remove" Height="30" Width="60" Margin="5" Command="{Binding RemoveGridRowCommand}" CommandParameter="{Binding SelectedItem, ElementName=RowsGrid}" />
             </StackPanel>
         </Grid>
 
@@ -164,10 +186,31 @@
                 Name="ColumnsGrid"
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
-                HeadersVisibility="Column"
+                HeadersVisibility="All"
+                LoadingRow="DataGrid_LoadingRow"
+                ItemsSource="{Binding SelectedGridConfig.Columns}"
                 Margin="0,0,5,0">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Column Definition" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                    <DataGridTextColumn Header="Column Definition" Width="*">
+                        <DataGridTextColumn.Binding>
+                            <Binding Path="Value"
+                                 UpdateSourceTrigger="PropertyChanged"
+                                 ValidatesOnDataErrors="True"
+                                 NotifyOnValidationError="True" />
+                        </DataGridTextColumn.Binding>
+
+                        <DataGridTextColumn.EditingElementStyle>
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <Trigger Property="Validation.HasError" Value="True">
+                                        <Setter Property="ToolTip"
+                                            Value="{Binding RelativeSource={RelativeSource Self},
+                                            Path=(Validation.Errors)[0].ErrorContent}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.EditingElementStyle>
+                    </DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
 
@@ -177,8 +220,8 @@
                 Text="{Binding Items.Count, ElementName=ColumnsGrid, StringFormat='Total: {0}'}"/>
 
             <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Top">
-                <Button Content="Add" Height="30" Width="60" Margin="5" Click="AddColumn_Click"/>
-                <Button Content="Remove" Height="30" Width="60" Margin="5" Click="RemoveColumn_Click"/>
+                <Button Content="Add" Height="30" Width="60" Margin="5" Command="{Binding AddGridColumnCommand}" />
+                <Button Content="Remove" Height="30" Width="60" Margin="5" Command="{Binding RemoveGridColumnCommand}" CommandParameter="{Binding SelectedItem, ElementName=ColumnsGrid}" />
             </StackPanel>
         </Grid>
     </Grid>

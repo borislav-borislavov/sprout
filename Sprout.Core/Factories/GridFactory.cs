@@ -39,13 +39,13 @@ namespace Sprout.Core.Factories
 
             foreach (var colSize in gridConfig.Columns)
             {
-                var colDef = new ColumnDefinition { Width = ParseGridLength(colSize) };
+                var colDef = new ColumnDefinition { Width = ParseGridLength(colSize.Value) };
                 grid.ColumnDefinitions.Add(colDef);
             }
 
             foreach (var rowSize in gridConfig.Rows)
             {
-                var colDef = new RowDefinition { Height = ParseGridLength(rowSize) };
+                var colDef = new RowDefinition { Height = ParseGridLength(rowSize.Value) };
                 grid.RowDefinitions.Add(colDef);
             }
 

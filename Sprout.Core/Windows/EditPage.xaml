@@ -176,7 +176,7 @@
                         </DataTemplate>
 
                         <DataTemplate DataType="{x:Type config:GridConfig}">
-                            <views:EditGridConfig/>
+                            <views:EditGridConfig DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext}"/>
                         </DataTemplate>
 
                         <DataTemplate DataType="{x:Type config:SproutTextBoxConfig}">

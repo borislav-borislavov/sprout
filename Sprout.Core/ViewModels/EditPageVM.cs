@@ -1,12 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Sprout.Core.Common;
+using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Navigation;
+using Sprout.Core.Views;
 using Sprout.Core.Views.Controls;
 using System;
 using System.Collections.Generic;
@@ -24,6 +26,9 @@ namespace Sprout.Core.ViewModels
 
         [ObservableProperty]
         private IDataAdapterConfig _selectedDataAdapter;
+
+        [ObservableProperty]
+        private GridConfig _selectedGridConfig;
 
         [ObservableProperty]
         private ObservableCollection<SproutControlConfig> _controls = [];
@@ -257,6 +262,15 @@ namespace Sprout.Core.ViewModels
                     SelectedButtonAction = null;
                 }
 
+                if (value is GridConfig gridConfig)
+                {
+                    SelectedGridConfig = gridConfig;
+                }
+                else
+                {
+                    SelectedGridConfig = null;
+                }
+
                 if (value is IDataAdapterControlConfig dataAdapterControlConfig)
                 {
                     IsDataAdapterVisible = true;
@@ -313,6 +327,59 @@ namespace Sprout.Core.ViewModels
                 {
                     throw new NotImplementedException();
                 }
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError(ex.Message);
+            }
+        }
+
+        [RelayCommand]
+        private void AddGridRow()
+        {
+            if (SelectedGridConfig == null) return;
+
+            SelectedGridConfig.Rows.Add("*");
+        }
+
+        [RelayCommand]
+        private void RemoveGridRow(StringItem stringItem)
+        {
+            try
+            {
+                //if (SelectedGridConfig == null || string.IsNullOrEmpty(row)) return;
+
+                SelectedGridConfig.Rows.Remove(stringItem);
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError(ex.Message);
+            }
+        }
+
+        [RelayCommand]
+        private void AddGridColumn()
+        {
+            try
+            {
+                if (SelectedGridConfig == null) return;
+
+                SelectedGridConfig.Columns.Add("*");
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError(ex.Message);
+            }
+        }
+
+        [RelayCommand]
+        private void RemoveGridColumn(StringItem stringItem)
+        {
+            try
+            {
+                //if (SelectedGridConfig == null || string.IsNullOrEmpty(column)) return;
+
+                SelectedGridConfig.Columns.Remove(stringItem);
             }
             catch (Exception ex)
             {

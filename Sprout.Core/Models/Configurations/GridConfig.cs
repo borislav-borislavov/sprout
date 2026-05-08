@@ -9,9 +9,9 @@ namespace Sprout.Core.Models.Configurations
 {
     public class GridConfig : SproutControlConfig
     {
-        public List<string> Rows { get; set; } = [];
+        public ObservableCollection<StringItem> Rows { get; set; } = [];
 
-        public List<string> Columns { get; set; } = [];
+        public ObservableCollection<StringItem> Columns { get; set; } = [];
 
         public bool ShowGridLines { get; set; }
 
