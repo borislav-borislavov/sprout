@@ -93,16 +93,19 @@ namespace Sprout.Core.Services.SqlServer
             }
         }
 
-        public async Task<ChangeResult> Change(SqlServerEditCommand editCmd, DataRow dataRow)
+        public async Task<ChangeResult> Change(IEditCommand editCmd, DataRow dataRow)
         {
+            if (editCmd is not SqlServerEditCommand editCommand)
+                throw new NotImplementedException();
+
             if (_connection.State == ConnectionState.Closed)
             {
                 await _connection.OpenAsync();
             }
 
-            var commandText = editCmd.Text;
+            var commandText = editCommand.Text;
 
-            var requestedParameters = ParameterParser.ParseQueryParameters(editCmd.Text);
+            var requestedParameters = ParameterParser.ParseQueryParameters(editCommand.Text);
 
             List<SqlParameter> sqlParams = [];
 
@@ -141,7 +144,7 @@ namespace Sprout.Core.Services.SqlServer
                 commandText = commandText.Replace($"{{{queryParam.RawPatameter}}}", $"{param.ParameterName}", StringComparison.OrdinalIgnoreCase);
             }
 
-            if (editCmd.WithMessages)
+            if (editCommand.WithMessages)
             {
                 commandText = CreateMessagesTable(commandText);
             }

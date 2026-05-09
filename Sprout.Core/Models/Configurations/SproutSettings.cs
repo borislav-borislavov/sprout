@@ -6,5 +6,6 @@ namespace Sprout.Core.Models.Configurations
         public int CommandTimeout { get; set; } = 30;
         public string LastUsername { get; set; } = string.Empty;
         public string MigrationsFolder { get; set; } = AppContext.BaseDirectory;
+        public string DuckDbConnectionString { get; set; } = string.Empty;
     }
 }

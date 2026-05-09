@@ -1,0 +1,256 @@
+<?xml version="1.0"?>
+<!-- DuckDB Syntax Definition for AvalonEdit/SharpDevelop -->
+<SyntaxDefinition name="DuckDB" extensions=".sql" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <Color name="Comment" foreground="Green" exampleText="-- comment" />
+  <Color name="Char" foreground="Red" exampleText="name = 'abc'"/>
+  <Color name="Keywords" fontWeight="bold" foreground="Blue" exampleText="SELECT FROM"/>
+  <Color name="Extensions" fontWeight="bold" foreground="DarkOrange" exampleText="httpfs excel"/>
+  <Color name="ExtensionFunctions" fontWeight="bold" foreground="Teal" exampleText="read_xlsx st_point"/>
+  <Color name="DuckDBExtras" fontWeight="bold" foreground="#FFD700" exampleText="PIVOT SUMMARIZE"/>
+  <Color name="BraceContent" fontWeight="bold" foreground="#FF569CD6" exampleText="{asd}"/>
+
+  <Property name="DocCommentMarker" value="///" />
+
+  <RuleSet name="CommentMarkerSet">
+    <Keywords fontWeight="bold" foreground="Red">
+      <Word>TODO</Word>
+      <Word>FIXME</Word>
+    </Keywords>
+    <Keywords fontWeight="bold" foreground="#E0E000">
+      <Word>HACK</Word>
+      <Word>UNDONE</Word>
+    </Keywords>
+  </RuleSet>
+
+  <RuleSet ignoreCase="true">
+    <Span color="Comment" ruleSet="CommentMarkerSet">
+      <Begin>--</Begin>
+    </Span>
+
+    <Span color="Comment" ruleSet="CommentMarkerSet" multiline="true">
+      <Begin>/\*</Begin>
+      <End>\*/</End>
+    </Span>
+
+    <Span color="Char">
+      <Begin>'</Begin>
+      <End>'</End>
+    </Span>
+
+    <Span fontWeight="bold">
+      <Begin>"</Begin>
+      <End>"</End>
+    </Span>
+
+    <Span color="BraceContent">
+      <Begin>\{</Begin>
+      <End>\}</End>
+    </Span>
+
+    <!-- DuckDB Official Extensions -->
+    <Keywords color="Extensions">
+      <Word>httpfs</Word>
+      <Word>icu</Word>
+      <Word>json</Word>
+      <Word>parquet</Word>
+      <Word>sqlite</Word>
+      <Word>postgres</Word>
+      <Word>mysql</Word>
+      <Word>spatial</Word>
+      <Word>tpch</Word>
+      <Word>tpcds</Word>
+      <Word>fts</Word>
+      <Word>aws</Word>
+      <Word>azure</Word>
+      <Word>motherduck</Word>
+      <Word>iceberg</Word>
+      <Word>delta</Word>
+      <Word>excel</Word>
+      <Word>vss</Word>
+    </Keywords>
+
+    <!-- Extension-Specific Functions -->
+    <Keywords color="ExtensionFunctions">
+      <!-- Excel -->
+      <Word>read_xlsx</Word>
+      <Word>read_xls</Word>
+      <!-- Spatial / Geospatial -->
+      <Word>st_area</Word>
+      <Word>st_asgeojson</Word>
+      <Word>st_astext</Word>
+      <Word>st_aswkb</Word>
+      <Word>st_aswkt</Word>
+      <Word>st_buffer</Word>
+      <Word>st_contains</Word>
+      <Word>st_convex_hull</Word>
+      <Word>st_difference</Word>
+      <Word>st_distance</Word>
+      <Word>st_drivers</Word>
+      <Word>st_envelope</Word>
+      <Word>st_equals</Word>
+      <Word>st_flipcoordinates</Word>
+      <Word>st_geometrytype</Word>
+      <Word>st_geomfromtext</Word>
+      <Word>st_geomfromwkb</Word>
+      <Word>st_intersects</Word>
+      <Word>st_layers</Word>
+      <Word>st_length</Word>
+      <Word>st_makeline</Word>
+      <Word>st_overlaps</Word>
+      <Word>st_point</Word>
+      <Word>st_read</Word>
+      <Word>st_transform</Word>
+      <Word>st_union</Word>
+      <Word>st_within</Word>
+      <Word>st_write</Word>
+      <Word>st_x</Word>
+      <Word>st_y</Word>
+      <!-- JSON -->
+      <Word>json_extract</Word>
+      <Word>json_extract_string</Word>
+      <Word>json_exists</Word>
+      <Word>json_value</Word>
+      <Word>json_array_length</Word>
+      <Word>json_contains</Word>
+      <Word>json_keys</Word>
+      <Word>json_structure</Word>
+      <Word>json_transform</Word>
+      <Word>json_group_array</Word>
+      <Word>json_group_object</Word>
+      <Word>from_json</Word>
+      <Word>to_json</Word>
+      <!-- HTTPFS / Cloud -->
+      <Word>s3_get_credentials</Word>
+      <Word>s3_list_objects</Word>
+      <!-- Full Text Search (FTS) -->
+      <Word>stem</Word>
+      <Word>match_bm25</Word>
+      <Word>create_fts_index</Word>
+      <Word>drop_fts_index</Word>
+      <!-- External DB Scanners -->
+      <Word>postgres_query</Word>
+      <Word>postgres_execute</Word>
+      <Word>postgres_scan</Word>
+      <Word>postgres_attach</Word>
+      <Word>mysql_query</Word>
+      <Word>mysql_execute</Word>
+      <Word>mysql_scan</Word>
+      <Word>sqlite_query</Word>
+      <Word>sqlite_execute</Word>
+      <Word>sqlite_scan</Word>
+      <!-- ICU -->
+      <Word>icu_sort_key</Word>
+      <Word>icu_calendar_names</Word>
+    </Keywords>
+
+    <!-- Standard SQL & DuckDB Specific Keywords -->
+    <Keywords color="Keywords">
+      <Word>SELECT</Word>
+      <Word>FROM</Word>
+      <Word>WHERE</Word>
+      <Word>GROUP</Word>
+      <Word>HAVING</Word>
+      <Word>ORDER</Word>
+      <Word>LIMIT</Word>
+      <Word>OFFSET</Word>
+      <Word>VALUES</Word>
+      <Word>INSERT</Word>
+      <Word>UPDATE</Word>
+      <Word>DELETE</Word>
+      <Word>CREATE</Word>
+      <Word>DROP</Word>
+      <Word>ALTER</Word>
+      <Word>TABLE</Word>
+      <Word>VIEW</Word>
+      <Word>JOIN</Word>
+      <Word>INNER</Word>
+      <Word>LEFT</Word>
+      <Word>RIGHT</Word>
+      <Word>FULL</Word>
+      <Word>OUTER</Word>
+      <Word>CROSS</Word>
+      <Word>ON</Word>
+      <Word>AS</Word>
+      <Word>DISTINCT</Word>
+      <Word>AND</Word>
+      <Word>OR</Word>
+      <Word>NOT</Word>
+      <Word>IN</Word>
+      <Word>IS</Word>
+      <Word>NULL</Word>
+      <Word>CASE</Word>
+      <Word>WHEN</Word>
+      <Word>THEN</Word>
+      <Word>ELSE</Word>
+      <Word>END</Word>
+      <Word>CAST</Word>
+      <Word>UNION</Word>
+      <Word>ALL</Word>
+      <Word>WITH</Word>
+      <Word>RECURSIVE</Word>
+      <Word>WINDOW</Word>
+      <Word>OVER</Word>
+      <Word>PARTITION</Word>
+      <Word>BY</Word>
+      <Word>PIVOT</Word>
+      <Word>UNPIVOT</Word>
+      <Word>SUMMARIZE</Word>
+      <Word>DESCRIBE</Word>
+      <Word>SHOW</Word>
+      <Word>EXPLAIN</Word>
+      <Word>ANALYZE</Word>
+      <Word>QUALIFY</Word>
+      <Word>SAMPLE</Word>
+      <Word>USING</Word>
+      <Word>COLUMNS</Word>
+      <Word>INSTALL</Word>
+      <Word>LOAD</Word>
+      <Word>ATTACH</Word>
+      <Word>DETACH</Word>
+      <Word>COPY</Word>
+      <Word>SECRET</Word>
+    </Keywords>
+
+    <!-- Data Types -->
+    <Keywords fontWeight="bold" foreground="DarkCyan">
+      <Word>BIGINT</Word>
+      <Word>BOOLEAN</Word>
+      <Word>BLOB</Word>
+      <Word>DATE</Word>
+      <Word>DOUBLE</Word>
+      <Word>DECIMAL</Word>
+      <Word>HUGEINT</Word>
+      <Word>INTEGER</Word>
+      <Word>INTERVAL</Word>
+      <Word>REAL</Word>
+      <Word>SMALLINT</Word>
+      <Word>TINYINT</Word>
+      <Word>TIME</Word>
+      <Word>TIMESTAMP</Word>
+      <Word>TIMESTAMPTZ</Word>
+      <Word>VARCHAR</Word>
+      <Word>UUID</Word>
+      <Word>JSON</Word>
+      <Word>LIST</Word>
+      <Word>MAP</Word>
+      <Word>STRUCT</Word>
+      <Word>GEOMETRY</Word>
+    </Keywords>
+
+    <!-- Core Table/Scalar Functions -->
+    <Keywords foreground="DarkMagenta">
+      <Word>read_csv</Word>
+      <Word>read_csv_auto</Word>
+      <Word>read_parquet</Word>
+      <Word>read_json</Word>
+      <Word>read_json_auto</Word>
+      <Word>range</Word>
+      <Word>unnest</Word>
+      <Word>struct_pack</Word>
+      <Word>list_extract</Word>
+      <Word>list_append</Word>
+      <Word>regexp_matches</Word>
+      <Word>current_setting</Word>
+    </Keywords>
+  </RuleSet>
+</SyntaxDefinition>

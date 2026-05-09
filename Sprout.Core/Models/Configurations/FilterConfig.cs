@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations
 {
-    public class SqlServerFilterConfig
+    public class FilterConfig
     {
         public string Title { get; set; }
         public string Text { get; set; }

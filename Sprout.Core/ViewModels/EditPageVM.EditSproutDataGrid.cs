@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Data.SqlClient;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
+using Sprout.Core.Models.Configurations.Duck;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
@@ -16,6 +17,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DuckDB.NET.Data;
 #nullable disable
 
 namespace Sprout.Core.ViewModels
@@ -139,84 +141,157 @@ namespace Sprout.Core.ViewModels
         [RelayCommand]
         private void CompleteColumns()
         {
-#warning this should be put in a factory which repsponds properly based on the type of adapter
+            if (SelectedDataGrid == null)
+            {
+                return;
+            }
+#warning this should be put in a factory which repsonds properly based on the type of adapter
             if (SelectedDataGrid.DataAdapter is SqlServerDataAdapterConfig adapterConfig)
             {
-                if (adapterConfig.DataProvider is not SqlServerDataProviderConfig dataProviderConfig) return;
+                SqlServerPopulateColumns(adapterConfig);
+                return;
+            }
+            else if (SelectedDataGrid.DataAdapter is DuckDataAdapterConfig duckAdapterConfig)
+            {
+                DuckDbPopulateColumns(duckAdapterConfig);
+            }
+        }
 
-                var query = dataProviderConfig.Text;
+        private void SqlServerPopulateColumns(SqlServerDataAdapterConfig adapterConfig)
+        {
+            if (adapterConfig.DataProvider is not SqlServerDataProviderConfig dataProviderConfig) return;
 
-                if (string.IsNullOrWhiteSpace(query)) return;
+            var query = dataProviderConfig.Text;
 
-                var requestedParameters = ParameterParser.ParseQueryParameters(query);
-                List<SqlParameter> sqlParams = [];
+            if (string.IsNullOrWhiteSpace(query)) return;
 
-                foreach (var queryParam in requestedParameters)
+            var requestedParameters = ParameterParser.ParseQueryParameters(query);
+            List<SqlParameter> sqlParams = [];
+
+            foreach (var queryParam in requestedParameters)
+            {
+                if (string.IsNullOrEmpty(queryParam.Name))
+                    continue;
+
+                var safeParamName = $"@{queryParam.Name.Replace(".", "_")}";
+
+                var param = new SqlParameter
                 {
-                    if (string.IsNullOrEmpty(queryParam.Name))
-                        continue;
+                    ParameterName = safeParamName,
+                    Value = DBNull.Value
+                };
 
-                    var safeParamName = $"@{queryParam.Name.Replace(".", "_")}";
+                sqlParams.Add(param);
 
-                    var param = new SqlParameter
+                query = query.Replace($"{{{queryParam.RawPatameter}}}", safeParamName, StringComparison.CurrentCultureIgnoreCase);
+            }
+
+            var connectionString = adapterConfig.ConnectionString;
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                connectionString = _configService.Load().Settings.SqlServerConnectionString;
+            }
+
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(query, conn))
+            {
+                try
+                {
+                    AttachParameters(cmd, sqlParams);
+
+                    conn.Open();
+
+                    using (var reader = cmd.ExecuteReader(CommandBehavior.SchemaOnly))
                     {
-                        ParameterName = safeParamName,
-                        Value = DBNull.Value
-                    };
+                        var schemaTable = reader.GetSchemaTable();
 
-                    sqlParams.Add(param);
-
-                    query = query.Replace($"{{{queryParam.RawPatameter}}}", safeParamName, StringComparison.CurrentCultureIgnoreCase);
-                }
-
-                var connectionString = adapterConfig.ConnectionString;
-                if (string.IsNullOrEmpty(connectionString))
-                {
-                    connectionString = _configService.Load().Settings.SqlServerConnectionString;
-                }
-
-                using (var conn = new SqlConnection(connectionString))
-                using (var cmd = new SqlCommand(query, conn))
-                {
-                    try
-                    {
-                        AttachParameters(cmd, sqlParams);
-
-                        conn.Open();
-
-                        using (var reader = cmd.ExecuteReader(CommandBehavior.SchemaOnly))
+                        if (reader.CanGetColumnSchema())
                         {
-                            var schemaTable = reader.GetSchemaTable();
+                            var columnSchema = reader.GetColumnSchema();
 
-                            if (reader.CanGetColumnSchema())
+                            foreach (var column in columnSchema)
                             {
-                                var columnSchema = reader.GetColumnSchema();
+                                var matchingCol = SelectedDataGrid.Columns
+                                    .FirstOrDefault(c => string.Equals(c.BindingPath, column.ColumnName, StringComparison.OrdinalIgnoreCase));
 
-                                foreach (var column in columnSchema)
+                                if (matchingCol == null)
                                 {
-                                    var matchingCol = SelectedDataGrid.Columns
-                                        .FirstOrDefault(c => string.Equals(c.BindingPath, column.ColumnName, StringComparison.OrdinalIgnoreCase));
-
-                                    if (matchingCol == null)
+                                    SelectedDataGrid.Columns.Add(new SproutDataGridColumnConfig
                                     {
-                                        SelectedDataGrid.Columns.Add(new SproutDataGridColumnConfig
-                                        {
-                                            BindingPath = column.ColumnName,
-                                            Header = column.ColumnName,
-                                            ColumnType = ColumnType.Text,
-                                            IsReadOnly = column.IsReadOnly == true || column.IsAutoIncrement == true
-                                        });
-                                    }
+                                        BindingPath = column.ColumnName,
+                                        Header = column.ColumnName,
+                                        ColumnType = ColumnType.Text,
+                                        IsReadOnly = column.IsReadOnly == true || column.IsAutoIncrement == true
+                                    });
                                 }
                             }
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        conn.Close();
+                }
+                catch (Exception ex)
+                {
+                    conn.Close();
 
-                        _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+                    _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
+                }
+            }
+        }
+
+        private void DuckDbPopulateColumns(DuckDataAdapterConfig adapterConfig)
+        {
+            if (adapterConfig.DataProvider is not DuckDataProviderConfig dataProviderConfig) return;
+
+            var query = dataProviderConfig.Text;
+
+            if (string.IsNullOrWhiteSpace(query)) return;
+
+            var connectionString = adapterConfig.ConnectionString;
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                connectionString = _configService.Load().Settings.DuckDbConnectionString;
+            }
+
+            using (var conn = new DuckDBConnection(connectionString))
+            using (var cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+
+                    cmd.CommandText = query;
+
+                    using (var reader = cmd.ExecuteReader(CommandBehavior.SchemaOnly))
+                    {
+                        var schemaTable = reader.GetSchemaTable();
+
+                        if (reader.CanGetColumnSchema())
+                        {
+                            var columnSchema = reader.GetColumnSchema();
+
+                            foreach (var column in columnSchema)
+                            {
+                                var matchingCol = SelectedDataGrid.Columns
+                                    .FirstOrDefault(c => string.Equals(c.BindingPath, column.ColumnName, StringComparison.OrdinalIgnoreCase));
+
+                                if (matchingCol == null)
+                                {
+                                    SelectedDataGrid.Columns.Add(new SproutDataGridColumnConfig
+                                    {
+                                        BindingPath = column.ColumnName,
+                                        Header = column.ColumnName,
+                                        ColumnType = ColumnType.Text,
+                                        IsReadOnly = column.IsReadOnly == true || column.IsAutoIncrement == true
+                                    });
+                                }
+                            }
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    conn.Close();
+
+                    _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
                 }
             }
         }

@@ -162,9 +162,9 @@ namespace Sprout.Core.Views
 
                         if (sproutDataGrid.Config.DataAdapter != null)
                         {
-                            if (sproutDataGrid.Config.DataAdapter is SqlServerDataAdapterConfig sqlServerDataAdapterConfig)
+                            if (sproutDataGrid.Config.DataAdapter != null)
                             {
-                                var dataProvider = sqlServerDataAdapterConfig.DataProvider as SqlServerDataProviderConfig;
+                                var dataProvider = sproutDataGrid.Config.DataAdapter.DataProvider;
 
                                 if (dataProvider.FilterConfigs.Any())
                                 {

@@ -1,5 +1,6 @@
 ﻿using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Services.DataProviders;
+using Sprout.Core.Services.Duck;
 using Sprout.Core.Services.SqlServer;
 using Sprout.Core.UIStates;
 using System;
@@ -17,6 +18,11 @@ namespace Sprout.Core.Factories
             if (dataAdapter is SqlServerDataAdapter sqlServerDataAdapter)
             {
                 return new SqlServerDataService(sqlServerDataAdapter, uiStateRegistry);
+            }
+
+            if (dataAdapter is DuckDataAdapter duckDataAdapter)
+            {
+                return new DuckDbDataService(duckDataAdapter, uiStateRegistry);
             }
 
             throw new NotSupportedException($"Data adapter of type {dataAdapter.GetType().Name} is not supported.");

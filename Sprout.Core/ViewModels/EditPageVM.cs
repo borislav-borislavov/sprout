@@ -4,6 +4,7 @@ using Sprout.Core.Common;
 using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
+using Sprout.Core.Models.Configurations.Duck;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
@@ -40,7 +41,7 @@ namespace Sprout.Core.ViewModels
         private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
 
-        public string[] AdapterTypes { get; set; } = ["SqlServer", "SQLite", "Excel"];
+        public string[] AdapterTypes { get; set; } = ["SqlServer", "Duck"];
 
         [ObservableProperty]
         private string _selectedAdapterType;
@@ -241,7 +242,7 @@ namespace Sprout.Core.ViewModels
         {
             try
             {
-                if (value is SproutDataGridConfig dataGridConfig && dataGridConfig.DataAdapter is SqlServerDataAdapterConfig)
+                if (value is SproutDataGridConfig dataGridConfig && dataGridConfig.DataAdapter != null)
                 {
                     AreFiltersVisible = true;
                     SelectedDataGrid = dataGridConfig;
@@ -280,6 +281,11 @@ namespace Sprout.Core.ViewModels
                     {
                         SelectedAdapterType = "SqlServer";
                         SelectedAdapterViewModel = new SqlServerDataAdapterVM(sqlServerDataAdapterConfig);
+                    }
+                    else if (dataAdapterControlConfig.DataAdapter is DuckDataAdapterConfig duckDataAdapterConfig)
+                    {
+                        SelectedAdapterType = "Duck";
+                        SelectedAdapterViewModel = new DuckDataAdapterVM(duckDataAdapterConfig);
                     }
                     else
                     {
@@ -321,6 +327,22 @@ namespace Sprout.Core.ViewModels
                         InsertCommand = new SqlServerEditCommandConfig(),
                         UpdateCommand = new SqlServerEditCommandConfig(),
                         DeleteCommand = new SqlServerEditCommandConfig(),
+                    };
+                }
+                else if (SelectedAdapterType == "Duck")
+                {
+                    adapterControl.DataAdapter = new DuckDataAdapterConfig
+                    {
+                        ConnectionString = "DataSource=:memory:",
+
+                        DataProvider = new DuckDataProviderConfig
+                        {
+                            Text = string.Empty
+                        },
+
+                        InsertCommand = new DuckEditCommandConfig(),
+                        UpdateCommand = new DuckEditCommandConfig(),
+                        DeleteCommand = new DuckEditCommandConfig(),
                     };
                 }
                 else

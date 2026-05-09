@@ -31,6 +31,6 @@ namespace Sprout.Core.Services.DataProviders
         Task<ChangeResult> Insert(DataRow dataRow);
         Task<ChangeResult> Update(DataRow dataRow);
         Task<ChangeResult> Delete(DataRow dataRow);
-        Task<ChangeResult> Change(SqlServerEditCommand editCmd, DataRow dataRow);
+        Task<ChangeResult> Change(IEditCommand editCmd, DataRow dataRow);
     }
 }

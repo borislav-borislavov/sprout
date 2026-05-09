@@ -8,9 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="DuckDb.xshd" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Dapper" Version="2.1.72" />
+    <PackageReference Include="DuckDB.NET.Bindings.Full" Version="1.5.2" />
+    <PackageReference Include="DuckDB.NET.Data.Full" Version="1.5.2" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="6.2.1" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
@@ -19,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="DuckDb.xshd" />
     <EmbeddedResource Include="TSQL.xshd" />
   </ItemGroup>
 

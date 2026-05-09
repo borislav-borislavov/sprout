@@ -11,7 +11,7 @@ namespace Sprout.Core.Factories
 {
     public static class SproutDataGridFilterFactory
     {
-        internal static UIElement GetFilter(SqlServerFilterConfig filterConfig)
+        internal static UIElement GetFilter(FilterConfig filterConfig)
         {
             var filter = new SproutDataGridTextFilter();
             filter.GroupBox.Header = filterConfig.Title;

@@ -13,7 +13,7 @@ namespace Sprout.Core.ViewModels
     public partial class EditPageVM : ObservableObject
     {
         [ObservableProperty]
-        private SqlServerFilterConfig _selectedFilter;
+        private FilterConfig _selectedFilter;
 
         public IEnumerable<EditorType> EditorTypes => Enum.GetValues(typeof(EditorType)).Cast<EditorType>();
 
@@ -28,7 +28,7 @@ namespace Sprout.Core.ViewModels
 
             if (adapterConfig.DataProvider is not SqlServerDataProviderConfig dataProvider) return;
 
-            dataProvider.FilterConfigs.Add(new SqlServerFilterConfig
+            dataProvider.FilterConfigs.Add(new FilterConfig
             {
                 Title = "New Filter",
                 Text = "",
