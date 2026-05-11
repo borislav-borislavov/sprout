@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations.DataGrid
 {
-    public class SproutDataGridColumnConfig
+    public class SproutDataGridColumnConfig : IDataAdapterConfigHost
     {
         public string Header { get; set; }
 
@@ -34,7 +34,7 @@ namespace Sprout.Core.Models.Configurations.DataGrid
         /// The data adapter configuration that provides the items source for the ComboBox.
         /// Only applicable when ColumnType is Combo. This adapter only needs a DataProvider (read-only).
         /// </summary>
-        public IDataAdapterConfig ComboDataAdapter { get; set; }
+        public IDataAdapterConfig DataAdapter { get; set; }
 
         public string ComboAdapterKey;
     }

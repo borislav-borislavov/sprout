@@ -47,10 +47,10 @@ namespace Sprout.Core.Models.Configurations
 				{
 					foreach (var column in dataGridConfig.Columns ?? [])
 					{
-						if (column.ColumnType == ColumnType.Combo && column.ComboDataAdapter is not null)
+						if (column.ColumnType == ColumnType.Combo && column.DataAdapter is not null)
 						{
                             column.ComboAdapterKey = $"{control.Name}.Column.{column.BindingPath}";
-							dataAdapterConfigs.Add(column.ComboAdapterKey, column.ComboDataAdapter);
+							dataAdapterConfigs.Add(column.ComboAdapterKey, column.DataAdapter);
 						}
 					}
 				}
