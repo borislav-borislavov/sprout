@@ -272,7 +272,7 @@ namespace Sprout.Core.ViewModels
                     SelectedGridConfig = null;
                 }
 
-                if (value is IDataAdapterControlConfig dataAdapterControlConfig)
+                if (value is IDataAdapterConfigHost dataAdapterControlConfig)
                 {
                     IsDataAdapterVisible = true;
                     SelectedDataAdapter = dataAdapterControlConfig.DataAdapter;
@@ -311,7 +311,7 @@ namespace Sprout.Core.ViewModels
         {
             try
             {
-                if (SelectedNode is not IDataAdapterControlConfig adapterControl) return;
+                if (SelectedNode is not IDataAdapterConfigHost adapterControl) return;
 
                 if (SelectedAdapterType == "SqlServer")
                 {

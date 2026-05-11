@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations
 {
-    public class SproutButtonConfig : SproutControlConfig, IDataAdapterControlConfig
+    public class SproutButtonConfig : SproutControlConfig, IDataAdapterConfigHost
     {
         public string Content { get; set; }
 

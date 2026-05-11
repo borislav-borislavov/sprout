@@ -36,7 +36,7 @@ namespace Sprout.Core.Models.Configurations
 					GetDataAdapterConfigsRecursive(child, dataAdapterConfigs);
 				}
 			}
-			else if (control is IDataAdapterControlConfig dataAdapterControlConfig)
+			else if (control is IDataAdapterConfigHost dataAdapterControlConfig)
 			{
 				if (dataAdapterControlConfig.DataAdapter is not null)
 				{

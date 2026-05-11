@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations
 {
-	public class SproutComboConfig : SproutControlConfig, IDataAdapterControlConfig
+	public class SproutComboConfig : SproutControlConfig, IDataAdapterConfigHost
 	{
 		public string DisplayColumn { get; set; }
 		public string ValueColumn { get; set; }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations.DataGrid
 {
-	public class SproutDataGridConfig : SproutControlConfig, IDataAdapterControlConfig
+	public class SproutDataGridConfig : SproutControlConfig, IDataAdapterConfigHost
 	{
 		public IDataAdapterConfig DataAdapter { get; set; }
 
