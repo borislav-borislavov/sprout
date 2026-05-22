@@ -1,0 +1,10 @@
+Example combo select:
+select UserTypeID, Name from UserTypes
+
+Header: UserTypeID
+
+BindingPath: UserTypeID
+
+DisplayColumn: Name
+
+ValueColumn: UserTypeID
