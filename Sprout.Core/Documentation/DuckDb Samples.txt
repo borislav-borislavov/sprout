@@ -1,0 +1,20 @@
+INSTALL excel;
+LOAD excel;
+
+CREATE TABLE imported_data AS 
+SELECT * 
+FROM read_xlsx('C:\Users\Learn\Desktop\BAT\Nomenclator user''s.xlsx', header = true, all_varchar = true);
+
+SELECT * FROM imported_data
+{!whereFilter}
+
+---------------------------------------
+
+CREATE TABLE imported_data AS 
+SELECT * 
+FROM read_csv_auto('C:\Users\Learn\Desktop\jde_tables.csv', 
+                   header = true, 
+                   all_varchar = true);
+
+-- Preview the data
+SELECT * FROM imported_data;
