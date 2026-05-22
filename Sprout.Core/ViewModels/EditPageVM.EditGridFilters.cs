@@ -24,9 +24,9 @@ namespace Sprout.Core.ViewModels
 
             if (SelectedNode is not SproutDataGridConfig dataGrid) return;
 
-            if (dataGrid.DataAdapter is not SqlServerDataAdapterConfig adapterConfig) return;
+            var dataProvider = dataGrid.DataAdapter?.DataProvider;
 
-            if (adapterConfig.DataProvider is not SqlServerDataProviderConfig dataProvider) return;
+            if (dataProvider == null) return;
 
             dataProvider.FilterConfigs.Add(new FilterConfig
             {
