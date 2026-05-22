@@ -1,0 +1,5 @@
+Filter example:
+Username like '%'+{0}+'%'
+
+There is a secondary parameter available {1} but it's not implemented yet.
+It is designed for between type of filters
