@@ -17,5 +17,6 @@ namespace Sprout.Core.Services.Navigation
 
         void ShowMainDashboard();
         void ShowLogin();
+        void ShowManageAdapter(IDataAdapterConfigHost dataAdapterConfigHost);
     }
 }

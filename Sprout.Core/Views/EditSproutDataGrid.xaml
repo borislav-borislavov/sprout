@@ -99,7 +99,8 @@
                              Text="{Binding SelectedColumn.ValueColumn, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
 
-                <Button Content="Initialize Data Adapter"
+
+                <Button Content="Edit Data Adapter"
                         Grid.Row="1"
                         HorizontalAlignment="Left"
                         Margin="0,0,0,5"

@@ -36,8 +36,8 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private ObservableObject _selectedColumnAdapterViewModel;
 
-        //[ObservableProperty]
-        //private SproutPageConfiguration _selectedNonMenuPage;
+        [ObservableProperty]
+        private string _selectedComboColAdapterType;
 
         partial void OnSelectedColumnChanged(SproutDataGridColumnConfig value)
         {
@@ -50,14 +50,14 @@ namespace Sprout.Core.ViewModels
             {
                 IsComboColumnSelected = true;
 
-                if (column.ComboDataAdapter is SqlServerDataAdapterConfig sqlConfig)
-                {
-                    SelectedColumnAdapterViewModel = new SqlServerReadOnlyDataAdapterVM(sqlConfig);
-                }
-                else
-                {
-                    SelectedColumnAdapterViewModel = null;
-                }
+                //if (column.DataAdapter is SqlServerDataAdapterConfig sqlConfig)
+                //{
+                //    SelectedColumnAdapterViewModel = new SqlServerReadOnlyDataAdapterVM(sqlConfig);
+                //}
+                //else
+                //{
+                //    SelectedColumnAdapterViewModel = null;
+                //}
             }
             else
             {
@@ -71,18 +71,53 @@ namespace Sprout.Core.ViewModels
         {
             if (SelectedColumn == null || SelectedColumn.ColumnType != ColumnType.Combo) return;
 
-            if (SelectedColumn.ComboDataAdapter != null) return;
+            //try
+            //{
+            //    if (SelectedComboColAdapterType == "SqlServer")
+            //    {
+            //        SelectedColumn.DataAdapter = new SqlServerDataAdapterConfig
+            //        {
+            //            //ConnectionString = "Server=.;Database=DbName;Trusted_Connection=True;TrustServerCertificate=Yes",
 
-            SelectedColumn.ComboDataAdapter = new SqlServerDataAdapterConfig
-            {
-                ConnectionString = string.Empty,
-                DataProvider = new SqlServerDataProviderConfig
-                {
-                    Text = string.Empty
-                }
-            };
+            //            DataProvider = new SqlServerDataProviderConfig
+            //            {
+            //                Text = string.Empty
+            //            },
 
-            UpdateComboColumnState(SelectedColumn);
+            //            InsertCommand = new SqlServerEditCommandConfig(),
+            //            UpdateCommand = new SqlServerEditCommandConfig(),
+            //            DeleteCommand = new SqlServerEditCommandConfig(),
+            //        };
+            //    }
+            //    else if (SelectedComboColAdapterType == "Duck")
+            //    {
+            //        SelectedColumn.DataAdapter = new DuckDataAdapterConfig
+            //        {
+            //            ConnectionString = "DataSource=:memory:",
+
+            //            DataProvider = new DuckDataProviderConfig
+            //            {
+            //                Text = string.Empty
+            //            },
+
+            //            InsertCommand = new DuckEditCommandConfig(),
+            //            UpdateCommand = new DuckEditCommandConfig(),
+            //            DeleteCommand = new DuckEditCommandConfig(),
+            //        };
+            //    }
+            //    else
+            //    {
+            //        throw new NotImplementedException();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _dialogService.ShowError(ex.Message);
+            //}
+
+            //UpdateComboColumnState(SelectedColumn);
+
+            _navigationService.ShowManageAdapter(SelectedColumn);
         }
 
         [RelayCommand]

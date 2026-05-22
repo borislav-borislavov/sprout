@@ -1,0 +1,54 @@
+﻿<Window x:Class="Sprout.Core.Windows.ManageDataAdapterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Sprout.Core.Windows"
+        xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
+        xmlns:views="clr-namespace:Sprout.Core.Views"
+        
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance viewModels:ManageDataAdapterVM}"
+        Title="ManageDataAdapter" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.3*"/>
+            <ColumnDefinition Width="0.7*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ComboBox Name="AdapterTypes"
+                  Grid.Column="0"
+                  Margin="5"
+                  VerticalAlignment="Top"
+                  ItemsSource="{Binding AdapterTypes}"
+                  SelectedItem="{Binding SelectedAdapterType}"/>
+
+        <Button Content="Change Adapter"
+                HorizontalAlignment="Left"
+                Margin="5"
+                Command="{Binding ChangeAdapterCommand}"
+                Grid.Column="1"/>
+
+        <Grid Name="ViewSwitcher"
+              Grid.Row="1"
+              Grid.Column="0"
+              Grid.ColumnSpan="2">
+            <Grid.Resources>
+                <DataTemplate DataType="{x:Type viewModels:SqlServerDataAdapterVM}">
+                    <views:SqlServerDataAdapterView />
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type viewModels:DuckDataAdapterVM}">
+                    <views:DuckDataAdapterView />
+                </DataTemplate>
+            </Grid.Resources>
+
+            <ContentControl Content="{Binding SelectedAdapterViewModel}" />
+        </Grid>
+    </Grid>
+</Window>

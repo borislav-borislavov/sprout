@@ -57,5 +57,12 @@ namespace Sprout.Core.Services.Navigation
             editLoginConfig.ShowDialog();
             return editLoginConfig.ViewModel.IsSaved;
         }
+
+        public void ShowManageAdapter(IDataAdapterConfigHost dataAdapterConfigHost)
+        {
+            var mdw = _serviceProvider.GetRequiredService<ManageDataAdapterWindow>();
+            (mdw.DataContext as ManageDataAdapterVM).AdapterConfigHost = dataAdapterConfigHost;
+            mdw.ShowDialog();
+        }
     }
 }

@@ -38,6 +38,7 @@ namespace Sprout.Core
             services.AddTransient<EditMenuVM>();
             services.AddTransient<EditPageVM>();
             services.AddTransient<AddControlVM>();
+            services.AddTransient<ManageDataAdapterVM>();
 
             //Views
             services.AddTransient<MainView>();
@@ -51,6 +52,8 @@ namespace Sprout.Core
             services.AddTransient<EditMenu>();
             services.AddTransient<EditPage>();
             services.AddTransient<AddControl>();
+            services.AddTransient<ManageDataAdapterWindow>();
+
         }
     }
 }
