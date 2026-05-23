@@ -1,0 +1,2 @@
+To access parent row data:
+SELECT * FROM BoxConfigs WHERE OfferHeaderID = {@Page.Data.OfferHeaderID}

@@ -1,0 +1,9 @@
+SELECT
+	*,
+	CASE
+		WHEN  LEN(TRIM(COALESCE(AccountName, ''))) = 0
+			THEN '#fac94d'
+		ELSE NULL
+	END AS _RowBackColor
+FROM Outlets
+{!whereFilter}
