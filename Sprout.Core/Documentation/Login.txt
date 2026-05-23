@@ -1,0 +1,14 @@
+SELECT * FROM Users
+WHERE Username = {@Username}
+AND PasswordHash = HASHBYTES('SHA2_256', CAST({@Password} AS NVARCHAR(200)))
+
+IF (@@ROWCOUNT = 1)
+BEGIN
+	SELECT 1 AS Result
+END
+ELSE
+BEGIN
+	SELECT 0 AS Result
+	INSERT INTO #Messages (Type, Message) VALUES ('Error', 'Invalid credentials')
+END
+
