@@ -1,0 +1,1 @@
+﻿C:\Users\Learn\source\repos\Sprout.Shell\Sprout.Shell\bin\Debug\net10.0-windows7.0\MigrationsFolder\SqlServer
