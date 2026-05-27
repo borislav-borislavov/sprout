@@ -76,7 +76,6 @@ namespace Sprout.Core.ViewModels
 
                 UiStateRegistry.UiStateChanged += async (_, change) =>
                 {
-#warning add try catch here!!!
                     foreach (var dataProvider in DataProviders.Values)
                     {
                         var dependencyHasChanged = false;
@@ -91,9 +90,16 @@ namespace Sprout.Core.ViewModels
 
                         if (dependencyHasChanged)
                         {
-                            using (var dataService = _dataServiceFactory.Create(dataProvider.Parent, UiStateRegistry))
+                            try
                             {
-                                await dataService.ProvideData();
+                                using (var dataService = _dataServiceFactory.Create(dataProvider.Parent, UiStateRegistry))
+                                {
+                                    await dataService.ProvideData();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                _dialogService.ShowMessage(ex.Message, "Dependency changed Error", DialogButton.OK, DialogImage.Error);
                             }
                         }
                     }
