@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DuckDB.NET.Data;
 using Microsoft.Data.SqlClient;
+using Sprout.Core.Common;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.Configurations.Duck;
@@ -17,7 +19,6 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DuckDB.NET.Data;
 #nullable disable
 
 namespace Sprout.Core.ViewModels
@@ -236,29 +237,26 @@ namespace Sprout.Core.ViewModels
 
                     conn.Open();
 
-                    using (var reader = cmd.ExecuteReader(CommandBehavior.SchemaOnly))
+                    using var reader = GetSqlServerReader(cmd);
+
+                    if (reader.CanGetColumnSchema())
                     {
-                        var schemaTable = reader.GetSchemaTable();
+                        var columnSchema = reader.GetColumnSchema();
 
-                        if (reader.CanGetColumnSchema())
+                        foreach (var column in columnSchema)
                         {
-                            var columnSchema = reader.GetColumnSchema();
-
-                            foreach (var column in columnSchema)
-                            {
-                                var matchingCol = SelectedDataGrid.Columns
-                                    .FirstOrDefault(c => string.Equals(c.BindingPath, column.ColumnName, StringComparison.OrdinalIgnoreCase));
+                            var matchingCol = SelectedDataGrid.Columns
+                                .FirstOrDefault(c => string.Equals(c.BindingPath, column.ColumnName, StringComparison.OrdinalIgnoreCase));
 
                                 if (matchingCol == null)
+                            {
+                                SelectedDataGrid.Columns.Add(new SproutDataGridColumnConfig
                                 {
-                                    SelectedDataGrid.Columns.Add(new SproutDataGridColumnConfig
-                                    {
-                                        BindingPath = column.ColumnName,
-                                        Header = column.ColumnName,
-                                        ColumnType = ColumnType.Text,
-                                        IsReadOnly = column.IsReadOnly == true || column.IsAutoIncrement == true
-                                    });
-                                }
+                                    BindingPath = column.ColumnName,
+                                    Header = column.ColumnName,
+                                    ColumnType = ColumnType.Text,
+                                    IsReadOnly = column.IsReadOnly == true || column.IsAutoIncrement == true
+                                });
                             }
                         }
                     }
@@ -269,6 +267,18 @@ namespace Sprout.Core.ViewModels
 
                     _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
                 }
+            }
+        }
+
+        private SqlDataReader GetSqlServerReader(SqlCommand cmd)
+        {
+            try
+            {
+                return cmd.ExecuteReader(CommandBehavior.SchemaOnly); //this doesn't work when you have a temp table
+            }
+            catch (Exception)
+            {
+                return cmd.ExecuteReader(CommandBehavior.SingleRow); //but this does
             }
         }
 
