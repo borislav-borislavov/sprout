@@ -40,7 +40,13 @@ namespace Sprout.Core.UIStates
 
         public T? Get<T>(string key) where T : BaseUIState
         {
-            return _states.TryGetValue(key, out var v) ? (T)v : default;
+            if (_states.TryGetValue(key, out var v) && v.GetType() == typeof(T))
+            {
+                return (T)v;
+            }
+
+            return default;
+
         }
     }
 }
