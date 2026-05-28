@@ -1,8 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Data.SqlClient;
+using Newtonsoft.Json;
 using Sprout.Core.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,6 +15,21 @@ namespace Sprout.Core.Common
 {
     public static class Extensions
     {
+        public static void LoadDataTableColumnsFromSchema(this SqlDataReader reader, DataTable dt)
+        {
+            var schemaTable = reader.GetSchemaTable();
+            foreach (DataRow schemaRow in schemaTable.Rows)
+            {
+                var colName = (string)schemaRow["ColumnName"];
+                var colType = (Type)schemaRow["DataType"];
+
+                if (colType == typeof(double)) //double type adds too many decimals and it doesn't reflect the actual value in the database
+                    colType = typeof(decimal);
+
+                dt.Columns.Add(colName, colType);
+            }
+        }
+
         public static T Clone<T>(this T source)
         {
             if (source == null)

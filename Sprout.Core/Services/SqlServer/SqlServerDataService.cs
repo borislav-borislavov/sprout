@@ -376,6 +376,8 @@ namespace Sprout.Core.Services.SqlServer
 
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
+                    reader.LoadDataTableColumnsFromSchema(dt);
+
                     // Move the CPU-heavy loading to a background thread
                     // This prevents the UI from freezing during the data parsing
                     await Task.Run(() => dt.Load(reader));
