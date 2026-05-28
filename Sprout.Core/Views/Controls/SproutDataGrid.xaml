@@ -155,7 +155,6 @@
               VirtualizingStackPanel.VirtualizationMode="Recycling"
               EnableRowVirtualization="True"
               EnableColumnVirtualization="True"
-              ScrollViewer.IsDeferredScrollingEnabled="True"
                 
               HorizontalGridLinesBrush="#E2E2E2" 
               VerticalGridLinesBrush="#E2E2E2" 
