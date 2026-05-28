@@ -166,6 +166,12 @@ namespace Sprout.Core.ViewModels
 
                 foreach (var kvp in DataProviders)
                 {
+                    //experimental optimization to not run queries which depend on other values for nothing
+                    if (kvp.Value.Dependencies.Count() > 0)
+                    {
+                        continue;
+                    }
+
                     var gridState = UiStateRegistry.Get<SproutGridUIState>(kvp.Key);
 
                     if (gridState != null)
