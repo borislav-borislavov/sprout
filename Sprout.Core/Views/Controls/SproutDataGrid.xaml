@@ -189,6 +189,19 @@
                 </DataGrid.RowStyle>
             </DataGrid>
 
+            <!-- Loading overlay shown while fetching data -->
+            <Border Grid.Row="1"
+                    Background="#80FFFFFF"
+                    Visibility="{Binding UIState.IsFetching, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
+                    IsHitTestVisible="True">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="Loading..."
+                               FontSize="14"
+                               Foreground="DarkSlateGray"
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
             <Border Grid.Row="2" BorderThickness="0,0.8,0,0" BorderBrush="DarkSlateGray" >
                 <StatusBar >
                     <StatusBar.Background>

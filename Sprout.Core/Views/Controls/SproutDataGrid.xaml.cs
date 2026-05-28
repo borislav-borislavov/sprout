@@ -28,7 +28,14 @@ namespace Sprout.Core.Views.Controls
     {
         public SproutDataGridConfig Config { get; set; }
 
-        public SproutGridUIState UIState { get; set; }
+        public static readonly DependencyProperty UIStateProperty =
+            DependencyProperty.Register(nameof(UIState), typeof(SproutGridUIState), typeof(SproutDataGrid), new PropertyMetadata(null));
+
+        public SproutGridUIState UIState
+        {
+            get => (SproutGridUIState)GetValue(UIStateProperty);
+            set => SetValue(UIStateProperty, value);
+        }
 
         public SproutDataGrid()
         {

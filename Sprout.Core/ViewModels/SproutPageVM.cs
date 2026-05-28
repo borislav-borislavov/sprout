@@ -76,8 +76,9 @@ namespace Sprout.Core.ViewModels
 
                 UiStateRegistry.UiStateChanged += async (_, change) =>
                 {
-                    foreach (var dataProvider in DataProviders.Values)
+                    foreach (var kvp in DataProviders)
                     {
+                        var dataProvider = kvp.Value;
                         var dependencyHasChanged = false;
 
                         foreach (var dependency in dataProvider.Dependencies)
@@ -90,6 +91,11 @@ namespace Sprout.Core.ViewModels
 
                         if (dependencyHasChanged)
                         {
+                            var gridState = UiStateRegistry.Get<SproutGridUIState>(kvp.Key);
+
+                            if (gridState != null)
+                                gridState.IsFetching = true;
+
                             try
                             {
                                 using (var dataService = _dataServiceFactory.Create(dataProvider.Parent, UiStateRegistry))
@@ -100,6 +106,11 @@ namespace Sprout.Core.ViewModels
                             catch (Exception ex)
                             {
                                 _dialogService.ShowMessage(ex.Message, "Dependency changed Error", DialogButton.OK, DialogImage.Error);
+                            }
+                            finally
+                            {
+                                if (gridState != null)
+                                    gridState.IsFetching = false;
                             }
                         }
                     }
@@ -155,9 +166,22 @@ namespace Sprout.Core.ViewModels
 
                 foreach (var kvp in DataProviders)
                 {
-                    using (var dataservice = _dataServiceFactory.Create(kvp.Value.Parent, UiStateRegistry))
+                    var gridState = UiStateRegistry.Get<SproutGridUIState>(kvp.Key);
+
+                    if (gridState != null)
+                        gridState.IsFetching = true;
+
+                    try
                     {
-                        await dataservice.ProvideData();
+                        using (var dataservice = _dataServiceFactory.Create(kvp.Value.Parent, UiStateRegistry))
+                        {
+                            await dataservice.ProvideData();
+                        }
+                    }
+                    finally
+                    {
+                        if (gridState != null)
+                            gridState.IsFetching = false;
                     }
                 }
             }

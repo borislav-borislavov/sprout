@@ -18,6 +18,9 @@ namespace Sprout.Core.UIStates
         [ObservableProperty]
         private object _selected;
 
+        [ObservableProperty]
+        private bool _isFetching;
+
         public virtual void SetUpState(SproutDataGrid control)
         {
             // Bindings and other setup logic can be added here if needed
@@ -30,6 +33,13 @@ namespace Sprout.Core.UIStates
                 {
                     Source = this,
                     Mode = BindingMode.TwoWay
+                });
+
+            control.dataGrid.SetBinding(DataGrid.IsReadOnlyProperty,
+                new Binding(nameof(this.IsFetching))
+                {
+                    Source = this,
+                    Mode = BindingMode.OneWay
                 });
         }
     }

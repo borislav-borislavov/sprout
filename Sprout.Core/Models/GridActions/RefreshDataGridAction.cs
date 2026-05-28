@@ -29,9 +29,22 @@ namespace Sprout.Core.Models.GridActions
                 throw new NotImplementedException();
             }
 
-            using(var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry))
+            var gridState = uiStateRegistry.Get<SproutGridUIState>(_ownControlName);
+
+            if (gridState != null)
+                gridState.IsFetching = true;
+
+            try
             {
-                await dataService.ProvideData();
+                using (var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry))
+                {
+                    await dataService.ProvideData();
+                }
+            }
+            finally
+            {
+                if (gridState != null)
+                    gridState.IsFetching = false;
             }
         }
     }
