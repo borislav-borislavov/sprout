@@ -110,6 +110,7 @@
                     Style="{StaticResource FlatRoundButtonStyle}"
                     Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
                     HorizontalAlignment="Left"
+                    Click="btnApplyFilters_Click"
                     Margin="2">
 
                     <iconPacks:PackIconMaterialLight Kind="Check"/>

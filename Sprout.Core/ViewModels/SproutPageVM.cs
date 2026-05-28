@@ -210,18 +210,6 @@ namespace Sprout.Core.ViewModels
             }
         }
 
-        [RelayCommand]
-        private void Filter()
-        {
-            try
-            {
-                _dialogService.ShowMessage("Implement me");
-            }
-            catch (Exception ex)
-            {
-                _dialogService.ShowMessage(ex.Message, "Filter Error", DialogButton.OK, DialogImage.Error);
-            }
-        }
 
         [RelayCommand]
         private void DisplayItemPage(object parameter)

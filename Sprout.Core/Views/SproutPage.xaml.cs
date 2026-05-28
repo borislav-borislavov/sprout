@@ -87,6 +87,18 @@ namespace Sprout.Core.Views
                                 Mode = BindingMode.OneWay
                             });
 
+                        sproutDataGrid.btnApplyFilters.SetBinding(Button.CommandProperty,
+                            new Binding(nameof(SproutPageVM.PerformActionCommand))
+                            {
+                                Mode = BindingMode.OneWay
+                            });
+
+                        sproutDataGrid.btnApplyFilters.SetBinding(Button.CommandParameterProperty,
+                            new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(RefreshDataGridAction)}]")
+                            {
+                                Mode = BindingMode.OneWay
+                            });
+
                         if (sproutDataGrid.Config.ItemDisplayPage != Guid.Empty)
                         {
                             sproutDataGrid.dataGrid.IsReadOnly = true;
@@ -189,11 +201,6 @@ namespace Sprout.Core.Views
                                         }
                                     }
 
-                                    sproutDataGrid.btnApplyFilters.SetBinding(Button.CommandProperty,
-                                        new Binding(nameof(SproutPageVM.FilterCommand))
-                                        {
-                                            Mode = BindingMode.OneWay
-                                        });
                                 }
                             }
                             else

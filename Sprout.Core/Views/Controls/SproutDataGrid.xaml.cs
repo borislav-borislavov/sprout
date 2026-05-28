@@ -50,18 +50,28 @@ namespace Sprout.Core.Views.Controls
                 dataGrid.Visibility = Visibility.Collapsed;
                 filtersBorder.Visibility = Visibility.Visible;
                 FiltersGrid.Visibility = Visibility.Visible;
-                
+
                 filtersButtonPanel.Visibility = Visibility.Visible;
                 gridButtonsPanel.Visibility = Visibility.Collapsed;
             }
             else
             {
-                dataGrid.Visibility = Visibility.Visible;
-                filtersBorder.Visibility = Visibility.Collapsed;
-                FiltersGrid.Visibility = Visibility.Collapsed;
-                filtersButtonPanel.Visibility = Visibility.Collapsed;
-                gridButtonsPanel.Visibility = Visibility.Visible;
+                ShowDataGrid();
             }   
+        }
+
+        private void btnApplyFilters_Click(object sender, RoutedEventArgs e)
+        {
+            ShowDataGrid();
+        }
+
+        private void ShowDataGrid()
+        {
+            dataGrid.Visibility = Visibility.Visible;
+            filtersBorder.Visibility = Visibility.Collapsed;
+            FiltersGrid.Visibility = Visibility.Collapsed;
+            filtersButtonPanel.Visibility = Visibility.Collapsed;
+            gridButtonsPanel.Visibility = Visibility.Visible;
         }
     }
 }
