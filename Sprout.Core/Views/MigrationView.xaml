@@ -22,6 +22,12 @@
                     Command="{Binding RunMigrationsCommand}"
                     HorizontalAlignment="Left"
                     Padding="20,5"/>
+
+            <Button Content="Open Migrations Folder"
+                    Command="{Binding OpenMigrationsFolderCommand}"
+                    HorizontalAlignment="Left"
+                    Padding="20,5"
+                    Margin="0,8,0,0"/>
         </StackPanel>
 
         <!-- Busy overlay -->

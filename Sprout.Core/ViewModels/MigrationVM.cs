@@ -68,6 +68,18 @@ namespace Sprout.Core.ViewModels
 
         private bool CanRun() => !IsBusy;
 
+        [RelayCommand]
+        private void OpenMigrationsFolder()
+        {
+            var settings = _configService.Load().Settings;
+            var folder = settings.MigrationsFolder;
+
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            Process.Start(new ProcessStartInfo(folder) { UseShellExecute = true });
+        }
+
         private void OpenLogFile()
         {
             var settings = _configService.Load().Settings;
