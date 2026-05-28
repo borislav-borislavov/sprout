@@ -111,6 +111,32 @@
                             Text="&#xE949;"
                             Margin="3"/>
                 </Button>
+
+                <Button
+                    HorizontalAlignment="Left"
+                    Margin="2"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    Command="{Binding MoveUpCommand}">
+                    <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="25"
+                            Text="&#xE74A;"
+                            Margin="3"/>
+                </Button>
+
+                <Button
+                    HorizontalAlignment="Left"
+                    Margin="2"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    Command="{Binding MoveDownCommand}">
+                    <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="25"
+                            Text="&#xE74B;"
+                            Margin="3"/>
+                </Button>
             </StackPanel>
 
         </Grid>

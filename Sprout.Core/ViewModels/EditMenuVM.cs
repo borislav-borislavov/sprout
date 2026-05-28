@@ -87,5 +87,27 @@ namespace Sprout.Core.ViewModels
                 PageConfigs.Remove(SelectedPageConfig);
             }
         }
+
+        [RelayCommand]
+        private void MoveUp()
+        {
+            if (SelectedPageConfig == null) return;
+            int index = PageConfigs.IndexOf(SelectedPageConfig);
+            if (index > 0)
+            {
+                PageConfigs.Move(index, index - 1);
+            }
+        }
+
+        [RelayCommand]
+        private void MoveDown()
+        {
+            if (SelectedPageConfig == null) return;
+            int index = PageConfigs.IndexOf(SelectedPageConfig);
+            if (index >= 0 && index < PageConfigs.Count - 1)
+            {
+                PageConfigs.Move(index, index + 1);
+            }
+        }
     }
 }
