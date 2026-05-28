@@ -99,6 +99,21 @@ namespace Sprout.Core.Views
                                 Mode = BindingMode.OneWay
                             });
 
+                        //export to excel grid action
+                        vm.ButtonActions[sproutDataGrid.Name][nameof(ExportToExcelGridAction)] = new ExportToExcelGridAction(sproutDataGrid.Name);
+
+                        sproutDataGrid.menuExportExcel.SetBinding(MenuItem.CommandProperty,
+                            new Binding(nameof(SproutPageVM.PerformActionCommand))
+                            {
+                                Mode = BindingMode.OneWay
+                            });
+
+                        sproutDataGrid.menuExportExcel.SetBinding(MenuItem.CommandParameterProperty,
+                            new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(ExportToExcelGridAction)}]")
+                            {
+                                Mode = BindingMode.OneWay
+                            });
+
                         if (sproutDataGrid.Config.ItemDisplayPage != Guid.Empty)
                         {
                             sproutDataGrid.dataGrid.IsReadOnly = true;

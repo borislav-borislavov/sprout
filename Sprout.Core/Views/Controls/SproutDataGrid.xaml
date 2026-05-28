@@ -80,6 +80,23 @@
                         Margin="2">
                     <iconPacks:PackIconMaterialLight Kind="Refresh" />
                 </Button>
+
+                <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
+
+                <Menu Background="Transparent" VerticalAlignment="Center">
+                    <MenuItem ToolTip="Export data">
+                        <MenuItem.Header>
+                            <iconPacks:PackIconMaterialLight Kind="Download" />
+                        </MenuItem.Header>
+                        <MenuItem x:Name="menuExportExcel">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Excel" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                    </MenuItem>
+                </Menu>
             </StackPanel>
 
             <Border
