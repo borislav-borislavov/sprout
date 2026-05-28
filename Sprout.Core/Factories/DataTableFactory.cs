@@ -38,6 +38,13 @@ namespace Sprout.Core.Factories
                 {
                     column.AutoIncrement = false;
                 }
+
+                //this allows for a textbox to be bound to a TwoWay bound readonly column
+                //but in general it prevents errors and crashes
+                if (column.ReadOnly)
+                {
+                    column.ReadOnly = false;
+                }
             }
         }
     }

@@ -18,4 +18,8 @@ namespace Sprout.Core.Models.Configurations
     {
         public string TargetDataGridName { get; set; }
     }
+
+    public class ExecuteSelectActionConfig : SproutButtonActionConfig
+    {
+    }
 }

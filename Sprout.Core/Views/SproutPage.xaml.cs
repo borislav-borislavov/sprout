@@ -269,9 +269,20 @@ namespace Sprout.Core.Views
                             {
                                 compositeAction.Add(new RefreshDataGridButtonAction(refreshConfig.TargetDataGridName));
                             }
+                            else if (actionConfig is ExecuteSelectActionConfig)
+                            {
+                                compositeAction.Add(new ExecuteSelectButtonAction(sproutButton.Name));
+                            }
                         }
 
                         vm.ButtonActions[sproutButton.Name][nameof(CompositeButtonAction)] = compositeAction;
+
+                        if (sproutButton.Config.Actions.OfType<ExecuteSelectActionConfig>().Any())
+                        {
+                            var buttonState = new SproutButtonUIState();
+                            buttonState.SetUpState(sproutButton.Name);
+                            vm.UiStateRegistry.Register(sproutButton.Name, buttonState);
+                        }
 
                         sproutButton.button.SetBinding(Button.CommandProperty,
                             new Binding(nameof(SproutPageVM.PerformActionCommand))

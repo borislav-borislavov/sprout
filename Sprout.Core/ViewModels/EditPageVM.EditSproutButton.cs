@@ -18,7 +18,7 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private SproutButtonActionConfig _selectedButtonAction;
 
-        public string[] AvailableActionTypes { get; } = [nameof(ExecuteUpdateActionConfig), nameof(RefreshDataGridActionConfig)];
+        public string[] AvailableActionTypes { get; } = [nameof(ExecuteUpdateActionConfig), nameof(RefreshDataGridActionConfig), nameof(ExecuteSelectActionConfig)];
 
         [ObservableProperty]
         private string _selectedActionType;
@@ -36,6 +36,7 @@ namespace Sprout.Core.ViewModels
                 {
                     nameof(ExecuteUpdateActionConfig) => new ExecuteUpdateActionConfig(),
                     nameof(RefreshDataGridActionConfig) => new RefreshDataGridActionConfig(),
+                    nameof(ExecuteSelectActionConfig) => new ExecuteSelectActionConfig(),
                     _ => throw new NotImplementedException($"Action type '{SelectedActionType}' is not implemented.")
                 };
 
