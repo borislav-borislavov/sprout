@@ -70,6 +70,20 @@ namespace Sprout.Core.Services.Duck
 
         public async Task<ChangeResult> Change(IEditCommand editCmd, DataRow dataRow)
         {
+            SetBusy(true);
+
+            try
+            {
+                return await ChangeInternal(editCmd, dataRow);
+            }
+            finally
+            {
+                SetBusy(false);
+            }
+        }
+
+        private async Task<ChangeResult> ChangeInternal(IEditCommand editCmd, DataRow dataRow)
+        {
             if (editCmd is not DuckEditCommand editCommand)
                 throw new NotImplementedException();
 
@@ -190,10 +204,24 @@ namespace Sprout.Core.Services.Duck
 
         public async Task ProvideData()
         {
+            SetBusy(true);
+
+            try
+            {
+                await ProvideDataInternal();
+            }
+            finally
+            {
+                SetBusy(false);
+            }
+        }
+
+        private async Task ProvideDataInternal()
+        {
             var queryText = _dataProvider.Text;
 
-            if (string.IsNullOrEmpty(queryText))
-                return;
+            if (string.IsNullOrWhiteSpace(_dataProvider.Text))
+                throw new Exception("No query provided!");
 
             var parameters = new List<(string Name, object Value)>();
             var idx = 0;
@@ -301,6 +329,14 @@ namespace Sprout.Core.Services.Duck
             DataTableFactory.PostLoadLogic(dt);
 
             _dataProvider.Data = dt;
+        }
+
+        private void SetBusy(bool isBusy)
+        {
+            if (UiStateRegistry.Get(_duckDataAdapter.Name) is not BusyUIState busyState)
+                return;
+
+            busyState.IsBusy = isBusy;
         }
 
         public object ResolveBindingPath(object source, string path)
