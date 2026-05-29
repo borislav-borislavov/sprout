@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace Sprout.Core.Common
 {
     public static class Extensions
     {
-        public static void LoadDataTableColumnsFromSchema(this SqlDataReader reader, DataTable dt)
+        public static void LoadDataTableColumnsFromSchema(this DbDataReader reader, DataTable dt)
         {
             var schemaTable = reader.GetSchemaTable();
             foreach (DataRow schemaRow in schemaTable.Rows)

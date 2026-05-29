@@ -322,104 +322,13 @@ namespace Sprout.Core.Services.SqlServer
 
         private (string queryText, List<SqlParameter> dependencyParameters) BuildQueryAndParameters()
         {
-            if (string.IsNullOrWhiteSpace(_dataProvider.Text))
-                throw new Exception("No query provided!");
+            var result = QueryBuilder.Build(_dataProvider.Text, _dataProvider);
 
-            string queryText = _dataProvider.Text;
-            List<SqlParameter> dependencyParameters = [];
+            var sqlParams = result.Parameters
+                .Select(p => new SqlParameter(p.Name, p.Value))
+                .ToList();
 
-            var idx = 0;
-
-            foreach (var item in _dataProvider.Dependencies)
-            {
-                var paramName = $"@depParam{idx}";
-                queryText = queryText.Replace($"{{{item.RawDependency}}}", paramName);
-                SqlParameter sqlParameter = new SqlParameter(paramName, item.Value ?? DBNull.Value);
-                dependencyParameters.Add(sqlParameter);
-                idx++;
-            }
-
-            var filterStatements = new List<string>();
-
-            if (_dataProvider.Filters.Count > 0)
-            {
-                int filterIdx = 0;
-
-                foreach (var filter in _dataProvider.Filters.Values)
-                {
-                    if (string.IsNullOrEmpty($"{filter.StartValue}") && string.IsNullOrEmpty($"{filter.EndValue}"))
-                    {
-                        continue;
-                    }
-
-                    var filterStatement = filter.Text;
-
-                    if (filter.IsRange)
-                    {
-                        var startParamName = $"@filter_{filterIdx}_Start{idx}";
-                        var sqlParameter = new SqlParameter(startParamName, filter.StartValue ?? DBNull.Value);
-                        dependencyParameters.Add(sqlParameter);
-                        idx++;
-
-                        var endParamName = $"@filter_{filterIdx}_End{idx}";
-                        sqlParameter = new SqlParameter(endParamName, filter.EndValue ?? DBNull.Value);
-                        dependencyParameters.Add(sqlParameter);
-                        idx++;
-
-                        filterStatement = string.Format(filter.Text, startParamName, endParamName);
-                    }
-                    else
-                    {
-                        var paramName = $"@filter_{filterIdx}_{idx}";
-                        var sqlParameter = new SqlParameter(paramName, filter.StartValue ?? DBNull.Value);
-                        dependencyParameters.Add(sqlParameter);
-                        idx++;
-
-                        filterStatement = string.Format(filter.Text, paramName);
-                    }
-
-                    filterStatements.Add(filterStatement);
-
-                    filterIdx++;
-                }
-            }
-
-            if (filterStatements.Count > 0
-                && (queryText.IndexOf(Const.SqlServer.WhereFilter) == -1
-                && queryText.IndexOf(Const.SqlServer.AndFilter) == -1))
-            {
-                throw new Exception($"Filters are added but {Const.SqlServer.WhereFilter} or {Const.SqlServer.AndFilter} not used in query");
-            }
-
-            //replace WhereFilter syntax
-            if (queryText.IndexOf(Const.SqlServer.WhereFilter) != -1)
-            {
-                if (filterStatements.Count == 0)
-                {
-                    queryText = queryText.Replace(Const.SqlServer.WhereFilter, string.Empty, StringComparison.OrdinalIgnoreCase);
-                }
-                else
-                {
-                    var whereClause = $"WHERE {string.Join($"{Environment.NewLine}AND ", filterStatements)}";
-                    queryText = queryText.Replace(Const.SqlServer.WhereFilter, whereClause, StringComparison.OrdinalIgnoreCase);
-                }
-            }
-
-            //replace AndFilter syntax
-            if (queryText.IndexOf(Const.SqlServer.AndFilter) != -1)
-            {
-                if (filterStatements.Count == 0)
-                {
-                    queryText = queryText.Replace(Const.SqlServer.AndFilter, string.Empty, StringComparison.OrdinalIgnoreCase);
-                }
-                else
-                {
-                    var whereClause = $" AND {string.Join($"{Environment.NewLine}AND ", filterStatements)}";
-                    queryText = queryText.Replace(Const.SqlServer.AndFilter, whereClause, StringComparison.OrdinalIgnoreCase);
-                }
-            }
-
-            return (queryText, dependencyParameters);
+            return (result.QueryText, sqlParams);
         }
 
         private static void SetQueryParamFromDataRow(QueryParameter queryParam, System.Data.DataRow dataRow)

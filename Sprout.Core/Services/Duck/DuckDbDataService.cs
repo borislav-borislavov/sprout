@@ -144,7 +144,7 @@ namespace Sprout.Core.Services.Duck
             foreach (var (name, value) in duckParams)
             {
                 var p = cmd.CreateParameter();
-                p.ParameterName = name;
+                p.ParameterName = name.TrimStart('$');
                 p.Value = value;
                 cmd.Parameters.Add(p);
             }
@@ -218,91 +218,7 @@ namespace Sprout.Core.Services.Duck
 
         private async Task ProvideDataInternal()
         {
-            var queryText = _dataProvider.Text;
-
-            if (string.IsNullOrWhiteSpace(_dataProvider.Text))
-                throw new Exception("No query provided!");
-
-            var parameters = new List<(string Name, object Value)>();
-            var idx = 0;
-
-            foreach (var item in _dataProvider.Dependencies)
-            {
-                var paramName = $"$depParam{idx}";
-                queryText = queryText.Replace($"{{{item.RawDependency}}}", paramName);
-                parameters.Add((paramName, item.Value ?? DBNull.Value));
-                idx++;
-            }
-
-            var filterStatements = new List<string>();
-
-            if (_dataProvider.Filters.Count > 0)
-            {
-                int filterIdx = 0;
-
-                foreach (var filter in _dataProvider.Filters.Values)
-                {
-                    if (string.IsNullOrEmpty($"{filter.StartValue}") && string.IsNullOrEmpty($"{filter.EndValue}"))
-                    {
-                        filterIdx++;
-                        continue;
-                    }
-
-                    string filterStatement;
-
-                    if (filter.IsRange)
-                    {
-                        var startParamName = $"$filter_{filterIdx}_Start{idx}";
-                        parameters.Add((startParamName, filter.StartValue ?? DBNull.Value));
-                        idx++;
-
-                        var endParamName = $"$filter_{filterIdx}_End{idx}";
-                        parameters.Add((endParamName, filter.EndValue ?? DBNull.Value));
-                        idx++;
-
-                        filterStatement = string.Format(filter.Text, startParamName, endParamName);
-                    }
-                    else
-                    {
-                        var paramName = $"$filter_{filterIdx}_{idx}";
-                        parameters.Add((paramName, filter.StartValue ?? DBNull.Value));
-                        idx++;
-
-                        filterStatement = string.Format(filter.Text, paramName);
-                    }
-
-                    filterStatements.Add(filterStatement);
-                    filterIdx++;
-                }
-            }
-
-            if (filterStatements.Count > 0
-                && queryText.IndexOf(Const.SqlServer.WhereFilter, StringComparison.OrdinalIgnoreCase) == -1
-                && queryText.IndexOf(Const.SqlServer.AndFilter, StringComparison.OrdinalIgnoreCase) == -1)
-            {
-                throw new Exception(
-                    $"Filters are added but {Const.SqlServer.WhereFilter} or {Const.SqlServer.AndFilter} not used in query");
-            }
-
-            if (queryText.IndexOf(Const.SqlServer.WhereFilter, StringComparison.OrdinalIgnoreCase) != -1)
-            {
-                var replacement = filterStatements.Count == 0
-                    ? string.Empty
-                    : $"WHERE {string.Join($"{Environment.NewLine}AND ", filterStatements)}";
-
-                queryText = queryText.Replace(
-                    Const.SqlServer.WhereFilter, replacement, StringComparison.OrdinalIgnoreCase);
-            }
-
-            if (queryText.IndexOf(Const.SqlServer.AndFilter, StringComparison.OrdinalIgnoreCase) != -1)
-            {
-                var replacement = filterStatements.Count == 0
-                    ? string.Empty
-                    : $" AND {string.Join($"{Environment.NewLine}AND ", filterStatements)}";
-
-                queryText = queryText.Replace(
-                    Const.SqlServer.AndFilter, replacement, StringComparison.OrdinalIgnoreCase);
-            }
+            var result = QueryBuilder.Build(_dataProvider.Text, _dataProvider, "$");
 
             if (_connection.State == ConnectionState.Closed)
             {
@@ -310,19 +226,21 @@ namespace Sprout.Core.Services.Duck
             }
 
             using var cmd = _connection.CreateCommand();
-            cmd.CommandText = queryText;
+            cmd.CommandText = result.QueryText;
 
-            foreach (var (name, value) in parameters)
+            foreach (var param in result.Parameters)
             {
                 var p = cmd.CreateParameter();
-                p.ParameterName = name;
-                p.Value = value;
+                p.ParameterName = param.Name.TrimStart('$');
+                p.Value = param.Value;
                 cmd.Parameters.Add(p);
             }
 
             var dt = DataTableFactory.Create();
 
             using var reader = await cmd.ExecuteReaderAsync();
+
+            reader.LoadDataTableColumnsFromSchema(dt);
 
             await Task.Run(() => dt.Load(reader));
 
