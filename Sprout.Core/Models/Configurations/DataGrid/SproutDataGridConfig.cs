@@ -14,9 +14,9 @@ namespace Sprout.Core.Models.Configurations.DataGrid
 	{
 		public IDataAdapterConfig DataAdapter { get; set; }
 
-		public bool AllowInsert => DataAdapter?.InsertCommand != null;
-		public bool AllowUpdate => DataAdapter?.UpdateCommand != null;
-		public bool AllowDelete => DataAdapter?.DeleteCommand != null;
+		public bool AllowInsert => !string.IsNullOrEmpty(DataAdapter?.InsertCommand.Text);
+		public bool AllowUpdate => !string.IsNullOrEmpty(DataAdapter?.UpdateCommand.Text);
+		public bool AllowDelete => !string.IsNullOrEmpty(DataAdapter?.DeleteCommand.Text);
 
 		public bool ShowSave => AllowInsert || AllowUpdate || AllowDelete;
 

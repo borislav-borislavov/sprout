@@ -31,7 +31,6 @@
                 <Button x:Name="btnFilters"
                         ToolTip="Filter data"
                         Style="{StaticResource FlatRoundButtonStyle}"
-                        Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
                         HorizontalAlignment="Left"
                         Click="btnFilters_Click"
                         Margin="2">
@@ -75,7 +74,6 @@
                 <Button x:Name="btnRefresh"
                         ToolTip="Refresh data"
                         Style="{StaticResource FlatRoundButtonStyle}"
-                        Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
                         HorizontalAlignment="Left"
                         Margin="2">
                     <iconPacks:PackIconMaterialLight Kind="Refresh" />
