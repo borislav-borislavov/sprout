@@ -193,6 +193,13 @@ namespace Sprout.Core.ViewModels
             }
         }
 
+        private static readonly char[] WpfBindingReservedChars = ['.', '/', '[', ']', '(', ')'];
+
+        private static bool ContainsWpfBindingReservedChars(string name)
+        {
+            return name.IndexOfAny(WpfBindingReservedChars) >= 0;
+        }
+
         private void SqlServerPopulateColumns(SqlServerDataAdapterConfig adapterConfig)
         {
             if (adapterConfig.DataProvider is not SqlServerDataProviderConfig dataProviderConfig) return;
@@ -243,12 +250,22 @@ namespace Sprout.Core.ViewModels
                     {
                         var columnSchema = reader.GetColumnSchema();
 
+                        var invalidColumn = columnSchema.FirstOrDefault(c => ContainsWpfBindingReservedChars(c.ColumnName));
+                        if (invalidColumn != null)
+                        {
+                            SelectedDataGrid.Columns.Clear();
+                            _dialogService.ShowMessage(
+                                $"Column '{invalidColumn.ColumnName}' contains reserved characters. Use the Header property to provide a display name and alias the column in your query.",
+                                "Error", DialogButton.OK, DialogImage.Error);
+                            return;
+                        }
+
                         foreach (var column in columnSchema)
                         {
                             var matchingCol = SelectedDataGrid.Columns
                                 .FirstOrDefault(c => string.Equals(c.BindingPath, column.ColumnName, StringComparison.OrdinalIgnoreCase));
 
-                                if (matchingCol == null)
+                            if (matchingCol == null)
                             {
                                 SelectedDataGrid.Columns.Add(new SproutDataGridColumnConfig
                                 {
@@ -312,6 +329,16 @@ namespace Sprout.Core.ViewModels
                         if (reader.CanGetColumnSchema())
                         {
                             var columnSchema = reader.GetColumnSchema();
+
+                            var invalidColumn = columnSchema.FirstOrDefault(c => ContainsWpfBindingReservedChars(c.ColumnName));
+                            if (invalidColumn != null)
+                            {
+                                SelectedDataGrid.Columns.Clear();
+                                _dialogService.ShowMessage(
+                                    $"Column '{invalidColumn.ColumnName}' contains reserved characters. Use the Header property to provide a display name and alias the column in your query.",
+                                    "Error", DialogButton.OK, DialogImage.Error);
+                                return;
+                            }
 
                             foreach (var column in columnSchema)
                             {
