@@ -264,10 +264,8 @@ namespace Sprout.Core.Services.SqlServer
 #warning separate query building from query execution
             var queryText = _dataProvider.Text;
 
-            if (string.IsNullOrEmpty(queryText))
-            {
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(queryText))
+                throw new Exception("No query provided!");
 
             var dependencyParameters = new List<SqlParameter>();
             var idx = 0;
