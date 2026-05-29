@@ -9,7 +9,9 @@ namespace Sprout.Core.Models.Configurations
 {
 	public class SqlServerDataAdapterConfig : IDataAdapterConfig
 	{
-		public string ConnectionString { get; set; }
+        public string Name { get; set; }
+        public Type ParentType { get; set; }
+        public string ConnectionString { get; set; }
 
 		public IDataProviderConfig DataProvider { get; set; }
 

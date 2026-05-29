@@ -9,6 +9,8 @@ namespace Sprout.Core.Models.Configurations.Duck
 {
     public class DuckDataAdapterConfig : IDataAdapterConfig
     {
+        public string Name { get; set; }
+        public Type ParentType { get; set; }
         public string ConnectionString { get; set; }
 
         public IDataProviderConfig DataProvider { get; set; }

@@ -26,8 +26,7 @@ namespace Sprout.Core.Models.Configurations
 			return dataAdapterConfigs;
 		}
 
-		private void GetDataAdapterConfigsRecursive(
-			SproutControlConfig control, Dictionary<string, IDataAdapterConfig> dataAdapterConfigs)
+		private void GetDataAdapterConfigsRecursive(SproutControlConfig control, Dictionary<string, IDataAdapterConfig> dataAdapterConfigs)
 		{
 			if (control is GridConfig grid)
 			{
@@ -40,7 +39,11 @@ namespace Sprout.Core.Models.Configurations
 			{
 				if (dataAdapterControlConfig.DataAdapter is not null)
 				{
-					dataAdapterConfigs.Add(control.Name, dataAdapterControlConfig.DataAdapter);
+                    //this helps the DataAdapter fetch the correct UIState for the control it's associated with
+                    dataAdapterControlConfig.DataAdapter.ParentType = control.GetType();
+                    dataAdapterControlConfig.DataAdapter.Name = control.Name;
+
+                    dataAdapterConfigs.Add(control.Name, dataAdapterControlConfig.DataAdapter);
 				}
 
 				if (control is SproutDataGridConfig dataGridConfig)
@@ -49,6 +52,10 @@ namespace Sprout.Core.Models.Configurations
 					{
 						if (column.ColumnType == ColumnType.Combo && column.DataAdapter is not null)
 						{
+                            //this helps the DataAdapter fetch the correct UIState for the control it's associated with
+                            column.DataAdapter.ParentType = column.GetType();
+                            column.DataAdapter.Name = column.DisplayColumn;
+
                             column.ComboAdapterKey = $"{control.Name}.Column.{column.BindingPath}";
 							dataAdapterConfigs.Add(column.ComboAdapterKey, column.DataAdapter);
 						}

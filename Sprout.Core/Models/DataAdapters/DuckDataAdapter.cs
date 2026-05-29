@@ -15,5 +15,7 @@ namespace Sprout.Core.Models.DataAdapters
         public IEditCommand InsertCommand { get; set; }
         public IEditCommand UpdateCommand { get; set; }
         public IEditCommand DeleteCommand { get; set; }
+        public Type ParentType { get; set; }
+        public string Name { get; set; }
     }
 }

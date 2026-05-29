@@ -2,6 +2,7 @@
 using Sprout.Core.Common;
 using Sprout.Core.Factories;
 using Sprout.Core.Models;
+using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
@@ -94,6 +95,20 @@ namespace Sprout.Core.Services.SqlServer
         }
 
         public async Task<ChangeResult> Change(IEditCommand editCmd, DataRow dataRow)
+        {
+            SetBusy(true);
+
+            try
+            {
+                return await ChangeInternal(editCmd, dataRow);
+            }
+            finally
+            {
+                SetBusy(false);
+            }
+        }
+
+        private async Task<ChangeResult> ChangeInternal(IEditCommand editCmd, DataRow dataRow)
         {
             if (editCmd is not SqlServerEditCommand editCommand)
                 throw new NotImplementedException();
@@ -261,13 +276,58 @@ namespace Sprout.Core.Services.SqlServer
 
         public async Task ProvideData()
         {
-#warning separate query building from query execution
-            var queryText = _dataProvider.Text;
+            SetBusy(true);
 
-            if (string.IsNullOrWhiteSpace(queryText))
+            try
+            {
+                (var queryText, var dependencyParameters) = BuildQueryAndParameters();
+
+                using var cmd = new SqlCommand(queryText, _connection);
+                cmd.Parameters.AddRange(dependencyParameters.ToArray());
+
+                //prevents the UI from freezing if the connection is slow
+                if (_connection.State == ConnectionState.Closed)
+                {
+                    await _connection.OpenAsync();
+                }
+
+                var dt = DataTableFactory.Create();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    reader.LoadDataTableColumnsFromSchema(dt);
+
+                    // Move the CPU-heavy loading to a background thread
+                    // This prevents the UI from freezing during the data parsing
+                    await Task.Run(() => dt.Load(reader));
+
+                    DataTableFactory.PostLoadLogic(dt);
+
+                    _dataProvider.Data = dt;
+                }
+            }
+            finally
+            {
+                SetBusy(false);
+            }
+        }
+
+        private void SetBusy(bool isBusy)
+        {
+            if (UiStateRegistry.Get(_dataAdapter.Name) is not BusyUIState busyState)
+                return;
+
+            busyState.IsBusy = isBusy;
+        }
+
+        private (string queryText, List<SqlParameter> dependencyParameters) BuildQueryAndParameters()
+        {
+            if (string.IsNullOrWhiteSpace(_dataProvider.Text))
                 throw new Exception("No query provided!");
 
-            var dependencyParameters = new List<SqlParameter>();
+            string queryText = _dataProvider.Text;
+            List<SqlParameter> dependencyParameters = [];
+
             var idx = 0;
 
             foreach (var item in _dataProvider.Dependencies)
@@ -359,32 +419,7 @@ namespace Sprout.Core.Services.SqlServer
                 }
             }
 
-            using (var cmd = new SqlCommand(queryText, _connection))
-            {
-                cmd.Parameters.AddRange(dependencyParameters.ToArray());
-
-                //prevents the UI from freezing if the connection is slow
-
-                if (_connection.State == ConnectionState.Closed)
-                {
-                    await _connection.OpenAsync();
-                }
-
-                var dt = DataTableFactory.Create();
-
-                using (var reader = await cmd.ExecuteReaderAsync())
-                {
-                    reader.LoadDataTableColumnsFromSchema(dt);
-
-                    // Move the CPU-heavy loading to a background thread
-                    // This prevents the UI from freezing during the data parsing
-                    await Task.Run(() => dt.Load(reader));
-
-                    DataTableFactory.PostLoadLogic(dt);
-
-                    _dataProvider.Data = dt;
-                }
-            }
+            return (queryText, dependencyParameters);
         }
 
         private static void SetQueryParamFromDataRow(QueryParameter queryParam, System.Data.DataRow dataRow)

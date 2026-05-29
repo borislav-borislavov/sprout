@@ -13,13 +13,13 @@ using System.Windows.Data;
 
 namespace Sprout.Core.UIStates
 {
-    public partial class SproutGridUIState : BaseUIState
+    public partial class SproutGridUIState : BaseUIState, BusyUIState
     {
         [ObservableProperty]
         private object _selected;
 
         [ObservableProperty]
-        private bool _isFetching;
+        private bool _isBusy;
 
         public virtual void SetUpState(SproutDataGrid control)
         {
@@ -36,7 +36,7 @@ namespace Sprout.Core.UIStates
                 });
 
             control.dataGrid.SetBinding(DataGrid.IsReadOnlyProperty,
-                new Binding(nameof(this.IsFetching))
+                new Binding(nameof(this.IsBusy))
                 {
                     Source = this,
                     Mode = BindingMode.OneWay

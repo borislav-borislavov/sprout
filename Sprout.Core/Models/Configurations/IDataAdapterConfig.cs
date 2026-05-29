@@ -17,7 +17,9 @@ namespace Sprout.Core.Models.Configurations
 		IEditCommandConfig InsertCommand { get; set; }
 		IEditCommandConfig UpdateCommand { get; set; }
 		IEditCommandConfig DeleteCommand { get; set; }
-	}
+		Type ParentType { get; set; }
+        string Name { get; set; }
+    }
 
 	public interface IEditCommandConfig { }
 }

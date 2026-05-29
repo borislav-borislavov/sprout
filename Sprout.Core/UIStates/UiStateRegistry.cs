@@ -48,5 +48,13 @@ namespace Sprout.Core.UIStates
             return default;
 
         }
+
+        public object? Get(string key)
+        {
+            if (_states.TryGetValue(key, out var v))
+                return v;
+
+            return null;
+        }
     }
 }

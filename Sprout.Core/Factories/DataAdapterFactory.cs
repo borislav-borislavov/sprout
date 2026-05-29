@@ -24,18 +24,25 @@ namespace Sprout.Core.Factories
 
         public IDataAdapter Create(IDataAdapterConfig dataAdapterConfig)
         {
+            IDataAdapter dataAdapter;
+
             if (dataAdapterConfig is SqlServerDataAdapterConfig sqlServerAdapterConfig)
             {
-                return CreateSqlServerDataAdapter(sqlServerAdapterConfig);
+                dataAdapter = CreateSqlServerDataAdapter(sqlServerAdapterConfig);
             }
             else if (dataAdapterConfig is DuckDataAdapterConfig duckAdapterConfig)
             {
-                return CreateDuckDataAdapter(duckAdapterConfig);
+                dataAdapter = CreateDuckDataAdapter(duckAdapterConfig);
             }
             else
             {
                 throw new NotImplementedException($"DataAdapterFactory does not support creating IDataAdapter for type {dataAdapterConfig.GetType().FullName}");
             }
+
+            dataAdapter.ParentType = dataAdapterConfig.ParentType;
+            dataAdapter.Name = dataAdapterConfig.Name;
+
+            return dataAdapter;
         }
 
         private IDataAdapter CreateSqlServerDataAdapter(SqlServerDataAdapterConfig sqlServerAdapterConfig)
