@@ -5,12 +5,16 @@ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 xmlns:local="clr-namespace:Sprout.Core.Views"
 xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
+xmlns:conv="clr-namespace:Sprout.Core.Converters"
 Name="MainViewControl"
              
 mc:Ignorable="d" 
 d:DesignHeight="450" d:DesignWidth="800"
 d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
     <UserControl.Resources>
+
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <conv:StringToBrushConverter x:Key="StringToBrush" />
 
         <Style x:Key="RoundedButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#DDD"/>
@@ -86,23 +90,89 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
                 <DropShadowEffect BlurRadius="15" ShadowDepth="3" Opacity="0.3" />
             </Border.Effect>
 
-            <ItemsControl x:Name="ButtonsList"
-                          Grid.Column="0"
-                          ItemsSource="{Binding PageConfigs}" >
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Button
-                            Style="{StaticResource RoundedButtonStyle}"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Focusable="False"
-                            Content="{Binding Title}"
-                            Command="{Binding ElementName=MainViewControl, Path=DataContext.OpenPageCommand }"
-                            CommandParameter="{Binding}"
-                        />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <StackPanel Grid.Column="0">
+                <ItemsControl x:Name="CategoriesList"
+                              ItemsSource="{Binding Categories}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,2">
+                                <Button
+                                    Style="{StaticResource RoundedButtonStyle}"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Focusable="False"
+                                    Command="{Binding ToggleExpandedCommand}">
+                                    <Grid Width="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=ActualWidth}">
+                                        <TextBlock Text="{Binding Title}"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"/>
+
+                                        <TextBlock FontFamily="Segoe Fluent Icons"
+                                                   FontSize="12"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,10,0">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <!--Chevron pointing right when collapsed-->
+                                                    <Setter Property="Text" Value="&#xE76C;"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                                            <!--Chevron pointing down when expanded-->
+                                                            <Setter Property="Text" Value="&#xE70D;"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                </Button>
+
+                                <Border CornerRadius="5"
+                                        Margin="0,2,0,0"
+                                        Padding="3"
+                                        Background="{Binding BackgroundColor, Converter={StaticResource StringToBrush}}"
+                                        Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVis}}">
+                                    <ItemsControl ItemsSource="{Binding Pages}"
+                                                  Margin="10,0,0,0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button
+                                                    Style="{StaticResource RoundedButtonStyle}"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    HorizontalContentAlignment="Left"
+                                                    Focusable="False"
+                                                    Content="{Binding Title}"
+                                                    Command="{Binding ElementName=MainViewControl, Path=DataContext.OpenPageCommand }"
+                                                    CommandParameter="{Binding}"
+                                                />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Border>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ItemsControl x:Name="ButtonsList"
+                              ItemsSource="{Binding PageConfigs}" >
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button
+                                Style="{StaticResource RoundedButtonStyle}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Focusable="False"
+                                Content="{Binding Title}"
+                                Command="{Binding ElementName=MainViewControl, Path=DataContext.OpenPageCommand }"
+                                CommandParameter="{Binding}"
+                            />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
 
         </Border>
 

@@ -25,6 +25,9 @@ namespace Sprout.Core.ViewModels
         private ObservableCollection<SproutPageConfiguration> _pageConfigs;
 
         [ObservableProperty]
+        private ObservableCollection<MenuCategoryVM> _categories = [];
+
+        [ObservableProperty]
 
         private ObservableCollection<ObservableObject> _tabs = [];
 
@@ -66,8 +69,28 @@ namespace Sprout.Core.ViewModels
         {
             _sproutConfig = _configService.Load();
 
-            var visiblePages = _sproutConfig.Pages.Where(p => p.AddToMenu);
-            PageConfigs = new ObservableCollection<SproutPageConfiguration>(visiblePages);
+            var visiblePages = _sproutConfig.Pages.Where(p => p.AddToMenu).ToList();
+            PageConfigs = new ObservableCollection<SproutPageConfiguration>(
+                visiblePages.Where(p => p.CategoryID == null));
+
+            Categories.Clear();
+
+            foreach (var category in _sproutConfig.Categories)
+            {
+                var categoryVM = new MenuCategoryVM
+                {
+                    ID = category.ID,
+                    Title = category.Title,
+                    BackgroundColor = category.BackgroundColor
+                };
+
+                foreach (var page in visiblePages.Where(p => p.CategoryID == category.ID))
+                {
+                    categoryVM.Pages.Add(page);
+                }
+
+                Categories.Add(categoryVM);
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanExecuteOpenPage))]

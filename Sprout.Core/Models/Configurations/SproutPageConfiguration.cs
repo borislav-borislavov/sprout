@@ -6,9 +6,11 @@ namespace Sprout.Core.Models.Configurations
 	{
 		public string Title { get; set; }
 
-        public Guid ID { get; set; }
+		public Guid ID { get; set; }
 
-        public bool AddToMenu { get; set; }
+		public bool AddToMenu { get; set; }
+
+		public Guid? CategoryID { get; set; }
 
         public SproutControlConfig Root { get; set; }
 

@@ -15,6 +15,7 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <conv:StringToBrushConverter x:Key="StringToBrush" />
     </Window.Resources>
 
     <!--Responsible for Async loading-->
@@ -31,7 +32,8 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.3*"/>
-            <ColumnDefinition Width="0.7*"/>
+            <ColumnDefinition Width="0.3*"/>
+            <ColumnDefinition Width="0.4*"/>
         </Grid.ColumnDefinitions>
 
         <Grid Name="MenuItems"
@@ -141,9 +143,147 @@
 
         </Grid>
 
-        <Grid Name="DisplaySelectedMenuItem"
+        <Grid Name="Categories"
               Grid.Row="0"
               Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                Grid.Row="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Text="Categories"
+                Foreground="Black"
+                FontWeight="Bold"
+                FontSize="16"
+                Margin="5"/>
+
+            <ListBox
+                Name="CategoriesList"
+                Grid.Row="1"
+                Margin="5"
+                IsEnabled="{Binding LoadDataCommand.IsRunning, Converter={StaticResource InverseBooleanConverter}}"
+                ItemsSource="{Binding Categories}"
+                SelectedItem="{Binding SelectedCategory}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
+                            <ItemsControl ItemsSource="{Binding Pages}" Margin="12,0,0,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Title}" Foreground="Gray"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <StackPanel Name="CategoryButtons"
+                        Grid.Row="2"
+                        Orientation="Horizontal">
+                <Button
+                    HorizontalAlignment="Left"
+                    Margin="2"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    ToolTip="New Category"
+                    Command="{Binding CreateNewCategoryCommand}">
+                        <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="25"
+                            Text="&#xE948;"
+                            Margin="3"/>
+                </Button>
+
+                <Button
+                    HorizontalAlignment="Left"
+                    Margin="2"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    ToolTip="Delete Category"
+                    Command="{Binding DeleteSelectedCategoryCommand}" >
+                    <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="25"
+                            Text="&#xE949;"
+                            Margin="3"/>
+                </Button>
+
+                <Button
+                    HorizontalAlignment="Left"
+                    Margin="2"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    ToolTip="Move Category Up"
+                    Command="{Binding MoveCategoryUpCommand}">
+                    <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="25"
+                            Text="&#xE74A;"
+                            Margin="3"/>
+                </Button>
+
+                <Button
+                    HorizontalAlignment="Left"
+                    Margin="2"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    ToolTip="Move Category Down"
+                    Command="{Binding MoveCategoryDownCommand}">
+                    <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="25"
+                            Text="&#xE74B;"
+                            Margin="3"/>
+                </Button>
+            </StackPanel>
+
+            <StackPanel Grid.Row="3" Margin="5">
+                <TextBlock Text="Category Title"/>
+                <TextBox Text="{Binding SelectedCategory.Title, UpdateSourceTrigger=PropertyChanged}" Margin="0,2"/>
+
+                <TextBlock Text="Background Color" Margin="0,5,0,0"/>
+                <Grid Margin="0,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.Column="0"
+                             Text="{Binding SelectedCategory.BackgroundColor, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <Border Grid.Column="1"
+                            Width="24"
+                            Margin="5,0,0,0"
+                            CornerRadius="3"
+                            BorderBrush="Gray"
+                            BorderThickness="1"
+                            Background="{Binding SelectedCategory.BackgroundColor, Converter={StaticResource StringToBrush}}"/>
+                </Grid>
+
+                <Button Content="Assign Selected Page →"
+                        Margin="0,5,0,0"
+                        Padding="5"
+                        Command="{Binding AssignSelectedPageToCategoryCommand}"/>
+
+                <Button Content="Remove Page From Category"
+                        Margin="0,5,0,0"
+                        Padding="5"
+                        Command="{Binding RemoveSelectedPageFromCategoryCommand}"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid Name="DisplaySelectedMenuItem"
+              Grid.Row="0"
+              Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
