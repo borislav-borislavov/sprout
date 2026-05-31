@@ -1,3 +1,5 @@
+using Sprout.Core.Models.Configurations.DataGrid;
+
 namespace Sprout.Core.Models.Configurations
 {
     public class SproutSettings
@@ -8,5 +10,10 @@ namespace Sprout.Core.Models.Configurations
         public string MigrationsFolder { get; set; } = AppContext.BaseDirectory;
         public string DuckDbConnectionString { get; set; } = string.Empty;
         public bool LogSqlQueries { get; set; }
+
+        /// <summary>
+        /// Persisted column layouts (visibility, order and frozen count) per SproutDataGrid, keyed by the grid name.
+        /// </summary>
+        public Dictionary<string, SproutGridColumnLayout> GridColumnLayouts { get; set; } = [];
     }
 }

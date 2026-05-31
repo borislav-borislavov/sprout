@@ -3,6 +3,8 @@ using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.UIStates;
+using Sprout.Core.ViewModels;
+using Sprout.Core.Windows;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,6 +30,12 @@ namespace Sprout.Core.Views.Controls
     {
         public SproutDataGridConfig Config { get; set; }
 
+        /// <summary>
+        /// Maps each generated <see cref="DataGridColumn"/> to a stable key (its binding path)
+        /// so column layout can be persisted and re-applied across sessions.
+        /// </summary>
+        public Dictionary<DataGridColumn, string> ColumnKeys { get; } = [];
+
         public static readonly DependencyProperty UIStateProperty =
             DependencyProperty.Register(nameof(UIState), typeof(SproutGridUIState), typeof(SproutDataGrid), new PropertyMetadata(null));
 
@@ -41,6 +49,52 @@ namespace Sprout.Core.Views.Controls
         {
             InitializeComponent();
 
+        }
+
+        /// <summary>
+        /// Returns the stable key (binding path) for the given column.
+        /// </summary>
+        public string GetColumnKey(DataGridColumn column)
+            => ColumnKeys.TryGetValue(column, out var key) ? key : column?.Header?.ToString();
+
+        /// <summary>
+        /// Applies a persisted column layout (visibility, order and frozen count) to the grid.
+        /// </summary>
+        public void ApplyColumnLayout(SproutGridColumnLayout layout)
+        {
+            if (layout == null) return;
+
+            foreach (var col in dataGrid.Columns)
+            {
+                var state = layout.Columns.FirstOrDefault(c => c.Key == GetColumnKey(col));
+                if (state != null)
+                {
+                    col.Visibility = state.IsVisible ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+
+            int displayIndex = 0;
+            foreach (var state in layout.Columns)
+            {
+                var col = dataGrid.Columns.FirstOrDefault(c => GetColumnKey(c) == state.Key);
+                if (col != null && displayIndex < dataGrid.Columns.Count)
+                {
+                    col.DisplayIndex = displayIndex++;
+                }
+            }
+
+            dataGrid.FrozenColumnCount = Math.Max(0, Math.Min(layout.FrozenColumnCount, dataGrid.Columns.Count));
+        }
+
+        private void btnColumnSettings_Click(object sender, RoutedEventArgs e)
+        {
+            var vm = new ColumnSettingsVM(this);
+            var window = new ColumnSettings(vm)
+            {
+                Owner = Window.GetWindow(this)
+            };
+
+            window.ShowDialog();
         }
 
         private void btnFilters_Click(object sender, RoutedEventArgs e)

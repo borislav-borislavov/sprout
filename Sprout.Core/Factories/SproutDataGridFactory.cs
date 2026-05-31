@@ -1,5 +1,6 @@
 ﻿using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
+using Sprout.Core.Services.Configurations;
 using Sprout.Core.UIStates;
 using Sprout.Core.Views;
 using Sprout.Core.Views.Controls;
@@ -77,6 +78,7 @@ namespace Sprout.Core.Factories
                 }
 
                 sproutDataGrid.dataGrid.Columns.Add(col);
+                sproutDataGrid.ColumnKeys[col] = colConfig.BindingPath ?? colConfig.Header;
             }
 
             AddControl(sproutDataGrid, controls);
@@ -86,7 +88,24 @@ namespace Sprout.Core.Factories
             var gridUIState = new SproutGridUIState();
             gridUIState.SetUpState(sproutDataGrid);
 
+            ApplyPersistedColumnLayout(sproutDataGrid);
+
             return sproutDataGrid;
+        }
+
+        private static void ApplyPersistedColumnLayout(SproutDataGrid sproutDataGrid)
+        {
+            var gridName = sproutDataGrid.Config?.Name;
+            if (string.IsNullOrEmpty(gridName)) return;
+
+            var configurationService = SproutApp.Services?.GetService(typeof(IConfigurationService)) as IConfigurationService;
+            if (configurationService == null) return;
+
+            var settings = configurationService.Load().Settings;
+            if (settings.GridColumnLayouts.TryGetValue(gridName, out var layout))
+            {
+                sproutDataGrid.ApplyColumnLayout(layout);
+            }
         }
     }
 }

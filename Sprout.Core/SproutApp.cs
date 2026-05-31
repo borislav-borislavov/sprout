@@ -22,12 +22,16 @@ namespace Sprout.Core
 {
     public static class SproutApp
     {
+        public static IServiceProvider Services { get; private set; }
+
         public static void Start()
         {
             var services = new ServiceCollection();
             services.AddCoreServices();
 
             var serviceProvider = services.BuildServiceProvider();
+
+            Services = serviceProvider;
 
             var navigationService = serviceProvider.GetRequiredService<INavigationService>();
 

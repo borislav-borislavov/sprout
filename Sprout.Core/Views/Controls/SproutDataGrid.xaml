@@ -79,6 +79,15 @@
                     <iconPacks:PackIconMaterialLight Kind="Refresh" />
                 </Button>
 
+                <Button x:Name="btnColumnSettings"
+                        ToolTip="Show, hide, reorder and lock columns"
+                        Style="{StaticResource FlatRoundButtonStyle}"
+                        HorizontalAlignment="Left"
+                        Click="btnColumnSettings_Click"
+                        Margin="2">
+                    <iconPacks:PackIconMaterialLight Kind="Table" />
+                </Button>
+
                 <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
 
                 <Menu Background="Transparent" VerticalAlignment="Center">
