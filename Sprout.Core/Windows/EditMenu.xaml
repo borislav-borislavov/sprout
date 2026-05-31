@@ -119,6 +119,20 @@
                     Margin="2"
                     BorderThickness="0"
                     Background="Transparent"
+                    ToolTip="Duplicate selected page"
+                    Command="{Binding DuplicateSelectedCommand}">
+                    <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="25"
+                            Text="&#xE8C8;"
+                            Margin="3"/>
+                </Button>
+
+                <Button
+                    HorizontalAlignment="Left"
+                    Margin="2"
+                    BorderThickness="0"
+                    Background="Transparent"
                     Command="{Binding MoveUpCommand}">
                     <TextBlock
                             FontFamily="Segoe Fluent Icons"

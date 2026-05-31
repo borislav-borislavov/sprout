@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Sprout.Core.Common;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Configurations;
 using System;
@@ -194,6 +195,21 @@ namespace Sprout.Core.ViewModels
             _configurationService.Save(_sproutConfig);
 
             IsSaved = true;
+        }
+
+        [RelayCommand]
+        private void DuplicateSelected()
+        {
+            if (SelectedPageConfig == null) return;
+
+            var duplicate = SelectedPageConfig.Clone();
+            duplicate.ID = Guid.NewGuid();
+            duplicate.Title = SelectedPageConfig.Title + " (Copy)";
+
+            int index = PageConfigs.IndexOf(SelectedPageConfig);
+            PageConfigs.Insert(index + 1, duplicate);
+
+            SelectedPageConfig = duplicate;
         }
 
         [RelayCommand]
