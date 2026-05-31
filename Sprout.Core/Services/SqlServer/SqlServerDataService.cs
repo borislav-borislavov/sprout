@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Sprout.Core.Common;
+using System.Diagnostics;
 using Sprout.Core.Factories;
 using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations.DataGrid;
@@ -173,12 +174,13 @@ namespace Sprout.Core.Services.SqlServer
             {
                 AttachParameters(cmd, sqlParams);
 
-                _sqlQueryLogger?.Log(nameof(SqlServerDataService), cmd.CommandText, cmd.Parameters);
-
+                var sw = Stopwatch.StartNew();
                 var isNextResultFetched = false;
 
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
+                    sw.Stop();
+                    _sqlQueryLogger?.Log(nameof(SqlServerDataService), cmd.CommandText, cmd.Parameters, sw.Elapsed);
                     do
                     {
                         if (isNextResultFetched)
@@ -290,8 +292,6 @@ namespace Sprout.Core.Services.SqlServer
                 using var cmd = new SqlCommand(queryText, _connection);
                 cmd.Parameters.AddRange(dependencyParameters.ToArray());
 
-                _sqlQueryLogger?.Log(nameof(SqlServerDataService), cmd.CommandText, cmd.Parameters);
-
                 //prevents the UI from freezing if the connection is slow
                 if (_connection.State == ConnectionState.Closed)
                 {
@@ -300,8 +300,11 @@ namespace Sprout.Core.Services.SqlServer
 
                 var dt = DataTableFactory.Create();
 
+                var sw = Stopwatch.StartNew();
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
+                    sw.Stop();
+                    _sqlQueryLogger?.Log(nameof(SqlServerDataService), cmd.CommandText, cmd.Parameters, sw.Elapsed);
                     reader.LoadDataTableColumnsFromSchema(dt);
 
                     // Move the CPU-heavy loading to a background thread

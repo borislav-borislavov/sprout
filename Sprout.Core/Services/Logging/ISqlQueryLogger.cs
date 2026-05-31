@@ -11,6 +11,6 @@ namespace Sprout.Core.Services.Logging
         /// Appends the given SQL query (and its parameters) to the log file
         /// when the <c>LogSqlQueries</c> setting is enabled. Does nothing otherwise.
         /// </summary>
-        void Log(string source, string commandText, DbParameterCollection parameters = null);
+        void Log(string source, string commandText, DbParameterCollection parameters = null, TimeSpan duration = default);
     }
 }

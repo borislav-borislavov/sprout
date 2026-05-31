@@ -1,5 +1,6 @@
 ﻿using DuckDB.NET.Data;
 using Sprout.Core.Common;
+using System.Diagnostics;
 using Sprout.Core.Factories;
 using Sprout.Core.Models;
 using Sprout.Core.Models.DataAdapters;
@@ -152,11 +153,12 @@ namespace Sprout.Core.Services.Duck
                 cmd.Parameters.Add(p);
             }
 
-            _sqlQueryLogger?.Log(nameof(DuckDbDataService), cmd.CommandText, cmd.Parameters);
-
+            var sw = Stopwatch.StartNew();
             var isNextResultFetched = false;
 
             using var reader = await cmd.ExecuteReaderAsync();
+            sw.Stop();
+            _sqlQueryLogger?.Log(nameof(DuckDbDataService), cmd.CommandText, cmd.Parameters, sw.Elapsed);
 
             do
             {
@@ -241,11 +243,12 @@ namespace Sprout.Core.Services.Duck
                 cmd.Parameters.Add(p);
             }
 
-            _sqlQueryLogger?.Log(nameof(DuckDbDataService), cmd.CommandText, cmd.Parameters);
-
             var dt = DataTableFactory.Create();
 
+            var sw = Stopwatch.StartNew();
             using var reader = await cmd.ExecuteReaderAsync();
+            sw.Stop();
+            _sqlQueryLogger?.Log(nameof(DuckDbDataService), cmd.CommandText, cmd.Parameters, sw.Elapsed);
 
             reader.LoadDataTableColumnsFromSchema(dt);
 
