@@ -20,8 +20,13 @@ namespace Sprout.Core.Models.Configurations.DataGrid
 
 		public bool ShowSave => AllowInsert || AllowUpdate || AllowDelete;
 
-        public Guid ItemDisplayPage { get; set; }
+		public Guid ItemDisplayPage { get; set; }
 
-        public ObservableCollection<SproutDataGridColumnConfig> Columns { get; set; } = [];
+		/// <summary>
+		/// Number of detail fields shown per row in the RowDetailsTemplate. Default is 10.
+		/// </summary>
+		public int RowDetailsItemsPerRow { get; set; } = 10;
+
+		public ObservableCollection<SproutDataGridColumnConfig> Columns { get; set; } = [];
 	}
 }

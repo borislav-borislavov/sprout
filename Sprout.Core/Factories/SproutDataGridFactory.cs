@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace Sprout.Core.Factories
 {
@@ -25,7 +27,7 @@ namespace Sprout.Core.Factories
                 Config = sproutGridConfig,
             };
 
-            foreach (var colConfig in sproutGridConfig.Columns ?? [])
+            foreach (var colConfig in (sproutGridConfig.Columns ?? []).Where(c => !c.ShowInRowDetails))
             {
                 DataGridColumn col = null;
 
@@ -80,6 +82,13 @@ namespace Sprout.Core.Factories
                 sproutDataGrid.ColumnKeys[col] = colConfig.BindingPath ?? colConfig.Header;
             }
 
+            var rowDetailColumns = (sproutGridConfig.Columns ?? []).Where(c => c.ShowInRowDetails).ToList();
+            if (rowDetailColumns.Count > 0)
+            {
+                sproutDataGrid.dataGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.VisibleWhenSelected;
+                sproutDataGrid.dataGrid.RowDetailsTemplate = BuildRowDetailsTemplate(rowDetailColumns, sproutGridConfig.RowDetailsItemsPerRow);
+            }
+
             AddControl(sproutDataGrid, controls);
 
             SetPositionInGrid(sproutDataGrid, sproutGridConfig);
@@ -88,6 +97,44 @@ namespace Sprout.Core.Factories
             gridUIState.SetUpState(sproutDataGrid);
 
             return sproutDataGrid;
+        }
+
+        private static DataTemplate BuildRowDetailsTemplate(List<SproutDataGridColumnConfig> columns, int itemsPerRow)
+        {
+            var border = new FrameworkElementFactory(typeof(Border));
+            border.SetValue(Border.BackgroundProperty, new SolidColorBrush(Color.FromRgb(245, 245, 245)));
+            border.SetValue(Border.BorderBrushProperty, new SolidColorBrush(Colors.LightGray));
+            border.SetValue(Border.BorderThicknessProperty, new Thickness(0, 1, 0, 1));
+            border.SetValue(Border.PaddingProperty, new Thickness(8, 4, 8, 4));
+
+            int columns_ = Math.Max(1, itemsPerRow);
+
+            var uniformGrid = new FrameworkElementFactory(typeof(UniformGrid));
+            uniformGrid.SetValue(UniformGrid.ColumnsProperty, columns_);
+
+            foreach (var col in columns)
+            {
+                var entryPanel = new FrameworkElementFactory(typeof(StackPanel));
+                entryPanel.SetValue(StackPanel.OrientationProperty, Orientation.Vertical);
+                entryPanel.SetValue(StackPanel.MarginProperty, new Thickness(0, 2, 16, 2));
+
+                var header = new FrameworkElementFactory(typeof(TextBlock));
+                header.SetValue(TextBlock.TextProperty, (col.Header ?? col.BindingPath) + ": ");
+                header.SetValue(TextBlock.FontWeightProperty, FontWeights.SemiBold);
+                header.SetValue(TextBlock.ForegroundProperty, new SolidColorBrush(Colors.DarkSlateGray));
+
+                var value = new FrameworkElementFactory(typeof(TextBlock));
+                value.SetBinding(TextBlock.TextProperty, new Binding(col.BindingPath));
+                value.SetValue(TextBlock.ForegroundProperty, new SolidColorBrush(Colors.DarkSlateGray));
+
+                entryPanel.AppendChild(header);
+                entryPanel.AppendChild(value);
+                uniformGrid.AppendChild(entryPanel);
+            }
+
+            border.AppendChild(uniformGrid);
+
+            return new DataTemplate { VisualTree = border };
         }
     }
 }

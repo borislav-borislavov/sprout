@@ -37,6 +37,12 @@ namespace Sprout.Core.Models.Configurations.DataGrid
         public IDataAdapterConfig DataAdapter { get; set; }
 
         public string ComboAdapterKey;
+
+        /// <summary>
+        /// When true this column will be included in the RowDetailsTemplate
+        /// shown when a row is selected (RowDetailsVisibilityMode = VisibleWhenSelected).
+        /// </summary>
+        public bool ShowInRowDetails { get; set; }
     }
 
     public enum ColumnType

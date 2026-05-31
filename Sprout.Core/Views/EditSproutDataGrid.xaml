@@ -5,12 +5,21 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Sprout.Core.Views"
              xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
-             
+             xmlns:gridConfig="clr-namespace:Sprout.Core.Models.Configurations.DataGrid;assembly=Sprout.Core"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:EditPageVM}"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <ObjectDataProvider x:Key="ColumnTypeValues"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="gridConfig:ColumnType"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -65,15 +74,32 @@
                           SelectedValue="{Binding SelectedDataGrid.ItemDisplayPage, Mode=TwoWay}"
                           />
             </StackPanel>
+
+            <StackPanel Orientation="Vertical" Margin="5,0,0,0">
+                <TextBlock Text="Row Details items per row" Margin="0,0,0,2"/>
+                <TextBox Width="60"
+                         Text="{Binding SelectedDataGrid.RowDetailsItemsPerRow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalContentAlignment="Center"/>
+            </StackPanel>
         </StackPanel>
         
         <DataGrid
             Grid.Row="1"
             Margin="5"
+            AutoGenerateColumns="False"
             CanUserAddRows="False"
             SelectedItem="{Binding SelectedColumn}"
             ItemsSource="{Binding SelectedDataGrid.Columns}">
-            
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Header" Binding="{Binding Header, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
+                <DataGridTextColumn Header="Binding Path" Binding="{Binding BindingPath, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
+                <DataGridComboBoxColumn Header="Type"
+                                        SelectedItemBinding="{Binding ColumnType, UpdateSourceTrigger=PropertyChanged}"
+                                        ItemsSource="{Binding Source={StaticResource ColumnTypeValues}}"
+                                        Width="80"/>
+                <DataGridCheckBoxColumn Header="Read Only" Binding="{Binding IsReadOnly, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
+                <DataGridCheckBoxColumn Header="Row Details" Binding="{Binding ShowInRowDetails, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+            </DataGrid.Columns>
         </DataGrid>
 
         <!-- ComboBox Column Configuration Panel -->
