@@ -6,6 +6,7 @@ using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.DataProviders;
+using Sprout.Core.Services.Logging;
 using Sprout.Core.Services.SqlServer;
 using Sprout.Core.UIStates;
 using System.Data;
@@ -20,15 +21,17 @@ namespace Sprout.Core.Services.Duck
         private DuckDBConnection _connection;
         private DuckDataAdapter _duckDataAdapter;
         private DuckDataProvider _dataProvider;
+        private readonly ISqlQueryLogger _sqlQueryLogger;
 
         public UiStateRegistry UiStateRegistry { get; }
 
-        public DuckDbDataService(DuckDataAdapter duckDataAdapter, UiStateRegistry uiStateRegistry)
+        public DuckDbDataService(DuckDataAdapter duckDataAdapter, UiStateRegistry uiStateRegistry, ISqlQueryLogger sqlQueryLogger = null)
         {
             _duckDataAdapter = duckDataAdapter;
             _dataProvider = duckDataAdapter.DataProvider as DuckDataProvider;
             UiStateRegistry = uiStateRegistry;
             _connection = new DuckDBConnection(duckDataAdapter.ConnectionString);
+            _sqlQueryLogger = sqlQueryLogger;
         }
 
         // ──────────────────────────────────────────────
@@ -149,6 +152,8 @@ namespace Sprout.Core.Services.Duck
                 cmd.Parameters.Add(p);
             }
 
+            _sqlQueryLogger?.Log(nameof(DuckDbDataService), cmd.CommandText, cmd.Parameters);
+
             var isNextResultFetched = false;
 
             using var reader = await cmd.ExecuteReaderAsync();
@@ -235,6 +240,8 @@ namespace Sprout.Core.Services.Duck
                 p.Value = param.Value;
                 cmd.Parameters.Add(p);
             }
+
+            _sqlQueryLogger?.Log(nameof(DuckDbDataService), cmd.CommandText, cmd.Parameters);
 
             var dt = DataTableFactory.Create();
 

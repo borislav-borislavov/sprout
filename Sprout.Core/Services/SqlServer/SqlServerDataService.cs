@@ -7,6 +7,7 @@ using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.DataProviders;
+using Sprout.Core.Services.Logging;
 using Sprout.Core.UIStates;
 using System.Data;
 using System.Windows;
@@ -20,15 +21,17 @@ namespace Sprout.Core.Services.SqlServer
         private SqlConnection _connection;
         private SqlServerDataAdapter _dataAdapter;
         private SqlServerDataProvider _dataProvider;
+        private readonly ISqlQueryLogger _sqlQueryLogger;
 
         public UiStateRegistry UiStateRegistry { get; }
 
-        public SqlServerDataService(SqlServerDataAdapter dataAdapter, UiStateRegistry uiStateRegistry)
+        public SqlServerDataService(SqlServerDataAdapter dataAdapter, UiStateRegistry uiStateRegistry, ISqlQueryLogger sqlQueryLogger = null)
         {
             _connection = new SqlConnection(dataAdapter.ConnectionString);
             _dataAdapter = dataAdapter;
             _dataProvider = dataAdapter.DataProvider as SqlServerDataProvider;
             UiStateRegistry = uiStateRegistry;
+            _sqlQueryLogger = sqlQueryLogger;
         }
 
         public async Task<ChangeResult> Insert(DataRow dataRow)
@@ -170,6 +173,8 @@ namespace Sprout.Core.Services.SqlServer
             {
                 AttachParameters(cmd, sqlParams);
 
+                _sqlQueryLogger?.Log(nameof(SqlServerDataService), cmd.CommandText, cmd.Parameters);
+
                 var isNextResultFetched = false;
 
                 using (var reader = await cmd.ExecuteReaderAsync())
@@ -284,6 +289,8 @@ namespace Sprout.Core.Services.SqlServer
 
                 using var cmd = new SqlCommand(queryText, _connection);
                 cmd.Parameters.AddRange(dependencyParameters.ToArray());
+
+                _sqlQueryLogger?.Log(nameof(SqlServerDataService), cmd.CommandText, cmd.Parameters);
 
                 //prevents the UI from freezing if the connection is slow
                 if (_connection.State == ConnectionState.Closed)

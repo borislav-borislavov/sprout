@@ -30,6 +30,14 @@
                 </StackPanel>
             </GroupBox>
 
+            <GroupBox Header="Diagnostics" Padding="10" Margin="0,0,0,10">
+                <StackPanel>
+                    <CheckBox Content="Log every SQL query to a file (sql-queries.log)"
+                              IsChecked="{Binding LogSqlQueries}"
+                              Margin="0,0,0,5"/>
+                </StackPanel>
+            </GroupBox>
+
             <Button Content="Save"
                     Command="{Binding SaveCommand}"
                     HorizontalAlignment="Left"

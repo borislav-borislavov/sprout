@@ -19,6 +19,9 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private int _commandTimeout;
 
+        [ObservableProperty]
+        private bool _logSqlQueries;
+
         public SettingsVM(IConfigurationService configService, IDialogService dialogService)
         {
             _configService = configService;
@@ -32,6 +35,7 @@ namespace Sprout.Core.ViewModels
             var settings = _configService.Load().Settings;
             SqlServerConnectionString = settings.SqlServerConnectionString;
             CommandTimeout = settings.CommandTimeout;
+            LogSqlQueries = settings.LogSqlQueries;
         }
 
         [RelayCommand]
@@ -42,6 +46,7 @@ namespace Sprout.Core.ViewModels
                 var config = _configService.Load();
                 config.Settings.SqlServerConnectionString = SqlServerConnectionString;
                 config.Settings.CommandTimeout = CommandTimeout;
+                config.Settings.LogSqlQueries = LogSqlQueries;
                 _configService.Save(config);
                 _dialogService.ShowMessage("Settings saved.", "Settings", DialogButton.OK, DialogImage.None);
             }
