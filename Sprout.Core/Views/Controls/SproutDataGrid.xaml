@@ -173,6 +173,7 @@
 			  CanUserDeleteRows="False"
 			  SelectionMode="Single"
 			  SelectionUnit="FullRow"
+			  PreviewKeyDown="dataGrid_PreviewKeyDown"
               BorderThickness="0,0.8,0,0"
               BorderBrush="DarkSlateGray" 
               HeadersVisibility="Column"

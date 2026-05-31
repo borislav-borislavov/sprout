@@ -143,6 +143,27 @@ namespace Sprout.Core.Views.Controls
             window.ShowDialog();
         }
 
+        private void dataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.C || (Keyboard.Modifiers & ModifierKeys.Control) == 0)
+                return;
+
+            var cell = dataGrid.CurrentCell;
+            if (!cell.IsValid || cell.Column == null)
+                return;
+
+            var content = cell.Column.GetCellContent(cell.Item);
+            var value = content switch
+            {
+                TextBlock tb => tb.Text,
+                ContentPresenter cp => cp.Content?.ToString(),
+                _ => content?.ToString()
+            };
+
+            Clipboard.SetText(value ?? string.Empty);
+            e.Handled = true;
+        }
+
         private void btnFilters_Click(object sender, RoutedEventArgs e)
         {
             if(dataGrid.Visibility == Visibility.Visible)
