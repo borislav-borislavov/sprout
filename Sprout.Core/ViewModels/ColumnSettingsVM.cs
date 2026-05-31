@@ -1,20 +1,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
 using Sprout.Core.Models.Configurations.DataGrid;
-using Sprout.Core.Services.Configurations;
-using Sprout.Core.Views.Controls;
+using Sprout.Core.UIStates;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace Sprout.Core.ViewModels
 {
     public partial class ColumnSettingsVM : ObservableObject
     {
-        private readonly SproutDataGrid _grid;
-        private readonly IConfigurationService _configurationService;
+        private readonly SproutGridUIState _gridState;
 
         [ObservableProperty]
         private ObservableCollection<ColumnSettingItemVM> _columns = [];
@@ -27,31 +22,39 @@ namespace Sprout.Core.ViewModels
 
         public bool IsSaved { get; private set; }
 
-        public ColumnSettingsVM(SproutDataGrid grid)
+        public ColumnSettingsVM(SproutGridUIState gridState)
         {
-            _grid = grid;
-            _configurationService = SproutApp.Services?.GetService<IConfigurationService>();
+            _gridState = gridState;
 
             Load();
         }
 
         private void Load()
         {
-            var ordered = _grid.dataGrid.Columns
-                .OrderBy(c => c.DisplayIndex)
-                .ToList();
+            var layout = _gridState.Grid.GetCurrentLayout();
+            LoadLayout(layout);
+        }
 
-            foreach (var col in ordered)
+        private void LoadLayout(SproutGridColumnLayout layout)
+        {
+            Columns.Clear();
+
+            foreach (var column in layout.Columns)
             {
                 Columns.Add(new ColumnSettingItemVM
                 {
-                    Key = _grid.GetColumnKey(col),
-                    Header = col.Header?.ToString(),
-                    IsVisible = col.Visibility == Visibility.Visible
+                    Key = column.Key,
+                    IsVisible = column.IsVisible
                 });
             }
 
-            FrozenColumnCount = _grid.dataGrid.FrozenColumnCount;
+            FrozenColumnCount = layout.FrozenColumnCount;
+        }
+
+        [RelayCommand]
+        private void ResetToDefault()
+        {
+            LoadLayout(_gridState.Grid.GetDefaultLayout());
         }
 
         [RelayCommand]
@@ -91,15 +94,8 @@ namespace Sprout.Core.ViewModels
                     .ToList()
             };
 
-            _grid.ApplyColumnLayout(layout);
-
-            var gridName = _grid.Config?.Name;
-            if (_configurationService != null && !string.IsNullOrEmpty(gridName))
-            {
-                var config = _configurationService.Load();
-                config.Settings.GridColumnLayouts[gridName] = layout;
-                _configurationService.Save(config);
-            }
+            // The grid state applies the layout and notifies the page so it can be persisted.
+            _gridState.UpdateColumnLayout(layout);
 
             IsSaved = true;
         }
@@ -107,10 +103,8 @@ namespace Sprout.Core.ViewModels
 
     public partial class ColumnSettingItemVM : ObservableObject
     {
-        public string Key { get; set; }
-
         [ObservableProperty]
-        private string _header;
+        private string _key;
 
         [ObservableProperty]
         private bool _isVisible = true;

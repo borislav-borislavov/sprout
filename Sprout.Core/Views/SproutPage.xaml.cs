@@ -223,6 +223,8 @@ namespace Sprout.Core.Views
                         }
 
                         vm.UiStateRegistry.Register(sproutDataGrid.UIState.Name, sproutDataGrid.UIState);
+
+                        vm.RegisterGridColumnLayout(sproutDataGrid.UIState);
                     }
 
                     if (kvp.Value is SproutCombo sproutCombo)

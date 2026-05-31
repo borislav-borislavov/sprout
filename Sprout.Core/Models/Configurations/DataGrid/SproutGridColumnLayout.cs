@@ -23,7 +23,7 @@ namespace Sprout.Core.Models.Configurations.DataGrid
     public class SproutGridColumnState
     {
         /// <summary>
-        /// Stable identifier of the column (its binding path).
+        /// Stable identifier of the column (its binding path / SQL column name), also used for display.
         /// </summary>
         public string Key { get; set; }
 

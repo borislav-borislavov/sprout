@@ -13,6 +13,7 @@ using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services;
 using Sprout.Core.Services.ActionMessageService;
+using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.DataProviders;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Login;
@@ -31,6 +32,7 @@ namespace Sprout.Core.ViewModels
         private readonly IDataAdapterFactory _dataAdapterFactory;
         private readonly IDataServiceFactory _dataServiceFactory;
         private readonly ILoggedInUserService _loggedInUserService;
+        private readonly IConfigurationService _configurationService;
 
         public SproutPageConfiguration PageConfig { get; private set; }
 
@@ -61,7 +63,8 @@ namespace Sprout.Core.ViewModels
             IActionMessageService actionMessageService,
             IDataAdapterFactory dataAdapterFactory,
             IDataServiceFactory dataServiceFactory,
-            ILoggedInUserService loggedInUserService)
+            ILoggedInUserService loggedInUserService,
+            IConfigurationService configurationService)
         {
             PageConfig = pageConfig;
             _dialogService = dialogService;
@@ -69,6 +72,7 @@ namespace Sprout.Core.ViewModels
             _dataAdapterFactory = dataAdapterFactory;
             _dataServiceFactory = dataServiceFactory;
             _loggedInUserService = loggedInUserService;
+            _configurationService = configurationService;
 
             try
             {
@@ -121,6 +125,37 @@ namespace Sprout.Core.ViewModels
         {
             UiStateRegistry.Register(Const.Page, SproutPageUIState);
             UiStateRegistry.Register(Const.Login, _loginUIState);
+        }
+
+        /// <summary>
+        /// Restores any persisted column layout for the given grid and keeps it in sync with
+        /// the configuration when the user changes it.
+        /// </summary>
+        public void RegisterGridColumnLayout(SproutGridUIState gridState)
+        {
+            if (gridState?.Grid?.Config?.Name is not string gridName || string.IsNullOrEmpty(gridName))
+                return;
+
+            var settings = _configurationService.Load().Settings;
+
+            if (settings.GridColumnLayouts.TryGetValue(gridName, out var layout))
+            {
+                gridState.ApplyColumnLayout(layout);
+            }
+
+            gridState.ColumnLayoutChanged += (_, updatedLayout) =>
+            {
+                try
+                {
+                    var config = _configurationService.Load();
+                    config.Settings.GridColumnLayouts[gridName] = updatedLayout;
+                    _configurationService.Save(config);
+                }
+                catch (Exception ex)
+                {
+                    _dialogService.ShowMessage(ex.Message, "Column layout Error", DialogButton.OK, DialogImage.Error);
+                }
+            };
         }
 
         public void CreateDataAdapters()

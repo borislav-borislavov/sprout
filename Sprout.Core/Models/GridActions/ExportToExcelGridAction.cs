@@ -32,6 +32,9 @@ namespace Sprout.Core.Models.GridActions
             if (data == null || data.Rows.Count == 0)
                 return Task.CompletedTask;
 
+            // Respect the user's column settings (visibility and order) coming from the grid.
+            var orderedColumnNames = GetExportColumnNames(data, uiStateRegistry);
+
             var saveFileDialog = new SaveFileDialog
             {
                 Filter = "Excel Files (*.xlsx)|*.xlsx",
@@ -47,12 +50,8 @@ namespace Sprout.Core.Models.GridActions
 
             // Add headers
             int excelCol = 1;
-            for (int col = 0; col < data.Columns.Count; col++)
+            foreach (var columnName in orderedColumnNames)
             {
-                var columnName = data.Columns[col].ColumnName;
-                if (columnName.StartsWith("_"))
-                    continue;
-
                 worksheet.Cell(1, excelCol).Value = columnName;
                 excelCol++;
             }
@@ -62,13 +61,9 @@ namespace Sprout.Core.Models.GridActions
             foreach (DataRow row in data.Rows)
             {
                 excelCol = 1;
-                for (int col = 0; col < data.Columns.Count; col++)
+                foreach (var columnName in orderedColumnNames)
                 {
-                    var columnName = data.Columns[col].ColumnName;
-                    if (columnName.StartsWith("_"))
-                        continue;
-
-                    var value = row[col];
+                    var value = row[columnName];
                     if (value != null && value != DBNull.Value)
                     {
                         worksheet.Cell(rowIndex, excelCol).Value = value.ToString();
@@ -85,6 +80,36 @@ namespace Sprout.Core.Models.GridActions
             workbook.SaveAs(saveFileDialog.FileName);
 
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Determines which DataTable columns to export and in what order, honoring the
+        /// grid's column settings (visibility and display order) when available.
+        /// Falls back to all non-internal columns in their natural order.
+        /// </summary>
+        private List<string> GetExportColumnNames(DataTable data, UiStateRegistry uiStateRegistry)
+        {
+            var availableColumns = new List<string>();
+            foreach (System.Data.DataColumn column in data.Columns)
+            {
+                if (!column.ColumnName.StartsWith("_"))
+                    availableColumns.Add(column.ColumnName);
+            }
+
+            var gridState = uiStateRegistry.Get<SproutGridUIState>(_ownControlName);
+            var visibleKeys = gridState?.Grid?.GetVisibleColumnKeysInDisplayOrder();
+
+            if (visibleKeys == null || visibleKeys.Count == 0)
+                return availableColumns;
+
+            var ordered = new List<string>();
+            foreach (var key in visibleKeys)
+            {
+                if (data.Columns.Contains(key) && !key.StartsWith("_"))
+                    ordered.Add(key);
+            }
+
+            return ordered.Count > 0 ? ordered : availableColumns;
         }
     }
 }

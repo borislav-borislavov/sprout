@@ -86,9 +86,55 @@ namespace Sprout.Core.Views.Controls
             dataGrid.FrozenColumnCount = Math.Max(0, Math.Min(layout.FrozenColumnCount, dataGrid.Columns.Count));
         }
 
+        /// <summary>
+        /// Returns the keys (binding paths) of the currently visible columns, in their display order.
+        /// Reflects the user's show/hide and reorder customizations.
+        /// </summary>
+        public List<string> GetVisibleColumnKeysInDisplayOrder()
+            => dataGrid.Columns
+                .Where(c => c.Visibility == Visibility.Visible)
+                .OrderBy(c => c.DisplayIndex)
+                .Select(GetColumnKey)
+                .Where(k => !string.IsNullOrEmpty(k))
+                .ToList();
+
+        /// <summary>
+        /// Builds a layout snapshot describing the grid's current column visibility, order and frozen count.
+        /// </summary>
+        public SproutGridColumnLayout GetCurrentLayout()
+            => new()
+            {
+                FrozenColumnCount = dataGrid.FrozenColumnCount,
+                Columns = dataGrid.Columns
+                    .OrderBy(c => c.DisplayIndex)
+                    .Select(c => new SproutGridColumnState
+                    {
+                        Key = GetColumnKey(c),
+                        IsVisible = c.Visibility == Visibility.Visible
+                    })
+                    .ToList()
+            };
+
+        /// <summary>
+        /// Builds the default layout from the grid's configuration: all columns visible,
+        /// in their original order, with no frozen columns.
+        /// </summary>
+        public SproutGridColumnLayout GetDefaultLayout()
+            => new()
+            {
+                FrozenColumnCount = 0,
+                Columns = (Config?.Columns ?? [])
+                    .Select(c => new SproutGridColumnState
+                    {
+                        Key = c.BindingPath ?? c.Header,
+                        IsVisible = true
+                    })
+                    .ToList()
+            };
+
         private void btnColumnSettings_Click(object sender, RoutedEventArgs e)
         {
-            var vm = new ColumnSettingsVM(this);
+            var vm = new ColumnSettingsVM(UIState);
             var window = new ColumnSettings(vm)
             {
                 Owner = Window.GetWindow(this)
