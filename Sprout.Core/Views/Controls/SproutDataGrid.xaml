@@ -80,7 +80,7 @@
                 </Button>
 
                 <Button x:Name="btnColumnSettings"
-                        ToolTip="Show, hide, reorder and lock columns"
+                        ToolTip="Column settings"
                         Style="{StaticResource FlatRoundButtonStyle}"
                         HorizontalAlignment="Left"
                         Click="btnColumnSettings_Click"
