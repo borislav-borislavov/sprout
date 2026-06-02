@@ -6,143 +6,249 @@
              xmlns:local="clr-namespace:Sprout.Core.Views"
              xmlns:config="clr-namespace:Sprout.Core.Models.Configurations"
              xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
              
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance viewModels:EditPageVM}">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <TabControl>
+            <TabItem Header="General">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*" MinWidth="150"/>
+                    </Grid.ColumnDefinitions>
 
-        <!--Name-->
-        <TextBlock
-            Grid.Row="0"
-            Grid.Column="0"
-            Margin="5"
-            VerticalAlignment="Top"
-            Text="Name"
-            FontWeight="Bold"
-            FontSize="16"/>
+                    <!--Name-->
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Margin="5"
+                        VerticalAlignment="Top"
+                        Text="Name"
+                        FontWeight="Bold"
+                        FontSize="16"/>
 
-        <TextBox
-            Grid.Row="0"
-            Grid.Column="1"
-            VerticalAlignment="Top"
-            Margin="5"
-            Text="{Binding SelectedButton.Name, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        VerticalAlignment="Top"
+                        Margin="5"
+                        Text="{Binding SelectedButton.Name, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <!--Content-->
-        <TextBlock
-            Grid.Row="1"
-            Grid.Column="0"
-            Margin="5"
-            VerticalAlignment="Top"
-            Text="Content"
-            FontWeight="Bold"
-            FontSize="16"/>
+                    <!--Content-->
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="5"
+                        VerticalAlignment="Top"
+                        Text="Content"
+                        FontWeight="Bold"
+                        FontSize="16"/>
 
-        <TextBox
-            Grid.Row="1"
-            Grid.Column="1"
-            VerticalAlignment="Top"
-            Margin="5"
-            Text="{Binding SelectedButton.Content, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        VerticalAlignment="Top"
+                        Margin="5"
+                        Text="{Binding SelectedButton.Content, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <!--Actions Header-->
-        <TextBlock
-            Grid.Row="2"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Margin="5,15,5,0"
-            Text="Actions"
-            FontWeight="Bold"
-            FontSize="16"/>
+                    <!--Actions Header-->
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Margin="5,15,5,0"
+                        Text="Actions"
+                        FontWeight="Bold"
+                        FontSize="16"/>
 
-        <!--Actions Toolbar-->
-        <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
-                    Orientation="Horizontal">
-            <ComboBox Width="200" Margin="5"
-                      ItemsSource="{Binding AvailableActionTypes}"
-                      SelectedItem="{Binding SelectedActionType}"/>
+                    <!--Actions Toolbar-->
+                    <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                                Orientation="Horizontal">
+                        <ComboBox Width="200" Margin="5"
+                                  ItemsSource="{Binding AvailableActionTypes}"
+                                  SelectedItem="{Binding SelectedActionType}"/>
 
-            <Button Content="Add" Height="35" Width="50" Margin="5"
-                    Command="{Binding AddButtonActionCommand}"/>
+                        <Button Content="Add" Height="35" Width="50" Margin="5"
+                                Command="{Binding AddButtonActionCommand}"/>
 
-            <Button Content="Remove" Height="35" Width="60" Margin="5"
-                    Command="{Binding RemoveButtonActionCommand}"/>
+                        <Button Content="Remove" Height="35" Width="60" Margin="5"
+                                Command="{Binding RemoveButtonActionCommand}"/>
 
-            <Button Content="Up" Height="35" Width="50" Margin="5"
-                    Command="{Binding MoveButtonActionUpCommand}"/>
+                        <Button Content="Up" Height="35" Width="50" Margin="5"
+                                Command="{Binding MoveButtonActionUpCommand}"/>
 
-            <Button Content="Down" Height="35" Width="50" Margin="5"
-                    Command="{Binding MoveButtonActionDownCommand}"/>
-        </StackPanel>
-
-        <!--Actions List-->
-        <ListBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
-                 ItemsSource="{Binding SelectedButton.Actions}"
-                 SelectedItem="{Binding SelectedButtonAction}">
-            <ListBox.Resources>
-                <DataTemplate DataType="{x:Type config:ExecuteUpdateActionConfig}">
-                    <TextBlock Text="Execute Update Command" FontWeight="SemiBold"/>
-                </DataTemplate>
-
-                <DataTemplate DataType="{x:Type config:RefreshDataGridActionConfig}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Refresh DataGrid: " FontWeight="SemiBold"/>
-                        <TextBlock Text="{Binding TargetDataGridName}" Foreground="DarkSlateGray"/>
+                        <Button Content="Down" Height="35" Width="50" Margin="5"
+                                Command="{Binding MoveButtonActionDownCommand}"/>
                     </StackPanel>
-                </DataTemplate>
 
-                <DataTemplate DataType="{x:Type config:ExecuteSelectActionConfig}">
-                    <TextBlock Text="Execute Select (Data Adapter)" FontWeight="SemiBold"/>
-                </DataTemplate>
-            </ListBox.Resources>
-        </ListBox>
+                    <!--Actions List-->
+                    <ListBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
+                             ItemsSource="{Binding SelectedButton.Actions}"
+                             SelectedItem="{Binding SelectedButtonAction}">
+                        <ListBox.Resources>
+                            <DataTemplate DataType="{x:Type config:ExecuteUpdateActionConfig}">
+                                <TextBlock Text="Execute Update Command" FontWeight="SemiBold"/>
+                            </DataTemplate>
 
-        <!--Selected Action Detail-->
-        <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
-            <Grid.Resources>
-                <DataTemplate DataType="{x:Type config:ExecuteUpdateActionConfig}">
-                    <StackPanel Margin="5">
-                        <TextBlock Text="This action executes the Update command configured in the DataAdapter tab."
-                                   TextWrapping="Wrap" Foreground="Gray"/>
-                        <Button Content="Initialize Data Adapter" Margin="0,10,0,0"
-                                HorizontalAlignment="Left" Padding="10,3"
-                                Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.InitializeButtonDataAdapterCommand}"/>
-                    </StackPanel>
-                </DataTemplate>
+                            <DataTemplate DataType="{x:Type config:RefreshDataGridActionConfig}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Refresh DataGrid: " FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding TargetDataGridName}" Foreground="DarkSlateGray"/>
+                                </StackPanel>
+                            </DataTemplate>
 
-                <DataTemplate DataType="{x:Type config:RefreshDataGridActionConfig}">
-                    <StackPanel Orientation="Horizontal" Margin="5">
-                        <TextBlock Text="Target DataGrid Name:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                        <TextBox Width="200" Text="{Binding TargetDataGridName, UpdateSourceTrigger=PropertyChanged}"/>
-                    </StackPanel>
-                </DataTemplate>
+                            <DataTemplate DataType="{x:Type config:ExecuteSelectActionConfig}">
+                                <TextBlock Text="Execute Select (Data Adapter)" FontWeight="SemiBold"/>
+                            </DataTemplate>
+                        </ListBox.Resources>
+                    </ListBox>
 
-                <DataTemplate DataType="{x:Type config:ExecuteSelectActionConfig}">
-                    <StackPanel Margin="5">
-                        <TextBlock Text="This action executes the Select query from the DataAdapter and stores the first row in the button's UI state."
-                                   TextWrapping="Wrap" Foreground="Gray"/>
-                        <Button Content="Initialize Data Adapter" Margin="0,10,0,0"
-                                HorizontalAlignment="Left" Padding="10,3"
-                                Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.InitializeButtonDataAdapterCommand}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </Grid.Resources>
+                    <!--Selected Action Detail-->
+                    <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
+                        <Grid.Resources>
+                            <DataTemplate DataType="{x:Type config:ExecuteUpdateActionConfig}">
+                                <StackPanel Margin="5">
+                                    <TextBlock Text="This action executes the Update command configured in the DataAdapter tab."
+                                               TextWrapping="Wrap" Foreground="Gray"/>
+                                    <Button Content="Initialize Data Adapter" Margin="0,10,0,0"
+                                            HorizontalAlignment="Left" Padding="10,3"
+                                            Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.InitializeButtonDataAdapterCommand}"/>
+                                </StackPanel>
+                            </DataTemplate>
 
-            <ContentControl Content="{Binding SelectedButtonAction}"/>
-        </Grid>
+                            <DataTemplate DataType="{x:Type config:RefreshDataGridActionConfig}">
+                                <StackPanel Orientation="Horizontal" Margin="5">
+                                    <TextBlock Text="Target DataGrid Name:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                    <TextBox Width="200" Text="{Binding TargetDataGridName, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type config:ExecuteSelectActionConfig}">
+                                <StackPanel Margin="5">
+                                    <TextBlock Text="This action executes the Select query from the DataAdapter and stores the first row in the button's UI state."
+                                               TextWrapping="Wrap" Foreground="Gray"/>
+                                    <Button Content="Initialize Data Adapter" Margin="0,10,0,0"
+                                            HorizontalAlignment="Left" Padding="10,3"
+                                            Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.InitializeButtonDataAdapterCommand}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </Grid.Resources>
+
+                        <ContentControl Content="{Binding SelectedButtonAction}"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Common">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*" MinWidth="150"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--Height-->
+                    <TextBlock
+                        Grid.Row="0" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Height" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="0" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedButton.Height, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--Width-->
+                    <TextBlock
+                        Grid.Row="1" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Width" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="1" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedButton.Width, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--Margin-->
+                    <TextBlock
+                        Grid.Row="2" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Margin" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="2" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedButton.Margin, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--HorizontalAlignment-->
+                    <TextBlock
+                        Grid.Row="3" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Center"
+                        Text="Horizontal Alignment" FontWeight="Bold" FontSize="16"/>
+                    <ComboBox
+                        Grid.Row="3" Grid.Column="1" Margin="5"
+                        SelectedItem="{Binding SelectedButton.HorizontalAlignment, UpdateSourceTrigger=PropertyChanged}">
+                        <sys:String>(Default)</sys:String>
+                        <sys:String>Left</sys:String>
+                        <sys:String>Center</sys:String>
+                        <sys:String>Right</sys:String>
+                        <sys:String>Stretch</sys:String>
+                    </ComboBox>
+
+                    <!--VerticalAlignment-->
+                    <TextBlock
+                        Grid.Row="4" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Center"
+                        Text="Vertical Alignment" FontWeight="Bold" FontSize="16"/>
+                    <ComboBox
+                        Grid.Row="4" Grid.Column="1" Margin="5"
+                        SelectedItem="{Binding SelectedButton.VerticalAlignment, UpdateSourceTrigger=PropertyChanged}">
+                        <sys:String>(Default)</sys:String>
+                        <sys:String>Top</sys:String>
+                        <sys:String>Center</sys:String>
+                        <sys:String>Bottom</sys:String>
+                        <sys:String>Stretch</sys:String>
+                    </ComboBox>
+
+                    <!--ToolTip-->
+                    <TextBlock
+                        Grid.Row="5" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Tooltip" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="5" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedButton.ToolTip, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--Padding-->
+                    <TextBlock
+                        Grid.Row="6" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Padding" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="6" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedButton.Padding, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </UserControl>
