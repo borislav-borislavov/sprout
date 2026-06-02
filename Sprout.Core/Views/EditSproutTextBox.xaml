@@ -18,6 +18,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -143,5 +144,22 @@
             VerticalAlignment="Top"
             Margin="5"
             Text="{Binding Margin, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!--Multi Line-->
+        <TextBlock
+            Grid.Row="7"
+            Grid.Column="0"
+            Margin="5"
+            VerticalAlignment="Center"
+            Text="Multi Line"
+            FontWeight="Bold"
+            FontSize="16"/>
+
+        <CheckBox
+            Grid.Row="7"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            Margin="5"
+            IsChecked="{Binding MultiLine, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
 </UserControl>

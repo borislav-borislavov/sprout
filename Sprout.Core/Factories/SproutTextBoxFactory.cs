@@ -47,6 +47,15 @@ namespace Sprout.Core.Factories
                 }
             }
 
+            if (config.MultiLine)
+            {
+                sproutTextBox.textBox.TextWrapping = System.Windows.TextWrapping.Wrap;
+                sproutTextBox.textBox.AcceptsReturn = true;
+                sproutTextBox.textBox.VerticalAlignment = VerticalAlignment.Stretch;
+                sproutTextBox.textBox.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+                sproutTextBox.textBox.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            }
+
             AddControl(sproutTextBox, controls);
 
             SetPositionInGrid(sproutTextBox, config);

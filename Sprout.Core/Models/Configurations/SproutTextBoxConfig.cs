@@ -22,5 +22,7 @@ namespace Sprout.Core.Models.Configurations
         /// Binding expression using the syntax {@ctrlName.Property.Path}
         /// </summary>
         public string Binding { get; set; }
+
+        public bool MultiLine { get; set; }
     }
 }
