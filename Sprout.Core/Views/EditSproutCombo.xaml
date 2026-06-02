@@ -5,89 +5,145 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Sprout.Core.Views"
              xmlns:config="clr-namespace:Sprout.Core.Models.Configurations"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
 
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance config:SproutComboConfig}">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <TabControl>
+            <TabItem Header="General">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*" MinWidth="150"/>
+                    </Grid.ColumnDefinitions>
 
-        <!--DisplayColumn-->
-        <TextBlock
-            Grid.Row="0"
-            Grid.Column="0"
-            Margin="5"
-            VerticalAlignment="Top"
-            Text="Display Column"
-            FontWeight="Bold"
-            FontSize="16"/>
+                    <!--DisplayColumn-->
+                    <TextBlock
+                        Grid.Row="0" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Display Column" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="0" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding DisplayColumn, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <TextBox
-            Grid.Row="0"
-            Grid.Column="1"
-            VerticalAlignment="Top"
-            Margin="5"
-            Text="{Binding DisplayColumn, UpdateSourceTrigger=PropertyChanged}"/>
+                    <!--ValueColumn-->
+                    <TextBlock
+                        Grid.Row="1" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Value Column" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="1" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding ValueColumn, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <!--ValueColumn-->
-        <TextBlock
-            Grid.Row="1"
-            Grid.Column="0"
-            Margin="5"
-            VerticalAlignment="Top"
-            Text="Value Column"
-            FontWeight="Bold"
-            FontSize="16"/>
+                    <!--SelectedValue-->
+                    <TextBlock
+                        Grid.Row="2" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Selected Value" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="2" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedValue, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+            </TabItem>
 
-        <TextBox
-            Grid.Row="1"
-            Grid.Column="1"
-            VerticalAlignment="Top"
-            Margin="5"
-            Text="{Binding ValueColumn, UpdateSourceTrigger=PropertyChanged}"/>
+            <TabItem Header="Common">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-        <!--VerticalAlignment-->
-        <TextBlock
-            Grid.Row="2"
-            Grid.Column="0"
-            Margin="5"
-            VerticalAlignment="Top"
-            Text="Vertical Alignment"
-            FontWeight="Bold"
-            FontSize="16"/>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*" MinWidth="150"/>
+                    </Grid.ColumnDefinitions>
 
-        <TextBox
-            Grid.Row="2"
-            Grid.Column="1"
-            VerticalAlignment="Top"
-            Margin="5"
-            Text="{Binding VerticalAlignment, UpdateSourceTrigger=PropertyChanged}"/>
+                    <!--Height-->
+                    <TextBlock
+                        Grid.Row="0" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Height" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="0" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding Height, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <!--SelectedValue-->
-        <TextBlock
-            Grid.Row="3"
-            Grid.Column="0"
-            Margin="5"
-            VerticalAlignment="Top"
-            Text="Selected Value"
-            FontWeight="Bold"
-            FontSize="16"/>
+                    <!--Width-->
+                    <TextBlock
+                        Grid.Row="1" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Width" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="1" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding Width, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <TextBox
-            Grid.Row="3"
-            Grid.Column="1"
-            VerticalAlignment="Top"
-            Margin="5"
-            Text="{Binding SelectedValue, UpdateSourceTrigger=PropertyChanged}"/>
+                    <!--Margin-->
+                    <TextBlock
+                        Grid.Row="2" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Margin" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="2" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding Margin, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--HorizontalAlignment-->
+                    <TextBlock
+                        Grid.Row="3" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Center"
+                        Text="Horizontal Alignment" FontWeight="Bold" FontSize="16"/>
+                    <ComboBox
+                        Grid.Row="3" Grid.Column="1" Margin="5"
+                        SelectedItem="{Binding HorizontalAlignment, UpdateSourceTrigger=PropertyChanged}">
+                        <sys:String>(Default)</sys:String>
+                        <sys:String>Left</sys:String>
+                        <sys:String>Center</sys:String>
+                        <sys:String>Right</sys:String>
+                        <sys:String>Stretch</sys:String>
+                    </ComboBox>
+
+                    <!--VerticalAlignment-->
+                    <TextBlock
+                        Grid.Row="4" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Center"
+                        Text="Vertical Alignment" FontWeight="Bold" FontSize="16"/>
+                    <ComboBox
+                        Grid.Row="4" Grid.Column="1" Margin="5"
+                        SelectedItem="{Binding VerticalAlignment, UpdateSourceTrigger=PropertyChanged}">
+                        <sys:String>(Default)</sys:String>
+                        <sys:String>Top</sys:String>
+                        <sys:String>Center</sys:String>
+                        <sys:String>Bottom</sys:String>
+                        <sys:String>Stretch</sys:String>
+                    </ComboBox>
+
+                    <!--ToolTip-->
+                    <TextBlock
+                        Grid.Row="5" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Tooltip" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="5" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding ToolTip, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </UserControl>

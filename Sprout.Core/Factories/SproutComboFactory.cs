@@ -25,19 +25,34 @@ namespace Sprout.Core.Factories
             sproutCombo.comboBox.DisplayMemberPath = sproutComboConfig.DisplayColumn;
             sproutCombo.comboBox.SelectedValuePath = sproutComboConfig.ValueColumn;
 
-            if (!string.IsNullOrEmpty(sproutComboConfig.VerticalAlignment))
+            if (sproutComboConfig.Height.HasValue)
+                sproutCombo.comboBox.Height = sproutComboConfig.Height.Value;
+
+            if (sproutComboConfig.Width.HasValue)
+                sproutCombo.comboBox.Width = sproutComboConfig.Width.Value;
+
+            if (!string.IsNullOrWhiteSpace(sproutComboConfig.Margin))
             {
-                if (Enum.TryParse<VerticalAlignment>(sproutComboConfig.VerticalAlignment, true, out var alignment))
-                {
-                    sproutCombo.comboBox.VerticalAlignment = alignment;
-                }
-                else
-                {
-#warning show a warning that the alignment is invalid
-                }
+                if (new ThicknessConverter().ConvertFromString(sproutComboConfig.Margin) is Thickness margin)
+                    sproutCombo.Margin = margin;
             }
 
+            if (!string.IsNullOrEmpty(sproutComboConfig.HorizontalAlignment) &&
+                sproutComboConfig.HorizontalAlignment != "(Default)" &&
+                Enum.TryParse<HorizontalAlignment>(sproutComboConfig.HorizontalAlignment, out var hAlign))
+            {
+                sproutCombo.HorizontalAlignment = hAlign;
+            }
 
+            if (!string.IsNullOrEmpty(sproutComboConfig.VerticalAlignment) &&
+                sproutComboConfig.VerticalAlignment != "(Default)" &&
+                Enum.TryParse<VerticalAlignment>(sproutComboConfig.VerticalAlignment, true, out var vAlign))
+            {
+                sproutCombo.comboBox.VerticalAlignment = vAlign;
+            }
+
+            if (!string.IsNullOrEmpty(sproutComboConfig.ToolTip))
+                sproutCombo.ToolTip = sproutComboConfig.ToolTip;
 
             AddControl(sproutCombo, controls);
 
