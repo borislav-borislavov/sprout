@@ -109,17 +109,15 @@
             <Border
                 x:Name="filtersBorder"
                 Visibility="Collapsed"
+                Grid.Row="0"
                 BorderThickness="0, 0, 0 0.8"
                 BorderBrush="DarkSlateGray">
             <StackPanel x:Name="filtersButtonPanel"
-                        Grid.Row="0"
-                        Visibility="Collapsed"
                         Orientation="Horizontal">
 
                 <Button
                     ToolTip="Filter data"
                     Style="{StaticResource FlatRoundButtonStyle}"
-                    Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
                     HorizontalAlignment="Left"
                     Click="btnFilters_Click"
                     Margin="2">
@@ -132,7 +130,6 @@
                     x:Name="btnApplyFilters"
                     ToolTip="Apply filters"
                     Style="{StaticResource FlatRoundButtonStyle}"
-                    Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
                     HorizontalAlignment="Left"
                     Click="btnApplyFilters_Click"
                     Margin="2">
