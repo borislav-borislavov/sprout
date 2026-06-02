@@ -6,223 +6,307 @@
              xmlns:local="clr-namespace:Sprout.Core.Views"
              xmlns:config="clr-namespace:Sprout.Core.Models.Configurations"
              xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
              
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance viewModels:EditPageVM}">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <TabControl>
+            <TabItem Header="General">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*" MinWidth="150"/>
+                    </Grid.ColumnDefinitions>
 
-        <!--Name-->
-        <TextBlock
-            Grid.Row="0"
-            Grid.Column="0"
-            Margin="5"
-            VerticalAlignment="Top"
-            Text="Name"
-            FontWeight="Bold"
-            FontSize="16"/>
+                    <!--Name-->
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Margin="5"
+                        VerticalAlignment="Top"
+                        Text="Name"
+                        FontWeight="Bold"
+                        FontSize="16"/>
 
-        <TextBox
-            Grid.Row="0"
-            Grid.Column="1"
-            VerticalAlignment="Top"
-            Margin="5"
-            Text="{Binding SelectedGridConfig.Name, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        VerticalAlignment="Top"
+                        Margin="5"
+                        Text="{Binding SelectedGridConfig.Name, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <!--ShowGridLines-->
-        <TextBlock
-            Grid.Row="1"
-            Grid.Column="0"
-            Margin="5"
-            VerticalAlignment="Center"
-            Text="Show Grid Lines"
-            FontWeight="Bold"
-            FontSize="16"/>
+                    <!--ShowGridLines-->
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="5"
+                        VerticalAlignment="Center"
+                        Text="Show Grid Lines"
+                        FontWeight="Bold"
+                        FontSize="16"/>
 
-        <CheckBox
-            Grid.Row="1"
-            Grid.Column="1"
-            Margin="5"
-            VerticalAlignment="Center"
-            IsChecked="{Binding SelectedGridConfig.ShowGridLines, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="5"
+                        VerticalAlignment="Center"
+                        IsChecked="{Binding SelectedGridConfig.ShowGridLines, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <!--Background-->
-        <TextBlock
-            Grid.Row="2"
-            Grid.Column="0"
-            Margin="5"
-            VerticalAlignment="Center"
-            Text="Background"
-            FontWeight="Bold"
-            FontSize="16"/>
+                    <!--Background-->
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Margin="5"
+                        VerticalAlignment="Center"
+                        Text="Background"
+                        FontWeight="Bold"
+                        FontSize="16"/>
 
-        <TextBox
-            Grid.Row="2"
-            Grid.Column="1"
-            Margin="5"
-            VerticalAlignment="Center"
-            Text="{Binding SelectedGridConfig.Background, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Margin="5"
+                        VerticalAlignment="Center"
+                        Text="{Binding SelectedGridConfig.Background, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <!--Margin-->
-        <TextBlock
-            Grid.Row="3"
-            Grid.Column="0"
-            Margin="5"
-            VerticalAlignment="Center"
-            Text="Margin"
-            FontWeight="Bold"
-            FontSize="16"/>
+                    <!--Margin-->
+                    <TextBlock
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Margin="5"
+                        VerticalAlignment="Center"
+                        Text="Margin"
+                        FontWeight="Bold"
+                        FontSize="16"/>
 
-        <TextBox
-            Grid.Row="3"
-            Grid.Column="1"
-            Margin="5"
-            VerticalAlignment="Center"
-            Text="{Binding SelectedGridConfig.Margin, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Margin="5"
+                        VerticalAlignment="Center"
+                        Text="{Binding SelectedGridConfig.Margin, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <!--Rows-->
-        <TextBlock
-            Grid.Row="4"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Margin="5"
-            VerticalAlignment="Top"
-            Text="Rows"
-            FontWeight="Bold"
-            FontSize="16"/>
+                    <!--Rows-->
+                    <TextBlock
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Margin="5"
+                        VerticalAlignment="Top"
+                        Text="Rows"
+                        FontWeight="Bold"
+                        FontSize="16"/>
 
-        <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+                    <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-            <DataGrid
-                Name="RowsGrid"
-                AutoGenerateColumns="False"
-                CanUserAddRows="False"
-                HeadersVisibility="All"
-                LoadingRow="DataGrid_LoadingRow"
-                ItemsSource="{Binding SelectedGridConfig.Rows}"
-                Margin="0,0,5,0">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Row Definition" Width="*">
-                        <DataGridTextColumn.Binding>
-                            <Binding Path="Value"
-                                 UpdateSourceTrigger="PropertyChanged"
-                                 ValidatesOnDataErrors="True"
-                                 NotifyOnValidationError="True" />
-                        </DataGridTextColumn.Binding>
+                        <DataGrid
+                            Name="RowsGrid"
+                            AutoGenerateColumns="False"
+                            CanUserAddRows="False"
+                            HeadersVisibility="All"
+                            LoadingRow="DataGrid_LoadingRow"
+                            ItemsSource="{Binding SelectedGridConfig.Rows}"
+                            Margin="0,0,5,0">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Row Definition" Width="*">
+                                    <DataGridTextColumn.Binding>
+                                        <Binding Path="Value"
+                                             UpdateSourceTrigger="PropertyChanged"
+                                             ValidatesOnDataErrors="True"
+                                             NotifyOnValidationError="True" />
+                                    </DataGridTextColumn.Binding>
 
-                        <DataGridTextColumn.EditingElementStyle>
-                            <Style TargetType="TextBox">
-                                <Style.Triggers>
-                                    <Trigger Property="Validation.HasError" Value="True">
-                                        <Setter Property="ToolTip"
-                                            Value="{Binding RelativeSource={RelativeSource Self},
-                                            Path=(Validation.Errors)[0].ErrorContent}" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </DataGridTextColumn.EditingElementStyle>
-                    </DataGridTextColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="TextBox">
+                                            <Style.Triggers>
+                                                <Trigger Property="Validation.HasError" Value="True">
+                                                    <Setter Property="ToolTip"
+                                                        Value="{Binding RelativeSource={RelativeSource Self},
+                                                        Path=(Validation.Errors)[0].ErrorContent}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
 
-            <TextBlock
-                Grid.Row="1"
-                Margin="5,2,5,0"
-                Text="{Binding Items.Count, ElementName=RowsGrid, StringFormat='Total: {0}'}"/>
+                        <TextBlock
+                            Grid.Row="1"
+                            Margin="5,2,5,0"
+                            Text="{Binding Items.Count, ElementName=RowsGrid, StringFormat='Total: {0}'}"/>
 
-            <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Top">
-                <Button Content="Add" Height="30" Width="60" Margin="5" Command="{Binding AddGridRowCommand}" />
-                <Button Content="Remove" Height="30" Width="60" Margin="5" Command="{Binding RemoveGridRowCommand}" CommandParameter="{Binding SelectedItem, ElementName=RowsGrid}" />
-            </StackPanel>
-        </Grid>
+                        <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Top">
+                            <Button Content="Add" Height="30" Width="60" Margin="5" Command="{Binding AddGridRowCommand}" />
+                            <Button Content="Remove" Height="30" Width="60" Margin="5" Command="{Binding RemoveGridRowCommand}" CommandParameter="{Binding SelectedItem, ElementName=RowsGrid}" />
+                        </StackPanel>
+                    </Grid>
 
-        <!--Columns-->
-        <TextBlock
-            Grid.Row="6"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Margin="5"
-            VerticalAlignment="Top"
-            Text="Columns"
-            FontWeight="Bold"
-            FontSize="16"/>
+                    <!--Columns-->
+                    <TextBlock
+                        Grid.Row="6"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Margin="5"
+                        VerticalAlignment="Top"
+                        Text="Columns"
+                        FontWeight="Bold"
+                        FontSize="16"/>
 
-        <Grid Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+                    <Grid Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-            <DataGrid
-                Name="ColumnsGrid"
-                AutoGenerateColumns="False"
-                CanUserAddRows="False"
-                HeadersVisibility="All"
-                LoadingRow="DataGrid_LoadingRow"
-                ItemsSource="{Binding SelectedGridConfig.Columns}"
-                Margin="0,0,5,0">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Column Definition" Width="*">
-                        <DataGridTextColumn.Binding>
-                            <Binding Path="Value"
-                                 UpdateSourceTrigger="PropertyChanged"
-                                 ValidatesOnDataErrors="True"
-                                 NotifyOnValidationError="True" />
-                        </DataGridTextColumn.Binding>
+                        <DataGrid
+                            Name="ColumnsGrid"
+                            AutoGenerateColumns="False"
+                            CanUserAddRows="False"
+                            HeadersVisibility="All"
+                            LoadingRow="DataGrid_LoadingRow"
+                            ItemsSource="{Binding SelectedGridConfig.Columns}"
+                            Margin="0,0,5,0">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Column Definition" Width="*">
+                                    <DataGridTextColumn.Binding>
+                                        <Binding Path="Value"
+                                             UpdateSourceTrigger="PropertyChanged"
+                                             ValidatesOnDataErrors="True"
+                                             NotifyOnValidationError="True" />
+                                    </DataGridTextColumn.Binding>
 
-                        <DataGridTextColumn.EditingElementStyle>
-                            <Style TargetType="TextBox">
-                                <Style.Triggers>
-                                    <Trigger Property="Validation.HasError" Value="True">
-                                        <Setter Property="ToolTip"
-                                            Value="{Binding RelativeSource={RelativeSource Self},
-                                            Path=(Validation.Errors)[0].ErrorContent}" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </DataGridTextColumn.EditingElementStyle>
-                    </DataGridTextColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="TextBox">
+                                            <Style.Triggers>
+                                                <Trigger Property="Validation.HasError" Value="True">
+                                                    <Setter Property="ToolTip"
+                                                        Value="{Binding RelativeSource={RelativeSource Self},
+                                                        Path=(Validation.Errors)[0].ErrorContent}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
 
-            <TextBlock
-                Grid.Row="1"
-                Margin="5,2,5,0"
-                Text="{Binding Items.Count, ElementName=ColumnsGrid, StringFormat='Total: {0}'}"/>
+                        <TextBlock
+                            Grid.Row="1"
+                            Margin="5,2,5,0"
+                            Text="{Binding Items.Count, ElementName=ColumnsGrid, StringFormat='Total: {0}'}"/>
 
-            <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Top">
-                <Button Content="Add" Height="30" Width="60" Margin="5" Command="{Binding AddGridColumnCommand}" />
-                <Button Content="Remove" Height="30" Width="60" Margin="5" Command="{Binding RemoveGridColumnCommand}" CommandParameter="{Binding SelectedItem, ElementName=ColumnsGrid}" />
-            </StackPanel>
-        </Grid>
+                        <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Top">
+                            <Button Content="Add" Height="30" Width="60" Margin="5" Command="{Binding AddGridColumnCommand}" />
+                            <Button Content="Remove" Height="30" Width="60" Margin="5" Command="{Binding RemoveGridColumnCommand}" CommandParameter="{Binding SelectedItem, ElementName=ColumnsGrid}" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Common">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*" MinWidth="150"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--Height-->
+                    <TextBlock
+                        Grid.Row="0" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Height" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="0" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedGridConfig.Height, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--Width-->
+                    <TextBlock
+                        Grid.Row="1" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Width" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="1" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedGridConfig.Width, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--HorizontalAlignment-->
+                    <TextBlock
+                        Grid.Row="2" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Center"
+                        Text="Horizontal Alignment" FontWeight="Bold" FontSize="16"/>
+                    <ComboBox
+                        Grid.Row="2" Grid.Column="1" Margin="5"
+                        SelectedItem="{Binding SelectedGridConfig.HorizontalAlignment, UpdateSourceTrigger=PropertyChanged}">
+                        <sys:String>(Default)</sys:String>
+                        <sys:String>Left</sys:String>
+                        <sys:String>Center</sys:String>
+                        <sys:String>Right</sys:String>
+                        <sys:String>Stretch</sys:String>
+                    </ComboBox>
+
+                    <!--VerticalAlignment-->
+                    <TextBlock
+                        Grid.Row="3" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Center"
+                        Text="Vertical Alignment" FontWeight="Bold" FontSize="16"/>
+                    <ComboBox
+                        Grid.Row="3" Grid.Column="1" Margin="5"
+                        SelectedItem="{Binding SelectedGridConfig.VerticalAlignment, UpdateSourceTrigger=PropertyChanged}">
+                        <sys:String>(Default)</sys:String>
+                        <sys:String>Top</sys:String>
+                        <sys:String>Center</sys:String>
+                        <sys:String>Bottom</sys:String>
+                        <sys:String>Stretch</sys:String>
+                    </ComboBox>
+
+                    <!--ToolTip-->
+                    <TextBlock
+                        Grid.Row="4" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Tooltip" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="4" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedGridConfig.ToolTip, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </UserControl>

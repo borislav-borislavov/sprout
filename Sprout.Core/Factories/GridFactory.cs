@@ -37,6 +37,29 @@ namespace Sprout.Core.Factories
                 }
             }
 
+            if (gridConfig.Height.HasValue)
+                grid.Height = gridConfig.Height.Value;
+
+            if (gridConfig.Width.HasValue)
+                grid.Width = gridConfig.Width.Value;
+
+            if (!string.IsNullOrEmpty(gridConfig.HorizontalAlignment) &&
+                gridConfig.HorizontalAlignment != "(Default)" &&
+                Enum.TryParse<HorizontalAlignment>(gridConfig.HorizontalAlignment, out var hAlign))
+            {
+                grid.HorizontalAlignment = hAlign;
+            }
+
+            if (!string.IsNullOrEmpty(gridConfig.VerticalAlignment) &&
+                gridConfig.VerticalAlignment != "(Default)" &&
+                Enum.TryParse<VerticalAlignment>(gridConfig.VerticalAlignment, out var vAlign))
+            {
+                grid.VerticalAlignment = vAlign;
+            }
+
+            if (!string.IsNullOrEmpty(gridConfig.ToolTip))
+                grid.ToolTip = gridConfig.ToolTip;
+
             foreach (var colSize in gridConfig.Columns)
             {
                 var colDef = new ColumnDefinition { Width = ParseGridLength(colSize.Value) };

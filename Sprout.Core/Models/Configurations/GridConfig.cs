@@ -19,6 +19,16 @@ namespace Sprout.Core.Models.Configurations
 
         public string Margin { get; set; }
 
+        public double? Height { get; set; }
+
+        public double? Width { get; set; }
+
+        public string HorizontalAlignment { get; set; }
+
+        public string VerticalAlignment { get; set; }
+
+        public string ToolTip { get; set; }
+
         public ObservableCollection<SproutControlConfig> Children { get; set; } = [];
     }
 }
