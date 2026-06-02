@@ -3,7 +3,10 @@ using CommunityToolkit.Mvvm.Input;
 using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.UIStates;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows.Data;
 
 namespace Sprout.Core.ViewModels
 {
@@ -17,8 +20,43 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private ColumnSettingItemVM _selectedColumn;
 
+        private string _searchText = string.Empty;
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                if (SetProperty(ref _searchText, value))
+                {
+                    var previous = SelectedColumn;
+                    FilteredColumns?.Refresh();
+                    if (previous != null && FilteredColumns?.Contains(previous) == true)
+                        SelectedColumn = previous;
+                }
+            }
+        }
+
+        [RelayCommand]
+        private void ClearSearch() => SearchText = string.Empty;
+
+        public ICollectionView FilteredColumns { get; private set; }
+
         [ObservableProperty]
         private int _frozenColumnCount;
+
+        private bool? _allColumnsVisible = true;
+        public bool? AllColumnsVisible
+        {
+            get => _allColumnsVisible;
+            set
+            {
+                if (SetProperty(ref _allColumnsVisible, value) && value.HasValue)
+                {
+                    foreach (var column in Columns)
+                        column.IsVisible = value.Value;
+                }
+            }
+        }
 
         public bool IsSaved { get; private set; }
 
@@ -37,18 +75,59 @@ namespace Sprout.Core.ViewModels
 
         private void LoadLayout(SproutGridColumnLayout layout)
         {
+            if (Columns != null)
+                Columns.CollectionChanged -= OnColumnsCollectionChanged;
+
             Columns.Clear();
 
             foreach (var column in layout.Columns)
             {
-                Columns.Add(new ColumnSettingItemVM
+                var item = new ColumnSettingItemVM
                 {
                     Key = column.Key,
                     IsVisible = column.IsVisible
-                });
+                };
+                item.PropertyChanged += OnColumnItemPropertyChanged;
+                Columns.Add(item);
             }
 
+            Columns.CollectionChanged += OnColumnsCollectionChanged;
             FrozenColumnCount = layout.FrozenColumnCount;
+
+            FilteredColumns = CollectionViewSource.GetDefaultView(Columns);
+            FilteredColumns.Filter = o => o is ColumnSettingItemVM item &&
+                (string.IsNullOrWhiteSpace(_searchText) ||
+                 item.Key.Contains(_searchText, System.StringComparison.OrdinalIgnoreCase));
+            OnPropertyChanged(nameof(FilteredColumns));
+
+            RefreshAllColumnsVisible();
+        }
+
+        private void OnColumnsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+                foreach (ColumnSettingItemVM item in e.OldItems)
+                    item.PropertyChanged -= OnColumnItemPropertyChanged;
+
+            if (e.NewItems != null)
+                foreach (ColumnSettingItemVM item in e.NewItems)
+                    item.PropertyChanged += OnColumnItemPropertyChanged;
+
+            RefreshAllColumnsVisible();
+        }
+
+        private void OnColumnItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ColumnSettingItemVM.IsVisible))
+                RefreshAllColumnsVisible();
+        }
+
+        private void RefreshAllColumnsVisible()
+        {
+            bool allChecked = Columns.All(c => c.IsVisible);
+            bool allUnchecked = Columns.All(c => !c.IsVisible);
+            _allColumnsVisible = allChecked ? true : allUnchecked ? false : null;
+            OnPropertyChanged(nameof(AllColumnsVisible));
         }
 
         [RelayCommand]
