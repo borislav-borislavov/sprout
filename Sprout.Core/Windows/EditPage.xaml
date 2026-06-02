@@ -141,6 +141,30 @@
                             FontSize="25"
                             Text="&#xE74D;" />
                 </Button>
+
+                <Button
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ToolTip="Move Down"
+                    Command="{Binding MoveDownCommand}"
+                    Margin="5">
+                    <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="25"
+                            Text="&#xE74B;" />
+                </Button>
+
+                <Button
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ToolTip="Move Up"
+                    Command="{Binding MoveUpCommand}"
+                    Margin="5">
+                    <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="25"
+                            Text="&#xE74A;" />
+                </Button>
             </StackPanel>
 
         </Grid>

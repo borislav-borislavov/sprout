@@ -190,6 +190,48 @@ namespace Sprout.Core.ViewModels
         }
 
         [RelayCommand]
+        private void MoveUp()
+        {
+            try
+            {
+                if (SelectedNode == null) return;
+
+                var parent = FindParent(Controls, SelectedNode);
+                if (parent == null) return;
+
+                var index = parent.Children.IndexOf(SelectedNode);
+                if (index <= 0) return;
+
+                parent.Children.Move(index, index - 1);
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError(ex.Message);
+            }
+        }
+
+        [RelayCommand]
+        private void MoveDown()
+        {
+            try
+            {
+                if (SelectedNode == null) return;
+
+                var parent = FindParent(Controls, SelectedNode);
+                if (parent == null) return;
+
+                var index = parent.Children.IndexOf(SelectedNode);
+                if (index < 0 || index >= parent.Children.Count - 1) return;
+
+                parent.Children.Move(index, index + 1);
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError(ex.Message);
+            }
+        }
+
+        [RelayCommand]
         private void MoveToParent(GridConfig newParent)
         {
             try
