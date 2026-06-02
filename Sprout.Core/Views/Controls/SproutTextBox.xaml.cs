@@ -28,6 +28,20 @@ namespace Sprout.Core.Views.Controls
         public SproutTextBox()
         {
             InitializeComponent();
+            textBox.TextChanged += (s, e) => UpdatePlaceholderVisibility();
+        }
+
+        internal void SetPlaceholder(string placeholder)
+        {
+            lblPlaceholder.Text = placeholder;
+            UpdatePlaceholderVisibility();
+        }
+
+        private void UpdatePlaceholderVisibility()
+        {
+            lblPlaceholder.Visibility = string.IsNullOrEmpty(textBox.Text)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
     }
 }

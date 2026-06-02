@@ -26,5 +26,14 @@
             VerticalAlignment="Top"
             BorderThickness="0.8"
             BorderBrush="DarkSlateGray"/>
+
+        <TextBlock
+            x:Name="lblPlaceholder"
+            Grid.Row="1"
+            VerticalAlignment="Top"
+            Margin="4,2,0,0"
+            Foreground="Gray"
+            IsHitTestVisible="False"
+            Visibility="Collapsed"/>
     </Grid>
 </UserControl>

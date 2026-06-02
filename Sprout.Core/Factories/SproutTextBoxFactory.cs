@@ -47,6 +47,11 @@ namespace Sprout.Core.Factories
                 }
             }
 
+            if (!string.IsNullOrEmpty(config.Placeholder))
+            {
+                sproutTextBox.SetPlaceholder(config.Placeholder);
+            }
+
             if (config.MultiLine)
             {
                 sproutTextBox.textBox.TextWrapping = System.Windows.TextWrapping.Wrap;
