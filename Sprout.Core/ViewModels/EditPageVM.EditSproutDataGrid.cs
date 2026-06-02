@@ -255,7 +255,7 @@ namespace Sprout.Core.ViewModels
                         {
                             SelectedDataGrid.Columns.Clear();
                             _dialogService.ShowMessage(
-                                $"Column '{invalidColumn.ColumnName}' contains reserved characters. Use the Header property to provide a display name and alias the column in your query.",
+                                $"Column '{invalidColumn.ColumnName}' contains reserved characters '.', '/', '[', ']', '(', ')'. Use the Header property to provide a display name and alias the column in your query.",
                                 "Error", DialogButton.OK, DialogImage.Error);
                             return;
                         }
@@ -265,6 +265,9 @@ namespace Sprout.Core.ViewModels
                             var matchingCol = SelectedDataGrid.Columns
                                 .FirstOrDefault(c => string.Equals(c.BindingPath, column.ColumnName, StringComparison.OrdinalIgnoreCase));
 
+                            //this is here in order to append a new column easily
+                            //but as a side effect if the query has duplicate columns it will ommit them
+                            //luckily the issue will be caught when you select the data
                             if (matchingCol == null)
                             {
                                 SelectedDataGrid.Columns.Add(new SproutDataGridColumnConfig
@@ -335,7 +338,7 @@ namespace Sprout.Core.ViewModels
                             {
                                 SelectedDataGrid.Columns.Clear();
                                 _dialogService.ShowMessage(
-                                    $"Column '{invalidColumn.ColumnName}' contains reserved characters. Use the Header property to provide a display name and alias the column in your query.",
+                                    $"Column '{invalidColumn.ColumnName}' contains reserved characters '.', '/', '[', ']', '(', ')'. Use the Header property to provide a display name and alias the column in your query.",
                                     "Error", DialogButton.OK, DialogImage.Error);
                                 return;
                             }
