@@ -57,7 +57,9 @@ namespace Sprout.Core.ViewModels
                     NewControl = new SproutDataGridConfig()
                     {
                         Name = ControlName,
-                        Columns = []
+                        Columns = [],
+                        RowSpan = 10,
+                        ColumnSpan = 10
                     };
                     break;
                 case SproutControlType.ComboBox:
