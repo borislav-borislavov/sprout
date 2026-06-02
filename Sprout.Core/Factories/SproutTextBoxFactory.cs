@@ -56,6 +56,25 @@ namespace Sprout.Core.Factories
                 sproutTextBox.textBox.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             }
 
+            if (!string.IsNullOrEmpty(config.HorizontalAlignment) &&
+                config.HorizontalAlignment != "(Default)" &&
+                Enum.TryParse<HorizontalAlignment>(config.HorizontalAlignment, out var hAlign))
+            {
+                sproutTextBox.HorizontalAlignment = hAlign;
+            }
+
+            if (!string.IsNullOrEmpty(config.VerticalAlignment) &&
+                config.VerticalAlignment != "(Default)" &&
+                Enum.TryParse<VerticalAlignment>(config.VerticalAlignment, out var vAlign))
+            {
+                sproutTextBox.VerticalAlignment = vAlign;
+            }
+
+            if (!string.IsNullOrEmpty(config.ToolTip))
+            {
+                sproutTextBox.ToolTip = config.ToolTip;
+            }
+
             AddControl(sproutTextBox, controls);
 
             SetPositionInGrid(sproutTextBox, config);

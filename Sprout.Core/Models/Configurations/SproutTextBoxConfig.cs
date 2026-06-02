@@ -24,5 +24,11 @@ namespace Sprout.Core.Models.Configurations
         public string Binding { get; set; }
 
         public bool MultiLine { get; set; }
+
+        public string HorizontalAlignment { get; set; }
+
+        public string VerticalAlignment { get; set; }
+
+        public string ToolTip { get; set; }
     }
 }
