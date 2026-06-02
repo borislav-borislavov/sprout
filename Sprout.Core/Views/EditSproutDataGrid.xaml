@@ -22,127 +22,218 @@
         </ObjectDataProvider>
     </UserControl.Resources>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <TabControl>
+            <TabItem Header="General">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Add"
+                                Height="35"
+                                Width="50"
+                                Margin="5"
+                                Command="{Binding AddColumnCommand}"
+                                VerticalAlignment="Top"/>
 
-        <StackPanel Orientation="Horizontal">
-            <Button Content="Add"
-                    Height="35"
-                    Width="50"
-                    Margin="5"
-                    Command="{Binding AddColumnCommand}"
-                    VerticalAlignment="Top"/>
+                        <Button Content="Remove"
+                                Height="35"
+                                Width="50"
+                                Margin="5"
+                                Command="{Binding DeleteColumnCommand}"
+                                VerticalAlignment="Top"/>
 
-            <Button Content="Remove"
-                    Height="35"
-                    Width="50"
-                    Margin="5"
-                    Command="{Binding DeleteColumnCommand}"
-                    VerticalAlignment="Top"/>
+                        <Button Content="CompleteColumns"
+                                Height="35"
+                                Width="110"
+                                Margin="5"
+                                Command="{Binding CompleteColumnsCommand}"
+                                VerticalAlignment="Top"/>
 
-            <Button Content="CompleteColumns"
-                    Height="35"
-                    Width="110"
-                    Margin="5"
-                    Command="{Binding CompleteColumnsCommand}"
-                    VerticalAlignment="Top"/>
+                        <Button Content="Up"
+                                Height="35"
+                                Width="50"
+                                Margin="5"
+                                Command="{Binding MoveColumnUpCommand}"
+                                VerticalAlignment="Top"/>
 
-            <Button Content="Up"
-                    Height="35"
-                    Width="50"
-                    Margin="5"
-                    Command="{Binding MoveColumnUpCommand}"
-                    VerticalAlignment="Top"/>
+                        <Button Content="Down"
+                                Height="35"
+                                Width="50"
+                                Margin="5"
+                                Command="{Binding MoveColumnDownCommand}"
+                                VerticalAlignment="Top"/>
 
-            <Button Content="Down"
-                    Height="35"
-                    Width="50"
-                    Margin="5"
-                    Command="{Binding MoveColumnDownCommand}"
-                    VerticalAlignment="Top"/>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Available Views" Margin="5"/>
+                            <ComboBox Name="AvailableViews"
+                                      ItemsSource="{Binding NonMenuPages}"
+                                      DisplayMemberPath="Title"
+                                      SelectedValuePath="ID"
+                                      SelectedValue="{Binding SelectedDataGrid.ItemDisplayPage, Mode=TwoWay}"/>
+                        </StackPanel>
 
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="Available Views" Margin="5"/>
-                <ComboBox Name="AvailableViews"
-                          ItemsSource="{Binding NonMenuPages}"
-                          DisplayMemberPath="Title"
-                          SelectedValuePath="ID"
-                          SelectedValue="{Binding SelectedDataGrid.ItemDisplayPage, Mode=TwoWay}"
-                          />
-            </StackPanel>
+                        <StackPanel Orientation="Vertical" Margin="5,0,0,0">
+                            <TextBlock Text="Row Details items per row" Margin="0,0,0,2"/>
+                            <TextBox Width="60"
+                                     Text="{Binding SelectedDataGrid.RowDetailsItemsPerRow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     VerticalContentAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
 
-            <StackPanel Orientation="Vertical" Margin="5,0,0,0">
-                <TextBlock Text="Row Details items per row" Margin="0,0,0,2"/>
-                <TextBox Width="60"
-                         Text="{Binding SelectedDataGrid.RowDetailsItemsPerRow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         VerticalContentAlignment="Center"/>
-            </StackPanel>
-        </StackPanel>
-        
-        <DataGrid
-            Grid.Row="1"
-            Margin="5"
-            AutoGenerateColumns="False"
-            CanUserAddRows="False"
-            SelectedItem="{Binding SelectedColumn}"
-            ItemsSource="{Binding SelectedDataGrid.Columns}">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Header" Binding="{Binding Header, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
-                <DataGridTextColumn Header="Binding Path" Binding="{Binding BindingPath, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
-                <DataGridComboBoxColumn Header="Type"
-                                        SelectedItemBinding="{Binding ColumnType, UpdateSourceTrigger=PropertyChanged}"
-                                        ItemsSource="{Binding Source={StaticResource ColumnTypeValues}}"
-                                        Width="80"/>
-                <DataGridCheckBoxColumn Header="Read Only" Binding="{Binding IsReadOnly, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
-                <DataGridCheckBoxColumn Header="Row Details" Binding="{Binding ShowInRowDetails, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
-            </DataGrid.Columns>
-        </DataGrid>
-
-        <!-- ComboBox Column Configuration Panel -->
-        <Expander
-            Grid.Row="2"
-            Header="ComboBox Column Settings"
-            Margin="5"
-            IsExpanded="True"
-            Visibility="{Binding IsComboColumnSelected, Converter={StaticResource BoolToVis}}">
-            <Grid Margin="5">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,5">
-                    <Label Content="Display Column:" Width="110" VerticalAlignment="Center"/>
-                    <TextBox Width="200"
-                             Text="{Binding SelectedColumn.DisplayColumn, UpdateSourceTrigger=PropertyChanged}"/>
-                    <Label Content="Value Column:" Width="100" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                    <TextBox Width="200"
-                             Text="{Binding SelectedColumn.ValueColumn, UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-
-
-                <Button Content="Edit Data Adapter"
+                    <DataGrid
                         Grid.Row="1"
-                        HorizontalAlignment="Left"
-                        Margin="0,0,0,5"
-                        Padding="10,3"
-                        Command="{Binding InitializeComboAdapterCommand}"/>
+                        Margin="5"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        SelectedItem="{Binding SelectedColumn}"
+                        ItemsSource="{Binding SelectedDataGrid.Columns}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Header" Binding="{Binding Header, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
+                            <DataGridTextColumn Header="Binding Path" Binding="{Binding BindingPath, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
+                            <DataGridComboBoxColumn Header="Type"
+                                                    SelectedItemBinding="{Binding ColumnType, UpdateSourceTrigger=PropertyChanged}"
+                                                    ItemsSource="{Binding Source={StaticResource ColumnTypeValues}}"
+                                                    Width="80"/>
+                            <DataGridCheckBoxColumn Header="Read Only" Binding="{Binding IsReadOnly, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
+                            <DataGridCheckBoxColumn Header="Row Details" Binding="{Binding ShowInRowDetails, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
 
-                <Grid Grid.Row="2">
-                    <Grid.Resources>
-                        <DataTemplate DataType="{x:Type viewModels:SqlServerReadOnlyDataAdapterVM}">
-                            <local:SqlServerReadOnlyDataAdapterView />
-                        </DataTemplate>
-                    </Grid.Resources>
+                    <!-- ComboBox Column Configuration Panel -->
+                    <Expander
+                        Grid.Row="2"
+                        Header="ComboBox Column Settings"
+                        Margin="5"
+                        IsExpanded="True"
+                        Visibility="{Binding IsComboColumnSelected, Converter={StaticResource BoolToVis}}">
+                        <Grid Margin="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
-                    <ContentControl Content="{Binding SelectedColumnAdapterViewModel}" />
+                            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,5">
+                                <Label Content="Display Column:" Width="110" VerticalAlignment="Center"/>
+                                <TextBox Width="200"
+                                         Text="{Binding SelectedColumn.DisplayColumn, UpdateSourceTrigger=PropertyChanged}"/>
+                                <Label Content="Value Column:" Width="100" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                <TextBox Width="200"
+                                         Text="{Binding SelectedColumn.ValueColumn, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+
+                            <Button Content="Edit Data Adapter"
+                                    Grid.Row="1"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,0,0,5"
+                                    Padding="10,3"
+                                    Command="{Binding InitializeComboAdapterCommand}"/>
+
+                            <Grid Grid.Row="2">
+                                <Grid.Resources>
+                                    <DataTemplate DataType="{x:Type viewModels:SqlServerReadOnlyDataAdapterVM}">
+                                        <local:SqlServerReadOnlyDataAdapterView />
+                                    </DataTemplate>
+                                </Grid.Resources>
+
+                                <ContentControl Content="{Binding SelectedColumnAdapterViewModel}" />
+                            </Grid>
+                        </Grid>
+                    </Expander>
                 </Grid>
-            </Grid>
-        </Expander>
+            </TabItem>
+
+            <TabItem Header="Common">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*" MinWidth="150"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--Height-->
+                    <TextBlock
+                        Grid.Row="0" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Height" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="0" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedDataGrid.Height, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--Width-->
+                    <TextBlock
+                        Grid.Row="1" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Width" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="1" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedDataGrid.Width, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--Margin-->
+                    <TextBlock
+                        Grid.Row="2" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Margin" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="2" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedDataGrid.Margin, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--HorizontalAlignment-->
+                    <TextBlock
+                        Grid.Row="3" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Center"
+                        Text="Horizontal Alignment" FontWeight="Bold" FontSize="16"/>
+                    <ComboBox
+                        Grid.Row="3" Grid.Column="1" Margin="5"
+                        SelectedItem="{Binding SelectedDataGrid.HorizontalAlignment, UpdateSourceTrigger=PropertyChanged}">
+                        <sys:String>(Default)</sys:String>
+                        <sys:String>Left</sys:String>
+                        <sys:String>Center</sys:String>
+                        <sys:String>Right</sys:String>
+                        <sys:String>Stretch</sys:String>
+                    </ComboBox>
+
+                    <!--VerticalAlignment-->
+                    <TextBlock
+                        Grid.Row="4" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Center"
+                        Text="Vertical Alignment" FontWeight="Bold" FontSize="16"/>
+                    <ComboBox
+                        Grid.Row="4" Grid.Column="1" Margin="5"
+                        SelectedItem="{Binding SelectedDataGrid.VerticalAlignment, UpdateSourceTrigger=PropertyChanged}">
+                        <sys:String>(Default)</sys:String>
+                        <sys:String>Top</sys:String>
+                        <sys:String>Center</sys:String>
+                        <sys:String>Bottom</sys:String>
+                        <sys:String>Stretch</sys:String>
+                    </ComboBox>
+
+                    <!--ToolTip-->
+                    <TextBlock
+                        Grid.Row="5" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Tooltip" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="5" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedDataGrid.ToolTip, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </UserControl>

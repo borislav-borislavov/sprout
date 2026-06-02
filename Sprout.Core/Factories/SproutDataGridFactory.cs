@@ -93,6 +93,35 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutDataGrid, sproutGridConfig);
 
+            if (sproutGridConfig.Height.HasValue)
+                sproutDataGrid.dataGrid.Height = sproutGridConfig.Height.Value;
+
+            if (sproutGridConfig.Width.HasValue)
+                sproutDataGrid.dataGrid.Width = sproutGridConfig.Width.Value;
+
+            if (!string.IsNullOrWhiteSpace(sproutGridConfig.Margin))
+            {
+                if (new ThicknessConverter().ConvertFromString(sproutGridConfig.Margin) is Thickness margin)
+                    sproutDataGrid.Margin = margin;
+            }
+
+            if (!string.IsNullOrEmpty(sproutGridConfig.HorizontalAlignment) &&
+                sproutGridConfig.HorizontalAlignment != "(Default)" &&
+                Enum.TryParse<HorizontalAlignment>(sproutGridConfig.HorizontalAlignment, out var hAlign))
+            {
+                sproutDataGrid.HorizontalAlignment = hAlign;
+            }
+
+            if (!string.IsNullOrEmpty(sproutGridConfig.VerticalAlignment) &&
+                sproutGridConfig.VerticalAlignment != "(Default)" &&
+                Enum.TryParse<VerticalAlignment>(sproutGridConfig.VerticalAlignment, out var vAlign))
+            {
+                sproutDataGrid.VerticalAlignment = vAlign;
+            }
+
+            if (!string.IsNullOrEmpty(sproutGridConfig.ToolTip))
+                sproutDataGrid.ToolTip = sproutGridConfig.ToolTip;
+
             var gridUIState = new SproutGridUIState();
             gridUIState.SetUpState(sproutDataGrid);
 
