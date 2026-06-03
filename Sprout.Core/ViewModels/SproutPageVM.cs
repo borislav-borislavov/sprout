@@ -189,8 +189,8 @@ namespace Sprout.Core.ViewModels
 
                 foreach (var kvp in DataProviders)
                 {
-                    //experimental optimization to not run queries which depend on other values for nothing
-                    if (kvp.Value.Dependencies.Count() > 0)
+                    if (SproutPageUIState.Data == null && //detail pages should load initially if they have data
+                        kvp.Value.Dependencies.Count() > 0) //experimental optimization to not run queries which depend on other values for nothing
                     {
                         continue;
                     }
