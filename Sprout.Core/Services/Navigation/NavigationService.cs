@@ -64,5 +64,11 @@ namespace Sprout.Core.Services.Navigation
             (mdw.DataContext as ManageDataAdapterVM).AdapterConfigHost = dataAdapterConfigHost;
             mdw.ShowDialog();
         }
+
+        public void ShowIconBrowser()
+        {
+            var window = _serviceProvider.GetRequiredService<IconBrowserWindow>();
+            window.ShowDialog();
+        }
     }
 }

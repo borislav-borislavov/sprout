@@ -198,5 +198,11 @@ namespace Sprout.Core.ViewModels
                 LoadMenuPages();
             }
         }
+
+        [RelayCommand]
+        private void OpenIconBrowser()
+        {
+            _navigationService.ShowIconBrowser();
+        }
     }
 }

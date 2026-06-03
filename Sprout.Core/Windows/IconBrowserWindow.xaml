@@ -1,0 +1,265 @@
+<Window x:Class="Sprout.Core.Windows.IconBrowserWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:conv="clr-namespace:Sprout.Core.Converters"
+        xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance viewModels:IconBrowserVM}"
+        Title="Icon Browser" Height="620" Width="900"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <FontFamily x:Key="FaSolid">pack://application:,,,/Sprout.Core;component/Fonts/fa-solid-900.otf#Font Awesome 7 Free</FontFamily>
+        <FontFamily x:Key="FaRegular">pack://application:,,,/Sprout.Core;component/Fonts/fa-regular-400.otf#Font Awesome 7 Free</FontFamily>
+        <FontFamily x:Key="FaBrands">pack://application:,,,/Sprout.Core;component/Fonts/fa-brands-400.otf#Font Awesome 7 Brands</FontFamily>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <conv:InverseBooleanConverter x:Key="InverseBool"/>
+        <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis"/>
+
+        <!-- Icon cell template reused inside each row -->
+        <DataTemplate x:Key="IconCellTemplate" DataType="{x:Type viewModels:IconItemVM}">
+            <Button Command="{Binding DataContext.SelectIconCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                    CommandParameter="{Binding}"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Padding="0"
+                    Cursor="Hand">
+                <Border Margin="4" Padding="6"
+                        CornerRadius="6"
+                        ToolTip="{Binding DisplayLabel}">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="BorderThickness" Value="1"/>
+                            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                            <Setter Property="Background" Value="#FAFAFA"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="BorderBrush" Value="#0078D4"/>
+                                    <Setter Property="Background" Value="#EBF4FF"/>
+                                    <Setter Property="BorderThickness" Value="2"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Glyph}"
+                                   FontSize="28"
+                                   HorizontalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Style}" Value="Solid">
+                                            <Setter Property="FontFamily" Value="{StaticResource FaSolid}"/>
+                                            <Setter Property="FontWeight" Value="Black"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Style}" Value="Regular">
+                                            <Setter Property="FontFamily" Value="{StaticResource FaRegular}"/>
+                                            <Setter Property="FontWeight" Value="Normal"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Style}" Value="Brands">
+                                            <Setter Property="FontFamily" Value="{StaticResource FaBrands}"/>
+                                            <Setter Property="FontWeight" Value="Normal"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock Text="{Binding Name}"
+                                   FontSize="9"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   Margin="0,4,0,0"
+                                   MaxWidth="110"/>
+                    </StackPanel>
+                </Border>
+            </Button>
+        </DataTemplate>
+    </Window.Resources>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Toolbar: category combo + search -->
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="160"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <ComboBox Grid.Column="0"
+                      Height="32"
+                      FontSize="13"
+                      VerticalContentAlignment="Center"
+                      IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBool}}"
+                      ItemsSource="{Binding Categories}"
+                      SelectedItem="{Binding SelectedCategory}"/>
+
+            <Grid Grid.Column="2">
+                <TextBox Height="32"
+                         FontSize="14"
+                         VerticalContentAlignment="Center"
+                         Padding="6,0"
+                         IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBool}}"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Text="Search icons..."
+                           Foreground="Gray"
+                           FontSize="14"
+                           VerticalAlignment="Center"
+                           Margin="8,0,0,0"
+                           IsHitTestVisible="False">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SearchText}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </Grid>
+
+        <!-- Loading overlay -->
+        <Grid Grid.Row="1"
+              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}"
+              Panel.ZIndex="10">
+            <TextBlock Text="Loading icons..."
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontSize="16"
+                       Foreground="Gray"/>
+        </Grid>
+
+        <!-- Icon grid: ListBox virtualizes over rows; each row has 6 cells -->
+        <ListBox Grid.Row="1"
+                 ItemsSource="{Binding IconRows}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.CanContentScroll="True"
+                 VirtualizingPanel.IsVirtualizing="True"
+                 VirtualizingPanel.VirtualizationMode="Recycling"
+                 VirtualizingPanel.ScrollUnit="Pixel"
+                 BorderThickness="0"
+                 Focusable="False"
+                 Visibility="{Binding IsLoading, Converter={StaticResource InverseBoolToVis}}">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="0"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Focusable" Value="False"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <!-- One row of up to 6 icons -->
+                    <ItemsControl ItemsSource="{Binding}"
+                                  ItemTemplate="{StaticResource IconCellTemplate}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Rows="1" Columns="6"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Selected icon detail bar -->
+        <Border Grid.Row="2"
+                Margin="0,8,0,0"
+                Padding="10,8"
+                CornerRadius="6"
+                BorderThickness="1" BorderBrush="#D0D0D0"
+                Background="#F5F5F5">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedIcon}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding XamlSnippet}" Value="">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Preview glyph -->
+                <TextBlock Grid.Column="0"
+                           Text="{Binding SelectedIcon.Glyph}"
+                           FontSize="32"
+                           VerticalAlignment="Center"
+                           Margin="0,0,12,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedIcon.Style}" Value="Solid">
+                                    <Setter Property="FontFamily" Value="{StaticResource FaSolid}"/>
+                                    <Setter Property="FontWeight" Value="Black"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedIcon.Style}" Value="Regular">
+                                    <Setter Property="FontFamily" Value="{StaticResource FaRegular}"/>
+                                    <Setter Property="FontWeight" Value="Normal"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedIcon.Style}" Value="Brands">
+                                    <Setter Property="FontFamily" Value="{StaticResource FaBrands}"/>
+                                    <Setter Property="FontWeight" Value="Normal"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <!-- Snippet text box -->
+                <TextBox Grid.Column="1"
+                         Text="{Binding XamlSnippet, Mode=OneWay}"
+                         IsReadOnly="True"
+                         FontFamily="Consolas"
+                         FontSize="12"
+                         VerticalAlignment="Center"
+                         BorderThickness="1"
+                         Padding="6,4"
+                         TextWrapping="NoWrap"/>
+
+                <!-- Copy button -->
+                <Button Grid.Column="2"
+                        Content="Copy"
+                        Margin="8,0,0,0"
+                        Padding="14,6"
+                        VerticalAlignment="Center"
+                        Command="{Binding CopySnippetCommand}"/>
+            </Grid>
+        </Border>
+
+        <!-- Status bar -->
+        <TextBlock Grid.Row="3" Margin="0,6,0,0" FontSize="12" Foreground="Gray">
+            <Run Text="{Binding TotalCount, Mode=OneWay}"/>
+            <Run Text="icons"/>
+        </TextBlock>
+    </Grid>
+</Window>
+

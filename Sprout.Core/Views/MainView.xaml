@@ -71,8 +71,12 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
                 <MenuItem Opacity="0.9" Header="Login" Command="{Binding EditLoginConfigCommand}"/>
             </MenuItem>
 
-            <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>
-            <MenuItem Header="Migrations" Command="{Binding OpenMigrationsCommand}"/>
+            <MenuItem Header="File">
+                <MenuItem Opacity="0.9" Header="Migrations" Command="{Binding OpenMigrationsCommand}"/>
+                <MenuItem Opacity="0.9" Header="Icon Browser" Command="{Binding OpenIconBrowserCommand}"/>
+                <Separator/>
+                <MenuItem Opacity="0.9" Header="Settings" Command="{Binding OpenSettingsCommand}"/>
+            </MenuItem>
         </Menu>
 
         <!--to remove blurryness of text i added UseLayoutRounding="True" SnapsToDevicePixels="True"-->
