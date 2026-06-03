@@ -208,6 +208,9 @@ namespace Sprout.Core.ViewModels
 
             if (string.IsNullOrWhiteSpace(query)) return;
 
+            query = query.Replace("{!whereFilter}", string.Empty, StringComparison.OrdinalIgnoreCase);
+            query = query.Replace("{!andFilter}", string.Empty, StringComparison.OrdinalIgnoreCase);
+
             var requestedParameters = ParameterParser.ParseQueryParameters(query);
             List<SqlParameter> sqlParams = [];
 
@@ -217,6 +220,12 @@ namespace Sprout.Core.ViewModels
                     continue;
 
                 var safeParamName = $"@{queryParam.Name.Replace(".", "_")}";
+
+                //if a variable is used multiple times in the query we only want to add it once to the parameters collection
+                if (sqlParams.Any(sp => sp.ParameterName == safeParamName))
+                {
+                    continue;
+                }
 
                 var param = new SqlParameter
                 {
@@ -310,11 +319,16 @@ namespace Sprout.Core.ViewModels
 
             if (string.IsNullOrWhiteSpace(query)) return;
 
+            query = query.Replace("{!whereFilter}", string.Empty, StringComparison.OrdinalIgnoreCase);
+            query = query.Replace("{!andFilter}", string.Empty, StringComparison.OrdinalIgnoreCase);
+
             var connectionString = adapterConfig.ConnectionString;
             if (string.IsNullOrEmpty(connectionString))
             {
                 connectionString = _configService.Load().Settings.DuckDbConnectionString;
             }
+
+            //TODO: Missing dependencies replace
 
             using (var conn = new DuckDBConnection(connectionString))
             using (var cmd = conn.CreateCommand())
