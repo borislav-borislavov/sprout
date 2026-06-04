@@ -1,1 +1,2 @@
-﻿ConnectionString = "Server=.;Database=DbName;Trusted_Connection=True;TrustServerCertificate=Yes",
+﻿Server=.;Database=DbName;Trusted_Connection=True;TrustServerCertificate=Yes
+Data Source=.;Database=DbName;Integrated Security=True;Pooling=False;TrustServerCertificate=True;Command Timeout=0
