@@ -1,0 +1,1 @@
+﻿ConnectionString = "Server=.;Database=DbName;Trusted_Connection=True;TrustServerCertificate=Yes",

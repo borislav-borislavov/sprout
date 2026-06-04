@@ -58,8 +58,6 @@ namespace Sprout.Core.ViewModels
                 {
                     AdapterConfigHost.DataAdapter = new SqlServerDataAdapterConfig
                     {
-                        //ConnectionString = "Server=.;Database=DbName;Trusted_Connection=True;TrustServerCertificate=Yes",
-
                         DataProvider = new SqlServerDataProviderConfig
                         {
                             Text = string.Empty
