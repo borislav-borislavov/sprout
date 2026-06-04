@@ -15,6 +15,9 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
+            <FontFamily x:Key="FaSolid">pack://application:,,,/Sprout.Core;component/Fonts/fa-solid-900.otf#Font Awesome 7 Free</FontFamily>
+            <FontFamily x:Key="FaRegular">pack://application:,,,/Sprout.Core;component/Fonts/fa-regular-400.otf#Font Awesome 7 Free</FontFamily>
+            <FontFamily x:Key="FaBrands">pack://application:,,,/Sprout.Core;component/Fonts/fa-brands-400.otf#Font Awesome 7 Brands</FontFamily>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -35,7 +38,7 @@
                         Click="btnFilters_Click"
                         Margin="2">
 
-                    <iconPacks:PackIconMaterialLight  Kind="Magnify"/>
+                    <TextBlock Text="&#xf002;" FontFamily="{StaticResource FaSolid}" FontWeight="Normal" FontSize="20"/>
                 </Button>
 
                 <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
@@ -48,7 +51,8 @@
                                      Converter={StaticResource BoolToVis}}"
                         HorizontalAlignment="Left"
                         Margin="2">
-                    <iconPacks:PackIconMaterialLight Kind="Plus" />
+                    
+                    <TextBlock Text="&#x2b;" FontFamily="{StaticResource FaSolid}" FontWeight="Normal" FontSize="20"/>
                 </Button>
 
                 <Button x:Name="btnSave"
@@ -57,7 +61,7 @@
                         Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
                         HorizontalAlignment="Left"
                         Margin="2">
-                    <iconPacks:PackIconMaterialLight Kind="ContentSave" />
+                    <TextBlock Text="&#xf0c7;" FontFamily="{StaticResource FaSolid}" FontWeight="Normal" FontSize="20"/>
                 </Button>
 
                 <Button x:Name="btnDelete"
@@ -68,7 +72,7 @@
                                         Converter={StaticResource BoolToVis}}"
                         HorizontalAlignment="Left"
                         Margin="2">
-                    <iconPacks:PackIconMaterialLight Kind="Delete" />
+                    <TextBlock Text="&#xf2ed;" FontFamily="{StaticResource FaRegular}" FontWeight="Normal" FontSize="20"/>
                 </Button>
 
                 <Button x:Name="btnRefresh"
@@ -76,7 +80,7 @@
                         Style="{StaticResource FlatRoundButtonStyle}"
                         HorizontalAlignment="Left"
                         Margin="2">
-                    <iconPacks:PackIconMaterialLight Kind="Refresh" />
+                    <TextBlock Text="&#xf0e2;" FontFamily="{StaticResource FaSolid}" FontWeight="Normal" FontSize="20"/>
                 </Button>
 
                 <Button x:Name="btnColumnSettings"
