@@ -1,14 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.VisualBasic;
 using Sprout.Core.Models.Configurations.DataGrid;
-using Sprout.Core.Views;
 using Sprout.Core.Views.Controls;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -27,6 +20,19 @@ namespace Sprout.Core.UIStates
         /// (visibility, order and frozen count) e.g. from the column settings dialog or when exporting.
         /// </summary>
         public SproutDataGrid Grid { get; private set; }
+
+        public string JsonData
+        {
+            get
+            {
+                if (Grid.dataGrid.ItemsSource is not DataView dv)
+                {
+                    return string.Empty;
+                }
+
+                return dv.Table.ToJson();
+            }
+        }
 
         /// <summary>
         /// Raised when the user changes the grid's column layout so it can be persisted by the page.

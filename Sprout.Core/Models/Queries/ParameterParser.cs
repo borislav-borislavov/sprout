@@ -25,7 +25,10 @@ namespace Sprout.Core.Models.Queries
                     Name = scope.TrimStart('@').TrimEnd('?', '!'),
                     IsMandatory = scope.EndsWith("!"),
                     RawPatameter = scope,
-                    IsFromUIState = nrNavigations > 1
+
+                    //Changed from 1 to 0 because RowParameters are accessed simply by their names
+                    //And now when I added SproutGridUIState.JsonData it was not fetching it properly (tried to get it from the DataRow)
+                    IsFromUIState = nrNavigations > 0
                 });
             }
 
