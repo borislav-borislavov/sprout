@@ -87,6 +87,7 @@ namespace Sprout.Core.ViewModels
                         var sqlAdapter = config.Login?.DataAdapter as SqlServerDataAdapterConfig
                             ?? new SqlServerDataAdapterConfig
                             {
+                                Name = "LoginDataAdapter",
                                 DataProvider = new SqlServerDataProviderConfig()
                             };
 
