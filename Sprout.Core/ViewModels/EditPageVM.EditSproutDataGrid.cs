@@ -2,23 +2,14 @@
 using CommunityToolkit.Mvvm.Input;
 using DuckDB.NET.Data;
 using Microsoft.Data.SqlClient;
-using Sprout.Core.Common;
+using Sprout.Core.Factories;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.Configurations.Duck;
-using Sprout.Core.Models.DataAdapters;
-using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.Dialog;
-using Sprout.Core.Services.SqlServer;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 #nullable disable
 
 namespace Sprout.Core.ViewModels
@@ -198,7 +189,7 @@ namespace Sprout.Core.ViewModels
                 connectionString = _configService.Load().Settings.SqlServerConnectionString;
             }
 
-            using (var conn = new SqlConnection(connectionString))
+            using (var conn = SqlServerConnectionFactory.Create(connectionString))
             using (var cmd = new SqlCommand(query, conn))
             {
                 try

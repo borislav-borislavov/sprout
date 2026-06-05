@@ -28,7 +28,7 @@ namespace Sprout.Core.Services.SqlServer
 
         public SqlServerDataService(SqlServerDataAdapter dataAdapter, UiStateRegistry uiStateRegistry, ISqlQueryLogger sqlQueryLogger = null)
         {
-            _connection = new SqlConnection(dataAdapter.ConnectionString);
+            _connection = SqlServerConnectionFactory.Create(dataAdapter.ConnectionString);
             _dataAdapter = dataAdapter;
             _dataProvider = dataAdapter.DataProvider as SqlServerDataProvider;
             UiStateRegistry = uiStateRegistry;

@@ -8,6 +8,7 @@ namespace Sprout.Core.Common
 {
     public static class Const
     {
+        public const string AppName = "Sprout";
         /// <summary>
         /// This is the keyword by which login information is fetched.
         /// Ex.: {@Login.User.UserID}

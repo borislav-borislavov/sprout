@@ -1,5 +1,6 @@
 using Dapper;
 using Microsoft.Data.SqlClient;
+using Sprout.Core.Factories;
 using System.Data;
 
 namespace Sprout.Core.Services.SqlServer
@@ -17,7 +18,7 @@ namespace Sprout.Core.Services.SqlServer
 
         public async Task OpenConnectionAsync()
         {
-            _connection = new SqlConnection(_connectionString);
+            _connection = SqlServerConnectionFactory.Create(_connectionString);
             await _connection.OpenAsync();
         }
 
