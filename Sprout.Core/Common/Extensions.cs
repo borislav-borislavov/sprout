@@ -27,6 +27,12 @@ namespace Sprout.Core.Common
                 if (colType == typeof(double)) //double type adds too many decimals and it doesn't reflect the actual value in the database
                     colType = typeof(decimal);
 
+                //Already added by DataTableFactory.Create()
+                if (colName == Const.BuiltInDataTableColumns._RowBackColor)
+                {
+                    continue;
+                }
+
                 dt.Columns.Add(colName, colType);
             }
         }
