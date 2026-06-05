@@ -30,7 +30,7 @@ namespace Sprout.Core.Models.GridActions
             _ownControlName = ownControlName;
         }
 
-        public List<ActionMessage> Messages => [];
+        public List<ActionMessage> Messages { get; } = [];
 
         public async Task Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
@@ -41,8 +41,6 @@ namespace Sprout.Core.Models.GridActions
                 //find a nice way to route logs to the screen
                 throw new NotImplementedException();
             }
-
-            List<ActionMessage> allMessages = [];
 
             using (var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry))
             {
@@ -64,7 +62,8 @@ namespace Sprout.Core.Models.GridActions
                     }
 
                     if (changeResult.Messages.Any())
-                        allMessages.AddRange(changeResult.Messages);
+                        Messages.AddRange(changeResult.Messages);
+
                 }
 
                 await dataService.ProvideData();
