@@ -19,8 +19,9 @@ namespace Sprout.Core.Services
     {
         public static QueryBuildResult Build(string queryTemplate, IDataProvider dataProvider, string parameterPrefix = "@")
         {
+            //A button with just an update action could not have a query
             if (string.IsNullOrWhiteSpace(queryTemplate))
-                throw new Exception("No query provided!");
+                return new QueryBuildResult();
 
             string queryText = queryTemplate;
             var parameters = new List<QueryBuildParameter>();
