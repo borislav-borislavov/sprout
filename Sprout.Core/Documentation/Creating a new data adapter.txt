@@ -1,0 +1,25 @@
+SomethingDataAdapterConfig : IDataAdapterConfig - Root configuration class
+
+SomethingDataProviderConfig : IDataProviderConfig - Child configuration class
+
+SomethingEditCommandConfig : IEditCommandConfig - Edit command configuration class
+
+SomethingDataProvider : ObservableObject, IDataProvider - Implementation of SomethingDataProviderConfig, holds the needed info for fetching data like references and filters
+
+SomethingDataAdapter : IDataAdapter - The materialized class, generated from the SomethingDataAdapterConfig
+
+SomethingEditCommand : IEditCommand - The materialized class, generated from the SomethingEditCommandConfig
+
+SomethingDbDataService : IDataService - Actual implementation of fetching and changing data. The real work is done here
+
+SomethingDataAdapterView.xaml - The view of the data adapter which will be used when you are configuring it (SomethingDataAdapterConfig and all its children) 
+
+QueryManager.xaml - Here it is decided which data adapter view to be displayed based on the type
+
+DataAdapterFactory - The factory which creates all data adapters
+
+DataServiceFactory - The factory which creates all data services
+
+EditPageVM - This is the view model of the EditPage. The EditPage is responsible well for editing the confugration of the whole page, including data adapters. Make sure to apply the changes needed to acomodate a new adapter.
+
+EditPAgeVM.EditSproutDataGrid.cs - Here mostly it is important to implement the complete columns for the specific adapter.

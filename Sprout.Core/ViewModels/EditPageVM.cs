@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Sprout.Core.Common;
 using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.Configurations.Api;
 using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.Configurations.Duck;
 using Sprout.Core.Models.Queries;
@@ -41,7 +42,7 @@ namespace Sprout.Core.ViewModels
         private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
 
-        public string[] AdapterTypes { get; set; } = ["SqlServer", "Duck"];
+        public string[] AdapterTypes { get; set; } = ["SqlServer", "Duck", "Api"];
 
         [ObservableProperty]
         private string _selectedAdapterType;
@@ -329,6 +330,11 @@ namespace Sprout.Core.ViewModels
                         SelectedAdapterType = "Duck";
                         SelectedAdapterViewModel = new DuckDataAdapterVM(duckDataAdapterConfig);
                     }
+                    else if (dataAdapterControlConfig.DataAdapter is ApiDataAdapterConfig apiDataAdapterConfig)
+                    {
+                        SelectedAdapterType = "Api";
+                        SelectedAdapterViewModel = new ApiDataAdapterVM(apiDataAdapterConfig);
+                    }
                     else
                     {
                         SelectedAdapterType = null;
@@ -383,6 +389,20 @@ namespace Sprout.Core.ViewModels
                         InsertCommand = new DuckEditCommandConfig(),
                         UpdateCommand = new DuckEditCommandConfig(),
                         DeleteCommand = new DuckEditCommandConfig(),
+                    };
+                }
+                else if (SelectedAdapterType == "Api")
+                {
+                    adapterControl.DataAdapter = new ApiDataAdapterConfig
+                    {
+                        DataProvider = new ApiDataProviderConfig
+                        {
+                            Text = string.Empty
+                        },
+
+                        InsertCommand = new ApiEditCommandConfig { Verb = HttpVerb.POST },
+                        UpdateCommand = new ApiEditCommandConfig { Verb = HttpVerb.PUT },
+                        DeleteCommand = new ApiEditCommandConfig { Verb = HttpVerb.DELETE },
                     };
                 }
                 else

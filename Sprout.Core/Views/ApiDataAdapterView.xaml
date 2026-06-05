@@ -1,0 +1,205 @@
+<UserControl x:Class="Sprout.Core.Views.ApiDataAdapterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModels="clr-namespace:Sprout.Core.ViewModels"
+             mc:Ignorable="d"
+             Background="#d0f0c0"
+             d:DataContext="{d:DesignInstance viewModels:ApiDataAdapterVM}"
+             d:DesignHeight="650" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+    <ScrollViewer>
+        <StackPanel>
+
+            <!-- ── Auth Settings ─────────────────────────────────── -->
+            <Expander Header="Authentication (optional)"
+                      IsExpanded="False"
+                      Margin="5">
+                <StackPanel Margin="10">
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,5">
+                        <Label Content="Auth URL:"
+                               ToolTip="POST to this URL to acquire a bearer token before data requests."
+                               HorizontalAlignment="Left"/>
+                        <TextBox MinWidth="400"
+                                 HorizontalAlignment="Left"
+                                 Text="{Binding Provider.AuthUrl, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,5">
+                        <Label Content="Auth Body (JSON):"
+                               ToolTip="JSON body template to POST to the Auth URL. Supports {placeholder} substitution."
+                               HorizontalAlignment="Left"/>
+                        <TextBox MinWidth="400"
+                                 MinHeight="80"
+                                 HorizontalAlignment="Left"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 Text="{Binding Provider.AuthBody, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Expander>
+
+            <!-- ── GET URL (Data Provider) ──────────────────────── -->
+            <Expander Header="GET URL (Data Provider)"
+                      IsExpanded="True"
+                      Margin="5">
+                <StackPanel Margin="10">
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,5">
+                        <Label Content="URL:"
+                               ToolTip="The URL for fetching data. Supports {dependency} placeholders. Filters are appended as query parameters."
+                               HorizontalAlignment="Left"/>
+                        <TextBox MinWidth="400"
+                                 HorizontalAlignment="Left"
+                                 Text="{Binding Provider.Text, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,5">
+                        <Label Content="Data Path:"
+                               ToolTip="Optional dot-notation or JSONPath to the results array (e.g. 'data.results' or '$.data.results'). Leave empty if the root is already an array."
+                               HorizontalAlignment="Left"/>
+                        <TextBox MinWidth="300"
+                                 HorizontalAlignment="Left"
+                                 Text="{Binding Provider.DataPath, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Expander>
+
+            <Expander Header="Insert Command"
+                      IsExpanded="False"
+                      Margin="5">
+                <StackPanel Margin="10">
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,5">
+                        <Label Content="URL:" HorizontalAlignment="Left"/>
+                        <TextBox MinWidth="400"
+                                 HorizontalAlignment="Left"
+                                 Text="{Binding DataAdapter.Insert.Text, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Label Content="HTTP Verb:" VerticalAlignment="Center" Width="80"/>
+                        <ComboBox ItemsSource="{Binding VerbOptions}"
+                                  SelectedItem="{Binding DataAdapter.Insert.Verb}"
+                                  Width="100"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,5">
+                        <Label Content="Body (optional):"
+                               ToolTip="JSON body template. Use {ColumnName} for DataRow values and {@Control.Property} for UI state values. Leave empty to auto-serialise all DataRow columns."
+                               HorizontalAlignment="Left"/>
+                        <TextBox MinWidth="400"
+                                 MinHeight="80"
+                                 HorizontalAlignment="Left"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 FontFamily="Consolas"
+                                 Text="{Binding DataAdapter.Insert.Body, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <CheckBox Content="Show response as message"
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding DataAdapter.Insert.ShowResponseAsMessage, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,5"
+                                Visibility="{Binding DataAdapter.Insert.ShowResponseAsMessage, Converter={StaticResource BoolToVis}}">
+                        <Label Content="Response Path (optional):"
+                               ToolTip="Dot-notation or JSONPath to the value shown as the message (e.g. 'message' or '$.data.text'). Leave empty to use the entire response body."
+                               HorizontalAlignment="Left"/>
+                        <TextBox MinWidth="300"
+                                 HorizontalAlignment="Left"
+                                 Text="{Binding DataAdapter.Insert.ResponsePath, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Expander>
+
+            <Expander Header="Update Command"
+                      IsExpanded="False"
+                      Margin="5">
+                <StackPanel Margin="10">
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,5">
+                        <Label Content="URL:" HorizontalAlignment="Left"/>
+                        <TextBox MinWidth="400"
+                                 HorizontalAlignment="Left"
+                                 Text="{Binding DataAdapter.Update.Text, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Label Content="HTTP Verb:" VerticalAlignment="Center" Width="80"/>
+                        <ComboBox ItemsSource="{Binding VerbOptions}"
+                                  SelectedItem="{Binding DataAdapter.Update.Verb}"
+                                  Width="100"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,5">
+                        <Label Content="Body (optional):"
+                               ToolTip="JSON body template. Use {ColumnName} for DataRow values and {@Control.Property} for UI state values. Leave empty to auto-serialise all DataRow columns."
+                               HorizontalAlignment="Left"/>
+                        <TextBox MinWidth="400"
+                                 MinHeight="80"
+                                 HorizontalAlignment="Left"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 FontFamily="Consolas"
+                                 Text="{Binding DataAdapter.Update.Body, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <CheckBox Content="Show response as message"
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding DataAdapter.Update.ShowResponseAsMessage, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,5"
+                                Visibility="{Binding DataAdapter.Update.ShowResponseAsMessage, Converter={StaticResource BoolToVis}}">
+                        <Label Content="Response Path (optional):"
+                               ToolTip="Dot-notation or JSONPath to the value shown as the message (e.g. 'message' or '$.data.text'). Leave empty to use the entire response body."
+                               HorizontalAlignment="Left"/>
+                        <TextBox MinWidth="300"
+                                 HorizontalAlignment="Left"
+                                 Text="{Binding DataAdapter.Update.ResponsePath, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Expander>
+
+            <Expander Header="Delete Command"
+                      IsExpanded="False"
+                      Margin="5">
+                <StackPanel Margin="10">
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,5">
+                        <Label Content="URL:" HorizontalAlignment="Left"/>
+                        <TextBox MinWidth="400"
+                                 HorizontalAlignment="Left"
+                                 Text="{Binding DataAdapter.Delete.Text, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Label Content="HTTP Verb:" VerticalAlignment="Center" Width="80"/>
+                        <ComboBox ItemsSource="{Binding VerbOptions}"
+                                  SelectedItem="{Binding DataAdapter.Delete.Verb}"
+                                  Width="100"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,5">
+                        <Label Content="Body (optional):"
+                               ToolTip="JSON body template. Use {ColumnName} for DataRow values and {@Control.Property} for UI state values. Leave empty to auto-serialise all DataRow columns."
+                               HorizontalAlignment="Left"/>
+                        <TextBox MinWidth="400"
+                                 MinHeight="80"
+                                 HorizontalAlignment="Left"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 FontFamily="Consolas"
+                                 Text="{Binding DataAdapter.Delete.Body, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <CheckBox Content="Show response as message"
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding DataAdapter.Delete.ShowResponseAsMessage, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,5"
+                                Visibility="{Binding DataAdapter.Delete.ShowResponseAsMessage, Converter={StaticResource BoolToVis}}">
+                        <Label Content="Response Path (optional):"
+                               ToolTip="Dot-notation or JSONPath to the value shown as the message (e.g. 'message' or '$.data.text'). Leave empty to use the entire response body."
+                               HorizontalAlignment="Left"/>
+                        <TextBox MinWidth="300"
+                                 HorizontalAlignment="Left"
+                                 Text="{Binding DataAdapter.Delete.ResponsePath, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Expander>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

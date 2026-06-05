@@ -1,0 +1,15 @@
+Api Filters-----------------------------------
+Just write the name of the query parameter as is, no {0} needed. Ex: Username
+
+Data Path-----------------------------------
+if you have:
+{
+	"values": [1, 2, 3]
+}
+
+then set the data path to values
+
+Changing Data-----------------------------------
+If you leave the body empty the whole row will be scripted as a json object
+
+Or you can supply a json object

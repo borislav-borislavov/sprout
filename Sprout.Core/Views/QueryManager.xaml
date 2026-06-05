@@ -46,6 +46,10 @@
                 <DataTemplate DataType="{x:Type viewModels:DuckDataAdapterVM}">
                     <views:DuckDataAdapterView />
                 </DataTemplate>
+
+                <DataTemplate DataType="{x:Type viewModels:ApiDataAdapterVM}">
+                    <views:ApiDataAdapterView />
+                </DataTemplate>
             </Grid.Resources>
 
             <ContentControl Content="{Binding SelectedAdapterViewModel}" />

@@ -1,0 +1,20 @@
+using Sprout.Core.Models.DataAdapters.DataProviders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+#nullable disable
+
+namespace Sprout.Core.Models.DataAdapters
+{
+    public class ApiDataAdapter : IDataAdapter
+    {
+        public IDataProvider DataProvider { get; set; }
+        public IEditCommand InsertCommand { get; set; }
+        public IEditCommand UpdateCommand { get; set; }
+        public IEditCommand DeleteCommand { get; set; }
+        public Type ParentType { get; set; }
+        public string Name { get; set; }
+    }
+}

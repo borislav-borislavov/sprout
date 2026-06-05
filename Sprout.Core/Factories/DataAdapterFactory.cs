@@ -1,4 +1,5 @@
 ﻿using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.Configurations.Api;
 using Sprout.Core.Models.Configurations.Duck;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
@@ -33,6 +34,10 @@ namespace Sprout.Core.Factories
             else if (dataAdapterConfig is DuckDataAdapterConfig duckAdapterConfig)
             {
                 dataAdapter = CreateDuckDataAdapter(duckAdapterConfig);
+            }
+            else if (dataAdapterConfig is ApiDataAdapterConfig apiAdapterConfig)
+            {
+                dataAdapter = CreateApiDataAdapter(apiAdapterConfig);
             }
             else
             {
@@ -187,6 +192,92 @@ namespace Sprout.Core.Factories
                 foreach (var filterConfig in dataProviderConfig.FilterConfigs)
                 {
                     dataProvider.Filters[filterConfig.Title] = new SqlServerFilter
+                    {
+                        Title = filterConfig.Title,
+                        Text = filterConfig.Text,
+                    };
+                }
+            }
+
+            return dataAdapter;
+        }
+
+        private IDataAdapter CreateApiDataAdapter(ApiDataAdapterConfig apiAdapterConfig)
+        {
+            var dataAdapter = new ApiDataAdapter();
+
+            var dataProviderConfig = apiAdapterConfig.DataProvider as ApiDataProviderConfig;
+
+            if (dataProviderConfig is null)
+                throw new Exception($"DataAdapter DataProvider type mismatch! Expected DataProvider is {nameof(ApiDataProviderConfig)}");
+
+            var dataProvider = new ApiDataProvider(dataAdapter)
+            {
+                Text = dataProviderConfig.Text,
+                DataPath = dataProviderConfig.DataPath,
+                AuthUrl = dataProviderConfig.AuthUrl,
+                AuthBody = dataProviderConfig.AuthBody,
+                Dependencies = ParameterParser.ParseDependencies(dataProviderConfig.Text)
+            };
+
+            dataAdapter.DataProvider = dataProvider;
+
+            if (apiAdapterConfig.InsertCommand != null)
+            {
+                var cfg = apiAdapterConfig.InsertCommand as ApiEditCommandConfig;
+
+                if (cfg is null)
+                    throw new Exception($"Expected InsertCommand should be of type {nameof(ApiEditCommandConfig)}");
+
+                dataAdapter.InsertCommand = new ApiEditCommand(dataAdapter)
+                {
+                    Text = cfg.Text,
+                    Verb = cfg.Verb,
+                    Body = cfg.Body,
+                    ShowResponseAsMessage = cfg.ShowResponseAsMessage,
+                    ResponsePath = cfg.ResponsePath
+                };
+            }
+
+            if (apiAdapterConfig.UpdateCommand != null)
+            {
+                var cfg = apiAdapterConfig.UpdateCommand as ApiEditCommandConfig;
+
+                if (cfg is null)
+                    throw new Exception($"Expected UpdateCommand should be of type {nameof(ApiEditCommandConfig)}");
+
+                dataAdapter.UpdateCommand = new ApiEditCommand(dataAdapter)
+                {
+                    Text = cfg.Text,
+                    Verb = cfg.Verb,
+                    Body = cfg.Body,
+                    ShowResponseAsMessage = cfg.ShowResponseAsMessage,
+                    ResponsePath = cfg.ResponsePath
+                };
+            }
+
+            if (apiAdapterConfig.DeleteCommand != null)
+            {
+                var cfg = apiAdapterConfig.DeleteCommand as ApiEditCommandConfig;
+
+                if (cfg is null)
+                    throw new Exception($"Expected DeleteCommand should be of type {nameof(ApiEditCommandConfig)}");
+
+                dataAdapter.DeleteCommand = new ApiEditCommand(dataAdapter)
+                {
+                    Text = cfg.Text,
+                    Verb = cfg.Verb,
+                    Body = cfg.Body,
+                    ShowResponseAsMessage = cfg.ShowResponseAsMessage,
+                    ResponsePath = cfg.ResponsePath
+                };
+            }
+
+            if (dataProviderConfig.FilterConfigs.Count > 0)
+            {
+                foreach (var filterConfig in dataProviderConfig.FilterConfigs)
+                {
+                    dataProvider.Filters[filterConfig.Title] = new ApiFilter
                     {
                         Title = filterConfig.Title,
                         Text = filterConfig.Text,

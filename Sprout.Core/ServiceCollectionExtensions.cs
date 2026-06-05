@@ -17,6 +17,8 @@ namespace Sprout.Core
     {
         public static void AddCoreServices(this IServiceCollection services)
         {
+            services.AddHttpClient();
+
             //Services
             services.AddTransient<IConfigurationService, JsonConfigurationService>();
             services.AddTransient<INavigationService, NavigationService>();
