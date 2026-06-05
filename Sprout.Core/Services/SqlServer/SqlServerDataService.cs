@@ -183,6 +183,9 @@ namespace Sprout.Core.Services.SqlServer
                     _sqlQueryLogger?.Log(nameof(SqlServerDataService), cmd.CommandText, cmd.Parameters, sw.Elapsed);
                     do
                     {
+                        //This helped when you have an early return in a change command
+                        if (reader.IsClosed) break;
+
                         if (isNextResultFetched)
                             isNextResultFetched = false;
 
@@ -288,6 +291,9 @@ namespace Sprout.Core.Services.SqlServer
             try
             {
                 (var queryText, var dependencyParameters) = BuildQueryAndParameters();
+
+                //a button which used to have a select action but now has only update action
+                if (string.IsNullOrEmpty(queryText)) return;
 
                 using var cmd = new SqlCommand(queryText, _connection);
                 cmd.Parameters.AddRange(dependencyParameters.ToArray());
