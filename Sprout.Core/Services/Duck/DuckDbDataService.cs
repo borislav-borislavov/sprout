@@ -246,7 +246,7 @@ namespace Sprout.Core.Services.Duck
             var dt = DataTableFactory.Create();
 
             var sw = Stopwatch.StartNew();
-            using var reader = await cmd.ExecuteReaderAsync();
+            using var reader = await Task.Run(() => cmd.ExecuteReaderAsync());
             sw.Stop();
             _sqlQueryLogger?.Log(nameof(DuckDbDataService), cmd.CommandText, cmd.Parameters, sw.Elapsed);
 
