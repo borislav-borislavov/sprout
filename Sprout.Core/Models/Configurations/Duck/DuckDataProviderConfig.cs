@@ -12,5 +12,7 @@ namespace Sprout.Core.Models.Configurations.Duck
         public string Text { get; set; }
 
         public ObservableCollection<FilterConfig> FilterConfigs { get; set; } = [];
+
+        public bool DeferInitialLoad { get; set; } = false;
     }
 }

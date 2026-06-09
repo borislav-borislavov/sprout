@@ -12,5 +12,7 @@ namespace Sprout.Core.Models.Configurations
         public string Text { get; set; }
 
         public ObservableCollection<FilterConfig> FilterConfigs { get; set; }
+
+        bool DeferInitialLoad { get; set; }
     }
 }

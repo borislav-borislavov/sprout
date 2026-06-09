@@ -43,6 +43,12 @@
                         <Label Content="Use Integrated Security:" Width="120" VerticalAlignment="Center"/>
                         <CheckBox IsChecked="{Binding UseIntegratedSecurity, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>-->
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                        <CheckBox Content="Defer initial load"
+                                  ToolTip="When checked the initial data load is skipped on page load."
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding DataAdapter.DataProvider.DeferInitialLoad, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
                 </StackPanel>
             </Expander>
 

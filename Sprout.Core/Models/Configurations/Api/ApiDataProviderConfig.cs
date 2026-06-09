@@ -31,5 +31,7 @@ namespace Sprout.Core.Models.Configurations.Api
         /// Supports {parameter} placeholders (e.g. {"username":"{user}","password":"{pass}"}).
         /// </summary>
         public string AuthBody { get; set; }
+
+        public bool DeferInitialLoad { get; set; } = false;
     }
 }

@@ -46,6 +46,12 @@
                       IsExpanded="True"
                       Margin="5">
                 <StackPanel Margin="10">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <CheckBox Content="Defer initial load"
+                                  ToolTip="When checked the initial data load is skipped on page load."
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding Provider.DeferInitialLoad, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
                     <StackPanel Orientation="Vertical" Margin="0,0,0,5">
                         <Label Content="URL:"
                                ToolTip="The URL for fetching data. Supports {dependency} placeholders. Filters are appended as query parameters."

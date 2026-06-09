@@ -68,7 +68,8 @@ namespace Sprout.Core.Factories
 
             var dataProvider = new SqlServerDataProvider(dataAdapter)
             {
-                Text = dataProviderConfig.Text
+                Text = dataProviderConfig.Text,
+                DeferInitialLoad = dataProviderConfig.DeferInitialLoad
             };
 
             dataAdapter.DataProvider = dataProvider;
@@ -143,7 +144,8 @@ namespace Sprout.Core.Factories
 
             var dataProvider = new DuckDataProvider(dataAdapter)
             {
-                Text = dataProviderConfig.Text
+                Text = dataProviderConfig.Text,
+                DeferInitialLoad = dataProviderConfig.DeferInitialLoad
             };
 
             dataAdapter.DataProvider = dataProvider;
@@ -217,7 +219,8 @@ namespace Sprout.Core.Factories
                 DataPath = dataProviderConfig.DataPath,
                 AuthUrl = dataProviderConfig.AuthUrl,
                 AuthBody = dataProviderConfig.AuthBody,
-                Dependencies = ParameterParser.ParseDependencies(dataProviderConfig.Text)
+                Dependencies = ParameterParser.ParseDependencies(dataProviderConfig.Text),
+                DeferInitialLoad = dataProviderConfig.DeferInitialLoad
             };
 
             dataAdapter.DataProvider = dataProvider;

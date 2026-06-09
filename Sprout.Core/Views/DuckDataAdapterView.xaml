@@ -39,6 +39,12 @@
                         <Label Content="Command Timeout (seconds):" Width="120" VerticalAlignment="Center"/>
                         <TextBox Width="100" Text="{Binding CommandTimeout, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                        <CheckBox Content="Defer initial load"
+                                  ToolTip="When checked the initial data load is skipped on page load."
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding DataAdapter.DataProvider.DeferInitialLoad, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
                 </StackPanel>
             </Expander>
 

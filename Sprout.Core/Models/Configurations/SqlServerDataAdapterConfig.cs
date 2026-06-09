@@ -27,6 +27,5 @@ namespace Sprout.Core.Models.Configurations
         public IEditCommandConfig DeleteCommand { get; set; }
         [JsonIgnore]
         public SqlServerEditCommandConfig Delete => (SqlServerEditCommandConfig)DeleteCommand;
-
     }
 }

@@ -18,5 +18,7 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
 		IEnumerable<DataProviderDependency> Dependencies { get; }
 
 		Dictionary<string, IFilter> Filters { get; set; }
-    }
+
+		bool DeferInitialLoad { get; set; }
+	}
 }
