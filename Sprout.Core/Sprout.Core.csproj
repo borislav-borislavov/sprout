@@ -30,11 +30,4 @@
     <EmbeddedResource Include="TSQL.xshd" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="Fonts\fa-solid-900.otf" />
-    <Resource Include="Fonts\fa-regular-400.otf" />
-    <Resource Include="Fonts\fa-brands-400.otf" />
-    <None Include="Fonts\icons.json" />
-  </ItemGroup>
-
 </Project>

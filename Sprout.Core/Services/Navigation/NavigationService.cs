@@ -4,7 +4,6 @@ using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.ViewModels;
 using Sprout.Core.Windows;
-using System.Collections.ObjectModel;
 
 namespace Sprout.Core.Services.Navigation
 {
@@ -63,12 +62,6 @@ namespace Sprout.Core.Services.Navigation
             var mdw = _serviceProvider.GetRequiredService<ManageDataAdapterWindow>();
             (mdw.DataContext as ManageDataAdapterVM).AdapterConfigHost = dataAdapterConfigHost;
             mdw.ShowDialog();
-        }
-
-        public void ShowIconBrowser()
-        {
-            var window = _serviceProvider.GetRequiredService<IconBrowserWindow>();
-            window.ShowDialog();
         }
     }
 }

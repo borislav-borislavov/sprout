@@ -199,10 +199,5 @@ namespace Sprout.Core.ViewModels
             }
         }
 
-        [RelayCommand]
-        private void OpenIconBrowser()
-        {
-            _navigationService.ShowIconBrowser();
+            }
         }
-    }
-}

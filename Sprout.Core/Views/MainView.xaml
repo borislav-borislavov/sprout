@@ -73,7 +73,6 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
 
             <MenuItem Header="File">
                 <MenuItem Opacity="0.9" Header="Migrations" Command="{Binding OpenMigrationsCommand}"/>
-                <MenuItem Opacity="0.9" Header="Icon Browser" Command="{Binding OpenIconBrowserCommand}"/>
                 <Separator/>
                 <MenuItem Opacity="0.9" Header="Settings" Command="{Binding OpenSettingsCommand}"/>
             </MenuItem>
