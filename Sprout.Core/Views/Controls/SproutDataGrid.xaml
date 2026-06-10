@@ -6,10 +6,7 @@
 			 xmlns:local="clr-namespace:Sprout.Core.Views.Controls"
 			 xmlns:conv="clr-namespace:Sprout.Core.Converters"
 			 mc:Ignorable="d"
-			 d:DesignHeight="450" d:DesignWidth="800"
-             >
-
-    <!--d:DataContext="{d:DesignInstance viewModels:EditPageVM}"-->
+			 d:DesignHeight="450" d:DesignWidth="800" >
     <UserControl.Resources>
         <ResourceDictionary>
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
@@ -33,7 +30,7 @@
                         Click="btnFilters_Click"
                         Margin="2">
 
-                    <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                    <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
 
                 <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
@@ -47,7 +44,7 @@
                         HorizontalAlignment="Left"
                         Margin="2">
                     
-                    <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                    <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
 
                 <Button x:Name="btnSave"
@@ -56,7 +53,7 @@
                         Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
                         HorizontalAlignment="Left"
                         Margin="2">
-                    <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                    <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
 
                 <Button x:Name="btnDelete"
@@ -67,7 +64,7 @@
                                         Converter={StaticResource BoolToVis}}"
                         HorizontalAlignment="Left"
                         Margin="2">
-                    <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                    <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
 
                 <Button x:Name="btnRefresh"
@@ -75,7 +72,7 @@
                         Style="{StaticResource FlatRoundButtonStyle}"
                         HorizontalAlignment="Left"
                         Margin="2">
-                    <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                    <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
 
                 <Button x:Name="btnColumnSettings"
@@ -84,7 +81,7 @@
                         HorizontalAlignment="Left"
                         Click="btnColumnSettings_Click"
                         Margin="2">
-                    <TextBlock Text="&#xF579;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                    <TextBlock Text="&#xF579;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
 
                 <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
@@ -92,7 +89,7 @@
                 <Menu Background="Transparent" VerticalAlignment="Center">
                     <MenuItem ToolTip="Export data">
                         <MenuItem.Header>
-                            <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                            <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                         </MenuItem.Header>
                         <MenuItem x:Name="menuExportExcel">
                             <MenuItem.Header>
@@ -121,7 +118,7 @@
                     Click="btnFilters_Click"
                     Margin="2">
 
-                    <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                    <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
 
                 </Button>
 
@@ -133,7 +130,7 @@
                     Click="btnApplyFilters_Click"
                     Margin="2">
 
-                    <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                    <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
 
                 </Button>
             </StackPanel>
