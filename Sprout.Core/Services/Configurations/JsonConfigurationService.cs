@@ -20,13 +20,14 @@ namespace Sprout.Core.Services.Configurations
     {
         public SproutConfiguration Load()
         {
-            //return GetDummy();
             return LoadFromJson();
         }
 
         private static string GetConfigFilePath()
         {
-            return Path.Combine(Environment.CurrentDirectory, "SproutConfig.json");
+            var seedVaultPath = Path.Combine(Environment.CurrentDirectory, "SeedVault");
+            Directory.CreateDirectory(seedVaultPath);
+            return Path.Combine(seedVaultPath, "main.seed");
         }
 
         private SproutConfiguration LoadFromJson()
