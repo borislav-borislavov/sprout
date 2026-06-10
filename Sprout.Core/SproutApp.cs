@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Sprout.Core;
+using Sprout.Core.Common;
 using Sprout.Core.Factories;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Configurations;
@@ -24,6 +25,12 @@ namespace Sprout.Core
     {
         public static void Start()
         {
+            AppArgs.Parse();
+
+            //var args = AppArgs.Args.Select(kvp => $"{kvp.Key}={kvp.Value}").ToArray();
+
+            //MessageBox.Show($"Starting Sprout with arguments: {string.Join(", ", args)}", "Sprout Startup", MessageBoxButton.OK, MessageBoxImage.Information);
+
             var services = new ServiceCollection();
             services.AddCoreServices();
 

@@ -10,6 +10,7 @@ using Sprout.Core.Services.Navigation;
 using Sprout.Core.ViewModels;
 using Sprout.Core.Views;
 using Sprout.Core.Windows;
+using Sprout.Core.Common;
 
 namespace Sprout.Core
 {
@@ -20,7 +21,7 @@ namespace Sprout.Core
             services.AddHttpClient();
 
             //Services
-            services.AddTransient<IConfigurationService, JsonConfigurationService>();
+            services.AddTransient<IConfigurationService, JsonConfigurationService>(x => new JsonConfigurationService(AppArgs.SeedPath));
             services.AddTransient<INavigationService, NavigationService>();
             services.AddTransient<IDialogService, DialogService>();
             services.AddTransient<IDataAdapterFactory, DataAdapterFactory>();

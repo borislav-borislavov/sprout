@@ -18,13 +18,23 @@ namespace Sprout.Core.Services.Configurations
 {
     public class JsonConfigurationService : IConfigurationService
     {
+        private readonly string _seedPath;
+
+        public JsonConfigurationService(string seedPath)
+        {
+            _seedPath = seedPath;
+        }
+
         public SproutConfiguration Load()
         {
             return LoadFromJson();
         }
 
-        private static string GetConfigFilePath()
+        private string GetConfigFilePath()
         {
+            if (!string.IsNullOrEmpty(_seedPath))
+                return _seedPath;
+
             var seedVaultPath = Path.Combine(Environment.CurrentDirectory, "SeedVault");
             Directory.CreateDirectory(seedVaultPath);
             return Path.Combine(seedVaultPath, "main.seed");
