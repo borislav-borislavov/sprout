@@ -21,13 +21,6 @@
 	<Exec Command="powershell -NoProfile -Command &quot;if (Test-Path '$(OutDir)runtimes\unix') { Remove-Item '$(OutDir)runtimes\unix' -Recurse -Force }&quot;" IgnoreExitCode="true" />
 	<Exec Command="powershell -NoProfile -Command &quot;if (Test-Path '$(OutDir)runtimes\win-arm64') { Remove-Item '$(OutDir)runtimes\win-arm64' -Recurse -Force }&quot;" IgnoreExitCode="true" />
 </Target>
-	
-  <ItemGroup>
-    <PackageReference Include="Costura.Fody" Version="6.2.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
 
   <ItemGroup>
     <Resource Include="sprout.ico" />
