@@ -7,8 +7,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>sprout.ico</ApplicationIcon>
+	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
   </PropertyGroup>
-
+	
   <ItemGroup>
     <None Remove="sprout.ico" />
   </ItemGroup>
