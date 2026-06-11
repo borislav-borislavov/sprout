@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations
 {
+    /// <summary>
+    /// UI Editor for this config is <see cref="Sprout.Core.UIEditors.EditSproutTextBox"/>
+    /// </summary>
     public class SproutTextBoxConfig : SproutControlConfig
     {
         public string Placeholder { get; set; }
@@ -30,5 +33,6 @@ namespace Sprout.Core.Models.Configurations
         public string VerticalAlignment { get; set; }
 
         public string ToolTip { get; set; }
+        public bool ChangeValueOnEnter { get; set; }
     }
 }

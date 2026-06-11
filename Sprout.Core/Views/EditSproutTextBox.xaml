@@ -20,6 +20,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
@@ -111,6 +112,23 @@
                         VerticalAlignment="Center"
                         Margin="5"
                         IsChecked="{Binding MultiLine, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--Change Value On Enter-->
+                    <TextBlock
+                        Grid.Row="5"
+                        Grid.Column="0"
+                        Margin="5"
+                        VerticalAlignment="Center"
+                        Text="Change Value On Enter"
+                        FontWeight="Bold"
+                        FontSize="16"/>
+
+                    <CheckBox
+                        Grid.Row="5"
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Margin="5"
+                        IsChecked="{Binding ChangeValueOnEnter, UpdateSourceTrigger=PropertyChanged}"/>
                 </Grid>
             </TabItem>
 
