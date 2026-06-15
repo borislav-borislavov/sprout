@@ -12,7 +12,6 @@ namespace Sprout.Core.Factories
 {
     public class GridFactory : BaseSproutControlFactory
     {
-
         public static UIElement GenerateGrid(GridConfig gridConfig, Dictionary<string, UIElement> controls)
         {
             var grid = new Grid();

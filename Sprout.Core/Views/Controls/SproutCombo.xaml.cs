@@ -1,4 +1,5 @@
-﻿using Sprout.Core.Models.Configurations;
+﻿using Sprout.Core.Models;
+using Sprout.Core.Models.Configurations;
 using Sprout.Core.UIStates;
 using System;
 using System.Collections.Generic;
@@ -21,10 +22,11 @@ namespace Sprout.Core.Views.Controls
     /// <summary>
     /// Interaction logic for SproutCombo.xaml
     /// </summary>
-    public partial class SproutCombo : UserControl
+    public partial class SproutCombo : UserControl, ISproutControl<SproutComboConfig>
     {
-        internal SproutComboConfig Config { get; set; }
+        public SproutComboConfig Config { get; set; }
         public SproutComboUIState UIState { get; internal set; }
+        public SproutControlType ControlType => SproutControlType.ComboBox;
 
         public SproutCombo()
         {

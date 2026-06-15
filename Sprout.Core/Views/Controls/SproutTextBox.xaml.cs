@@ -1,3 +1,4 @@
+using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.UIStates;
 using System;
@@ -20,9 +21,10 @@ namespace Sprout.Core.Views.Controls
     /// <summary>
     /// Interaction logic for SproutTextBox.xaml
     /// </summary>
-    public partial class SproutTextBox : UserControl
+    public partial class SproutTextBox : UserControl, ISproutControl<SproutTextBoxConfig>
     {
-        internal SproutTextBoxConfig Config { get; set; }
+        public SproutTextBoxConfig Config { get; set; }
+        public SproutControlType ControlType => SproutControlType.TextBox;
         public SproutTextBoxUIState UIState { get; internal set; }
 
         public SproutTextBox()

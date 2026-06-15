@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic;
+using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.Queries;
@@ -26,9 +27,10 @@ namespace Sprout.Core.Views.Controls
     /// <summary>
     /// Interaction logic for SproutDataGrid.xaml
     /// </summary>
-    public partial class SproutDataGrid : UserControl
+    public partial class SproutDataGrid : UserControl, ISproutControl<SproutDataGridConfig>
     {
         public SproutDataGridConfig Config { get; set; }
+        public SproutControlType ControlType => SproutControlType.DataGrid;
 
         /// <summary>
         /// Maps each generated <see cref="DataGridColumn"/> to a stable key (its binding path)
@@ -48,7 +50,6 @@ namespace Sprout.Core.Views.Controls
         public SproutDataGrid()
         {
             InitializeComponent();
-
         }
 
         /// <summary>

@@ -1,3 +1,4 @@
+using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
 using System;
 using System.Collections.Generic;
@@ -20,9 +21,10 @@ namespace Sprout.Core.Views.Controls
     /// <summary>
     /// Interaction logic for SproutButton.xaml
     /// </summary>
-    public partial class SproutButton : UserControl
+    public partial class SproutButton : UserControl, ISproutControl<SproutButtonConfig>
     {
-        internal SproutButtonConfig Config { get; set; }
+        public SproutButtonConfig Config { get; set; }
+        public SproutControlType ControlType => SproutControlType.Button;
 
         public SproutButton()
         {

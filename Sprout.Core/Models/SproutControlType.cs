@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models
 {
-    internal enum SproutControlType
+    public enum SproutControlType
     {
         Grid,
         DataGrid,
