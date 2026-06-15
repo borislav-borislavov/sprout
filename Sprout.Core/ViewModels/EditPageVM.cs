@@ -95,7 +95,7 @@ namespace Sprout.Core.ViewModels
             try
             {
                 var sproutConfig = _configService.Load();
-                var foundPage = sproutConfig.Pages.FirstOrDefault(p => p.Title == PageConfig.Title);
+                var foundPage = sproutConfig.Pages.FirstOrDefault(p => p.ID == PageConfig.ID);
                 var pageIndex = sproutConfig.Pages.IndexOf(foundPage);
                 sproutConfig.Pages.Remove(foundPage);
                 sproutConfig.Pages.Insert(pageIndex, PageConfig);

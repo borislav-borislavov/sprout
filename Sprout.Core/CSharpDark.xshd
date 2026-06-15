@@ -1,0 +1,215 @@
+<?xml version="1.0"?>
+<!-- VS 2022 Dark theme colors for C# -->
+<SyntaxDefinition name="CSharpDark" extensions=".cs" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+
+  <!-- ── Palette ───────────────────────────────────────────────────────── -->
+  <Color name="Comment"          foreground="#6A9955"/>
+  <Color name="XmlDocComment"    foreground="#6A9955"/>
+  <Color name="String"           foreground="#CE9178"/>
+  <Color name="Char"             foreground="#CE9178"/>
+  <Color name="Verbatim"         foreground="#CE9178"/>
+  <Color name="Keyword"          foreground="#569CD6"/>
+  <Color name="ControlKeyword"   foreground="#C586C0"/>
+  <Color name="ValueType"        foreground="#569CD6"/>
+  <Color name="Preprocessor"     foreground="#9B9B9B"/>
+  <Color name="Number"           foreground="#B5CEA8"/>
+  <Color name="Punctuation"      foreground="#D4D4D4"/>
+  <Color name="TypeName"         foreground="#4EC9B0"/>
+  <Color name="Attribute"        foreground="#DCDCAA"/>
+  <Color name="TodoMarker"       foreground="#C8A56A" fontWeight="bold"/>
+  <Color name="HackMarker"       foreground="#E0E000" fontWeight="bold"/>
+
+  <RuleSet name="CommentMarkerSet">
+	<Keywords color="TodoMarker">
+	  <Word>TODO</Word>
+	  <Word>FIXME</Word>
+	  <Word>BUG</Word>
+	  <Word>HACK</Word>
+	  <Word>NOTE</Word>
+	</Keywords>
+	<Keywords color="HackMarker">
+	  <Word>UNDONE</Word>
+	</Keywords>
+  </RuleSet>
+
+  <RuleSet>
+
+	<!-- ── Preprocessor ─────────────────────────────────────────────────── -->
+	<Span color="Preprocessor" multiline="false">
+	  <Begin>^\s*\#</Begin>
+	</Span>
+
+	<!-- ── XML doc comments (///) ───────────────────────────────────────── -->
+	<Span color="XmlDocComment" ruleSet="CommentMarkerSet">
+	  <Begin>///</Begin>
+	</Span>
+
+	<!-- ── Line comment (//) ────────────────────────────────────────────── -->
+	<Span color="Comment" ruleSet="CommentMarkerSet">
+	  <Begin>//</Begin>
+	</Span>
+
+	<!-- ── Block comment (/* … */) ──────────────────────────────────────── -->
+	<Span color="Comment" ruleSet="CommentMarkerSet" multiline="true">
+	  <Begin>/\*</Begin>
+	  <End>\*/</End>
+	</Span>
+
+	<!-- ── Verbatim string (@"…") ───────────────────────────────────────── -->
+	<Span color="Verbatim" multiline="true">
+	  <Begin>@"</Begin>
+	  <End>"</End>
+	  <RuleSet>
+		<Span>
+		  <Begin>""</Begin>
+		  <End></End>
+		</Span>
+	  </RuleSet>
+	</Span>
+
+	<!-- ── Raw string ("""…""") ─────────────────────────────────────────── -->
+	<Span color="Verbatim" multiline="true">
+	  <Begin>"""</Begin>
+	  <End>"""</End>
+	</Span>
+
+	<!-- ── Regular string ───────────────────────────────────────────────── -->
+	<Span color="String">
+	  <Begin>"</Begin>
+	  <End>"</End>
+	  <RuleSet>
+		<Span>
+		  <Begin>\\.</Begin>
+		  <End></End>
+		</Span>
+	  </RuleSet>
+	</Span>
+
+	<!-- ── Char literal ─────────────────────────────────────────────────── -->
+	<Span color="Char">
+	  <Begin>'</Begin>
+	  <End>'</End>
+	  <RuleSet>
+		<Span>
+		  <Begin>\\.</Begin>
+		  <End></End>
+		</Span>
+	  </RuleSet>
+	</Span>
+
+	<!-- ── Numbers ──────────────────────────────────────────────────────── -->
+	<Rule color="Number">
+	  \b0[xX][0-9a-fA-F_]+  # hex
+	  |
+	  \b0[bB][01_]+         # binary
+	  |
+	  \b[0-9][0-9_]*(\.[0-9_]+)?([eE][+-]?[0-9_]+)?[fFdDmMlLuU]*\b
+	</Rule>
+
+	<!-- ── Control flow keywords (purple) ───────────────────────────────── -->
+	<Keywords color="ControlKeyword">
+	  <Word>if</Word>
+	  <Word>else</Word>
+	  <Word>switch</Word>
+	  <Word>case</Word>
+	  <Word>default</Word>
+	  <Word>for</Word>
+	  <Word>foreach</Word>
+	  <Word>while</Word>
+	  <Word>do</Word>
+	  <Word>break</Word>
+	  <Word>continue</Word>
+	  <Word>goto</Word>
+	  <Word>return</Word>
+	  <Word>throw</Word>
+	  <Word>try</Word>
+	  <Word>catch</Word>
+	  <Word>finally</Word>
+	  <Word>yield</Word>
+	  <Word>await</Word>
+	  <Word>when</Word>
+	</Keywords>
+
+	<!-- ── Value-type / primitive keywords (blue) ───────────────────────── -->
+	<Keywords color="ValueType">
+	  <Word>bool</Word>
+	  <Word>byte</Word>
+	  <Word>sbyte</Word>
+	  <Word>char</Word>
+	  <Word>decimal</Word>
+	  <Word>double</Word>
+	  <Word>float</Word>
+	  <Word>int</Word>
+	  <Word>uint</Word>
+	  <Word>long</Word>
+	  <Word>ulong</Word>
+	  <Word>short</Word>
+	  <Word>ushort</Word>
+	  <Word>object</Word>
+	  <Word>string</Word>
+	  <Word>void</Word>
+	  <Word>var</Word>
+	  <Word>dynamic</Word>
+	</Keywords>
+
+	<!-- ── General keywords (blue) ──────────────────────────────────────── -->
+	<Keywords color="Keyword">
+	  <Word>abstract</Word>
+	  <Word>as</Word>
+	  <Word>base</Word>
+	  <Word>checked</Word>
+	  <Word>class</Word>
+	  <Word>const</Word>
+	  <Word>delegate</Word>
+	  <Word>enum</Word>
+	  <Word>event</Word>
+	  <Word>explicit</Word>
+	  <Word>extern</Word>
+	  <Word>fixed</Word>
+	  <Word>implicit</Word>
+	  <Word>in</Word>
+	  <Word>interface</Word>
+	  <Word>internal</Word>
+	  <Word>is</Word>
+	  <Word>lock</Word>
+	  <Word>namespace</Word>
+	  <Word>new</Word>
+	  <Word>null</Word>
+	  <Word>operator</Word>
+	  <Word>out</Word>
+	  <Word>override</Word>
+	  <Word>params</Word>
+	  <Word>partial</Word>
+	  <Word>private</Word>
+	  <Word>protected</Word>
+	  <Word>public</Word>
+	  <Word>readonly</Word>
+	  <Word>record</Word>
+	  <Word>ref</Word>
+	  <Word>required</Word>
+	  <Word>sealed</Word>
+	  <Word>sizeof</Word>
+	  <Word>stackalloc</Word>
+	  <Word>static</Word>
+	  <Word>struct</Word>
+	  <Word>this</Word>
+	  <Word>true</Word>
+	  <Word>false</Word>
+	  <Word>typeof</Word>
+	  <Word>unchecked</Word>
+	  <Word>unsafe</Word>
+	  <Word>using</Word>
+	  <Word>virtual</Word>
+	  <Word>volatile</Word>
+	  <Word>async</Word>
+	  <Word>init</Word>
+	  <Word>with</Word>
+	  <Word>global</Word>
+	  <Word>file</Word>
+	  <Word>scoped</Word>
+	  <Word>unmanaged</Word>
+	  <Word>notnull</Word>
+	</Keywords>
+
+  </RuleSet>
+</SyntaxDefinition>

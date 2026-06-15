@@ -12,6 +12,8 @@ namespace Sprout.Core.Models.Configurations
 
 		public Guid? CategoryID { get; set; }
 
+        public string Script { get; set; }
+
         public SproutControlConfig Root { get; set; }
 
 		public Dictionary<string, IDataAdapterConfig> GetDataAdapterConfigs()

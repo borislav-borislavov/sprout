@@ -7,6 +7,7 @@ using Sprout.Core.Messages;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.ActionMessageService;
 using Sprout.Core.Services.Configurations;
+using Sprout.Core.Services.CPL;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Navigation;
 using System.Collections.ObjectModel;
@@ -132,7 +133,7 @@ namespace Sprout.Core.ViewModels
                 SelectedTab = existing;
                 return;
             }
-            
+
             var migrationVM = _vmFactory.Create<MigrationVM>();
 
             Tabs.Add(migrationVM);
@@ -199,5 +200,45 @@ namespace Sprout.Core.ViewModels
             }
         }
 
+        private bool CanEditPageScript() => SelectedTab is SproutPageVM;
+
+        [RelayCommand(CanExecute = nameof(CanEditPageScript))]
+        private void EditPageScript()
+        {
+            try
+            {
+                if (SelectedTab is not SproutPageVM selectedPageVM) return;
+
+                var compiler = new CustomPageLogicCompiler(selectedPageVM, _configService);
+
+                var pageId = selectedPageVM.PageConfig.ID;
+
+                _navigationService.ShowScriptEditor(compiler);
+
+                var uiState = selectedPageVM.SproutPageUIState; //the data that is passed by another page
+
+                Tabs.Remove(selectedPageVM);
+
+                //this just refreshes the _sproutConfig
+                LoadMenuPages();
+
+                var currentPageConfig = _sproutConfig.Pages.FirstOrDefault(pc => pc.ID == pageId);
+
+                if (currentPageConfig == null)
+                {
+                    _dialogService.ShowError("Unable to find requested page, all changes are lost");
+                    return;
+                }
+
+                var newTab = _sproutPageVMFactory.Create(currentPageConfig, uiState.Data);
+
+                Tabs.Add(newTab);
+                SelectedTab = newTab;
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError($"Error editing page script: {ex.Message}");
             }
         }
+    }
+}

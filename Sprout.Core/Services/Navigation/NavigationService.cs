@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Configurations;
+using Sprout.Core.Services.CPL;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.ViewModels;
 using Sprout.Core.Windows;
@@ -62,6 +63,13 @@ namespace Sprout.Core.Services.Navigation
             var mdw = _serviceProvider.GetRequiredService<ManageDataAdapterWindow>();
             (mdw.DataContext as ManageDataAdapterVM).AdapterConfigHost = dataAdapterConfigHost;
             mdw.ShowDialog();
+        }
+
+        public void ShowScriptEditor(BaseCompiler compiler)
+        {
+            var editor = _serviceProvider.GetRequiredService<ScriptEditor>();
+            editor.Initialize(compiler);
+            editor.ShowDialog();
         }
     }
 }

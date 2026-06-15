@@ -1,5 +1,6 @@
 ﻿using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Configurations;
+using Sprout.Core.Services.CPL;
 using Sprout.Core.Services.Dialog;
 using System.Collections.ObjectModel;
 
@@ -18,5 +19,7 @@ namespace Sprout.Core.Services.Navigation
         void ShowMainDashboard();
         void ShowLogin();
         void ShowManageAdapter(IDataAdapterConfigHost dataAdapterConfigHost);
+
+        void ShowScriptEditor(BaseCompiler compiler);
     }
 }

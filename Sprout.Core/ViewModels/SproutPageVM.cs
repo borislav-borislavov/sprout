@@ -14,6 +14,7 @@ using Sprout.Core.Models.Queries;
 using Sprout.Core.Services;
 using Sprout.Core.Services.ActionMessageService;
 using Sprout.Core.Services.Configurations;
+using Sprout.Core.Services.CPL;
 using Sprout.Core.Services.DataProviders;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Login;
@@ -22,6 +23,7 @@ using Sprout.Core.UIStates;
 using Sprout.Core.Views;
 using System.Reflection.Metadata;
 using System.Windows;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxTokenParser;
 
 namespace Sprout.Core.ViewModels
 {
@@ -55,8 +57,11 @@ namespace Sprout.Core.ViewModels
         /// and it increases the complexity of the code and the chances for bugs. Code is a liability and this reduces greatly the code complexity.
         /// </summary>
         public SproutPage DynamicViewInstance { get; private set; }
+        public CompileResult CompileResult { get; set; }
 
         private LoginUIState _loginUIState = new();
+
+        private readonly SproutPageLogicBridge _host;
 
         public SproutPageVM(SproutPageConfiguration pageConfig,
             IDialogService dialogService,
@@ -77,6 +82,10 @@ namespace Sprout.Core.ViewModels
             try
             {
                 CreateDataAdapters();
+                DynamicViewInstance = new SproutPage(_configurationService) { DataContext = this };
+                DynamicViewInstance.InitializeControls(this);
+                
+                _host = new SproutPageLogicBridge($"{PageConfig.ID.ToString().Replace("-", "")}");
 
                 UiStateRegistry.UiStateChanged += async (_, change) =>
                 {
@@ -108,7 +117,9 @@ namespace Sprout.Core.ViewModels
                     }
                 };
 
-                DynamicViewInstance = new SproutPage { DataContext = this };
+                
+                DynamicViewInstance.InitializePage(this);
+                OnPageInitialize();
 
                 if (_loggedInUserService?.UserDataAdapter?.DataProvider?.Data is System.Data.DataTable loginUserDt && loginUserDt.Rows.Count > 0)
                 {
@@ -118,6 +129,47 @@ namespace Sprout.Core.ViewModels
             catch (Exception ex)
             {
                 _dialogService.ShowMessage(ex.Message, "Ctor Error", DialogButton.OK, DialogImage.Error);
+            }
+        }
+
+        //public async Task<List<DiagnosticMessage>> ApplyUserCodeAsync(string userCode)
+        //{
+        //    var result = _compiler.Compile(userCode, $"{PageConfig.ID.ToString().Replace("-", "")}", this);
+
+        //    if (!result.IsSuccess)
+        //        return result.Diagnostics; // Surface errors in your code editor UI
+
+        //    string? error = await _host.LoadAsync(result.Assembly!, pageContext: this);
+        //    if (error is not null)
+        //        return [new DiagnosticMessage("Error", error, 0, 0)];
+
+        //    return result.Diagnostics; // May contain warnings
+        //}
+
+        /// <summary>
+        /// Load the custom page logic
+        /// </summary>
+        private void LoadCPL()
+        {
+            try
+            {
+                if (CompileResult == null) return;
+
+                if (!CompileResult.IsSuccess)
+                {
+                    //return CompileResult.Diagnostics; // Surface errors in your code editor UI
+                    _dialogService.ShowError(string.Join("\n", CompileResult.Diagnostics.Select(d => $"{d.Severity}: {d.Message} at {d.Line}:{d.Column}")));
+                    return;
+                }
+
+                string? error = _host.LoadAsync(CompileResult.Assembly!, pageContext: this).Result;
+                if (error is not null)
+                    _dialogService.ShowError(error);
+                //return [new DiagnosticMessage("Error", error, 0, 0)];
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowMessage(ex.Message, "Load CPL Error", DialogButton.OK, DialogImage.Error);
             }
         }
 
@@ -178,10 +230,12 @@ namespace Sprout.Core.ViewModels
             }
         }
 
-        public async void OnLoaded()
+        public async void OnPageInitialize()
         {
             try
             {
+                LoadCPL();
+
                 foreach (var kvp in DataProviders)
                 {
                     DependencyBinder.BindDependencies(kvp.Value, UiStateRegistry);

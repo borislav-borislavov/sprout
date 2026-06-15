@@ -9,6 +9,8 @@ using Sprout.Core.Models.DataAdapters.Filters;
 using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services;
+using Sprout.Core.Services.Configurations;
+using Sprout.Core.Services.CPL;
 using Sprout.Core.Services.SqlServer;
 using Sprout.Core.UIStates;
 using Sprout.Core.ViewModels;
@@ -32,14 +34,24 @@ namespace Sprout.Core.Views
 {
     public partial class SproutPage : UserControl
     {
-        public SproutPage()
+        private bool _isInitialized = false;
+        public Dictionary<string, UIElement> _controls = [];
+        private readonly IConfigurationService _configurationService;
+
+        public SproutPage(IConfigurationService configurationService)
         {
             InitializeComponent();
+            _configurationService = configurationService;
         }
 
-        private bool _isInitialized = false;
+        public void InitializeControls(SproutPageVM vm)
+        {
+            //step 1 - generate UI controls
+            this.Content = SproutControlFactory.GetControl(vm.PageConfig.Root, _controls);
+        }
 
-        private void InitializePage(SproutPageVM vm)
+
+        public void InitializePage(SproutPageVM vm)
         {
             try
             {
@@ -48,10 +60,11 @@ namespace Sprout.Core.Views
                     return;
                 }
 
-                Dictionary<string, UIElement> _controls = [];
-
-                //step 1 - generate UI controls
-                this.Content = SproutControlFactory.GetControl(vm.PageConfig.Root, _controls);
+                if (!string.IsNullOrWhiteSpace(vm.PageConfig.Script))
+                {
+                    var compiler = new CustomPageLogicCompiler(vm, _configurationService);
+                    vm.CompileResult = compiler.Compile();
+                }
 
                 vm.RegisterExtraUIStates();
 
@@ -328,23 +341,5 @@ namespace Sprout.Core.Views
             }
         }
 
-        private void SproutPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (this.DataContext is not SproutPageVM vm)
-            {
-                return;
-            }
-
-            InitializePage(vm);
-
-            if (!_isInitialized)
-            {
-                //step 3 - load the data
-
-                vm.OnLoaded();
-
-                _isInitialized = true;
-            }
-        }
     }
 }

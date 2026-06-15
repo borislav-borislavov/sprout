@@ -99,22 +99,22 @@
             </TreeView>
 
             <StackPanel
-                Margin="5"
-                Grid.Row="2"
-                Grid.Column="0"
-                Orientation="Horizontal"
-                FlowDirection="RightToLeft" >
-                
+                    Margin="5"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Orientation="Horizontal"
+                    FlowDirection="RightToLeft" >
+
                 <Button
                     VerticalAlignment="Center"
                     Background="Transparent"
                     BorderThickness="0"
                     ToolTip="Save"
                     Command="{Binding SaveCommand}"
-                    Margin="5">
+                    Margin="5, 5, 0, 5">
                     <TextBlock
-                         FontFamily="Segoe Fluent Icons"
-                         FontSize="25"
+                         FontFamily="Segoe MDL2 Assets"
+                         FontSize="23"
                          Text="&#xe74e;" />
                 </Button>
 
@@ -123,10 +123,10 @@
                     BorderThickness="0"
                     ToolTip="Add Control"
                     Command="{Binding AddControlCommand}"
-                    Margin="5">
+                    Margin="5, 5, 0, 5">
                     <TextBlock
-                            FontFamily="Segoe Fluent Icons"
-                            FontSize="25"
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="23"
                             Text="&#xE948;" />
                 </Button>
 
@@ -135,10 +135,10 @@
                     BorderThickness="0"
                     ToolTip="Remove Control"
                     Command="{Binding RemoveControlCommand}"
-                    Margin="5">
+                    Margin="5, 5, 0, 5">
                     <TextBlock
-                            FontFamily="Segoe Fluent Icons"
-                            FontSize="25"
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="23"
                             Text="&#xE74D;" />
                 </Button>
 
@@ -147,23 +147,23 @@
                     BorderThickness="0"
                     ToolTip="Move Down"
                     Command="{Binding MoveDownCommand}"
-                    Margin="5">
+                    Margin="5, 5, 0, 5">
                     <TextBlock
-                            FontFamily="Segoe Fluent Icons"
-                            FontSize="25"
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="23"
                             Text="&#xE74B;" />
                 </Button>
 
                 <Button
-                    Background="Transparent"
-                    BorderThickness="0"
-                    ToolTip="Move Up"
-                    Command="{Binding MoveUpCommand}"
-                    Margin="5">
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ToolTip="Move Up"
+                        Command="{Binding MoveUpCommand}"
+                        Margin="5, 5, 0, 5">
                     <TextBlock
-                            FontFamily="Segoe Fluent Icons"
-                            FontSize="25"
-                            Text="&#xE74A;" />
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="23"
+                                Text="&#xE74A;" />
                 </Button>
             </StackPanel>
 
