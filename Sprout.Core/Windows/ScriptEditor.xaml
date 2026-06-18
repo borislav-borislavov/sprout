@@ -91,10 +91,14 @@
 
         <!-- ── Editor + Output ── -->
         <Grid Grid.Row="1" x:Name="EditorOutputGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="23*"/>
+                <ColumnDefinition Width="977*"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" MinHeight="80"/>
-                    <RowDefinition Height="0"/>
-                    <RowDefinition Height="0" MinHeight="60"/>
+                <RowDefinition Height="0"/>
+                <RowDefinition Height="0" MinHeight="60"/>
             </Grid.RowDefinitions>
 
             <!-- Editor -->
@@ -113,22 +117,22 @@
                 HorizontalScrollBarVisibility="Auto"
                 VerticalScrollBarVisibility="Auto"
                 BorderThickness="0"
-                Padding="4,0,0,0"/>
+                Padding="4,0,0,0" Grid.ColumnSpan="2"/>
 
             <!-- ── Splitter ── -->
-            <GridSplitter Grid.Row="1"
+            <GridSplitter
                           Height="4"
                           HorizontalAlignment="Stretch"
                           Background="#3C3C3C"
                           ResizeDirection="Rows"
                           ResizeBehavior="PreviousAndNext"
-                          Cursor="SizeNS"/>
+                          Cursor="SizeNS" Grid.ColumnSpan="2" Margin="0,592,0,56" Grid.RowSpan="3"/>
 
             <!-- ── Output panel ── -->
-            <Border Grid.Row="2"
+            <Border
                     Background="#1C1C1C"
                     BorderBrush="#3C3C3C"
-                    BorderThickness="0,0,0,0">
+                    BorderThickness="0,0,0,0" Grid.ColumnSpan="2" Margin="0,592,0,0" Grid.RowSpan="3">
                 <DockPanel>
 
                     <!-- Header bar -->

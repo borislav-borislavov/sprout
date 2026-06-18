@@ -64,6 +64,7 @@ namespace Sprout.Core.ViewModels
         private readonly SproutPageLogicBridge _host;
 
         public SproutPageVM(SproutPageConfiguration pageConfig,
+            OpenTabMessageArgs? args,
             IDialogService dialogService,
             IActionMessageService actionMessageService,
             IDataAdapterFactory dataAdapterFactory,
@@ -72,6 +73,7 @@ namespace Sprout.Core.ViewModels
             IConfigurationService configurationService)
         {
             PageConfig = pageConfig;
+            SproutPageUIState.Data = args?.Parameter;
             _dialogService = dialogService;
             _actionMessageService = actionMessageService;
             _dataAdapterFactory = dataAdapterFactory;

@@ -57,7 +57,7 @@ namespace Sprout.Core.ViewModels
 
                 if (pageConfig != null)
                 {
-                    OpenTab(pageConfig, msg.Value.Parameter);
+                    OpenTab(pageConfig, msg.Value);
                 }
                 else
                 {
@@ -101,9 +101,9 @@ namespace Sprout.Core.ViewModels
             OpenTab(pageConfig, null);
         }
 
-        private void OpenTab(SproutPageConfiguration pageConfig, object? parameter)
+        private void OpenTab(SproutPageConfiguration pageConfig, OpenTabMessageArgs? args)
         {
-            var sproutPageVM = _sproutPageVMFactory.Create(pageConfig, parameter);
+            var sproutPageVM = _sproutPageVMFactory.Create(pageConfig, args);
 
             SelectedTab = sproutPageVM;
             Tabs.Add(sproutPageVM);
@@ -170,7 +170,11 @@ namespace Sprout.Core.ViewModels
                 return;
             }
 
-            var newTab = _sproutPageVMFactory.Create(currentPageConfig, uiState.Data);
+            var newTab = _sproutPageVMFactory.Create(currentPageConfig, new OpenTabMessageArgs
+            {
+                PageConfigID = currentPageConfig.ID,
+                Parameter = uiState.Data
+            });
 
             Tabs.Add(newTab);
             SelectedTab = newTab;
@@ -230,7 +234,11 @@ namespace Sprout.Core.ViewModels
                     return;
                 }
 
-                var newTab = _sproutPageVMFactory.Create(currentPageConfig, uiState.Data);
+                var newTab = _sproutPageVMFactory.Create(currentPageConfig, new OpenTabMessageArgs
+                {
+                    PageConfigID = currentPageConfig.ID,
+                    Parameter = uiState.Data
+                });
 
                 Tabs.Add(newTab);
                 SelectedTab = newTab;

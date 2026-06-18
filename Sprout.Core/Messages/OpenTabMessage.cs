@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Messages
 {
-    internal class OpenTabMessage : ValueChangedMessage<OpenTabMessageArgs>
+    public class OpenTabMessage : ValueChangedMessage<OpenTabMessageArgs>
     {
         public OpenTabMessage(OpenTabMessageArgs value) 
             : base(value)
@@ -17,7 +17,7 @@ namespace Sprout.Core.Messages
         }
     }
 
-    internal class OpenTabMessageArgs
+    public class OpenTabMessageArgs
     {
         public Guid PageConfigID { get; set; }
         public object Parameter { get; set; }

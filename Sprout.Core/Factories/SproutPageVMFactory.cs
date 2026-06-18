@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Sprout.Core.Messages;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.ViewModels;
 using System;
@@ -13,17 +14,16 @@ namespace Sprout.Core.Factories
 {
     public class SproutPageVMFactory(IServiceProvider _serviceProvider) : ISproutPageVMFactory
     {
-        public SproutPageVM Create(SproutPageConfiguration pageConfig, object? parameter)
+        public SproutPageVM Create(SproutPageConfiguration pageConfig, OpenTabMessageArgs? args)
         {
+            //This is needed so that ActivatorUtilities.CreateInstance works properly
+            if (args == null) args = new();
+
             var vm = ActivatorUtilities.CreateInstance<SproutPageVM>(
                 _serviceProvider,
-                pageConfig
+                pageConfig,
+                args
             );
-
-            if (parameter != null)
-            {
-                vm.SproutPageUIState.Data = parameter;
-            }
 
             return vm;
         }
