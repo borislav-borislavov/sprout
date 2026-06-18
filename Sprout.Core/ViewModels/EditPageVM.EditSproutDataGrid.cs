@@ -211,6 +211,8 @@ namespace Sprout.Core.ViewModels
                     {
                         var columnSchema = reader.GetColumnSchema();
 
+                        if (columnSchema.Count == 0) throw new Exception("No columns selected!");
+
                         var invalidColumn = columnSchema.FirstOrDefault(c => ContainsWpfBindingReservedChars(c.ColumnName));
                         if (invalidColumn != null)
                         {
@@ -299,6 +301,8 @@ namespace Sprout.Core.ViewModels
                         {
                             var columnSchema = reader.GetColumnSchema();
 
+                            if (columnSchema.Count == 0) throw new Exception("No columns selected!");
+
                             var invalidColumn = columnSchema.FirstOrDefault(c => ContainsWpfBindingReservedChars(c.ColumnName));
                             if (invalidColumn != null)
                             {
@@ -336,85 +340,86 @@ namespace Sprout.Core.ViewModels
                 }
             }
         }
-            private async Task ApiPopulateColumns(ApiDataAdapterConfig adapterConfig)
+
+        private async Task ApiPopulateColumns(ApiDataAdapterConfig adapterConfig)
+        {
+            if (adapterConfig.DataProvider is not ApiDataProviderConfig dataProviderConfig) return;
+
+            var url = dataProviderConfig.Text;
+            if (string.IsNullOrWhiteSpace(url)) return;
+
+            try
             {
-                if (adapterConfig.DataProvider is not ApiDataProviderConfig dataProviderConfig) return;
+                using var client = new HttpClient();
+                var response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
 
-                var url = dataProviderConfig.Text;
-                if (string.IsNullOrWhiteSpace(url)) return;
+                var json = await response.Content.ReadAsStringAsync();
+                var root = JToken.Parse(json);
 
-                try
+                JToken target = root;
+
+                if (!string.IsNullOrWhiteSpace(dataProviderConfig.DataPath))
                 {
-                    using var client = new HttpClient();
-                    var response = await client.GetAsync(url);
-                    response.EnsureSuccessStatusCode();
+                    var path = dataProviderConfig.DataPath.StartsWith("$")
+                        ? dataProviderConfig.DataPath
+                        : "$." + dataProviderConfig.DataPath;
+                    target = root.SelectToken(path);
 
-                    var json = await response.Content.ReadAsStringAsync();
-                    var root = JToken.Parse(json);
-
-                    JToken target = root;
-
-                    if (!string.IsNullOrWhiteSpace(dataProviderConfig.DataPath))
-                    {
-                        var path = dataProviderConfig.DataPath.StartsWith("$")
-                            ? dataProviderConfig.DataPath
-                            : "$." + dataProviderConfig.DataPath;
-                        target = root.SelectToken(path);
-
-                        if (target == null)
-                        {
-                            _dialogService.ShowMessage(
-                                $"DataPath '{dataProviderConfig.DataPath}' did not match any element in the response.",
-                                "Error", DialogButton.OK, DialogImage.Error);
-                            return;
-                        }
-                    }
-
-                    JArray array = target switch
-                    {
-                        JArray ja => ja,
-                        JObject jo => new JArray(jo),
-                        _ => null
-                    };
-
-                    if (array == null || array.Count == 0 || array[0] is not JObject firstObj)
+                    if (target == null)
                     {
                         _dialogService.ShowMessage(
-                            "The API response did not return a non-empty array of objects.",
+                            $"DataPath '{dataProviderConfig.DataPath}' did not match any element in the response.",
+                            "Error", DialogButton.OK, DialogImage.Error);
+                        return;
+                    }
+                }
+
+                JArray array = target switch
+                {
+                    JArray ja => ja,
+                    JObject jo => new JArray(jo),
+                    _ => null
+                };
+
+                if (array == null || array.Count == 0 || array[0] is not JObject firstObj)
+                {
+                    _dialogService.ShowMessage(
+                        "The API response did not return a non-empty array of objects.",
+                        "Error", DialogButton.OK, DialogImage.Error);
+                    return;
+                }
+
+                foreach (var prop in firstObj.Properties())
+                {
+                    if (ContainsWpfBindingReservedChars(prop.Name))
+                    {
+                        SelectedDataGrid.Columns.Clear();
+                        _dialogService.ShowMessage(
+                            $"Column '{prop.Name}' contains reserved characters '.', '/', '[', ']', '(', ')'. Alias the field in your API or use a DataPath.",
                             "Error", DialogButton.OK, DialogImage.Error);
                         return;
                     }
 
-                    foreach (var prop in firstObj.Properties())
+                    var matchingCol = SelectedDataGrid.Columns
+                        .FirstOrDefault(c => string.Equals(c.BindingPath, prop.Name, StringComparison.OrdinalIgnoreCase));
+
+                    if (matchingCol == null)
                     {
-                        if (ContainsWpfBindingReservedChars(prop.Name))
+                        SelectedDataGrid.Columns.Add(new SproutDataGridColumnConfig
                         {
-                            SelectedDataGrid.Columns.Clear();
-                            _dialogService.ShowMessage(
-                                $"Column '{prop.Name}' contains reserved characters '.', '/', '[', ']', '(', ')'. Alias the field in your API or use a DataPath.",
-                                "Error", DialogButton.OK, DialogImage.Error);
-                            return;
-                        }
-
-                        var matchingCol = SelectedDataGrid.Columns
-                            .FirstOrDefault(c => string.Equals(c.BindingPath, prop.Name, StringComparison.OrdinalIgnoreCase));
-
-                        if (matchingCol == null)
-                        {
-                            SelectedDataGrid.Columns.Add(new SproutDataGridColumnConfig
-                            {
-                                BindingPath = prop.Name,
-                                Header = prop.Name,
-                                ColumnType = ColumnType.Text,
-                                IsReadOnly = false
-                            });
-                        }
+                            BindingPath = prop.Name,
+                            Header = prop.Name,
+                            ColumnType = ColumnType.Text,
+                            IsReadOnly = false
+                        });
                     }
                 }
-                catch (Exception ex)
-                {
-                    _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
-                }
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
             }
         }
     }
+}

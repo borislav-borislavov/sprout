@@ -14,6 +14,7 @@ using System.Data;
 using System.Data.Common;
 using System.Windows;
 using System.Windows.Data;
+using Sprout.Core.Models.Configurations.DataGrid;
 
 namespace Sprout.Core.Services.Duck
 {
@@ -249,6 +250,11 @@ namespace Sprout.Core.Services.Duck
             using var reader = await Task.Run(() => cmd.ExecuteReaderAsync());
             sw.Stop();
             _sqlQueryLogger?.Log(nameof(DuckDbDataService), cmd.CommandText, cmd.Parameters, sw.Elapsed);
+
+            if (reader.FieldCount == 0 && _duckDataAdapter.ParentType == typeof(SproutDataGridConfig))
+            {
+                throw new Exception($"Critical Error: Query of grid {_duckDataAdapter.Name} is not returning any columns!");
+            }
 
             reader.LoadDataTableColumnsFromSchema(dt);
 

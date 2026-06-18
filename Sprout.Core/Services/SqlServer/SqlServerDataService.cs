@@ -311,6 +311,12 @@ namespace Sprout.Core.Services.SqlServer
                 {
                     sw.Stop();
                     _sqlQueryLogger?.Log(nameof(SqlServerDataService), cmd.CommandText, cmd.Parameters, sw.Elapsed);
+
+                    if (reader.FieldCount == 0 && _dataAdapter.ParentType == typeof(SproutDataGridConfig))
+                    {
+                        throw new Exception($"Critical Error: Query of grid {_dataAdapter.Name} is not returning any columns!");
+                    }
+
                     reader.LoadDataTableColumnsFromSchema(dt);
 
                     // Move the CPU-heavy loading to a background thread
