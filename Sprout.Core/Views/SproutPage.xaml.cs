@@ -263,6 +263,14 @@ namespace Sprout.Core.Views
                                         Mode = BindingMode.TwoWay
                                     });
                             }
+                            else if (int.TryParse(sproutCombo.Config.SelectedValue, out var selIdx))
+                            {
+                                sproutCombo.comboBox.SelectedIndex = selIdx;
+                            }
+                            else
+                            {
+                                sproutCombo.comboBox.SelectedValue = sproutCombo.Config.SelectedValue;
+                            }
                         }
 
                         vm.UiStateRegistry.Register(sproutCombo.UIState.Name, sproutCombo.UIState);

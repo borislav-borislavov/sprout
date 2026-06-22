@@ -8,3 +8,8 @@ BindingPath: UserTypeID
 DisplayColumn: Name
 
 ValueColumn: UserTypeID
+
+Selected Value - This can be:
+	1. A UI State binding which will bind the SelectedValue to whatever the binding picks up
+	2. A hard coded Text value which will be used as the SelectedValue
+	3. An int value which will be used as an index to select the item in the combo. 0 will select the first item, 1 will select the second item, etc.
