@@ -273,7 +273,7 @@ namespace Sprout.Core.Services.Api
             // Replace row-data placeholders ({ColumnName}) when a DataRow is present
             if (dataRow != null)
             {
-                var requestedParameters = ParameterParser.ParseQueryParameters(urlTemplate);
+                var requestedParameters = DependencyParser.ParseDependencyMetas(urlTemplate);
                 foreach (var param in requestedParameters)
                 {
                     if (param.IsFromUIState) continue;
@@ -388,7 +388,7 @@ namespace Sprout.Core.Services.Api
                 parsableBody = rootScopes.First();
             }
 
-            var parameters = ParameterParser.ParseQueryParameters(parsableBody);
+            var parameters = DependencyParser.ParseDependencyMetas(parsableBody);
 
             foreach (var param in parameters)
             {
@@ -396,7 +396,7 @@ namespace Sprout.Core.Services.Api
 
                 if (param.IsFromUIState)
                 {
-                    var dep = ParameterParser.ParseDependency(param.RawPatameter);
+                    var dep = DependencyParser.ParseDependency(param.RawPatameter);
                     var uiState = UiStateRegistry[dep.ControlName];
 
                     if (uiState == null)

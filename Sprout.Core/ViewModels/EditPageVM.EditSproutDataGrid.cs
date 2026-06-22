@@ -163,7 +163,7 @@ namespace Sprout.Core.ViewModels
             query = query.Replace("{!whereFilter}", string.Empty, StringComparison.OrdinalIgnoreCase);
             query = query.Replace("{!andFilter}", string.Empty, StringComparison.OrdinalIgnoreCase);
 
-            var requestedParameters = ParameterParser.ParseQueryParameters(query);
+            var requestedParameters = DependencyParser.ParseDependencyMetas(query);
             List<SqlParameter> sqlParams = [];
 
             foreach (var queryParam in requestedParameters)

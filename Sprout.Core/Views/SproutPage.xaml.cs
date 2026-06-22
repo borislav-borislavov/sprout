@@ -250,7 +250,7 @@ namespace Sprout.Core.Views
 
                         if (!string.IsNullOrEmpty(sproutCombo.Config.SelectedValue))
                         {
-                            var dependency = ParameterParser.ParseDependencies(sproutCombo.Config.SelectedValue).FirstOrDefault();
+                            var dependency = DependencyParser.ParseDependencies(sproutCombo.Config.SelectedValue).FirstOrDefault();
 
                             if (dependency != null)
                             {
@@ -280,7 +280,7 @@ namespace Sprout.Core.Views
                     {
                         if (!string.IsNullOrEmpty(sproutTextBox.Config.Binding))
                         {
-                            var dependency = ParameterParser.ParseDependencies(sproutTextBox.Config.Binding).FirstOrDefault();
+                            var dependency = DependencyParser.ParseDependencies(sproutTextBox.Config.Binding).FirstOrDefault();
 
                             if (dependency != null)
                             {

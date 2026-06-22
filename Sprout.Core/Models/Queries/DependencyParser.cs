@@ -1,26 +1,20 @@
 ﻿using Sprout.Core.Common;
 using Sprout.Core.Common.Models;
 using Sprout.Core.Models.DataAdapters.DataProviders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Sprout.Core.Services.SqlServer.SqlServerDataService;
 
 namespace Sprout.Core.Models.Queries
 {
-    public static class ParameterParser
+    public static class DependencyParser
     {
-        public static IEnumerable<QueryParameter> ParseQueryParameters(string text)
+        public static IEnumerable<DependencyMeta> ParseDependencyMetas(string text)
         {
-            List<QueryParameter> parameters = new();
+            List<DependencyMeta> parameters = new();
 
             foreach (var scope in GetScopes(text))
             {
                 var nrNavigations = scope.Count(c => c == '.');
 
-                parameters.Add(new QueryParameter
+                parameters.Add(new DependencyMeta
                 {
                     Name = scope.TrimStart('@').TrimEnd('?', '!'),
                     IsMandatory = scope.EndsWith("!"),

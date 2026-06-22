@@ -75,7 +75,7 @@ namespace Sprout.Core.Factories
             dataAdapter.DataProvider = dataProvider;
 
 #warning polish this
-            (dataAdapter.DataProvider as SqlServerDataProvider).Dependencies = ParameterParser.ParseDependencies(dataProviderConfig.Text);
+            (dataAdapter.DataProvider as SqlServerDataProvider).Dependencies = DependencyParser.ParseDependencies(dataProviderConfig.Text);
 
             if (sqlServerAdapterConfig.InsertCommand != null)
             {
@@ -219,7 +219,7 @@ namespace Sprout.Core.Factories
                 DataPath = dataProviderConfig.DataPath,
                 AuthUrl = dataProviderConfig.AuthUrl,
                 AuthBody = dataProviderConfig.AuthBody,
-                Dependencies = ParameterParser.ParseDependencies(dataProviderConfig.Text),
+                Dependencies = DependencyParser.ParseDependencies(dataProviderConfig.Text),
                 DeferInitialLoad = dataProviderConfig.DeferInitialLoad
             };
 

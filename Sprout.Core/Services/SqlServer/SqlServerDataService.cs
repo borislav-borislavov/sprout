@@ -124,7 +124,7 @@ namespace Sprout.Core.Services.SqlServer
 
             var commandText = editCommand.Text;
 
-            var requestedParameters = ParameterParser.ParseQueryParameters(editCommand.Text);
+            var requestedParameters = DependencyParser.ParseDependencyMetas(editCommand.Text);
 
             List<SqlParameter> sqlParams = [];
 
@@ -132,7 +132,7 @@ namespace Sprout.Core.Services.SqlServer
             {
                 if (queryParam.IsFromUIState)
                 {
-                    var dep = ParameterParser.ParseDependency(queryParam.RawPatameter);
+                    var dep = DependencyParser.ParseDependency(queryParam.RawPatameter);
 
                     var uiState = UiStateRegistry[dep.ControlName];
 
@@ -353,7 +353,7 @@ namespace Sprout.Core.Services.SqlServer
             return (result.QueryText, sqlParams);
         }
 
-        private static void SetQueryParamFromDataRow(QueryParameter queryParam, System.Data.DataRow dataRow)
+        private static void SetQueryParamFromDataRow(DependencyMeta queryParam, System.Data.DataRow dataRow)
         {
             // Check if the row is deleted first to avoid the exception
             var version = dataRow.RowState == DataRowState.Deleted
@@ -389,16 +389,6 @@ namespace Sprout.Core.Services.SqlServer
         public void Dispose()
         {
             _connection?.Dispose();
-        }
-
-        public class QueryParameter
-        {
-            public string Name { get; set; }
-            public string Path { get; set; }
-            public object Value { get; set; }
-            public bool IsMandatory { get; set; }
-            public string RawPatameter { get; internal set; }
-            public bool IsFromUIState { get; internal set; }
         }
     }
 }

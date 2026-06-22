@@ -95,7 +95,7 @@ namespace Sprout.Core.Services.Duck
             var commandText = editCommand.Text;
 
             // 1. Parse {param} placeholders from the command text
-            var requestedParameters = ParameterParser.ParseQueryParameters(editCommand.Text);
+            var requestedParameters = DependencyParser.ParseDependencyMetas(editCommand.Text);
 
             var duckParams = new List<(string Name, object Value)>();
 
@@ -103,7 +103,7 @@ namespace Sprout.Core.Services.Duck
             {
                 if (queryParam.IsFromUIState)
                 {
-                    var dep = ParameterParser.ParseDependency(queryParam.RawPatameter);
+                    var dep = DependencyParser.ParseDependency(queryParam.RawPatameter);
                     var uiState = UiStateRegistry[dep.ControlName];
 
                     if (uiState == null)
@@ -317,7 +317,7 @@ namespace Sprout.Core.Services.Duck
             """;
 
         private static void SetQueryParamFromDataRow(
-            SqlServerDataService.QueryParameter queryParam, DataRow dataRow)
+            DependencyMeta queryParam, DataRow dataRow)
         {
             var version = dataRow.RowState == DataRowState.Deleted
                 ? DataRowVersion.Original
