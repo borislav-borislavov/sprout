@@ -104,6 +104,7 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
                                     Style="{StaticResource RoundedButtonStyle}"
                                     Background="Transparent"
                                     BorderThickness="0"
+                                    FontSize="14"
                                     Focusable="False"
                                     Command="{Binding ToggleExpandedCommand}">
                                     <Grid Width="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=ActualWidth}">
@@ -112,7 +113,7 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
                                                    VerticalAlignment="Center"/>
 
                                         <TextBlock FontFamily="Segoe Fluent Icons"
-                                                   FontSize="12"
+                                                   FontSize="13"
                                                    HorizontalAlignment="Right"
                                                    VerticalAlignment="Center"
                                                    Margin="0,0,10,0">
@@ -145,7 +146,8 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
                                                     Style="{StaticResource RoundedButtonStyle}"
                                                     Background="Transparent"
                                                     BorderThickness="0"
-                                                    HorizontalContentAlignment="Left"
+                                                    FontSize="14"
+                                                    HorizontalAlignment="Left"
                                                     Focusable="False"
                                                     Content="{Binding Title}"
                                                     Command="{Binding ElementName=MainViewControl, Path=DataContext.OpenPageCommand }"
@@ -168,7 +170,9 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
                                 Style="{StaticResource RoundedButtonStyle}"
                                 Background="Transparent"
                                 BorderThickness="0"
+                                HorizontalAlignment="Left"
                                 Focusable="False"
+                                FontSize="14"
                                 Content="{Binding Title}"
                                 Command="{Binding ElementName=MainViewControl, Path=DataContext.OpenPageCommand }"
                                 CommandParameter="{Binding}"
