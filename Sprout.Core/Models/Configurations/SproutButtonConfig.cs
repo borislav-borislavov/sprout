@@ -11,6 +11,10 @@ namespace Sprout.Core.Models.Configurations
     {
         public string Content { get; set; }
 
+        public string Icon { get; set; }
+
+        public string IconFont { get; set; } = "Segoe MDL2 Assets";
+
         public double? Height { get; set; }
 
         public double? Width { get; set; }
@@ -24,6 +28,8 @@ namespace Sprout.Core.Models.Configurations
         public string ToolTip { get; set; }
 
         public string Padding { get; set; }
+
+        public int BrushThickness { get; set; } = 1;
 
         public IDataAdapterConfig DataAdapter { get; set; }
 

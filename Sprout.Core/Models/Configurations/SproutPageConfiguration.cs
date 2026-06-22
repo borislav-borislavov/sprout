@@ -10,7 +10,11 @@ namespace Sprout.Core.Models.Configurations
 
 		public bool AddToMenu { get; set; }
 
-		public Guid? CategoryID { get; set; }
+        //"\uE74E"
+        public string Icon { get; set; }
+		public string IconFont { get; set; } = "Segoe MDL2 Assets";
+
+        public Guid? CategoryID { get; set; }
 
         public string Script { get; set; }
 

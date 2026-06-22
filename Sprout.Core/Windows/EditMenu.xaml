@@ -16,6 +16,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <conv:StringToBrushConverter x:Key="StringToBrush" />
+        <conv:IconStringConverter x:Key="IconStringConverter" />
     </Window.Resources>
 
     <!--Responsible for Async loading-->
@@ -312,6 +313,25 @@
                 <TextBox Text="{Binding SelectedPageConfig.Title, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
 
                 <CheckBox Content="AddToMenu" IsChecked="{Binding SelectedPageConfig.AddToMenu}" Margin="5" />
+
+                <TextBlock Text="Icon" Margin="5,5,5,0"/>
+                <Grid Margin="5,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0"
+                             Text="{Binding SelectedPageConfig.Icon, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IconStringConverter}}"/>
+                    <TextBlock Grid.Column="1"
+                               Margin="5,0,0,0"
+                               FontSize="20"
+                               VerticalAlignment="Center"
+                               Text="{Binding SelectedPageConfig.Icon}"
+                               FontFamily="{Binding SelectedPageConfig.IconFont}"/>
+                </Grid>
+
+                <TextBlock Text="Icon Font" Margin="5,5,5,0"/>
+                <TextBox Text="{Binding SelectedPageConfig.IconFont, UpdateSourceTrigger=PropertyChanged}" Margin="5,2"/>
             </StackPanel>
 
             <Button Content="Save"

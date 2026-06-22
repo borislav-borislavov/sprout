@@ -26,6 +26,56 @@ namespace Sprout.Core.Views.Controls
         public SproutButtonConfig Config { get; set; }
         public SproutControlType ControlType => SproutControlType.Button;
 
+        // ── ButtonContent ──────────────────────────────────────────────────────
+        public static readonly DependencyProperty ButtonContentProperty =
+            DependencyProperty.Register(nameof(ButtonContent), typeof(string), typeof(SproutButton),
+                new PropertyMetadata(string.Empty));
+
+        public string ButtonContent
+        {
+            get => (string)GetValue(ButtonContentProperty);
+            set => SetValue(ButtonContentProperty, value);
+        }
+
+        // ── Icon ───────────────────────────────────────────────────────────────
+        public static readonly DependencyProperty IconProperty =
+            DependencyProperty.Register(nameof(Icon), typeof(string), typeof(SproutButton),
+                new PropertyMetadata(string.Empty));
+
+        public string Icon
+        {
+            get => (string)GetValue(IconProperty);
+            set => SetValue(IconProperty, value);
+        }
+
+        // ── IconFont ───────────────────────────────────────────────────────────
+        public static readonly DependencyProperty IconFontProperty =
+            DependencyProperty.Register(nameof(IconFont), typeof(string), typeof(SproutButton),
+                new PropertyMetadata("Segoe MDL2 Assets"));
+
+        public string IconFont
+        {
+            get => (string)GetValue(IconFontProperty);
+            set => SetValue(IconFontProperty, value);
+        }
+
+        // ── BrushThickness ─────────────────────────────────────────────────────
+        public static readonly DependencyProperty BrushThicknessProperty =
+            DependencyProperty.Register(nameof(BrushThickness), typeof(int), typeof(SproutButton),
+                new PropertyMetadata(1, OnBrushThicknessChanged));
+
+        private static void OnBrushThicknessChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is SproutButton sb)
+                sb.button.BorderThickness = new Thickness((int)e.NewValue);
+        }
+
+        public int BrushThickness
+        {
+            get => (int)GetValue(BrushThicknessProperty);
+            set => SetValue(BrushThicknessProperty, value);
+        }
+
         public SproutButton()
         {
             InitializeComponent();

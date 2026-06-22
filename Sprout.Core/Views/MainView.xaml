@@ -173,10 +173,14 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
                                 HorizontalAlignment="Left"
                                 Focusable="False"
                                 FontSize="14"
-                                Content="{Binding Title}"
                                 Command="{Binding ElementName=MainViewControl, Path=DataContext.OpenPageCommand }"
                                 CommandParameter="{Binding}"
-                            />
+                            >
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Icon}" FontFamily="{Binding IconFont}" FontSize="23" />
+                                    <TextBlock Text="{Binding Title}" FontSize="14" Margin="3,0,0,0"/>
+                                </StackPanel>
+                            </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

@@ -5,6 +5,60 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Sprout.Core.Views.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="40" d:DesignWidth="120">
-    <Button x:Name="button" Content="Button"/>
+             d:DesignHeight="40" d:DesignWidth="120"
+             x:Name="root">
+    <Button x:Name="button"
+            Template="{StaticResource RoundBtnHover}"
+            FocusVisualStyle="{x:Null}"
+            Background="#99E8E8E8"
+            >
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Icon glyph — hidden when Icon is empty -->
+            <TextBlock x:Name="iconBlock"
+                       Grid.Column="0"
+                       Text="{Binding Icon, ElementName=root}"
+                       FontSize="14"
+                       VerticalAlignment="Center">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="FontFamily" Value="{Binding IconFont, ElementName=root}"/>
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Icon, ElementName=root}" Value="">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <!-- Text label — hidden when ButtonContent is empty -->
+            <TextBlock x:Name="textBlock"
+                       Grid.Column="1"
+                       Text="{Binding ButtonContent, ElementName=root}"
+                       d:Text="Sprout Button"
+                       VerticalAlignment="Center">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <!-- spacing only needed when icon is also visible -->
+                        <Setter Property="Margin" Value="6,0,0,0"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ButtonContent, ElementName=root}" Value="">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Icon, ElementName=root}" Value="">
+                                <Setter Property="Margin" Value="0"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>
+    </Button>
 </UserControl>
