@@ -34,11 +34,6 @@ namespace Sprout.Core.Models.ButtonActions
                 throw new Exception($"DataAdapter not found for control '{_ownControlName}'");
             }
 
-            if (ownDataAdapter.UpdateCommand is not SqlServerEditCommand sqlEditCommand)
-            {
-                throw new Exception($"UpdateCommand is not configured for control '{_ownControlName}'");
-            }
-
             using (var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry))
             {
                 var changeResult = await dataService.Update(null);
