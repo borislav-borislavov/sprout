@@ -8,6 +8,7 @@ namespace Sprout.Core.Models.Configurations.Api
 {
     public enum HttpVerb
     {
+        GET,
         POST,
         PUT,
         PATCH,

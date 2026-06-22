@@ -72,7 +72,7 @@ namespace Sprout.Core.Services.Api
             if (token != null)
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var url = BuildUrl(_dataProvider.Text, _dataProvider);
+            var url = BuildDataProviderUrl(_dataProvider.Text);
 
             var sw = Stopwatch.StartNew();
             var response = await client.GetAsync(url);
@@ -152,7 +152,7 @@ namespace Sprout.Core.Services.Api
             if (token != null)
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var url = SubstituteDependencies(cmd.Text, _dataProvider, dataRow);
+            var url = SubstituteCommandDependencies(cmd, dataRow);
 
             var body = BuildBody(cmd, dataRow);
             var content = new StringContent(body, Encoding.UTF8, "application/json");
@@ -161,6 +161,7 @@ namespace Sprout.Core.Services.Api
 
             HttpResponseMessage response = cmd.Verb switch
             {
+                HttpVerb.GET => await client.GetAsync(url),
                 HttpVerb.POST => await client.PostAsync(url, content),
                 HttpVerb.PUT => await client.PutAsync(url, content),
                 HttpVerb.PATCH => await client.PatchAsync(url, content),
@@ -176,14 +177,26 @@ namespace Sprout.Core.Services.Api
 
             if (response.IsSuccessStatusCode == false)
             {
-                var indentedJson = JToken.Parse(responseJson).ToString(Formatting.Indented);
-                changeResult.Messages.Add(new ActionMessage("Error", indentedJson));
+                if (string.IsNullOrWhiteSpace(responseJson))
+                {
+                    changeResult.Messages.Add(new ActionMessage("Error", $"{response}"));
+                }
+                else
+                {
+                    var indentedJson = JToken.Parse(responseJson).ToString(Formatting.Indented);
+                    changeResult.Messages.Add(new ActionMessage("Error", indentedJson));
+                }
+
                 return changeResult;
             }
 
             if (cmd.ShowResponseAsMessage)
             {
                 var message = ExtractResponseMessage(responseJson, cmd.ResponsePath);
+
+                //try to show something
+                if (message == null) message = $"{response}";
+
                 if (message != null)
                     changeResult.Messages.Add(new ActionMessage("Info", message));
             }
@@ -221,18 +234,17 @@ namespace Sprout.Core.Services.Api
                 $"Could not find a token field in the auth response. Expected one of: {string.Join(", ", _tokenFieldNames)}");
         }
 
-        // ──────────────────────────────────────────────────────────────
-        // URL building
-        // ──────────────────────────────────────────────────────────────
-
-        private string BuildUrl(string urlTemplate, ApiDataProvider dataProvider)
+        /// <summary>
+        /// The DataProvider URL also takes account of the filters so that grids work properly
+        /// </summary>
+        private string BuildDataProviderUrl(string urlTemplate)
         {
-            var url = SubstituteDependencies(urlTemplate, dataProvider, null);
+            var url = SubstituteDataProviderDependencies(urlTemplate, _dataProvider, null);
 
             // Append active filters as query parameters
             var queryParams = new List<string>();
 
-            foreach (var filter in dataProvider.Filters.Values)
+            foreach (var filter in _dataProvider.Filters.Values)
             {
                 if (filter is not ApiFilter apiFilter) continue;
 
@@ -257,7 +269,7 @@ namespace Sprout.Core.Services.Api
             return url;
         }
 
-        private string SubstituteDependencies(string urlTemplate, ApiDataProvider dataProvider, DataRow dataRow)
+        private string SubstituteDataProviderDependencies(string urlTemplate, ApiDataProvider dataProvider, DataRow dataRow)
         {
             if (string.IsNullOrWhiteSpace(urlTemplate)) return urlTemplate;
 
@@ -276,8 +288,9 @@ namespace Sprout.Core.Services.Api
                 var requestedParameters = DependencyParser.ParseDependencyMetas(urlTemplate);
                 foreach (var param in requestedParameters)
                 {
-                    if (param.IsFromUIState) continue;
+                    if (param.IsFromUIState) continue; // the dataProvider.Dependencies are handled (and originating from the UIState)
 
+                    //Handle only DataRow-sourced params
                     var version = dataRow.RowState == DataRowState.Deleted
                         ? DataRowVersion.Original
                         : DataRowVersion.Current;
@@ -297,6 +310,63 @@ namespace Sprout.Core.Services.Api
             }
 
             return url;
+        }
+
+        /// <summary>
+        /// Responsible for evaluating ON DEMAND DataRow dependencies and UIState dependencies (usually UIState dependencies fire automatically but we don't want that on commands)
+        /// </summary>
+        private string SubstituteCommandDependencies(ApiEditCommand cmd, DataRow dataRow)
+        {
+            if (string.IsNullOrWhiteSpace(cmd.Text)) return cmd.Text;
+
+            var url = cmd.Text;
+
+            var requestedParameters = DependencyParser.ParseDependencyMetas(cmd.Text);
+
+            foreach (var queryParam in requestedParameters)
+            {
+                if (queryParam.IsFromUIState)
+                {
+                    var dep = DependencyParser.ParseDependency(queryParam.RawPatameter);
+
+                    var uiState = UiStateRegistry[dep.ControlName];
+
+                    if (uiState == null)
+                    {
+                        throw new Exception($"UI State with path {queryParam.Path} not found for parameter {queryParam.Name}");
+                    }
+
+                    queryParam.Value = ResolveBindingPath(uiState, dep.PropertyPath);
+                }
+                else
+                {
+                    SetQueryParamFromDataRow(queryParam, dataRow);
+                }
+
+                var rawValue = queryParam.Value != null ? HttpUtility.UrlEncode($"{queryParam.Value}") : string.Empty;
+                url = url.Replace($"{{{queryParam.RawPatameter}}}", rawValue, StringComparison.OrdinalIgnoreCase);
+            }
+
+            return url;
+        }
+
+        private static void SetQueryParamFromDataRow(DependencyMeta queryParam, System.Data.DataRow dataRow)
+        {
+            // Check if the row is deleted first to avoid the exception
+            var version = dataRow.RowState == DataRowState.Deleted
+                          ? DataRowVersion.Original
+                          : DataRowVersion.Current;
+
+            var value = dataRow[queryParam.Name, version];
+
+            if (value == DBNull.Value)
+            {
+                // check for default value
+            }
+            else
+            {
+                queryParam.Value = value;
+            }
         }
 
         // ──────────────────────────────────────────────────────────────
