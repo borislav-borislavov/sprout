@@ -22,6 +22,7 @@
         
         <TextBox
             x:Name="textBox"
+            x:FieldModifier="public"
             Grid.Row="1"
             VerticalAlignment="Top"
             BorderThickness="0.8"
