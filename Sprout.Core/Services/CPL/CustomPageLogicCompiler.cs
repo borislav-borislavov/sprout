@@ -96,7 +96,8 @@ namespace Sprout.Core.Services.CPL
             "System.Linq",
             "System.Threading.Tasks",
             "Sprout.Core.Services.CPL",
-            "System.Windows"
+            "System.Windows",
+            "ClosedXML.Excel"
         ];
 
         private readonly SproutPageVM _pageVM;
