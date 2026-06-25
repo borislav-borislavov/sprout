@@ -23,7 +23,10 @@ namespace Sprout.Core.Factories
             sproutButton.ButtonContent = sproutButtonConfig.Content ?? string.Empty;
             sproutButton.Icon = sproutButtonConfig.Icon ?? string.Empty;
             sproutButton.IconFont = sproutButtonConfig.IconFont ?? "Segoe MDL2 Assets";
+            sproutButton.IconFontSize = sproutButtonConfig.IconFontSize ?? 14.0;
+            sproutButton.TextFontSize = sproutButtonConfig.TextFontSize ?? 12.0;
             sproutButton.BrushThickness = sproutButtonConfig.BrushThickness;
+            sproutButton.ForegroundColor = sproutButtonConfig.ForegroundColor;
 
             if (sproutButtonConfig.Height.HasValue)
                 sproutButton.button.Height = sproutButtonConfig.Height.Value;

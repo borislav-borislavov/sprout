@@ -59,6 +59,28 @@ namespace Sprout.Core.Views.Controls
             set => SetValue(IconFontProperty, value);
         }
 
+        // ── IconFontSize ───────────────────────────────────────────────────────
+        public static readonly DependencyProperty IconFontSizeProperty =
+            DependencyProperty.Register(nameof(IconFontSize), typeof(double), typeof(SproutButton),
+                new PropertyMetadata(14.0));
+
+        public double IconFontSize
+        {
+            get => (double)GetValue(IconFontSizeProperty);
+            set => SetValue(IconFontSizeProperty, value);
+        }
+
+        // ── TextFontSize ───────────────────────────────────────────────────────
+        public static readonly DependencyProperty TextFontSizeProperty =
+            DependencyProperty.Register(nameof(TextFontSize), typeof(double), typeof(SproutButton),
+                new PropertyMetadata(12.0));
+
+        public double TextFontSize
+        {
+            get => (double)GetValue(TextFontSizeProperty);
+            set => SetValue(TextFontSizeProperty, value);
+        }
+
         // ── BrushThickness ─────────────────────────────────────────────────────
         public static readonly DependencyProperty BrushThicknessProperty =
             DependencyProperty.Register(nameof(BrushThickness), typeof(int), typeof(SproutButton),
@@ -76,9 +98,47 @@ namespace Sprout.Core.Views.Controls
             set => SetValue(BrushThicknessProperty, value);
         }
 
+        // ── ForegroundColor ────────────────────────────────────────────────────
+        public static readonly DependencyProperty ForegroundColorProperty =
+            DependencyProperty.Register(nameof(ForegroundColor), typeof(string), typeof(SproutButton),
+                new PropertyMetadata(null, OnForegroundColorChanged));
+
+        private static void OnForegroundColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not SproutButton sb) return;
+
+            var colorString = e.NewValue as string;
+
+            if (!string.IsNullOrWhiteSpace(colorString))
+            {
+                try
+                {
+                    var brush = (Brush)new BrushConverter().ConvertFromString(colorString);
+                    sb.iconBlock.Foreground = brush;
+                    sb.textBlock.Foreground = brush;
+                    return;
+                }
+                catch { /* invalid value — fall through and clear */ }
+            }
+
+            // Null/empty/invalid: clear so PrimaryFontBrush is inherited from the global style
+            sb.iconBlock.ClearValue(ForegroundProperty);
+            sb.textBlock.ClearValue(ForegroundProperty);
+        }
+
+        public string ForegroundColor
+        {
+            get => (string)GetValue(ForegroundColorProperty);
+            set => SetValue(ForegroundColorProperty, value);
+        }
+
         public SproutButton()
         {
             InitializeComponent();
+            // Stamp as a local value so it always wins over the style's BorderThickness="0".
+            // The callback handles later changes, but WPF skips the callback when the value
+            // matches the DP default — so we guarantee it here too.
+            button.BorderThickness = new Thickness(BrushThickness);
         }
     }
 }

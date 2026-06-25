@@ -15,6 +15,10 @@ namespace Sprout.Core.Models.Configurations
 
         public string IconFont { get; set; } = "Segoe MDL2 Assets";
 
+        public double? IconFontSize { get; set; }
+
+        public double? TextFontSize { get; set; }
+
         public double? Height { get; set; }
 
         public double? Width { get; set; }
@@ -30,6 +34,8 @@ namespace Sprout.Core.Models.Configurations
         public string Padding { get; set; }
 
         public int BrushThickness { get; set; } = 1;
+
+        public string ForegroundColor { get; set; } = "#2C3E50";
 
         public IDataAdapterConfig DataAdapter { get; set; }
 

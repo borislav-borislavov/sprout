@@ -15,6 +15,7 @@
     <UserControl.Resources>
         <conv:IconStringConverter x:Key="IconStringConverter"/>
         <conv:NullableDoubleConverter x:Key="NullableDoubleConverter"/>
+        <conv:StringToBrushConverter x:Key="StringToBrush"/>
     </UserControl.Resources>
 
     <Grid>
@@ -22,6 +23,8 @@
             <TabItem Header="General">
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -113,9 +116,31 @@
                         Margin="5"
                         Text="{Binding SelectedButton.IconFont, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <!--Actions Header-->
+                    <!--IconFontSize-->
                     <TextBlock
                         Grid.Row="4"
+                        Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Icon Font Size" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="4" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedButton.IconFontSize, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullableDoubleConverter}}"/>
+
+                    <!--TextFontSize-->
+                    <TextBlock
+                        Grid.Row="5"
+                        Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Text Font Size" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="5" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedButton.TextFontSize, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullableDoubleConverter}}"/>
+
+                    <!--Actions Header-->
+                    <TextBlock
+                        Grid.Row="6"
                         Grid.Column="0"
                         Grid.ColumnSpan="2"
                         Margin="5,15,5,0"
@@ -124,7 +149,7 @@
                         FontSize="16"/>
 
                     <!--Actions Toolbar-->
-                    <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                    <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2"
                                 Orientation="Horizontal">
                         <ComboBox Width="200" Margin="5"
                                   ItemsSource="{Binding AvailableActionTypes}"
@@ -144,7 +169,7 @@
                     </StackPanel>
 
                     <!--Actions List-->
-                    <ListBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
+                    <ListBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
                              ItemsSource="{Binding SelectedButton.Actions}"
                              SelectedItem="{Binding SelectedButtonAction}">
                         <ListBox.Resources>
@@ -166,7 +191,7 @@
                     </ListBox>
 
                     <!--Selected Action Detail-->
-                    <Grid Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
+                    <Grid Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
                         <Grid.Resources>
                             <DataTemplate DataType="{x:Type config:ExecuteUpdateActionConfig}">
                                 <StackPanel Margin="5">
@@ -204,6 +229,7 @@
             <TabItem Header="Common">
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -308,6 +334,25 @@
                         Grid.Row="7" Grid.Column="1"
                         VerticalAlignment="Top" Margin="5"
                         Text="{Binding SelectedButton.BrushThickness, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--ForegroundColor-->
+                    <TextBlock
+                        Grid.Row="8" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Center"
+                        Text="Foreground Color" FontWeight="Bold" FontSize="16"/>
+                    <Grid Grid.Row="8" Grid.Column="1" Margin="5,5,5,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" VerticalAlignment="Center"
+                                 Text="{Binding SelectedButton.ForegroundColor, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Border Grid.Column="1"
+                                Width="24" Margin="5,0,0,0"
+                                CornerRadius="3"
+                                BorderBrush="Gray" BorderThickness="1"
+                                Background="{Binding SelectedButton.ForegroundColor, Converter={StaticResource StringToBrush}}"/>
+                    </Grid>
                 </Grid>
             </TabItem>
         </TabControl>
