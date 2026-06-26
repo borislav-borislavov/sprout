@@ -205,21 +205,6 @@ namespace Sprout.Core.ViewModels
         }
 
         [RelayCommand]
-        private void DuplicateSelected()
-        {
-            if (SelectedPageConfig == null) return;
-
-            var duplicate = SelectedPageConfig.Clone();
-            duplicate.ID = Guid.NewGuid();
-            duplicate.Title = SelectedPageConfig.Title + " (Copy)";
-
-            int index = PageConfigs.IndexOf(SelectedPageConfig);
-            PageConfigs.Insert(index + 1, duplicate);
-
-            SelectedPageConfig = duplicate;
-        }
-
-        [RelayCommand]
         private void DeleteSelected()
         {
             if (SelectedPageConfig != null)

@@ -52,13 +52,6 @@
                 </StackPanel>
             </Button>
             <Separator/>
-            <Button Command="{Binding DuplicateSelectedCommand}" ToolTip="Duplicate selected page">
-                <StackPanel HorizontalAlignment="Center">
-                    <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE8C8;" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Duplicate" HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Separator/>
             <Button Command="{Binding MoveUpCommand}" ToolTip="Move page up">
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE74A;" HorizontalAlignment="Center"/>
