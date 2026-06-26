@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Sprout.Core.Factories;
 using Sprout.Core.Services.ActionMessageService;
+using Sprout.Core.Services.Clipboard;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Login;
@@ -24,6 +25,7 @@ namespace Sprout.Core
             services.AddTransient<IConfigurationService, JsonConfigurationService>(x => new JsonConfigurationService(AppArgs.SeedPath));
             services.AddTransient<INavigationService, NavigationService>();
             services.AddTransient<IDialogService, DialogService>();
+            services.AddTransient<IClipboardService, ClipboardService>();
             services.AddTransient<IDataAdapterFactory, DataAdapterFactory>();
             services.AddTransient<IDataServiceFactory, DataServiceFactory>();
             services.AddTransient<IActionMessageService, ActionMessageService>();

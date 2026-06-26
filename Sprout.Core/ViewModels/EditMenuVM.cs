@@ -1,8 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Newtonsoft.Json;
 using Sprout.Core.Common;
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Services.Clipboard;
 using Sprout.Core.Services.Configurations;
+using Sprout.Core.Services.Dialog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,14 +30,18 @@ namespace Sprout.Core.ViewModels
         private MenuCategoryVM _selectedCategory;
 
         private readonly IConfigurationService _configurationService;
+        private readonly IClipboardService _clipboardService;
+        private readonly IDialogService _dialogService;
 
         private SproutConfiguration _sproutConfig;
 
         public bool IsSaved { get; internal set; }
 
-        public EditMenuVM(IConfigurationService configurationService)
+        public EditMenuVM(IConfigurationService configurationService, IClipboardService clipboardService, IDialogService dialogService)
         {
             _configurationService = configurationService;
+            _clipboardService = clipboardService;
+            _dialogService = dialogService;
         }
 
         [RelayCommand]
@@ -245,6 +252,51 @@ namespace Sprout.Core.ViewModels
             if (index >= 0 && index < PageConfigs.Count - 1)
             {
                 PageConfigs.Move(index, index + 1);
+            }
+        }
+
+        [RelayCommand]
+        private void CopyPageAsJson()
+        {
+            if (SelectedPageConfig == null) return;
+
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                Formatting = Formatting.Indented
+            };
+
+            var json = JsonConvert.SerializeObject(SelectedPageConfig, settings);
+            _clipboardService.SetText(json);
+        }
+
+        [RelayCommand]
+        private void CreatePageFromJson()
+        {
+            if (!_clipboardService.ContainsText()) return;
+
+            try
+            {
+                var json = _clipboardService.GetText();
+
+                var settings = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.Auto,
+                    Formatting = Formatting.Indented
+                };
+
+                var page = JsonConvert.DeserializeObject<SproutPageConfiguration>(json, settings);
+                if (page == null) return;
+
+                page.ID = Guid.NewGuid();
+                page.Title = page.Title + " (Imported)";
+
+                PageConfigs.Add(page);
+                SelectedPageConfig = page;
+            }
+            catch
+            {
+                _dialogService.ShowWarning("The clipboard does not contain valid page JSON.");
             }
         }
     }

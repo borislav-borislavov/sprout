@@ -28,6 +28,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -37,8 +38,23 @@
             <ColumnDefinition Width="0.4*"/>
         </Grid.ColumnDefinitions>
 
+        <ToolBar Grid.Row="0" Grid.ColumnSpan="3" Margin="2">
+            <Button Command="{Binding CopyPageAsJsonCommand}" ToolTip="Copy selected page as JSON">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE8C8;" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Copy Page" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding CreatePageFromJsonCommand}" ToolTip="Create page from JSON in clipboard">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE77F;" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Paste Page" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </ToolBar>
+
         <Grid Name="MenuItems"
-              Grid.Row="0"
+              Grid.Row="1"
               Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -159,7 +175,7 @@
         </Grid>
 
         <Grid Name="Categories"
-              Grid.Row="0"
+              Grid.Row="1"
               Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -297,7 +313,7 @@
         </Grid>
 
         <Grid Name="DisplaySelectedMenuItem"
-              Grid.Row="0"
+              Grid.Row="1"
               Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition/>
