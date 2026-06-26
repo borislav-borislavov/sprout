@@ -13,5 +13,6 @@ namespace Sprout.Core.Models
         ComboBox,
         Button,
         TextBox,
+        CheckBox,
     }
 }

@@ -27,6 +27,8 @@ namespace Sprout.Core.Factories
                     return SproutComboFactory.Create(sproutComboConfig, controls);
                 case SproutTextBoxConfig sproutTextBoxConfig:
                     return SproutTextBoxFactory.Create(sproutTextBoxConfig, controls);
+                case SproutCheckBoxConfig sproutCheckBoxConfig:
+                    return SproutCheckBoxFactory.Create(sproutCheckBoxConfig, controls);
                 default:
                     throw new NotImplementedException();
             }
