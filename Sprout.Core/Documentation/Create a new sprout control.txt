@@ -1,0 +1,9 @@
+
+Each control is created from a Config check for an example at "Sprout.Core.Models.Configurations.DataGrid"
+The control is created via its own factory. For example SproutDataGridFactory which is called also by the SproutControlFactory
+The view of the control is created in "Sprout.Core.Views.Controls" check for example "Sprout.Core.Views.Controls.SproutDataGrid"
+Sprout controls have UIState which is used for the binding of the reactive dependencies that controls can have. (FYI DependencyParser but this is already implementend and it works)
+Each SproutControl has its own Edit view. For example "Sprout.Core.Views.EditGridConfig". These views are used in Sprout.Core.Windows.EditPage
+EditPage is used to edit the whole configuration of the page (with the exception of the custom page logic C# scripts)
+For now in SproutPage.InitializePage() i am initializing the SproutControls.
+Control configs can inherit IDataAdapterConfigHost. DataAdapters are an interface to interract with different data sources. (Data adapters already exist and are working)
