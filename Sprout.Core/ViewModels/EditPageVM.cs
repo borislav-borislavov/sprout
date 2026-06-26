@@ -117,10 +117,13 @@ namespace Sprout.Core.ViewModels
 
                 if (newControl == null) return;
 
-#warning create interface to mark containers
                 if (SelectedNode is GridConfig gridConfig)
                 {
                     gridConfig.Children.Add(newControl);
+                }
+                else if (SelectedNode is IChildControlHost childHost)
+                {
+                    childHost.Child = newControl;
                 }
             }
             catch (Exception ex)
@@ -140,7 +143,15 @@ namespace Sprout.Core.ViewModels
 
                 if (parent == null) return;
 
-                parent.Children.Remove(SelectedNode);
+                if (parent is GridConfig gridParent)
+                {
+                    gridParent.Children.Remove(SelectedNode);
+                }
+                else if (parent is IChildControlHost childHost)
+                {
+                    childHost.Child = null;
+                }
+
                 SelectedNode = null;
             }
             catch (Exception ex)
@@ -149,7 +160,7 @@ namespace Sprout.Core.ViewModels
             }
         }
 
-        private static GridConfig FindParent(IEnumerable<SproutControlConfig> nodes, SproutControlConfig target)
+        private static SproutControlConfig FindParent(IEnumerable<SproutControlConfig> nodes, SproutControlConfig target)
         {
             foreach (var node in nodes)
             {
@@ -161,6 +172,17 @@ namespace Sprout.Core.ViewModels
                     }
 
                     var result = FindParent(gridConfig.Children, target);
+                    if (result != null) return result;
+                }
+
+                if (node is IChildControlHost childHost && childHost.Child != null)
+                {
+                    if (childHost.Child == target)
+                    {
+                        return node;
+                    }
+
+                    var result = FindParent([childHost.Child], target);
                     if (result != null) return result;
                 }
             }
@@ -198,12 +220,12 @@ namespace Sprout.Core.ViewModels
                 if (SelectedNode == null) return;
 
                 var parent = FindParent(Controls, SelectedNode);
-                if (parent == null) return;
+                if (parent is not GridConfig gridParent) return;
 
-                var index = parent.Children.IndexOf(SelectedNode);
+                var index = gridParent.Children.IndexOf(SelectedNode);
                 if (index <= 0) return;
 
-                parent.Children.Move(index, index - 1);
+                gridParent.Children.Move(index, index - 1);
             }
             catch (Exception ex)
             {
@@ -219,12 +241,12 @@ namespace Sprout.Core.ViewModels
                 if (SelectedNode == null) return;
 
                 var parent = FindParent(Controls, SelectedNode);
-                if (parent == null) return;
+                if (parent is not GridConfig gridParent) return;
 
-                var index = parent.Children.IndexOf(SelectedNode);
-                if (index < 0 || index >= parent.Children.Count - 1) return;
+                var index = gridParent.Children.IndexOf(SelectedNode);
+                if (index < 0 || index >= gridParent.Children.Count - 1) return;
 
-                parent.Children.Move(index, index + 1);
+                gridParent.Children.Move(index, index + 1);
             }
             catch (Exception ex)
             {
@@ -242,7 +264,15 @@ namespace Sprout.Core.ViewModels
                 var currentParent = FindParent(Controls, _moveSourceNode);
                 if (currentParent == null || currentParent == newParent) return;
 
-                currentParent.Children.Remove(_moveSourceNode);
+                if (currentParent is GridConfig gridParent)
+                {
+                    gridParent.Children.Remove(_moveSourceNode);
+                }
+                else if (currentParent is IChildControlHost childHost)
+                {
+                    childHost.Child = null;
+                }
+
                 newParent.Children.Add(_moveSourceNode);
                 SelectedNode = _moveSourceNode;
             }
@@ -265,6 +295,14 @@ namespace Sprout.Core.ViewModels
                         yield return childGrid;
                     }
                 }
+
+                if (node is IChildControlHost childHost && childHost.Child != null)
+                {
+                    foreach (var childGrid in GetAllGridConfigs([childHost.Child]))
+                    {
+                        yield return childGrid;
+                    }
+                }
             }
         }
 
@@ -276,6 +314,14 @@ namespace Sprout.Core.ViewModels
 
                 if (child is GridConfig childGrid && IsDescendant(childGrid, target))
                     return true;
+
+                if (child is IChildControlHost childHost && childHost.Child != null)
+                {
+                    if (childHost.Child == target) return true;
+
+                    if (childHost.Child is GridConfig nestedGrid && IsDescendant(nestedGrid, target))
+                        return true;
+                }
             }
 
             return false;

@@ -346,6 +346,11 @@ namespace Sprout.Core.Views
                                 Mode = BindingMode.OneWay
                             });
                     }
+
+                    if (kvp.Value is SproutBorder sproutBorder)
+                    {
+                        vm.UiStateRegistry.Register(sproutBorder.UIState.Name, sproutBorder.UIState);
+                    }
                 }
             }
             catch (Exception ex)
