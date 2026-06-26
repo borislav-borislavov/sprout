@@ -105,6 +105,16 @@
                             <TextBlock Text="{Binding Name}"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
+
+                    <HierarchicalDataTemplate DataType="{x:Type config:SproutDatePickerConfig}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                FontFamily="Segoe Fluent Icons"
+                                Text="&#xe787;"
+                                Margin="3"/>
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
                 </TreeView.Resources>
             </TreeView>
 
@@ -219,6 +229,10 @@
 
                         <DataTemplate DataType="{x:Type config:SproutCheckBoxConfig}">
                             <views:EditSproutCheckBox/>
+                        </DataTemplate>
+
+                        <DataTemplate DataType="{x:Type config:SproutDatePickerConfig}">
+                            <views:EditSproutDatePicker/>
                         </DataTemplate>
 
                         <DataTemplate DataType="{x:Type config:SproutButtonConfig}">

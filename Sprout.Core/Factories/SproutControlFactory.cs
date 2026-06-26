@@ -29,6 +29,8 @@ namespace Sprout.Core.Factories
                     return SproutTextBoxFactory.Create(sproutTextBoxConfig, controls);
                 case SproutCheckBoxConfig sproutCheckBoxConfig:
                     return SproutCheckBoxFactory.Create(sproutCheckBoxConfig, controls);
+                case SproutDatePickerConfig sproutDatePickerConfig:
+                    return SproutDatePickerFactory.Create(sproutDatePickerConfig, controls);
                 default:
                     throw new NotImplementedException();
             }

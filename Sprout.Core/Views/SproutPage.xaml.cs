@@ -298,6 +298,11 @@ namespace Sprout.Core.Views
                         vm.UiStateRegistry.Register(sproutTextBox.UIState.Name, sproutTextBox.UIState);
                     }
 
+                    if (kvp.Value is SproutDatePicker sproutDatePicker)
+                    {
+                        vm.UiStateRegistry.Register(sproutDatePicker.UIState.Name, sproutDatePicker.UIState);
+                    }
+
                     if (kvp.Value is SproutButton sproutButton)
                     {
                         vm.ButtonActions.Add(sproutButton.Name, []);
