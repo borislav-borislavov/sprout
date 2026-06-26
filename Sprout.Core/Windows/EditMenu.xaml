@@ -39,6 +39,39 @@
         </Grid.ColumnDefinitions>
 
         <ToolBar Grid.Row="0" Grid.ColumnSpan="3" Margin="2">
+            <Button Command="{Binding CreateNewCommand}" ToolTip="Create new page">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE948;" HorizontalAlignment="Center"/>
+                    <TextBlock Text="New Page" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding DeleteSelectedCommand}" ToolTip="Delete selected page">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE949;" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Delete" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button Command="{Binding DuplicateSelectedCommand}" ToolTip="Duplicate selected page">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE8C8;" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Duplicate" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button Command="{Binding MoveUpCommand}" ToolTip="Move page up">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE74A;" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Move Up" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding MoveDownCommand}" ToolTip="Move page down">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE74B;" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Move Down" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Separator/>
             <Button Command="{Binding CopyPageAsJsonCommand}" ToolTip="Copy selected page as JSON">
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE8C8;" HorizontalAlignment="Center"/>
@@ -51,6 +84,13 @@
                     <TextBlock Text="Paste Page" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
+            <Separator/>
+            <Button Command="{Binding SaveCommand}" ToolTip="Save">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE74E;" HorizontalAlignment="Center" Foreground="Green"/>
+                    <TextBlock Text="Save" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
         </ToolBar>
 
         <Grid Name="MenuItems"
@@ -59,7 +99,6 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock
@@ -102,77 +141,7 @@
                    Margin="0,10,0,0" />
             </StackPanel>
 
-            <StackPanel Name="Buttons"
-                        Grid.Row="2"
-                        Orientation="Horizontal">
-                <Button
-                    HorizontalAlignment="Left"
-                    Margin="2"
-                    BorderThickness="0"
-                    Background="Transparent"
-                    Command="{Binding CreateNewCommand}">
-                        <TextBlock
-                            FontFamily="Segoe Fluent Icons"
-                            FontSize="25"
-                            Text="&#xE948;"
-                            Margin="3"/>
-                </Button>
-
-                <Button
-                    HorizontalAlignment="Left"
-                    Margin="2"
-                    BorderThickness="0"
-                    Background="Transparent"
-                    Command="{Binding DeleteSelectedCommand}" >
-                    <TextBlock
-                            FontFamily="Segoe Fluent Icons"
-                            FontSize="25"
-                            Text="&#xE949;"
-                            Margin="3"/>
-                </Button>
-
-                <Button
-                    HorizontalAlignment="Left"
-                    Margin="2"
-                    BorderThickness="0"
-                    Background="Transparent"
-                    ToolTip="Duplicate selected page"
-                    Command="{Binding DuplicateSelectedCommand}">
-                    <TextBlock
-                            FontFamily="Segoe Fluent Icons"
-                            FontSize="25"
-                            Text="&#xE8C8;"
-                            Margin="3"/>
-                </Button>
-
-                <Button
-                    HorizontalAlignment="Left"
-                    Margin="2"
-                    BorderThickness="0"
-                    Background="Transparent"
-                    Command="{Binding MoveUpCommand}">
-                    <TextBlock
-                            FontFamily="Segoe Fluent Icons"
-                            FontSize="25"
-                            Text="&#xE74A;"
-                            Margin="3"/>
-                </Button>
-
-                <Button
-                    HorizontalAlignment="Left"
-                    Margin="2"
-                    BorderThickness="0"
-                    Background="Transparent"
-                    Command="{Binding MoveDownCommand}">
-                    <TextBlock
-                            FontFamily="Segoe Fluent Icons"
-                            FontSize="25"
-                            Text="&#xE74B;"
-                            Margin="3"/>
-                </Button>
-            </StackPanel>
-
-        </Grid>
+            </Grid>
 
         <Grid Name="Categories"
               Grid.Row="1"
@@ -317,7 +286,6 @@
               Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -349,15 +317,6 @@
                 <TextBlock Text="Icon Font" Margin="5,5,5,0"/>
                 <TextBox Text="{Binding SelectedPageConfig.IconFont, UpdateSourceTrigger=PropertyChanged}" Margin="5,2"/>
             </StackPanel>
-
-            <Button Content="Save"
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    HorizontalAlignment="Left"
-                    Margin="5"
-                    Padding="5"
-                    Command="{Binding SaveCommand}"
-                    />
         </Grid>
     </Grid>
 </Window>
