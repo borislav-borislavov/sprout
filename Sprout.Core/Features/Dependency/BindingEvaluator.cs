@@ -15,6 +15,7 @@ namespace Sprout.Core.Features.Dependency
         /// It is used maintly to evaluate bindings when executing insert/update/delete commands.
         /// In such scenarios we don't want the bindings to fire every time a value changes, we just want to evaluate the binding once before the operation is executed.
         /// </summary>
+        [Obsolete("This method is deprecated. Use FastPropertyPathEvaluator.GetValue instead.")]
         public static object Evaluate(object source, string path)
         {
             if (source == null) return null;
