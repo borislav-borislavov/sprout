@@ -13,6 +13,7 @@ using Sprout.Core.UIStates;
 using System.Data;
 using System.Windows;
 using System.Windows.Data;
+using Sprout.Core.Features.Dependency;
 #nullable disable
 
 namespace Sprout.Core.Services.SqlServer
@@ -74,30 +75,6 @@ namespace Sprout.Core.Services.SqlServer
             return await Change(sqlEditCommand, dataRow);
         }
 
-        public object ResolveBindingPath(object source, string path)
-        {
-            if (source == null) return null;
-
-            // 1. Create the dummy
-            var dummy = new FrameworkElement { DataContext = source };
-            var binding = new Binding(path) { Source = source };
-
-            try
-            {
-                // 2. Attach the binding
-                BindingOperations.SetBinding(dummy, FrameworkElement.TagProperty, binding);
-
-                // 3. Capture the value
-                return dummy.Tag;
-            }
-            finally
-            {
-                // 4. CLEAN UP: Explicitly break the link between the source and the dummy
-                BindingOperations.ClearBinding(dummy, FrameworkElement.TagProperty);
-                dummy.DataContext = null;
-            }
-        }
-
         public async Task<ChangeResult> Change(IEditCommand editCmd, DataRow dataRow)
         {
             SetBusy(true);
@@ -128,31 +105,31 @@ namespace Sprout.Core.Services.SqlServer
 
             List<SqlParameter> sqlParams = [];
 
-            foreach (var queryParam in requestedParameters)
+            foreach (var requestedParam in requestedParameters)
             {
-                if (queryParam.IsFromUIState)
+                if (requestedParam.IsFromUIState)
                 {
-                    var dep = DependencyParser.ParseDependency(queryParam.RawPatameter);
+                    var dep = DependencyParser.ParseDependency(requestedParam.RawPatameter);
 
                     var uiState = UiStateRegistry[dep.ControlName];
 
                     if (uiState == null)
                     {
-                        throw new Exception($"UI State with path {queryParam.Path} not found for parameter {queryParam.Name}");
+                        throw new Exception($"UI State with path {requestedParam.Path} not found for parameter {requestedParam.Name}");
                     }
 
-                    queryParam.Value = ResolveBindingPath(uiState, dep.PropertyPath);
+                    requestedParam.Value = BindingEvaluator.Evaluate(uiState, dep.PropertyPath);
                 }
                 else
                 {
-                    SetQueryParamFromDataRow(queryParam, dataRow);
+                    SetQueryParamFromDataRow(requestedParam, dataRow);
                 }
 
                 var param = new SqlParameter
                 {
                     //Replace is needed when the parameter is from the UIRegistry, then it contains multiple .
-                    ParameterName = $"@{queryParam.Name.Replace(".", "_")}",
-                    Value = queryParam.Value ?? DBNull.Value
+                    ParameterName = $"@{requestedParam.Name.Replace(".", "_")}",
+                    Value = requestedParam.Value ?? DBNull.Value
                 };
 
                 if (!sqlParams.Any(p => string.Equals(p.ParameterName, param.ParameterName, StringComparison.OrdinalIgnoreCase)))
@@ -160,7 +137,7 @@ namespace Sprout.Core.Services.SqlServer
                     sqlParams.Add(param);
                 }
 
-                commandText = commandText.Replace($"{{{queryParam.RawPatameter}}}", $"{param.ParameterName}", StringComparison.OrdinalIgnoreCase);
+                commandText = commandText.Replace($"{{{requestedParam.RawPatameter}}}", $"{param.ParameterName}", StringComparison.OrdinalIgnoreCase);
             }
 
             if (editCommand.WithMessages)

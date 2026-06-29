@@ -15,6 +15,7 @@ using System.Data.Common;
 using System.Windows;
 using System.Windows.Data;
 using Sprout.Core.Models.Configurations.DataGrid;
+using Sprout.Core.Features.Dependency;
 
 namespace Sprout.Core.Services.Duck
 {
@@ -110,7 +111,7 @@ namespace Sprout.Core.Services.Duck
                         throw new Exception(
                             $"UI State with path {queryParam.Path} not found for parameter {queryParam.Name}");
 
-                    queryParam.Value = ResolveBindingPath(uiState, dep.PropertyPath);
+                    queryParam.Value = BindingEvaluator.Evaluate(uiState, dep.PropertyPath);
                 }
                 else
                 {
@@ -271,25 +272,6 @@ namespace Sprout.Core.Services.Duck
                 return;
 
             busyState.IsBusy = isBusy;
-        }
-
-        public object ResolveBindingPath(object source, string path)
-        {
-            if (source == null) return null;
-
-            var dummy = new FrameworkElement { DataContext = source };
-            var binding = new Binding(path) { Source = source };
-
-            try
-            {
-                BindingOperations.SetBinding(dummy, FrameworkElement.TagProperty, binding);
-                return dummy.Tag;
-            }
-            finally
-            {
-                BindingOperations.ClearBinding(dummy, FrameworkElement.TagProperty);
-                dummy.DataContext = null;
-            }
         }
 
         private static bool IsMessages(DbDataReader reader)

@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sprout.Core.Common;
 using Sprout.Core.Factories;
+using Sprout.Core.Features.Dependency;
 using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations.Api;
 using Sprout.Core.Models.DataAdapters;
@@ -336,7 +337,7 @@ namespace Sprout.Core.Services.Api
                         throw new Exception($"UI State with path {queryParam.Path} not found for parameter {queryParam.Name}");
                     }
 
-                    queryParam.Value = ResolveBindingPath(uiState, dep.PropertyPath);
+                    queryParam.Value = BindingEvaluator.Evaluate(uiState, dep.PropertyPath);
                 }
                 else
                 {
@@ -472,7 +473,7 @@ namespace Sprout.Core.Services.Api
                     if (uiState == null)
                         throw new Exception($"UI state '{dep.ControlName}' not found for body parameter '{param.RawPatameter}'.");
 
-                    var resolved = ResolveBindingPath(uiState, dep.PropertyPath);
+                    var resolved = BindingEvaluator.Evaluate(uiState, dep.PropertyPath);
                     rawValue = resolved?.ToString() ?? string.Empty;
                 }
                 else
@@ -568,25 +569,6 @@ namespace Sprout.Core.Services.Api
         // ──────────────────────────────────────────────────────────────
         // Helpers
         // ──────────────────────────────────────────────────────────────
-
-        public object ResolveBindingPath(object source, string path)
-        {
-            if (source == null) return null;
-
-            var dummy = new FrameworkElement { DataContext = source };
-            var binding = new Binding(path) { Source = source };
-
-            try
-            {
-                BindingOperations.SetBinding(dummy, FrameworkElement.TagProperty, binding);
-                return dummy.Tag;
-            }
-            finally
-            {
-                BindingOperations.ClearBinding(dummy, FrameworkElement.TagProperty);
-                dummy.DataContext = null;
-            }
-        }
 
         private void SetBusy(bool isBusy)
         {
