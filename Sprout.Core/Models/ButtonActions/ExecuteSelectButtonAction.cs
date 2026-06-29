@@ -26,6 +26,18 @@ namespace Sprout.Core.Models.ButtonActions
                 throw new Exception($"DataAdapter not found for control '{_ownControlName}'");
             }
 
+            //The DataProvider dependencies of buttons are intentionally skipped to provide a more intuitive behavior of the control.
+            //The code below refreshes the values of the dependencies manually to provide up to date data.
+            foreach (var dependency in ownDataAdapter.DataProvider.Dependencies)
+            {
+                var targetedControlUIState = uiStateRegistry[dependency.ControlName];
+
+                if (targetedControlUIState == null)
+                    throw new Exception($"UI State for control {dependency.ControlName} not found.");
+
+                dependency.Value = $"{FastPropertyPathEvaluator.GetValue(targetedControlUIState, dependency.PropertyPath)}";
+            }
+
             using (var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry))
             {
                 await dataService.ProvideData();

@@ -240,6 +240,13 @@ namespace Sprout.Core.ViewModels
 
                 foreach (var kvp in DataProviders)
                 {
+                    if (kvp.Value.Parent.ParentType == typeof(SproutButtonConfig))
+                    {
+                        //The DataProvider dependencies of buttons are intentionally skipped to provide a more intuitive behavior of the control.
+                        //Their values are set manually before the button action executes ProvideData.
+                        continue;
+                    }
+
                     DependencyBinder.BindDependencies(kvp.Value, UiStateRegistry);
                 }
 
