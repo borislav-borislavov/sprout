@@ -16,15 +16,9 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
 
-        <Style x:Key="ToolbarButtonStyle" TargetType="Button">
+        <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="#FFFFFF"/>
             <Setter Property="Padding" Value="7,5"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
-            <Setter Property="FontSize" Value="15"/>
             <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -51,6 +45,12 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="{x:Static ToolBar.SeparatorStyleKey}" TargetType="Separator">
+            <Setter Property="Background" Value="#3C3C3C"/>
+            <Setter Property="Width" Value="1"/>
+            <Setter Property="Margin" Value="4,4"/>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -61,34 +61,26 @@
         </Grid.RowDefinitions>
 
         <!-- ── Toolbar ── -->
-        <Border Grid.Row="0"
-                Background="#2C2C2C"
-                BorderBrush="#3C3C3C"
-                BorderThickness="0,0,0,1"
-                Padding="4,3">
-            <StackPanel Orientation="Horizontal">
-
-                <Button Style="{StaticResource ToolbarButtonStyle}"
-                        Command="{Binding SaveCommand}"
-                        ToolTip="Save (Ctrl+S)"
-                        Content="&#xE74E;"/>
-
-                <Separator Width="1" Background="#3C3C3C" Margin="4,4"/>
-
-                <Button Style="{StaticResource ToolbarButtonStyle}"
-                        Command="{Binding CopyCommand}"
-                        ToolTip="Copy all"
-                        Content="&#xE8C8;"/>
-
-                <Separator Width="1" Background="#3C3C3C" Margin="4,4"/>
-
-                <Button Style="{StaticResource ToolbarButtonStyle}"
-                        Command="{Binding CompileCommand}"
-                        ToolTip="Compile"
-                        Content="&#xE9F5;"/>
-
-            </StackPanel>
-        </Border>
+        <ToolBarTray Grid.Row="0" Background="#2C2C2C" IsLocked="True">
+            <ToolBar Background="#2C2C2C"
+                     Loaded="ToolBar_Loaded"
+                     Band="0" BandIndex="0">
+                <Button Command="{Binding SaveCommand}"
+                        ToolTip="Save (Ctrl+S)" >
+                    <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="White"/>
+                </Button>
+                <Separator/>
+                <Button Command="{Binding CopyCommand}"
+                        ToolTip="Copy all">
+                    <TextBlock Text="&#xE8C8;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="White"/>
+                </Button>
+                <Separator/>
+                <Button Command="{Binding CompileCommand}"
+                        ToolTip="Compile">
+                    <TextBlock Text="&#xE9F5;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="White"/>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
 
         <!-- ── Editor ── -->
         <avalonEdit:TextEditor

@@ -36,6 +36,13 @@ namespace Sprout.Core.Windows
             OutputExpander.IsExpanded = vm.HasCompileResult;
         }
 
+        private void ToolBar_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is ToolBar toolBar
+                && toolBar.Template.FindName("OverflowGrid", toolBar) is FrameworkElement overflow)
+                overflow.Visibility = Visibility.Collapsed;
+        }
+
         private void ApplyEditorColors()
         {
             // Selection: VS 2022 blue selection highlight
