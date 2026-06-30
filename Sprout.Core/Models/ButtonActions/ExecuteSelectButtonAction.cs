@@ -1,4 +1,5 @@
 using Sprout.Core.Factories;
+using Sprout.Core.Features.Dependency;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.GridActions;
 using Sprout.Core.UIStates;
@@ -35,7 +36,7 @@ namespace Sprout.Core.Models.ButtonActions
                 if (targetedControlUIState == null)
                     throw new Exception($"UI State for control {dependency.ControlName} not found.");
 
-                dependency.Value = $"{FastPropertyPathEvaluator.GetValue(targetedControlUIState, dependency.PropertyPath)}";
+                dependency.Value = BindingEvaluator.Evaluate(targetedControlUIState, dependency.PropertyPath);
             }
 
             using (var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry))
