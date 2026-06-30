@@ -21,5 +21,7 @@ namespace Sprout.Core.Services.Navigation
         void ShowManageAdapter(IDataAdapterConfigHost dataAdapterConfigHost);
 
         void ShowScriptEditor(BaseCompiler compiler);
+
+        bool ShowManageUsings(BaseCompiler compiler);
     }
 }

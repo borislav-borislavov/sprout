@@ -18,6 +18,10 @@ namespace Sprout.Core.Models.Configurations
 
         public string Script { get; set; }
 
+        // Extra namespaces imported into this page's script (in addition to the
+        // compiler's built-in defaults). Used for both compilation and completion.
+        public List<string> Usings { get; set; } = [];
+
         public SproutControlConfig Root { get; set; }
 
 		public Dictionary<string, IDataAdapterConfig> GetDataAdapterConfigs()

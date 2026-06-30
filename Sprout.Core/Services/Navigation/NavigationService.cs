@@ -71,5 +71,12 @@ namespace Sprout.Core.Services.Navigation
             editor.Initialize(compiler);
             editor.ShowDialog();
         }
+
+        public bool ShowManageUsings(BaseCompiler compiler)
+        {
+            var window = _serviceProvider.GetRequiredService<ManageUsingsWindow>();
+            window.Initialize(compiler);
+            return window.ShowDialog() == true;
+        }
     }
 }

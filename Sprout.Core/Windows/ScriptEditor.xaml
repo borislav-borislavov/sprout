@@ -79,6 +79,11 @@
                         ToolTip="Compile">
                     <TextBlock Text="&#xE9F5;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="White"/>
                 </Button>
+                <Separator/>
+                <Button Command="{Binding ManageUsingsCommand}"
+                        ToolTip="Manage additional usings">
+                    <TextBlock Text="&#xE71D;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="White"/>
+                </Button>
             </ToolBar>
         </ToolBarTray>
 

@@ -46,6 +46,7 @@ namespace Sprout.Core
             services.AddTransient<EditPageVM>();
             services.AddTransient<AddControlVM>();
             services.AddTransient<ManageDataAdapterVM>();
+            services.AddTransient<ManageUsingsVM>();
             services.AddTransient<ScriptEditorVM>();
 
             //Views
@@ -61,6 +62,7 @@ namespace Sprout.Core
             services.AddTransient<EditPage>();
             services.AddTransient<AddControl>();
             services.AddTransient<ManageDataAdapterWindow>();
+            services.AddTransient<ManageUsingsWindow>();
             services.AddTransient<ScriptEditor>();
 
         }

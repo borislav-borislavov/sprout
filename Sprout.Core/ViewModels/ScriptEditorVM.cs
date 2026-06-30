@@ -4,6 +4,7 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using Sprout.Core.Services.CPL;
+using Sprout.Core.Services.Navigation;
 using System.Collections.ObjectModel;
 using System.Xml;
 
@@ -11,14 +12,18 @@ namespace Sprout.Core.ViewModels
 {
     public partial class ScriptEditorVM : ObservableObject
     {
+        private readonly INavigationService _navigationService;
+
         private BaseCompiler _compiler;
 
         public TextDocument Document { get; } = new TextDocument();
 
         public IHighlightingDefinition Highlighting { get; }
 
-        public ScriptEditorVM()
+        public ScriptEditorVM(INavigationService navigationService)
         {
+            _navigationService = navigationService;
+
             using var stream = GetType().Assembly
                 .GetManifestResourceStream("Sprout.Core.CSharpDark.xshd");
             using var reader = XmlReader.Create(stream!);
@@ -81,9 +86,27 @@ namespace Sprout.Core.ViewModels
             foreach (var hint in _compiler.GetCompletionHints())
                 MemberSuggestions.Add(hint);
 
+            LoadTypeSuggestions();
+        }
+
+        // Merges the compiler's currently-imported type names into the global
+        // type completion list (idempotent — safe to call again after usings change).
+        private void LoadTypeSuggestions()
+        {
+            if (_compiler is null) return;
+
             foreach (var typeName in _compiler.GetTypeNames())
                 if (!TypeSuggestions.Contains(typeName))
                     TypeSuggestions.Add(typeName);
+        }
+
+        [RelayCommand]
+        private void ManageUsings()
+        {
+            if (_compiler is null) return;
+
+            if (_navigationService.ShowManageUsings(_compiler))
+                LoadTypeSuggestions();
         }
 
         // Members available on the expression left of the dot at <caretOffset>,

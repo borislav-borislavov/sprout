@@ -65,6 +65,19 @@ namespace Sprout.Core.Services.CPL
 
         public virtual IEnumerable<string> GetCompletionHints() => [];
 
+        // Extra, user-managed namespaces imported into the page script. The base
+        // implementation has none; page compilers override these to read/apply
+        // them from the page configuration.
+        public virtual IReadOnlyList<string> GetAdditionalUsings() => [];
+
+        // Applies the edited usings to the in-memory page state only. Persistence is
+        // deferred to SaveUserScript so the script editor's Save is the single commit point.
+        public virtual void ApplyAdditionalUsings(IEnumerable<string> usings) { }
+
+        // Forces the type-name index to rebuild on next use — call after the set
+        // of imported namespaces changes so completion reflects the new usings.
+        protected void InvalidateTypeIndex() => _typeIndex = null;
+
         // Lazily-built map of simple type name -> Type for every public type
         // declared in one of the namespaces imported via Usings.
         private Dictionary<string, Type>? _typeIndex;
@@ -167,19 +180,41 @@ namespace Sprout.Core.Services.CPL
             var root = syntaxTree.GetRoot();
 
             var token = root.FindToken(sentinelPos);
-            var memberAccess = token.Parent?.FirstAncestorOrSelf<MemberAccessExpressionSyntax>();
-            if (memberAccess is null)
+
+            // Depending on the surrounding context Roslyn parses "<receiver>.<sentinel>"
+            // either as a member-access expression (value/instance access, e.g. "sb.")
+            // or as a qualified name (type/namespace access, e.g. "File."). Handle both
+            // so static type access resolves instead of being dropped.
+            var sentinelName = token.Parent;
+            ExpressionSyntax? receiver = sentinelName?.Parent switch
+            {
+                MemberAccessExpressionSyntax memberAccess when memberAccess.Name == sentinelName
+                    => memberAccess.Expression,
+                QualifiedNameSyntax qualifiedName when qualifiedName.Right == sentinelName
+                    => qualifiedName.Left,
+                _ => null
+            };
+
+            if (receiver is null)
                 return [];
 
-            var receiver = memberAccess.Expression;
+            // The receiver may have been parsed in a type/namespace context (for example
+            // as the left side of a qualified name), where locals, fields and parameters
+            // do not bind. Re-bind its text as an expression at the receiver's position so
+            // both value receivers ("sb.") and type receivers ("File.") resolve the same
+            // way real IntelliSense does.
+            var receiverExpression = SyntaxFactory.ParseExpression(receiver.ToString());
+            var receiverPosition = receiver.SpanStart;
 
             // A receiver that binds to a type means static access (File.), otherwise
             // it's an instance and we use the expression's resolved type (sb.).
-            var receiverSymbol = model.GetSymbolInfo(receiver).Symbol;
+            var receiverSymbol = model.GetSpeculativeSymbolInfo(
+                receiverPosition, receiverExpression, SpeculativeBindingOption.BindAsExpression).Symbol;
             var isStatic = receiverSymbol is INamedTypeSymbol;
             var containerType = isStatic
                 ? (INamedTypeSymbol)receiverSymbol!
-                : model.GetTypeInfo(receiver).Type;
+                : model.GetSpeculativeTypeInfo(
+                    receiverPosition, receiverExpression, SpeculativeBindingOption.BindAsExpression).Type;
 
             if (containerType is null)
                 return [];
@@ -274,7 +309,8 @@ namespace Sprout.Core.Services.CPL
 
     internal class CustomPageLogicCompiler : BaseCompiler
     {
-        protected override string[] Usings =>
+        // Built-in namespaces always available to every page script.
+        private static readonly string[] _baseUsings =
         [
             "System",
             "System.Collections.Generic",
@@ -285,6 +321,14 @@ namespace Sprout.Core.Services.CPL
             "System.Windows",
             "ClosedXML.Excel"
         ];
+
+        // Built-in defaults plus the page's extra usings (deduped, defaults win).
+        protected override string[] Usings =>
+            _baseUsings
+                .Concat(_pageVM.PageConfig.Usings ?? [])
+                .Where(u => !string.IsNullOrWhiteSpace(u))
+                .Distinct(StringComparer.Ordinal)
+                .ToArray();
 
         private readonly SproutPageVM _pageVM;
         private readonly IConfigurationService _configurationService;
@@ -299,6 +343,24 @@ namespace Sprout.Core.Services.CPL
 
         public override IEnumerable<string> GetCompletionHints()
             => _pageVM.DynamicViewInstance._controls.Keys;
+
+        // Only the user-managed usings (excludes the built-in defaults).
+        public override IReadOnlyList<string> GetAdditionalUsings()
+            => _pageVM.PageConfig.Usings ?? [];
+
+        public override void ApplyAdditionalUsings(IEnumerable<string> usings)
+        {
+            _pageVM.PageConfig.Usings = usings
+                .Where(u => !string.IsNullOrWhiteSpace(u))
+                .Select(u => u.Trim())
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
+
+            // Applied to the in-memory page config only; saving the script from the
+            // editor persists everything together. New namespaces may introduce new
+            // types, so refresh the completion index now.
+            InvalidateTypeIndex();
+        }
 
         private string BuildPageControlProperties()
         {
@@ -347,7 +409,13 @@ namespace Sprout.Core.Services.CPL
         public override void SaveUserScript()
         {
             _pageVM.PageConfig.Script = UserScript;
+            PersistPageConfig();
+        }
 
+        // Writes the current page config back into the persisted Sprout config,
+        // replacing the stored copy in place.
+        private void PersistPageConfig()
+        {
             var sproutConfig = _configurationService.Load();
             var foundPage = sproutConfig.Pages.FirstOrDefault(p => p.ID == _pageVM.PageConfig.ID);
             var pageIndex = sproutConfig.Pages.IndexOf(foundPage);
