@@ -116,6 +116,16 @@
                         </StackPanel>
                     </HierarchicalDataTemplate>
 
+                    <HierarchicalDataTemplate DataType="{x:Type config:SproutLabelConfig}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                FontFamily="Segoe Fluent Icons"
+                                Text="&#xE932;"
+                                Margin="3"/>
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+
                     <HierarchicalDataTemplate DataType="{x:Type config:SproutBorderConfig}" ItemsSource="{Binding ChildCollection}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
@@ -253,6 +263,10 @@
 
                         <DataTemplate DataType="{x:Type config:SproutDatePickerConfig}">
                             <views:EditSproutDatePicker/>
+                        </DataTemplate>
+
+                        <DataTemplate DataType="{x:Type config:SproutLabelConfig}">
+                            <views:EditSproutLabel/>
                         </DataTemplate>
 
                         <DataTemplate DataType="{x:Type config:SproutButtonConfig}">

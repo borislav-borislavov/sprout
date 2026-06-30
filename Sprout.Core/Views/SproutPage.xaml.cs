@@ -298,6 +298,28 @@ namespace Sprout.Core.Views
                         vm.UiStateRegistry.Register(sproutTextBox.UIState.Name, sproutTextBox.UIState);
                     }
 
+                    if (kvp.Value is SproutLabel sproutLabel)
+                    {
+                        if (!string.IsNullOrEmpty(sproutLabel.Config.Binding))
+                        {
+                            var dependency = DependencyParser.ParseDependencies(sproutLabel.Config.Binding).FirstOrDefault();
+
+                            if (dependency != null)
+                            {
+                                sproutLabel.textBlock.SetBinding(
+                                    TextBlock.TextProperty,
+                                    new Binding
+                                    {
+                                        Source = vm.UiStateRegistry,
+                                        Path = new PropertyPath($"[{dependency.ControlName}].{dependency.PropertyPath}"),
+                                        Mode = BindingMode.OneWay
+                                    });
+                            }
+                        }
+
+                        vm.UiStateRegistry.Register(sproutLabel.UIState.Name, sproutLabel.UIState);
+                    }
+
                     if (kvp.Value is SproutDatePicker sproutDatePicker)
                     {
                         vm.UiStateRegistry.Register(sproutDatePicker.UIState.Name, sproutDatePicker.UIState);

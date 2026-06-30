@@ -35,6 +35,8 @@ namespace Sprout.Core.Factories
                     return SproutCheckBoxFactory.Create(sproutCheckBoxConfig, controls);
                 case SproutDatePickerConfig sproutDatePickerConfig:
                     return SproutDatePickerFactory.Create(sproutDatePickerConfig, controls);
+                case SproutLabelConfig sproutLabelConfig:
+                    return SproutLabelFactory.Create(sproutLabelConfig, controls);
                 default:
                     throw new NotImplementedException();
             }

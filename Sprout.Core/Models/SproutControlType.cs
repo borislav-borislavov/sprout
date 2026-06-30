@@ -17,5 +17,6 @@ namespace Sprout.Core.Models
         DatePicker,
         Border,
         List,
+        Label,
     }
 }

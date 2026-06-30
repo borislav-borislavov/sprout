@@ -105,6 +105,12 @@ namespace Sprout.Core.ViewModels
                         Name = ControlName
                     };
                     break;
+                case SproutControlType.Label:
+                    NewControl = new SproutLabelConfig()
+                    {
+                        Name = ControlName
+                    };
+                    break;
                 default:
                     throw new NotImplementedException(
                         $"Control type '{controlType}' is not implemented yet.");
