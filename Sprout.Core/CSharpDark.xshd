@@ -150,6 +150,8 @@
 	  <Word>void</Word>
 	  <Word>var</Word>
 	  <Word>dynamic</Word>
+	  <Word>nint</Word>
+	  <Word>nuint</Word>
 	</Keywords>
 
 	<!-- ── General keywords (blue) ──────────────────────────────────────── -->
@@ -209,6 +211,113 @@
 	  <Word>scoped</Word>
 	  <Word>unmanaged</Word>
 	  <Word>notnull</Word>
+	  <Word>get</Word>
+	  <Word>set</Word>
+	  <Word>nameof</Word>
+	  <Word>where</Word>
+	  <Word>and</Word>
+	  <Word>or</Word>
+	  <Word>not</Word>
+	</Keywords>
+
+	<!-- ── Common framework types (teal) ────────────────────────────────── -->
+	<Keywords color="TypeName">
+	  <Word>Task</Word>
+	  <Word>ValueTask</Word>
+	  <Word>CancellationToken</Word>
+	  <Word>CancellationTokenSource</Word>
+	  <Word>Action</Word>
+	  <Word>Func</Word>
+	  <Word>Predicate</Word>
+	  <Word>Comparison</Word>
+	  <Word>Converter</Word>
+	  <Word>EventHandler</Word>
+	  <Word>Lazy</Word>
+	  <Word>Nullable</Word>
+	  <Word>Tuple</Word>
+	  <Word>ValueTuple</Word>
+	  <Word>List</Word>
+	  <Word>Dictionary</Word>
+	  <Word>HashSet</Word>
+	  <Word>Queue</Word>
+	  <Word>Stack</Word>
+	  <Word>LinkedList</Word>
+	  <Word>SortedList</Word>
+	  <Word>SortedDictionary</Word>
+	  <Word>SortedSet</Word>
+	  <Word>Collection</Word>
+	  <Word>ObservableCollection</Word>
+	  <Word>ReadOnlyCollection</Word>
+	  <Word>ReadOnlyDictionary</Word>
+	  <Word>IEnumerable</Word>
+	  <Word>IEnumerator</Word>
+	  <Word>ICollection</Word>
+	  <Word>IList</Word>
+	  <Word>IDictionary</Word>
+	  <Word>ISet</Word>
+	  <Word>IReadOnlyList</Word>
+	  <Word>IReadOnlyCollection</Word>
+	  <Word>IReadOnlyDictionary</Word>
+	  <Word>IQueryable</Word>
+	  <Word>Array</Word>
+	  <Word>Span</Word>
+	  <Word>ReadOnlySpan</Word>
+	  <Word>Memory</Word>
+	  <Word>ReadOnlyMemory</Word>
+	  <Word>Boolean</Word>
+	  <Word>Byte</Word>
+	  <Word>SByte</Word>
+	  <Word>Char</Word>
+	  <Word>Int16</Word>
+	  <Word>Int32</Word>
+	  <Word>Int64</Word>
+	  <Word>UInt16</Word>
+	  <Word>UInt32</Word>
+	  <Word>UInt64</Word>
+	  <Word>Single</Word>
+	  <Word>Double</Word>
+	  <Word>Decimal</Word>
+	  <Word>String</Word>
+	  <Word>Object</Word>
+	  <Word>IntPtr</Word>
+	  <Word>UIntPtr</Word>
+	  <Word>DateTime</Word>
+	  <Word>DateTimeOffset</Word>
+	  <Word>TimeSpan</Word>
+	  <Word>DateOnly</Word>
+	  <Word>TimeOnly</Word>
+	  <Word>Guid</Word>
+	  <Word>Uri</Word>
+	  <Word>Type</Word>
+	  <Word>Version</Word>
+	  <Word>StringBuilder</Word>
+	  <Word>StringComparison</Word>
+	  <Word>StringComparer</Word>
+	  <Word>Regex</Word>
+	  <Word>Stream</Word>
+	  <Word>Encoding</Word>
+	  <Word>Exception</Word>
+	  <Word>SystemException</Word>
+	  <Word>ApplicationException</Word>
+	  <Word>ArgumentException</Word>
+	  <Word>ArgumentNullException</Word>
+	  <Word>ArgumentOutOfRangeException</Word>
+	  <Word>InvalidOperationException</Word>
+	  <Word>NotImplementedException</Word>
+	  <Word>NotSupportedException</Word>
+	  <Word>NullReferenceException</Word>
+	  <Word>IndexOutOfRangeException</Word>
+	  <Word>InvalidCastException</Word>
+	  <Word>FormatException</Word>
+	  <Word>OverflowException</Word>
+	  <Word>KeyNotFoundException</Word>
+	  <Word>TimeoutException</Word>
+	  <Word>OperationCanceledException</Word>
+	  <Word>TaskCanceledException</Word>
+	  <Word>AggregateException</Word>
+	  <Word>IOException</Word>
+	  <Word>FileNotFoundException</Word>
+	  <Word>DirectoryNotFoundException</Word>
 	</Keywords>
 
   </RuleSet>
