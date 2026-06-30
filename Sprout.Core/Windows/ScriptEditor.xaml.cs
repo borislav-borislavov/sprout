@@ -13,6 +13,8 @@ namespace Sprout.Core.Windows
     public partial class ScriptEditor : Window
     {
         private CompletionWindow? _completionWindow;
+        private OverloadInsightWindow? _insightWindow;
+        private SignatureHelpProvider? _signatureProvider;
 
         public ScriptEditor(ScriptEditorVM vm)
         {
@@ -71,6 +73,13 @@ namespace Sprout.Core.Windows
                 e.Handled = true;
                 OpenCompletionWindow();
             }
+            else if (e.Key == Key.Space
+                && e.KeyboardDevice.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
+            {
+                // Ctrl+Shift+Space: show parameter info for the surrounding method call.
+                e.Handled = true;
+                ShowSignatureHelp();
+            }
         }
 
         private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
@@ -86,7 +95,21 @@ namespace Sprout.Core.Windows
         {
             // Auto-open member completions right after a member-access dot, e.g. "File."
             if (e.Text == ".")
+            {
                 OpenCompletionWindow();
+                return;
+            }
+
+            // Auto-open parameter info when starting a call, e.g. "Foo(".
+            if (e.Text == "(")
+            {
+                ShowSignatureHelp();
+                return;
+            }
+
+            // Keep parameter info in sync with the caret while it is open (e.g. after ',').
+            if (_insightWindow is not null)
+                ShowSignatureHelp();
         }
 
         private void Editor_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -168,6 +191,44 @@ namespace Sprout.Core.Windows
             if (typedText.Length > 0)
                 _completionWindow.CompletionList.SelectItem(typedText);
         }
+
+        private void ShowSignatureHelp()
+        {
+            if (DataContext is not ScriptEditorVM vm) return;
+
+            var help = vm.GetSignatureHelp(Editor.CaretOffset);
+            if (help is null || help.Signatures.Count == 0)
+            {
+                CloseSignatureHelp();
+                return;
+            }
+
+            // Update the open popup in place so the highlighted parameter tracks the caret.
+            if (_insightWindow is not null && _signatureProvider is not null)
+            {
+                _signatureProvider.Update(help);
+                return;
+            }
+
+            _signatureProvider = new SignatureHelpProvider(help);
+            _insightWindow = new OverloadInsightWindow(Editor.TextArea)
+            {
+                Provider = _signatureProvider,
+                Background = new SolidColorBrush(Color.FromRgb(37, 37, 38)),
+                Foreground = new SolidColorBrush(Color.FromRgb(212, 212, 212)),
+                BorderBrush = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
+            };
+
+            _insightWindow.Closed += (_, _) =>
+            {
+                _insightWindow = null;
+                _signatureProvider = null;
+            };
+
+            _insightWindow.Show();
+        }
+
+        private void CloseSignatureHelp() => _insightWindow?.Close();
     }
 
     // Draws a subtle highlight behind the line the caret is on

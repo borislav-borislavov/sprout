@@ -241,6 +241,174 @@ namespace Sprout.Core.Services.CPL
             return results;
         }
 
+        // Resolves the method/constructor overloads for the call surrounding <caretOffset>
+        // within <userScript>, plus which parameter the caret is on, so the editor can show
+        // Visual-Studio-style parameter info. Returns null when the caret is not inside a call.
+        public SignatureHelpResult? GetSignatureHelp(string userScript, int caretOffset)
+        {
+            if (string.IsNullOrEmpty(userScript) || caretOffset < 0 || caretOffset > userScript.Length)
+                return null;
+
+            // Replace the (possibly partial) identifier around the caret with a sentinel so
+            // the call parses as a well-formed argument list regardless of surrounding context.
+            var nameStart = caretOffset;
+            while (nameStart > 0 && IsIdentifierChar(userScript[nameStart - 1]))
+                nameStart--;
+
+            var nameEnd = caretOffset;
+            while (nameEnd < userScript.Length && IsIdentifierChar(userScript[nameEnd]))
+                nameEnd++;
+
+            const string sentinel = "__sprout_signature__";
+            var modifiedScript = string.Concat(userScript.AsSpan(0, nameStart), sentinel, userScript.AsSpan(nameEnd));
+
+            // Reuse the derived class' source wrapping so locals/usings/page controls are in
+            // scope; swap the script in temporarily for source generation.
+            string fullSource;
+            var originalScript = UserScript;
+            try
+            {
+                UserScript = modifiedScript;
+                fullSource = GetSource();
+            }
+            finally
+            {
+                UserScript = originalScript;
+            }
+
+            var sentinelPos = fullSource.IndexOf(sentinel, StringComparison.Ordinal);
+            if (sentinelPos < 0)
+                return null;
+
+            var syntaxTree = CSharpSyntaxTree.ParseText(fullSource);
+            var compilation = CSharpCompilation.Create(
+                assemblyName: "Signature_" + Guid.NewGuid().ToString("N"),
+                syntaxTrees: [syntaxTree],
+                references: _references,
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            var model = compilation.GetSemanticModel(syntaxTree);
+            var root = syntaxTree.GetRoot();
+            var token = root.FindToken(sentinelPos);
+
+            // The sentinel must sit inside an argument list "(...)" for a call to exist.
+            var argumentList = token.Parent?
+                .AncestorsAndSelf()
+                .OfType<ArgumentListSyntax>()
+                .FirstOrDefault();
+            if (argumentList is null)
+                return null;
+
+            var methods = GetCandidateMethods(model, argumentList.Parent);
+            if (methods.Count == 0)
+                return null;
+
+            // The active parameter is the number of argument separators (commas) before the
+            // sentinel; since the sentinel is itself an argument, that equals its index.
+            var activeParameter = argumentList.Arguments
+                .GetSeparators()
+                .Count(comma => comma.SpanStart < sentinelPos);
+
+            // Build the displayable overloads, de-duplicated by their rendered signature.
+            var signatures = new List<SignatureHelpSignature>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var method in methods)
+            {
+                var signature = BuildSignature(method);
+                var key = string.Concat(signature.Prefix, string.Join(", ", signature.Parameters), signature.Suffix);
+                if (seen.Add(key))
+                    signatures.Add(signature);
+            }
+
+            if (signatures.Count == 0)
+                return null;
+
+            var activeSignature = SelectActiveSignature(signatures, activeParameter);
+            return new SignatureHelpResult(signatures, activeSignature, activeParameter);
+        }
+
+        // The candidate methods (overloads) for the call node wrapping the caret: a method
+        // group for invocations ("Foo(", "sb.Append(") or the constructors for "new Foo(".
+        private static IReadOnlyList<IMethodSymbol> GetCandidateMethods(SemanticModel model, SyntaxNode? callNode)
+        {
+            switch (callNode)
+            {
+                case InvocationExpressionSyntax invocation:
+                {
+                    var group = model.GetMemberGroup(invocation.Expression)
+                        .OfType<IMethodSymbol>()
+                        .ToList();
+                    if (group.Count > 0)
+                        return group;
+
+                    var info = model.GetSymbolInfo(invocation);
+                    if (info.Symbol is IMethodSymbol resolved)
+                        return [resolved];
+                    return info.CandidateSymbols.OfType<IMethodSymbol>().ToList();
+                }
+
+                case ObjectCreationExpressionSyntax creation:
+                {
+                    if (model.GetSymbolInfo(creation.Type).Symbol is INamedTypeSymbol type)
+                        return type.InstanceConstructors
+                            .Where(c => c.DeclaredAccessibility == Microsoft.CodeAnalysis.Accessibility.Public)
+                            .ToList();
+                    return [];
+                }
+
+                default:
+                    return [];
+            }
+        }
+
+        // Renders one overload, split so the active parameter can be highlighted later:
+        // "<return> <name>(" + each parameter display + ")".
+        private static SignatureHelpSignature BuildSignature(IMethodSymbol method)
+        {
+            var prefix = method.MethodKind == MethodKind.Constructor
+                ? method.ContainingType.Name + "("
+                : method.ReturnType.ToDisplayString(_signatureFormat) + " " + method.Name + "(";
+
+            var parameters = method.Parameters
+                .Select(p => p.ToDisplayString(_signatureFormat))
+                .ToList();
+
+            return new SignatureHelpSignature(prefix, parameters, ")");
+        }
+
+        // Picks the smallest overload that can still hold the active parameter; falls back to
+        // the closest larger one so an in-progress call always highlights something sensible.
+        private static int SelectActiveSignature(IReadOnlyList<SignatureHelpSignature> signatures, int activeParameter)
+        {
+            var required = activeParameter + 1;
+            var best = 0;
+            var bestScore = int.MaxValue;
+
+            for (var i = 0; i < signatures.Count; i++)
+            {
+                var count = signatures[i].Parameters.Count;
+                var score = count >= required
+                    ? count - required
+                    : (int.MaxValue / 2) + (required - count);
+
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    best = i;
+                }
+            }
+
+            return best;
+        }
+
+        private static readonly SymbolDisplayFormat _signatureFormat =
+            SymbolDisplayFormat.MinimallyQualifiedFormat
+                .WithParameterOptions(
+                    SymbolDisplayParameterOptions.IncludeType
+                    | SymbolDisplayParameterOptions.IncludeName
+                    | SymbolDisplayParameterOptions.IncludeParamsRefOut
+                    | SymbolDisplayParameterOptions.IncludeDefaultValue);
+
         private static bool IsIdentifierChar(char c) => char.IsLetterOrDigit(c) || c == '_';
 
         // Keeps only members that make sense in the given (static vs instance) context.

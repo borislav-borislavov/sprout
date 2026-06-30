@@ -115,6 +115,11 @@ namespace Sprout.Core.ViewModels
         public IReadOnlyList<MemberCompletion> GetMemberCompletions(int caretOffset)
             => _compiler?.GetMemberCompletions(Document.Text, caretOffset) ?? [];
 
+        // Method/constructor overloads (and the active parameter) for the call surrounding
+        // <caretOffset>, resolved by the compiler. Null when the caret is not inside a call.
+        public SignatureHelpResult? GetSignatureHelp(int caretOffset)
+            => _compiler?.GetSignatureHelp(Document.Text, caretOffset);
+
         [RelayCommand]
         private void Save()
         {
