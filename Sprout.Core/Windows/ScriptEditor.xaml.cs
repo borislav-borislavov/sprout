@@ -24,6 +24,9 @@ namespace Sprout.Core.Windows
             // F5 runs the Compile command, mirroring the Compile toolbar button.
             InputBindings.Add(new KeyBinding(vm.CompileCommand, Key.F5, ModifierKeys.None));
 
+            // Ctrl+S runs the Save command, mirroring the Save toolbar button.
+            InputBindings.Add(new KeyBinding(vm.SaveCommand, Key.S, ModifierKeys.Control));
+
             ApplyEditorColors();
 
             Editor.TextArea.TextEntering += TextArea_TextEntering;

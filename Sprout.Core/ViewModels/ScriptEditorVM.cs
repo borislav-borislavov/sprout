@@ -76,6 +76,9 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private string _outputText = string.Empty;
 
+        [ObservableProperty]
+        private string _saveStatusText = string.Empty;
+
         public ObservableCollection<DiagnosticMessage> Diagnostics { get; } = [];
 
         public void Initialize(BaseCompiler compiler)
@@ -125,6 +128,7 @@ namespace Sprout.Core.ViewModels
         {
             _compiler.UserScript = Document.Text;
             _compiler.SaveUserScript();
+            SaveStatusText = $"\u2713 Saved at {DateTime.Now:HH:mm:ss}";
         }
 
         [RelayCommand]

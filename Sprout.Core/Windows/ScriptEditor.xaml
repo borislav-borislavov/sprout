@@ -58,6 +58,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- ── Toolbar ── -->
@@ -146,5 +147,18 @@
                      AcceptsReturn="True"
                      CaretBrush="Transparent"/>
         </Expander>
+
+        <!-- ── Status bar ── -->
+        <Border Grid.Row="3"
+                Background="#2C2C2C"
+                BorderBrush="#3C3C3C"
+                BorderThickness="0,1,0,0"
+                Padding="10,3">
+            <TextBlock Text="{Binding SaveStatusText}"
+                       Foreground="#57A64A"
+                       FontFamily="Cascadia Code, Consolas, Courier New"
+                       FontSize="12"
+                       VerticalAlignment="Center"/>
+        </Border>
     </Grid>
 </Window>
