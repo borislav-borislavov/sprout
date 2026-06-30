@@ -77,6 +77,9 @@ namespace Sprout.Core.ViewModels
         {
             _compiler = compiler;
             Document.Text = _compiler.UserScript ?? string.Empty;
+
+            foreach (var hint in _compiler.GetCompletionHints())
+                MemberSuggestions.Add(hint);
         }
 
         [RelayCommand]

@@ -61,6 +61,8 @@ namespace Sprout.Core.Services.CPL
         public abstract string GetSource();
         public abstract void SaveUserScript();
 
+        public virtual IEnumerable<string> GetCompletionHints() => [];
+
         internal string BuildUsings()
         {
             var sb = new StringBuilder();
@@ -110,6 +112,9 @@ namespace Sprout.Core.Services.CPL
             _configurationService = configurationService;
             UserScript = _pageVM.PageConfig.Script;
         }
+
+        public override IEnumerable<string> GetCompletionHints()
+            => _pageVM.DynamicViewInstance._controls.Keys;
 
         private string BuildPageControlProperties()
         {
