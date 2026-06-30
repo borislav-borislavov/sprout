@@ -34,5 +34,11 @@ namespace Sprout.Core.Models.Configurations
 
         public string ToolTip { get; set; }
         public bool ChangeValueOnEnter { get; set; }
+
+        /// <summary>
+        /// When true, the text box accepts dropped files and sets its text to the
+        /// full path of the dropped file.
+        /// </summary>
+        public bool AllowFileDrop { get; set; }
     }
 }

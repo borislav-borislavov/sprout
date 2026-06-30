@@ -21,6 +21,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
@@ -129,6 +130,23 @@
                         VerticalAlignment="Center"
                         Margin="5"
                         IsChecked="{Binding ChangeValueOnEnter, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--Allow File Drop-->
+                    <TextBlock
+                        Grid.Row="6"
+                        Grid.Column="0"
+                        Margin="5"
+                        VerticalAlignment="Center"
+                        Text="Allow File Drop"
+                        FontWeight="Bold"
+                        FontSize="16"/>
+
+                    <CheckBox
+                        Grid.Row="6"
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Margin="5"
+                        IsChecked="{Binding AllowFileDrop, UpdateSourceTrigger=PropertyChanged}"/>
                 </Grid>
             </TabItem>
 

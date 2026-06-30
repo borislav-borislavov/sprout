@@ -80,6 +80,11 @@ namespace Sprout.Core.Factories
                 sproutTextBox.ToolTip = config.ToolTip;
             }
 
+            if (config.AllowFileDrop)
+            {
+                sproutTextBox.EnableFileDrop();
+            }
+
             AddControl(sproutTextBox, controls);
 
             SetPositionInGrid(sproutTextBox, config);
