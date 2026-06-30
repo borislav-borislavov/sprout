@@ -63,6 +63,69 @@ namespace Sprout.Core.Services.CPL
 
         public virtual IEnumerable<string> GetCompletionHints() => [];
 
+        // Lazily-built map of simple type name -> Type for every public type
+        // declared in one of the namespaces imported via Usings.
+        private Dictionary<string, Type>? _typeIndex;
+
+        private Dictionary<string, Type> GetTypeIndex()
+        {
+            if (_typeIndex is not null)
+                return _typeIndex;
+
+            var namespaces = new HashSet<string>(Usings, StringComparer.Ordinal);
+            var index = new Dictionary<string, Type>(StringComparer.Ordinal);
+
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (assembly.IsDynamic)
+                    continue;
+
+                Type[] types;
+                try
+                {
+                    types = assembly.GetExportedTypes();
+                }
+                catch
+                {
+                    continue;
+                }
+
+                foreach (var type in types)
+                {
+                    if (type.Namespace is null || !namespaces.Contains(type.Namespace))
+                        continue;
+
+                    var name = type.Name;
+                    var tick = name.IndexOf('`');
+                    if (tick >= 0)
+                        name = name[..tick];
+
+                    index.TryAdd(name, type);
+                }
+            }
+
+            return _typeIndex = index;
+        }
+
+        // All type names available through the imported namespaces.
+        public IEnumerable<string> GetTypeNames() => GetTypeIndex().Keys;
+
+        // Public static members of the given type (resolved from the imported
+        // namespaces) — used for "TypeName." member completion.
+        public IEnumerable<string> GetMemberSuggestions(string typeName)
+        {
+            if (string.IsNullOrEmpty(typeName) || !GetTypeIndex().TryGetValue(typeName, out var type))
+                return [];
+
+            return type
+                .GetMembers(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                .Where(m => m is not MethodInfo method || !method.IsSpecialName)
+                .Select(m => m.Name)
+                .Distinct(StringComparer.Ordinal)
+                .OrderBy(n => n, StringComparer.Ordinal)
+                .ToList();
+        }
+
         internal string BuildUsings()
         {
             var sb = new StringBuilder();
@@ -95,6 +158,7 @@ namespace Sprout.Core.Services.CPL
         [
             "System",
             "System.Collections.Generic",
+            "System.IO",
             "System.Linq",
             "System.Threading.Tasks",
             "Sprout.Core.Services.CPL",

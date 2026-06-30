@@ -80,7 +80,16 @@ namespace Sprout.Core.ViewModels
 
             foreach (var hint in _compiler.GetCompletionHints())
                 MemberSuggestions.Add(hint);
+
+            foreach (var typeName in _compiler.GetTypeNames())
+                if (!TypeSuggestions.Contains(typeName))
+                    TypeSuggestions.Add(typeName);
         }
+
+        // Static members available on a type imported via the page's usings,
+        // e.g. "File" -> { ReadAllText, WriteAllText, Exists, ... }.
+        public IEnumerable<string> GetMemberSuggestions(string typeName)
+            => _compiler?.GetMemberSuggestions(typeName) ?? [];
 
         [RelayCommand]
         private void Save()

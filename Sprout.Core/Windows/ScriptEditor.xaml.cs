@@ -22,6 +22,7 @@ namespace Sprout.Core.Windows
             ApplyEditorColors();
 
             Editor.TextArea.TextEntering += TextArea_TextEntering;
+            Editor.TextArea.TextEntered += TextArea_TextEntered;
             Editor.TextArea.KeyDown += TextArea_KeyDown;
             Editor.PreviewMouseWheel += Editor_PreviewMouseWheel;
 
@@ -78,6 +79,13 @@ namespace Sprout.Core.Windows
             }
         }
 
+        private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+        {
+            // Auto-open member completions right after a member-access dot, e.g. "File."
+            if (e.Text == ".")
+                OpenCompletionWindow();
+        }
+
         private void Editor_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (Keyboard.Modifiers != ModifierKeys.Control) return;
@@ -92,9 +100,10 @@ namespace Sprout.Core.Windows
         {
             if (DataContext is not ScriptEditorVM vm) return;
 
+            var doc = Editor.Document;
+
             // Determine the word already typed before the caret
             var offset = Editor.CaretOffset;
-            var doc = Editor.Document;
             while (offset > 0)
             {
                 var c = doc.GetCharAt(offset - 1);
@@ -104,8 +113,33 @@ namespace Sprout.Core.Windows
 
             var typedText = doc.GetText(offset, Editor.CaretOffset - offset);
 
-            // Only show completions once the user has started typing a word
-            if (typedText.Length == 0) return;
+            // Detect a member-access context: an identifier immediately followed
+            // by a dot just before the word being typed, e.g. "File.Re|".
+            var memberType = TryGetMemberAccessType(doc, offset, typedText.Length);
+
+            var items = new List<ScriptCompletionData>();
+
+            if (memberType is not null)
+            {
+                foreach (var member in vm.GetMemberSuggestions(memberType))
+                    items.Add(new ScriptCompletionData(member, $"{memberType}.{member}"));
+            }
+            else
+            {
+                // Only show the global list once the user has started typing a word
+                if (typedText.Length == 0) return;
+
+                foreach (var kw in vm.KeywordSuggestions)
+                    items.Add(new ScriptCompletionData(kw, $"Keyword: {kw}"));
+
+                foreach (var type in vm.TypeSuggestions)
+                    items.Add(new ScriptCompletionData(type, $"Type: {type}"));
+
+                foreach (var member in vm.MemberSuggestions)
+                    items.Add(new ScriptCompletionData(member, $"Member: {member}"));
+            }
+
+            if (items.Count == 0) return;
 
             _completionWindow = new CompletionWindow(Editor.TextArea)
             {
@@ -118,17 +152,8 @@ namespace Sprout.Core.Windows
             _completionWindow.CompletionList.Foreground = new SolidColorBrush(Color.FromRgb(212, 212, 212));
 
             var data = _completionWindow.CompletionList.CompletionData;
-
-            foreach (var kw in vm.KeywordSuggestions)
-                data.Add(new ScriptCompletionData(kw, $"Keyword: {kw}"));
-
-            foreach (var type in vm.TypeSuggestions)
-                data.Add(new ScriptCompletionData(type, $"Type: {type}"));
-
-            foreach (var member in vm.MemberSuggestions)
-                data.Add(new ScriptCompletionData(member, $"Member: {member}"));
-
-            if (data.Count == 0) return;
+            foreach (var item in items)
+                data.Add(item);
 
             _completionWindow.StartOffset = offset;
 
@@ -136,7 +161,35 @@ namespace Sprout.Core.Windows
             _completionWindow.Closed += (_, _) => _completionWindow = null;
 
             // Filter the list by the word already typed before the caret
-            _completionWindow.CompletionList.SelectItem(typedText);
+            if (typedText.Length > 0)
+                _completionWindow.CompletionList.SelectItem(typedText);
+        }
+
+        // If the text right before the current word is "Identifier.", returns the
+        // identifier (e.g. "File"); otherwise returns null.
+        private static string? TryGetMemberAccessType(
+            ICSharpCode.AvalonEdit.Document.TextDocument doc, int wordStart, int typedLength)
+        {
+            var dotIndex = wordStart - 1;
+            if (dotIndex < 0 || doc.GetCharAt(dotIndex) != '.')
+                return null;
+
+            var end = dotIndex;
+            var start = end;
+            while (start > 0)
+            {
+                var c = doc.GetCharAt(start - 1);
+                if (!char.IsLetterOrDigit(c) && c != '_') break;
+                start--;
+            }
+
+            if (start == end)
+                return null;
+
+            var identifier = doc.GetText(start, end - start);
+
+            // Must be a type-like token (starts with a letter or underscore, not a digit).
+            return char.IsDigit(identifier[0]) ? null : identifier;
         }
     }
 
