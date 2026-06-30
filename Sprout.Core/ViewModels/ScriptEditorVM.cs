@@ -86,10 +86,11 @@ namespace Sprout.Core.ViewModels
                     TypeSuggestions.Add(typeName);
         }
 
-        // Static members available on a type imported via the page's usings,
-        // e.g. "File" -> { ReadAllText, WriteAllText, Exists, ... }.
-        public IEnumerable<string> GetMemberSuggestions(string typeName)
-            => _compiler?.GetMemberSuggestions(typeName) ?? [];
+        // Members available on the expression left of the dot at <caretOffset>,
+        // resolved by the compiler's Roslyn semantic model. Handles both static
+        // (e.g. "File.") and instance (e.g. "sb.") access.
+        public IReadOnlyList<MemberCompletion> GetMemberCompletions(int caretOffset)
+            => _compiler?.GetMemberCompletions(Document.Text, caretOffset) ?? [];
 
         [RelayCommand]
         private void Save()

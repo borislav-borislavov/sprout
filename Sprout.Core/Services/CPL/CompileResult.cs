@@ -6,6 +6,9 @@ namespace Sprout.Core.Services.CPL
 {
     public record DiagnosticMessage(string Severity, string Message, int Line, int Column);
 
+    // A single member-completion entry: the name to insert and a readable signature.
+    public sealed record MemberCompletion(string Name, string Description);
+
     public class CompileResult
     {
         public bool IsSuccess { get; set; }

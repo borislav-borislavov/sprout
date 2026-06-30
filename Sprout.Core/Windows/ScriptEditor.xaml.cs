@@ -113,16 +113,17 @@ namespace Sprout.Core.Windows
 
             var typedText = doc.GetText(offset, Editor.CaretOffset - offset);
 
-            // Detect a member-access context: an identifier immediately followed
-            // by a dot just before the word being typed, e.g. "File.Re|".
-            var memberType = TryGetMemberAccessType(doc, offset, typedText.Length);
+            // Detect a member-access context: a '.' immediately precedes the word
+            // being typed, e.g. "sb.App|" or "File.".
+            var isMemberAccess = offset > 0 && doc.GetCharAt(offset - 1) == '.';
 
             var items = new List<ScriptCompletionData>();
 
-            if (memberType is not null)
+            if (isMemberAccess)
             {
-                foreach (var member in vm.GetMemberSuggestions(memberType))
-                    items.Add(new ScriptCompletionData(member, $"{memberType}.{member}"));
+                // Resolve members through the Roslyn semantic model (instance + static).
+                foreach (var member in vm.GetMemberCompletions(Editor.CaretOffset))
+                    items.Add(new ScriptCompletionData(member.Name, member.Description));
             }
             else
             {
@@ -163,33 +164,6 @@ namespace Sprout.Core.Windows
             // Filter the list by the word already typed before the caret
             if (typedText.Length > 0)
                 _completionWindow.CompletionList.SelectItem(typedText);
-        }
-
-        // If the text right before the current word is "Identifier.", returns the
-        // identifier (e.g. "File"); otherwise returns null.
-        private static string? TryGetMemberAccessType(
-            ICSharpCode.AvalonEdit.Document.TextDocument doc, int wordStart, int typedLength)
-        {
-            var dotIndex = wordStart - 1;
-            if (dotIndex < 0 || doc.GetCharAt(dotIndex) != '.')
-                return null;
-
-            var end = dotIndex;
-            var start = end;
-            while (start > 0)
-            {
-                var c = doc.GetCharAt(start - 1);
-                if (!char.IsLetterOrDigit(c) && c != '_') break;
-                start--;
-            }
-
-            if (start == end)
-                return null;
-
-            var identifier = doc.GetText(start, end - start);
-
-            // Must be a type-like token (starts with a letter or underscore, not a digit).
-            return char.IsDigit(identifier[0]) ? null : identifier;
         }
     }
 

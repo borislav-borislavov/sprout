@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.ViewModels;
@@ -7,6 +8,7 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
@@ -110,21 +112,139 @@ namespace Sprout.Core.Services.CPL
         // All type names available through the imported namespaces.
         public IEnumerable<string> GetTypeNames() => GetTypeIndex().Keys;
 
-        // Public static members of the given type (resolved from the imported
-        // namespaces) — used for "TypeName." member completion.
-        public IEnumerable<string> GetMemberSuggestions(string typeName)
+        // Resolves the members available on the expression to the left of the dot
+        // at <caretOffset> within <userScript>, using a Roslyn semantic model so
+        // both static ("File.") and instance ("sb.") access work like real IntelliSense.
+        public IReadOnlyList<MemberCompletion> GetMemberCompletions(string userScript, int caretOffset)
         {
-            if (string.IsNullOrEmpty(typeName) || !GetTypeIndex().TryGetValue(typeName, out var type))
+            if (string.IsNullOrEmpty(userScript) || caretOffset < 0 || caretOffset > userScript.Length)
                 return [];
 
-            return type
-                .GetMembers(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                .Where(m => m is not MethodInfo method || !method.IsSpecialName)
-                .Select(m => m.Name)
-                .Distinct(StringComparer.Ordinal)
-                .OrderBy(n => n, StringComparer.Ordinal)
-                .ToList();
+            // Span of the (possibly partial) member name being typed around the caret.
+            var nameStart = caretOffset;
+            while (nameStart > 0 && IsIdentifierChar(userScript[nameStart - 1]))
+                nameStart--;
+
+            // Member access requires a '.' immediately before the member name.
+            if (nameStart == 0 || userScript[nameStart - 1] != '.')
+                return [];
+
+            var nameEnd = caretOffset;
+            while (nameEnd < userScript.Length && IsIdentifierChar(userScript[nameEnd]))
+                nameEnd++;
+
+            // Replace whatever is being typed after the dot with a unique sentinel so
+            // the snippet parses as a well-formed member access regardless of context.
+            const string sentinel = "__sprout_completion__";
+            var modifiedScript = string.Concat(userScript.AsSpan(0, nameStart), sentinel, userScript.AsSpan(nameEnd));
+
+            // Reuse the derived class' source wrapping so locals/usings/page controls
+            // are all in scope; swap the script in temporarily for source generation.
+            string fullSource;
+            var originalScript = UserScript;
+            try
+            {
+                UserScript = modifiedScript;
+                fullSource = GetSource();
+            }
+            finally
+            {
+                UserScript = originalScript;
+            }
+
+            var sentinelPos = fullSource.IndexOf(sentinel, StringComparison.Ordinal);
+            if (sentinelPos < 0)
+                return [];
+
+            var syntaxTree = CSharpSyntaxTree.ParseText(fullSource);
+            var compilation = CSharpCompilation.Create(
+                assemblyName: "Completion_" + Guid.NewGuid().ToString("N"),
+                syntaxTrees: [syntaxTree],
+                references: _references,
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            var model = compilation.GetSemanticModel(syntaxTree);
+            var root = syntaxTree.GetRoot();
+
+            var token = root.FindToken(sentinelPos);
+            var memberAccess = token.Parent?.FirstAncestorOrSelf<MemberAccessExpressionSyntax>();
+            if (memberAccess is null)
+                return [];
+
+            var receiver = memberAccess.Expression;
+
+            // A receiver that binds to a type means static access (File.), otherwise
+            // it's an instance and we use the expression's resolved type (sb.).
+            var receiverSymbol = model.GetSymbolInfo(receiver).Symbol;
+            var isStatic = receiverSymbol is INamedTypeSymbol;
+            var containerType = isStatic
+                ? (INamedTypeSymbol)receiverSymbol!
+                : model.GetTypeInfo(receiver).Type;
+
+            if (containerType is null)
+                return [];
+
+            var symbols = model.LookupSymbols(
+                sentinelPos,
+                container: containerType,
+                includeReducedExtensionMethods: !isStatic);
+
+            var results = new List<MemberCompletion>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (var member in symbols)
+            {
+                if (!IsCompletableMember(member, isStatic))
+                    continue;
+                if (!seen.Add(member.Name))
+                    continue;
+
+                results.Add(new MemberCompletion(member.Name, DescribeMember(member)));
+            }
+
+            results.Sort((a, b) => string.CompareOrdinal(a.Name, b.Name));
+            return results;
         }
+
+        private static bool IsIdentifierChar(char c) => char.IsLetterOrDigit(c) || c == '_';
+
+        // Keeps only members that make sense in the given (static vs instance) context.
+        private static bool IsCompletableMember(ISymbol member, bool isStatic)
+        {
+            if (member.IsImplicitlyDeclared)
+                return false;
+
+            switch (member)
+            {
+                case IMethodSymbol method:
+                    if (method.MethodKind == MethodKind.ReducedExtension)
+                        return !isStatic; // extension methods only apply to instances
+                    if (method.MethodKind != MethodKind.Ordinary)
+                        return false;     // skip ctors, operators, accessors, etc.
+                    return method.IsStatic == isStatic;
+
+                case IPropertySymbol property:
+                    return property.IsStatic == isStatic;
+
+                case IFieldSymbol field:
+                    return (field.IsStatic || field.IsConst) == isStatic;
+
+                case IEventSymbol evt:
+                    return evt.IsStatic == isStatic;
+
+                case INamedTypeSymbol:
+                    return isStatic; // nested types are reached through the type name
+
+                default:
+                    return false;
+            }
+        }
+
+        private static readonly SymbolDisplayFormat _memberSignatureFormat =
+            SymbolDisplayFormat.CSharpErrorMessageFormat;
+
+        private static string DescribeMember(ISymbol member)
+            => member.ToDisplayString(_memberSignatureFormat);
 
         internal string BuildUsings()
         {
