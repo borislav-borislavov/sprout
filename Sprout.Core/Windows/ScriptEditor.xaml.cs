@@ -19,6 +19,9 @@ namespace Sprout.Core.Windows
             InitializeComponent();
             DataContext = vm;
 
+            // F5 runs the Compile command, mirroring the Compile toolbar button.
+            InputBindings.Add(new KeyBinding(vm.CompileCommand, Key.F5, ModifierKeys.None));
+
             ApplyEditorColors();
 
             Editor.TextArea.TextEntering += TextArea_TextEntering;

@@ -76,7 +76,7 @@
                 </Button>
                 <Separator/>
                 <Button Command="{Binding CompileCommand}"
-                        ToolTip="Compile">
+                        ToolTip="Compile (F5)">
                     <TextBlock Text="&#xE9F5;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="White"/>
                 </Button>
                 <Separator/>
