@@ -16,6 +16,7 @@
   <Color name="Punctuation"      foreground="#D4D4D4"/>
   <Color name="TypeName"         foreground="#4EC9B0"/>
   <Color name="Attribute"        foreground="#DCDCAA"/>
+  <Color name="MethodCall"       foreground="#DCDCAA"/>
   <Color name="TodoMarker"       foreground="#C8A56A" fontWeight="bold"/>
   <Color name="HackMarker"       foreground="#E0E000" fontWeight="bold"/>
 
@@ -319,6 +320,15 @@
 	  <Word>FileNotFoundException</Word>
 	  <Word>DirectoryNotFoundException</Word>
 	</Keywords>
+
+	<!-- ── Method names (yellow) ────────────────────────────────────────── -->
+	<!-- Any identifier immediately followed by '(' — i.e. a method declaration -->
+	<!-- or call. Declared after the keyword groups so keywords that precede    -->
+	<!-- '(' (if/while/foreach/switch/using/lock/nameof/typeof…) keep their     -->
+	<!-- own color and are not turned yellow.                                   -->
+	<Rule color="MethodCall">
+	  \b[A-Za-z_]\w* (?=\s*\()
+	</Rule>
 
   </RuleSet>
 </SyntaxDefinition>
