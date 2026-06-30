@@ -19,7 +19,7 @@
         <Style x:Key="ToolbarButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="#CCCCCC"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
             <Setter Property="Padding" Value="7,5"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -57,6 +57,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- ── Toolbar ── -->
@@ -89,102 +90,64 @@
             </StackPanel>
         </Border>
 
-        <!-- ── Editor + Output ── -->
-        <Grid Grid.Row="1" x:Name="EditorOutputGrid">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="23*"/>
-                <ColumnDefinition Width="977*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" MinHeight="80"/>
-                <RowDefinition Height="0"/>
-                <RowDefinition Height="0" MinHeight="60"/>
-            </Grid.RowDefinitions>
+        <!-- ── Editor ── -->
+        <avalonEdit:TextEditor
+            x:Name="Editor"
+            Grid.Row="1"
+            Document="{Binding Document}"
+            SyntaxHighlighting="{Binding Highlighting}"
+            FontFamily="Cascadia Code, Consolas, Courier New"
+            FontSize="14"
+            ShowLineNumbers="True"
+            Background="#1F1F1F"
+            Foreground="#D4D4D4"
+            LineNumbersForeground="#4A4A4A"
+            WordWrap="False"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Auto"
+            BorderThickness="0"
+            Padding="4,0,0,0"/>
 
-            <!-- Editor -->
-            <avalonEdit:TextEditor
-                x:Name="Editor"
-                Grid.Row="0"
-                Document="{Binding Document}"
-                SyntaxHighlighting="{Binding Highlighting}"
-                FontFamily="Cascadia Code, Consolas, Courier New"
-                FontSize="14"
-                ShowLineNumbers="True"
-                Background="#1F1F1F"
-                Foreground="#D4D4D4"
-                LineNumbersForeground="#4A4A4A"
-                WordWrap="False"
-                HorizontalScrollBarVisibility="Auto"
-                VerticalScrollBarVisibility="Auto"
-                BorderThickness="0"
-                Padding="4,0,0,0" Grid.ColumnSpan="2"/>
-
-            <!-- ── Splitter ── -->
-            <GridSplitter
-                          Height="4"
-                          HorizontalAlignment="Stretch"
-                          Background="#3C3C3C"
-                          ResizeDirection="Rows"
-                          ResizeBehavior="PreviousAndNext"
-                          Cursor="SizeNS" Grid.ColumnSpan="2" Margin="0,592,0,56" Grid.RowSpan="3"/>
-
-            <!-- ── Output panel ── -->
-            <Border
-                    Background="#1C1C1C"
-                    BorderBrush="#3C3C3C"
-                    BorderThickness="0,0,0,0" Grid.ColumnSpan="2" Margin="0,592,0,0" Grid.RowSpan="3">
-                <DockPanel>
-
-                    <!-- Header bar -->
-                    <Border DockPanel.Dock="Top"
-                            Background="#252526"
-                            BorderBrush="#3C3C3C"
-                            BorderThickness="0,0,0,1"
-                            Padding="10,4,4,4">
-                        <DockPanel>
-                            <Button DockPanel.Dock="Right"
-                                    Style="{StaticResource ToolbarButtonStyle}"
-                                    Command="{Binding CloseOutputCommand}"
-                                    ToolTip="Close output"
-                                    Content="&#xE711;"
-                                    Padding="5,3"/>
-
-                            <TextBlock VerticalAlignment="Center"
-                                       FontFamily="Cascadia Code, Consolas, Courier New"
-                                       FontSize="12">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Foreground" Value="#57A64A"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsCompileSuccess}" Value="False">
-                                                <Setter Property="Foreground" Value="#F44747"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                                <Run Text="Output  —  "/>
-                                <Run Text="{Binding CompileStatusText, Mode=OneWay}"/>
-                            </TextBlock>
-                        </DockPanel>
-                    </Border>
-
-                    <!-- Selectable, scrollable output text -->
-                    <TextBox DockPanel.Dock="Bottom"
-                             Text="{Binding OutputText, Mode=OneWay}"
-                             IsReadOnly="True"
-                             Background="#1C1C1C"
-                             Foreground="#D4D4D4"
-                             FontFamily="Cascadia Code, Consolas, Courier New"
-                             FontSize="12"
-                             BorderThickness="0"
-                             Padding="10,6"
-                             TextWrapping="NoWrap"
-                             VerticalScrollBarVisibility="Auto"
-                             HorizontalScrollBarVisibility="Auto"
-                             AcceptsReturn="True"
-                             CaretBrush="Transparent"/>
-                </DockPanel>
-            </Border>
-        </Grid>
+        <!-- ── Output ── -->
+        <Expander x:Name="OutputExpander"
+                  Grid.Row="2"
+                  Background="#252526"
+                  Foreground="#D4D4D4"
+                  BorderBrush="#3C3C3C"
+                  BorderThickness="0,1,0,0"
+                  IsExpanded="False">
+            <Expander.Header>
+                <TextBlock VerticalAlignment="Center"
+                           FontFamily="Cascadia Code, Consolas, Courier New"
+                           FontSize="12">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="#57A64A"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsCompileSuccess}" Value="False">
+                                    <Setter Property="Foreground" Value="#F44747"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                    <Run Text="Output  —  "/>
+                    <Run Text="{Binding CompileStatusText, Mode=OneWay}"/>
+                </TextBlock>
+            </Expander.Header>
+            <TextBox Text="{Binding OutputText, Mode=OneWay}"
+                     IsReadOnly="True"
+                     Background="#1C1C1C"
+                     Foreground="#D4D4D4"
+                     FontFamily="Cascadia Code, Consolas, Courier New"
+                     FontSize="12"
+                     BorderThickness="0"
+                     Padding="10,6"
+                     TextWrapping="NoWrap"
+                     Height="200"
+                     VerticalScrollBarVisibility="Auto"
+                     HorizontalScrollBarVisibility="Auto"
+                     AcceptsReturn="True"
+                     CaretBrush="Transparent"/>
+        </Expander>
     </Grid>
 </Window>

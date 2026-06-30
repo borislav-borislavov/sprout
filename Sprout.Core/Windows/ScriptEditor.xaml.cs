@@ -33,19 +33,7 @@ namespace Sprout.Core.Windows
             if (e.PropertyName != nameof(ScriptEditorVM.HasCompileResult)) return;
             if (sender is not ScriptEditorVM vm) return;
 
-            var outputRow = EditorOutputGrid.RowDefinitions[2];
-            var splitterRow = EditorOutputGrid.RowDefinitions[1];
-
-            if (vm.HasCompileResult)
-            {
-                outputRow.Height = new GridLength(200, GridUnitType.Pixel);
-                splitterRow.Height = new GridLength(4, GridUnitType.Pixel);
-            }
-            else
-            {
-                outputRow.Height = new GridLength(0, GridUnitType.Pixel);
-                splitterRow.Height = new GridLength(0, GridUnitType.Pixel);
-            }
+            OutputExpander.IsExpanded = vm.HasCompileResult;
         }
 
         private void ApplyEditorColors()
