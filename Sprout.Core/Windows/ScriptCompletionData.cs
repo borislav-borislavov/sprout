@@ -1,6 +1,7 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Sprout.Core.Windows
@@ -17,7 +18,11 @@ namespace Sprout.Core.Windows
 
         public string Text { get; }
 
-        public object Content => Text;
+        public object Content => new TextBlock
+        {
+            Text = Text,
+            Foreground = Brushes.White
+        };
 
         public object Description { get; }
 

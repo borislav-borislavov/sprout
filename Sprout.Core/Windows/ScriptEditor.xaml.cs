@@ -115,8 +115,24 @@ namespace Sprout.Core.Windows
 
             if (data.Count == 0) return;
 
+            // Move start offset back to the beginning of the current word
+            var offset = Editor.CaretOffset;
+            var doc = Editor.Document;
+            while (offset > 0)
+            {
+                var c = doc.GetCharAt(offset - 1);
+                if (!char.IsLetterOrDigit(c) && c != '_') break;
+                offset--;
+            }
+            _completionWindow.StartOffset = offset;
+
             _completionWindow.Show();
             _completionWindow.Closed += (_, _) => _completionWindow = null;
+
+            // Filter the list by the word already typed before the caret
+            var typedText = doc.GetText(offset, Editor.CaretOffset - offset);
+            if (typedText.Length > 0)
+                _completionWindow.CompletionList.SelectItem(typedText);
         }
     }
 
