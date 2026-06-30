@@ -351,6 +351,50 @@ namespace Sprout.Core.Views
                     {
                         vm.UiStateRegistry.Register(sproutBorder.UIState.Name, sproutBorder.UIState);
                     }
+
+                    if (kvp.Value is SproutList sproutList)
+                    {
+                        if (!string.IsNullOrEmpty(sproutList.Name))
+                        {
+                            sproutList.SetBinding(SproutList.SourceDataProperty,
+                                new Binding($"DataProviders[{sproutList.Name}].Data")
+                                {
+                                    Mode = BindingMode.OneWay
+                                });
+                        }
+
+                        vm.UiStateRegistry.Register(sproutList.UIState.Name, sproutList.UIState);
+
+                        if (sproutList.Config?.Pages is { Count: > 0 } pageLinks &&
+                            !string.IsNullOrEmpty(sproutList.Name))
+                        {
+                            sproutList.pageLaunchMenuRoot.Items.Clear();
+
+                            foreach (var pageLink in pageLinks)
+                            {
+                                var menuItem = new MenuItem
+                                {
+                                    Header = string.IsNullOrWhiteSpace(pageLink.Title)
+                                        ? "Open page"
+                                        : pageLink.Title,
+                                    Command = vm.DisplayListItemPageCommand,
+                                    CommandParameter = new ListPageLaunchInfo
+                                    {
+                                        ListName = sproutList.Name,
+                                        PageId = pageLink.PageId
+                                    }
+                                };
+
+                                sproutList.pageLaunchMenuRoot.Items.Add(menuItem);
+                            }
+
+                            sproutList.pageLaunchMenu.Visibility = Visibility.Visible;
+                        }
+                        else
+                        {
+                            sproutList.pageLaunchMenu.Visibility = Visibility.Collapsed;
+                        }
+                    }
                 }
             }
             catch (Exception ex)

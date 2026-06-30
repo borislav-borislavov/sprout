@@ -16,5 +16,6 @@ namespace Sprout.Core.Models
         CheckBox,
         DatePicker,
         Border,
+        List,
     }
 }

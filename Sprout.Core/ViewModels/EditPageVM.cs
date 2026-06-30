@@ -361,6 +361,16 @@ namespace Sprout.Core.ViewModels
                     SelectedGridConfig = null;
                 }
 
+                if (value is SproutListConfig listConfig)
+                {
+                    SelectedList = listConfig;
+                }
+                else
+                {
+                    SelectedList = null;
+                    SelectedListPage = null;
+                }
+
                 if (value is IDataAdapterConfigHost dataAdapterControlConfig)
                 {
                     IsDataAdapterVisible = true;

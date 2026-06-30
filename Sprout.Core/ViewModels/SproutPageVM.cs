@@ -319,5 +319,33 @@ namespace Sprout.Core.ViewModels
 
             WeakReferenceMessenger.Default.Send(new OpenTabMessage(args));
         }
+
+        [RelayCommand]
+        private void DisplayListItemPage(object parameter)
+        {
+            if (parameter is not ListPageLaunchInfo launchInfo)
+                return;
+
+            var sproutListUiState = UiStateRegistry.Get<SproutListUIState>(launchInfo.ListName);
+
+            if (sproutListUiState == null)
+            {
+                return;
+            }
+
+            if (sproutListUiState.Selected == null)
+            {
+                _dialogService.ShowMessage("Please select an item from the list first.", "No selection");
+                return;
+            }
+
+            var args = new OpenTabMessageArgs()
+            {
+                PageConfigID = launchInfo.PageId,
+                Parameter = sproutListUiState.Selected
+            };
+
+            WeakReferenceMessenger.Default.Send(new OpenTabMessage(args));
+        }
     }
 }
