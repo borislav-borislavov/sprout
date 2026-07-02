@@ -82,6 +82,11 @@ namespace Sprout.Core.Factories
                 sproutDataGrid.ColumnKeys[col] = colConfig.BindingPath ?? colConfig.Header;
             }
 
+            if (sproutDataGrid.dataGrid.Columns.Count == 0)
+            {
+                sproutDataGrid.dataGrid.AutoGenerateColumns = true;
+            }
+
             var rowDetailColumns = (sproutGridConfig.Columns ?? []).Where(c => c.ShowInRowDetails).ToList();
             if (rowDetailColumns.Count > 0)
             {

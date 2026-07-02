@@ -167,6 +167,7 @@
 			  SelectionMode="Single"
 			  SelectionUnit="FullRow"
 			  PreviewKeyDown="dataGrid_PreviewKeyDown"
+              AutoGeneratingColumn="dataGrid_AutoGeneratingColumn"
               BorderThickness="0,0.8,0,0"
               BorderBrush="DarkSlateGray" 
               HeadersVisibility="Column"

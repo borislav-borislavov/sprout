@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic;
+using Sprout.Core.Common;
 using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
@@ -31,6 +32,7 @@ namespace Sprout.Core.Views.Controls
     {
         public SproutDataGridConfig Config { get; set; }
         public SproutControlType ControlType => SproutControlType.DataGrid;
+        private static string[] _hiddenColumns = [Const.BuiltInDataTableColumns._IsDeleted, Const.BuiltInDataTableColumns._RowBackColor];
 
         /// <summary>
         /// Maps each generated <see cref="DataGridColumn"/> to a stable key (its binding path)
@@ -194,6 +196,18 @@ namespace Sprout.Core.Views.Controls
             FiltersGrid.Visibility = Visibility.Collapsed;
             filtersButtonPanel.Visibility = Visibility.Collapsed;
             gridButtonsPanel.Visibility = Visibility.Visible;
+        }
+
+        /// <summary>
+        /// When autogenerating columns do not display framework columns in the grid
+        /// </summary>
+        private void dataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (_hiddenColumns.Contains(e.PropertyName))
+            {
+                // don't create the column at all
+                e.Cancel = true;
+            }
         }
     }
 }
