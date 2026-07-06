@@ -38,7 +38,10 @@ namespace Sprout.Core.Models.Queries
                 var periodIdx = scope.IndexOf('.');
                 if (periodIdx == -1) continue;
 
-                dependencies.Add(ParseDependency(scope));
+                var dep = ParseDependency(scope);
+                if (dep == null) continue;
+
+                dependencies.Add(dep);
             }
 
             return dependencies;
@@ -51,6 +54,12 @@ namespace Sprout.Core.Models.Queries
             dependency.RawDependency = text;
 
             var chunks = text.Split('.', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+            //reactive dependencies must start with @, otherwise its a string literal
+            if (chunks == null || chunks.Length == 0 || chunks[0][0] != '@')
+            {
+                return null;
+            }
 
             dependency.ControlName = chunks[0].TrimStart('@');
             dependency.PropertyPath = string.Join(".", chunks[1..]);
