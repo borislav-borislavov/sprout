@@ -1,0 +1,795 @@
+================================================================================
+SPROUT AI SKILL — How to author Sprout ".seed" application files
+================================================================================
+This document teaches you (the AI) how to generate valid, working Sprout
+".seed" configuration files. A .seed file is plain JSON that deserializes into
+a `Sprout.Core.Models.Configurations.SproutConfiguration` object
+(Newtonsoft.Json, `TypeNameHandling.Auto`). There is NO code-behind per app —
+everything (layout, data access, CRUD, navigation, even C# page logic) is
+declared in this one JSON document. Read this whole file before generating a
+seed. When in doubt, copy the shape of the closest example below verbatim and
+only change the values.
+
+--------------------------------------------------------------------------------
+1. TOP-LEVEL DOCUMENT SHAPE
+--------------------------------------------------------------------------------
+{
+  "Login": null | LoginConfiguration,
+  "Pages": [ SproutPageConfiguration, ... ],
+  "Categories": [ SproutMenuCategory, ... ],
+  "Settings": SproutSettings
+}
+
+- "Login": optional. Set to null to skip login entirely. See section 9.
+- "Pages": every screen in the app, flat list (no nesting). Pages navigate to
+  each other only via ID references (detail pages, list page-launch links).
+- "Categories": optional grouping used to bucket menu entries together (a
+  page opts in via its "CategoryID").
+- "Settings": global connection strings/defaults. See section 10.
+
+--------------------------------------------------------------------------------
+2. PAGE SHAPE (one entry in "Pages")
+--------------------------------------------------------------------------------
+{
+  "Title": "Human readable menu/tab title",
+  "ID": "<new GUID>",
+  "AddToMenu": true | false,
+  "Icon": "" | null | "\uE74E"   (Segoe MDL2 Assets glyph, may be empty string),
+  "IconFont": "Segoe MDL2 Assets",
+  "CategoryID": null | "<GUID of a Categories entry>",
+  "Script": null | "" | "<C# code, see section 8>",
+  "Usings": [],                  // extra "using X;" namespaces for Script
+  "Root": GridConfig             // MUST be a GridConfig (see section 3)
+}
+
+Rules:
+- "ID" must be a unique GUID (standard dashed format, e.g.
+  "44697335-e81d-40b0-b662-c547f9cb3d62"). Generate a fresh v4-looking GUID for
+  every new page/control that needs one; never reuse an ID across pages.
+- Set "AddToMenu": false for pages that only exist as navigation targets
+  (detail/drill-down pages, row-detail pages, sub pages opened from a list or
+  grid) so they don't clutter the main menu.
+- "Root" is currently REQUIRED to be a `GridConfig`
+  ("$type": "Sprout.Core.Models.Configurations.GridConfig, Sprout.Core"). Any
+  other root type fails to load. Always start a page with a root grid named
+  "RootGrid" at Row 0/Column 0 with RowSpan 1/ColumnSpan 1, and put all real
+  content inside its "Children".
+- "Script" may be null, empty string, or a C# snippet — see section 8.
+
+--------------------------------------------------------------------------------
+3. LAYOUT: GridConfig (the only allowed page root; also usable as a nested
+   container anywhere, e.g. inside SproutBorderConfig or SproutListConfig)
+--------------------------------------------------------------------------------
+{
+  "$type": "Sprout.Core.Models.Configurations.GridConfig, Sprout.Core",
+  "Rows": [ { "Value": "Auto"|"*"|"2*"|"120", "Error": null }, ... ],
+  "Columns": [ { "Value": "Auto"|"*"|"2*"|"120", "Error": null }, ... ],
+  "ShowGridLines": false,
+  "Background": null,
+  "Margin": null,
+  "Height": null,
+  "Width": null,
+  "HorizontalAlignment": null,
+  "VerticalAlignment": null,
+  "ToolTip": null,
+  "Children": [ <any SproutControlConfig-derived object>, ... ],
+  "Name": "RootGrid",
+  "Row": 0, "RowSpan": 1, "Column": 0, "ColumnSpan": 1
+}
+
+Grid sizing values (WPF GridLength strings): "Auto" (size to content), "*"
+(fill remaining space equally), "2*" (weighted fill), or a plain number string
+like "120" (fixed pixels). The sample app always predefines a generous
+10x10 "*" row/column grid so children can be freely placed without resizing
+the grid every time — this is the recommended default:
+  "Rows": ten entries of {"Value": "*", "Error": null}
+  "Columns": ten entries of {"Value": "*", "Error": null}
+Use "Auto" rows at the top when a row hosts fixed-height toolbars/inputs
+(seen in the "Table Infos" and "Execute query" sample pages).
+
+Every control placed inside "Children" (including nested grids) MUST set:
+  "Name"   — unique within the page; also used as key everywhere (data
+             adapters, UI-state bindings, dependency references, grid column
+             layouts, script property access).
+  "Row", "RowSpan", "Column", "ColumnSpan" — position within the PARENT grid's
+             row/column definitions (0-based). Defaults are Row=0, RowSpan=1,
+             Column=0, ColumnSpan=1 if omitted, but always set them explicitly
+             for anything that isn't naturally top-left.
+
+Grids can nest freely: put a GridConfig inside another GridConfig's Children
+to build sub-layouts (e.g. a toolbar row containing several buttons).
+
+--------------------------------------------------------------------------------
+4. CONTROL CATALOG (each item goes inside a GridConfig's "Children")
+--------------------------------------------------------------------------------
+Every control config includes the base placement fields (Name, Row, RowSpan,
+Column, ColumnSpan) — omitted below for brevity. Every "$type" string follows
+the pattern "Sprout.Core.Models.Configurations.<ClassName>, Sprout.Core"
+(nested types add their sub-namespace, e.g. "...Configurations.DataGrid.
+SproutDataGridConfig, Sprout.Core" or "...Configurations.Api.
+ApiDataAdapterConfig, Sprout.Core"). Copy the $type strings exactly as shown.
+
+4.1 SproutTextBoxConfig — single/multi-line text input
+{
+  "$type": "Sprout.Core.Models.Configurations.SproutTextBoxConfig, Sprout.Core",
+  "Placeholder": null | "hint text",
+  "Title": null | "Label shown above the box",
+  "Height": null, "Width": null, "Margin": "5" | "5,0,0,5" | "",
+  "Binding": null | "{@ctrl.Property.Path}",   // reactive one-way display value
+  "MultiLine": false,
+  "HorizontalAlignment": null | "Left"|"Center"|"Right"|"(Default)",
+  "VerticalAlignment": null | "Top"|"Center"|"Bottom"|"(Default)",
+  "ToolTip": null | "text",
+  "ChangeValueOnEnter": false,   // true = Text only pushes to UI-state on Enter key
+  "AllowFileDrop": false,        // true = dropping a file sets Text to its full path
+  "Name": "txtSomething"
+}
+Notes:
+- Use MultiLine:true + a tall RowSpan for query/description boxes.
+- "ChangeValueOnEnter": true is the pattern used for search/filter inputs that
+  are consumed by a SQL query's {@txtX.Text} dependency (see "Table Infos"
+  sample: txtTableName), so the query only re-parameterizes after Enter.
+- "Binding" is how a textbox displays another control's value reactively,
+  e.g. "Binding": "{@btnGenerateQuery.FirstRow.Result}" to show the first row
+  of a button's ad-hoc select result (see section 6.4).
+
+4.2 SproutButtonConfig — button, optionally data-driven
+{
+  "$type": "Sprout.Core.Models.Configurations.SproutButtonConfig, Sprout.Core",
+  "Content": null | "  Button Text  ",
+  "Icon": null | "" | "\uE8AD" (Segoe MDL2 Assets glyph),
+  "IconFont": "Segoe MDL2 Assets",
+  "IconFontSize": null | 20.0,
+  "TextFontSize": null,
+  "Height": null, "Width": null, "Margin": "5",
+  "HorizontalAlignment": "Center"|"Left"|"Right"|null,
+  "VerticalAlignment": "Center"|"Top"|"Bottom"|null,
+  "ToolTip": null | "text",
+  "Padding": "5" | null,
+  "BrushThickness": 1,               // border thickness for icon buttons; 0 = flat
+  "ForegroundColor": "#2C3E50",       // hex color for icon/text
+  "DataAdapter": null | <IDataAdapterConfig>,   // optional — see section 5
+  "Actions": [ <SproutButtonActionConfig>, ... ],
+  "Name": "btnSomething"
+}
+Actions (put ONE OR MORE in "Actions"; each is executed in order when clicked):
+  { "$type": "Sprout.Core.Models.Configurations.ExecuteSelectActionConfig, Sprout.Core" }
+      -> Re-runs this button's own DataAdapter's DataProvider (SELECT/GET),
+         refreshing its dependencies first, then stores the first result row
+         on the button's UI state ("FirstRow"), so other controls can bind to
+         "{@btnName.FirstRow.ColumnName}". Use this for "Generate"/"Calculate"
+         style buttons whose "query" produces one throwaway row of output
+         instead of updating a grid.
+  { "$type": "Sprout.Core.Models.Configurations.ExecuteUpdateActionConfig, Sprout.Core" }
+      -> Executes this button's DataAdapter's UpdateCommand (a stored proc /
+         INSERT/UPDATE/API POST-PUT-etc. with no target row). Use for
+         "Save"/"Run"/"Call API" style buttons. Any messages returned are
+         shown to the user (and can appear as popups depending on config).
+  { "$type": "Sprout.Core.Models.Configurations.RefreshDataGridActionConfig, Sprout.Core",
+    "TargetDataGridName": "dgSomeGrid" }
+      -> Reloads a DIFFERENT control's data (usually a SproutDataGridConfig)
+         by name. Use this to make a button refresh a grid elsewhere on the
+         page after some other operation.
+A button with no DataAdapter and no Actions is a "dumb" button whose only
+purpose is to be wired up manually in the page's Script (see the "Clear
+Date"/"X" buttons in the sample, wired via `btnClearDate.button.Click += ...`).
+
+4.3 SproutLabelConfig — read-only display text
+{
+  "$type": "Sprout.Core.Models.Configurations.SproutLabelConfig, Sprout.Core",
+  "Text": null | "static text",
+  "Binding": null | "{@ctrl.Property.Path}",  // overrides Text reactively
+  "Foreground": null | "#RRGGBB" | "Red",
+  "FontFamily": null | "Segoe UI",
+  "FontSize": null | 14.0,
+  "FontWeight": null | "Bold"|"Normal",
+  "FontStyle": null,
+  "TextWrapping": false,
+  "Height": null, "Width": null, "Margin": null,
+  "HorizontalAlignment": null, "VerticalAlignment": null, "ToolTip": null,
+  "Name": "lblSomething"
+}
+
+4.4 SproutComboConfig — dropdown backed by a data adapter
+{
+  "$type": "Sprout.Core.Models.Configurations.SproutComboConfig, Sprout.Core",
+  "DisplayColumn": "Name",      // column shown to the user
+  "ValueColumn": "Value",       // column used as SelectedValue
+  "SelectedValue": "" | "SomeHardcodedText" | "0",
+     // 3 valid forms: (1) a UI-state binding string "{@ctrl.Prop}",
+     // (2) a literal text value used verbatim as the pre-selected value,
+     // (3) an integer STRING used as a 0-based index into the loaded items
+     //     (e.g. "0" pre-selects the first row).
+  "Height": null, "Width": 150.0, "Margin": "5",
+  "HorizontalAlignment": "Left"|null, "VerticalAlignment": "Top"|null,
+  "ToolTip": null,
+  "DataAdapter": <IDataAdapterConfig>,   // required — provides the option rows
+  "Name": "cmbSomething"
+}
+A quick static-options combo can be backed by a SQL adapter whose query is a
+UNION ALL of literals, e.g.:
+  "SELECT 'SCO' AS Name, 'SCO' AS Value UNION ALL SELECT 'NO' AS Name, 'NO' AS Value"
+This avoids needing a real lookup table for small fixed option sets.
+
+4.5 SproutCheckBoxConfig
+{
+  "$type": "Sprout.Core.Models.Configurations.SproutCheckBoxConfig, Sprout.Core",
+  "Title": null | "Label text",
+  "Height": null, "Width": null, "Margin": null,
+  "Binding": null | "{@ctrl.Property.Path}",
+  "HorizontalAlignment": null, "VerticalAlignment": null, "ToolTip": null,
+  "Name": "chkSomething"
+}
+
+4.6 SproutDatePickerConfig
+{
+  "$type": "Sprout.Core.Models.Configurations.SproutDatePickerConfig, Sprout.Core",
+  "Label": null | "Date label",
+  "DateMode": "CurrentDate" | other SproutDatePickerMode values,
+  "CustomDate": null | "2024-01-01T00:00:00",
+  "DayOffset": 0, "MonthOffset": 0,
+  "OutputDateFormat": "yyyy-MM-dd",   // format used for the ".Date" text binding
+  "Height": null, "Width": null, "Margin": null,
+  "HorizontalAlignment": null, "VerticalAlignment": null, "ToolTip": null,
+  "Name": "dtSomething"
+}
+Bind to "{@dtSomething.Date}" for the formatted string, or eventually the raw
+"SelectedDate" for the DateTime? value.
+
+4.7 SproutBorderConfig — visual wrapper around ONE child control (usually a
+     nested GridConfig so it can hold many children)
+{
+  "$type": "Sprout.Core.Models.Configurations.SproutBorderConfig, Sprout.Core",
+  "Background": "#daecf7", "BorderBrush": "#0682cc", "BorderThickness": 1.0,
+  "CornerRadius": 4.0,
+  "Height": null, "Width": null, "Margin": "5, 5, 5, 0", "Padding": null,
+  "HorizontalAlignment": null, "VerticalAlignment": null, "ToolTip": null,
+  "Child": GridConfig,          // default Name is "BorderGrid" if generated fresh
+  "ChildCollection": { "$type": "<>z__ReadOnlySingleElementList`1[[Sprout.Core.Models.Configurations.SproutControlConfig, Sprout.Core]], Sprout.Core",
+                        "$values": [ <same object as Child> ] },
+  "Name": "brdSomething"
+}
+IMPORTANT: "ChildCollection" is a computed/serialized mirror of "Child" (a
+single-element read-only list used for tree-view style binding in the editor
+UI). When you author a border, set "Child" to the real grid, and duplicate
+the exact same object into "ChildCollection.$values[0]" (same $type, same
+Name, same Children) — this matches what the running app actually persists.
+If unsure, it is safe to include both identically as shown in the samples.
+
+4.8 SproutListConfig — repeats a child template per data row, optional
+     search/footer/border chrome, optional page-launch navigation
+{
+  "$type": "Sprout.Core.Models.Configurations.SproutListConfig, Sprout.Core",
+  "Header": null | "List title",
+  "ShowBorder": true,
+  "Background": null, "BorderBrush": "#2C3E50", "BorderThickness": 1.0,
+  "CornerRadius": 0.0,
+  "ShowFooter": true,      // shows item count footer
+  "ShowSearch": true,      // shows built-in client-side search box
+  "EmptyText": "No items to display",
+  "Height": null, "Width": null, "Margin": null, "Padding": null,
+  "HorizontalAlignment": null, "VerticalAlignment": null, "ToolTip": null,
+  "DataAdapter": <IDataAdapterConfig>,        // provides the list's rows
+  "Pages": [ { "Title": null|"Open detail", "PageId": "<GUID>" }, ... ],
+     // when non-empty, shows a page-launch menu on the list; selecting an
+     // entry opens that page and passes the list's Selected item as the page
+     // parameter (same mechanism as a grid's ItemDisplayPage row navigation).
+  "Child": GridConfig,          // the per-item template; default Name
+                                 // "ListItemTemplate"; bind inner controls'
+                                 // "Binding" to plain column names (e.g.
+                                 // "AddressNumber"), NOT "{@...}" syntax,
+                                 // because each item's DataContext IS the row.
+  "ChildCollection": { same duplication pattern as SproutBorderConfig },
+  "Name": "lsSomething"
+}
+Inside "Child", controls bind directly to column names from the DataAdapter's
+result set (e.g. a SproutLabelConfig with "Binding": "AddressNumber", a
+SproutTextBoxConfig with "Binding": "NameAlpha") — this is different from the
+"{@Control.Property}" cross-control syntax used everywhere else, because the
+list item template's data context is the row itself, not another control.
+
+4.9 SproutDataGridConfig — full CRUD-capable data grid (most common control)
+{
+  "$type": "Sprout.Core.Models.Configurations.DataGrid.SproutDataGridConfig, Sprout.Core",
+  "DataAdapter": <IDataAdapterConfig>,   // REQUIRED — drives read + CRUD
+  "AllowInsert": false,   // COMPUTED at runtime from whether InsertCommand.Text
+  "AllowUpdate": false,   // is non-empty; still include these bool fields in
+  "AllowDelete": false,   // the JSON matching whether you set the commands.
+  "ShowSave": false,      // computed as AllowInsert||AllowUpdate||AllowDelete
+  "ItemDisplayPage": "00000000-0000-0000-0000-000000000000" | "<page GUID>",
+     // when set to a real page ID, double-clicking/selecting a row navigates
+     // to that page, passing the row as the page's parent-row context
+     // (accessible there via "{@Page.Data.ColumnName}" — see section 6.2).
+     // Use the all-zero GUID when there is no drill-down page.
+  "RowDetailsItemsPerRow": 10,   // layout width of the expandable row-details panel
+  "Height": null, "Width": null, "Margin": "5,0,0,5",
+  "HorizontalAlignment": null, "VerticalAlignment": null, "ToolTip": null,
+  "Columns": [ SproutDataGridColumnConfig, ... ],
+  "Name": "dgSomething",
+  "Row": 1, "RowSpan": 3, "Column": 0, "ColumnSpan": 3
+}
+AllowInsert/AllowUpdate/AllowDelete/ShowSave are derived purely from whether
+the adapter's InsertCommand/UpdateCommand/DeleteCommand.Text is populated —
+set the boolean AND the command text consistently so hand-authored JSON
+matches runtime behavior (non-empty command text = corresponding bool true).
+
+SproutDataGridColumnConfig (one per visible column):
+{
+  "ComboAdapterKey": null,   // auto-populated by the platform, leave null
+  "Header": "Column Title",
+  "BindingPath": "ExactColumnNameFromQuery",
+  "ColumnType": 0,    // 0=Text, 1=Check, 2=Combo, 3=Date, 4=DateTime
+  "IsReadOnly": false,   // true for computed/lookup columns, false for editable
+  "DisplayColumn": null | "Name",   // Combo only: text column from lookup adapter
+  "ValueColumn": null | "ID",       // Combo only: value column from lookup adapter
+  "DataAdapter": null | <IDataAdapterConfig>,  // Combo only: read-only lookup source
+  "ShowInRowDetails": false   // true = also show in the expandable row-details panel
+}
+Only set DisplayColumn/ValueColumn/DataAdapter when ColumnType is Combo (2);
+otherwise leave them null.
+
+4.10 Nested layout — everything above can be embedded inside GridConfig,
+     SproutBorderConfig.Child, or SproutListConfig.Child freely. Build complex
+     screens by nesting grids (e.g. a bordered toolbar grid containing one
+     icon button, sitting above a big data grid).
+
+--------------------------------------------------------------------------------
+5. DATA ADAPTERS — the read/write "brain" behind buttons, combos, grids, lists
+--------------------------------------------------------------------------------
+Any control implementing "DataAdapter" (buttons, combos, grids, lists, combo
+grid-columns) accepts ONE of three adapter families. All three share the same
+shape: Name/ParentType + DataProvider (read) + InsertCommand/UpdateCommand/
+DeleteCommand (write). "Name" and "ParentType" are set/overwritten by the
+platform at load time from the owning control's Name/type — always fill them
+in your generated JSON matching the owning control's "Name" anyway, exactly
+as the samples do (adapter Name == control Name).
+
+5.1 SQL SERVER — SqlServerDataAdapterConfig (most common; used unless the
+    user asks for local file storage or an HTTP API)
+{
+  "$type": "Sprout.Core.Models.Configurations.SqlServerDataAdapterConfig, Sprout.Core",
+  "Name": "dgSomething",
+  "ParentType": "Sprout.Core.Models.Configurations.DataGrid.SproutDataGridConfig, Sprout.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+     // ParentType is the owning control's config type, fully qualified with
+     // the assembly info shown; match the pattern for whatever control hosts
+     // this adapter (SproutButtonConfig, SproutComboConfig, SproutDataGridConfig, ...).
+  "ConnectionString": null | "<override>",  // null/empty = use Settings.SqlServerConnectionString
+  "DataProvider": {
+    "$type": "Sprout.Core.Models.Configurations.SqlServerDataProviderConfig, Sprout.Core",
+    "Text": "SELECT ... FROM ... {!andFilter}",   // the SELECT query, see section 6
+    "FilterConfigs": [ FilterConfig, ... ],        // see section 7
+    "DeferInitialLoad": false   // true = don't auto-run on page load
+  },
+  "InsertCommand": { "$type": "Sprout.Core.Models.Configurations.SqlServerEditCommandConfig, Sprout.Core", "Text": null | "INSERT INTO ..." },
+  "UpdateCommand": { "$type": "Sprout.Core.Models.Configurations.SqlServerEditCommandConfig, Sprout.Core", "Text": null | "UPDATE ..." },
+  "DeleteCommand": { "$type": "Sprout.Core.Models.Configurations.SqlServerEditCommandConfig, Sprout.Core", "Text": null | "DELETE ..." }
+}
+Even when an adapter is read-only, ALWAYS include InsertCommand/UpdateCommand/
+DeleteCommand objects with "Text": null (do not omit the objects entirely) —
+this matches every sample page exactly.
+
+5.2 DUCKDB (local embedded analytical DB file, e.g. "Tasks.db") —
+    DuckDataAdapterConfig / DuckDataProviderConfig / DuckEditCommandConfig
+    Same shape as SQL Server, PLUS a required "ConnectionString" like
+    "DataSource=Tasks.db" (relative file in the app's working directory).
+{
+  "$type": "Sprout.Core.Models.Configurations.Duck.DuckDataAdapterConfig, Sprout.Core",
+  "Name": "dgTasks",
+  "ParentType": "Sprout.Core.Models.Configurations.DataGrid.SproutDataGridConfig, Sprout.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "ConnectionString": "DataSource=Tasks.db",
+  "DataProvider": {
+    "$type": "Sprout.Core.Models.Configurations.Duck.DuckDataProviderConfig, Sprout.Core",
+    "Text": "CREATE SEQUENCE IF NOT EXISTS tasks_id_seq START 1;\nCREATE TABLE IF NOT EXISTS Tasks (...);\nSELECT * FROM Tasks",
+    "FilterConfigs": [], "DeferInitialLoad": false
+  },
+  "InsertCommand": { "$type": "Sprout.Core.Models.Configurations.Duck.DuckEditCommandConfig, Sprout.Core",
+                      "Text": "INSERT INTO Tasks (Col1, Col2) VALUES ({@Col1}, {@Col2});" },
+  "UpdateCommand": { "$type": "Sprout.Core.Models.Configurations.Duck.DuckEditCommandConfig, Sprout.Core", "Text": null },
+  "DeleteCommand": { "$type": "Sprout.Core.Models.Configurations.Duck.DuckEditCommandConfig, Sprout.Core", "Text": null }
+}
+DuckDB idioms worth reusing:
+  - Idempotent bootstrap directly in DataProvider.Text: create a SEQUENCE and
+    TABLE with "IF NOT EXISTS", then finish with a plain "SELECT * FROM Table"
+    so the same query both provisions the DB and returns the grid's rows.
+  - Excel/CSV ingestion: "INSTALL excel; LOAD excel;" then
+    "CREATE TABLE x AS SELECT * FROM read_xlsx('path', header=true, all_varchar=true);"
+    or "read_csv_auto('path', header=true, all_varchar=true)".
+  - "GROUP BY ALL" auto-groups by every non-aggregated selected column.
+  - Row filter placeholder is still "{!whereFilter}"/"{!andFilter}" (section 6).
+  - DuckDB command/query PARAMETER PREFIX is "$" internally (vs SQL Server's
+    "@"), but you never write the prefix yourself — you always author
+    dependencies using the universal "{@Control.Property}" syntax in section
+    6 regardless of backend; the platform substitutes the correct prefixed
+    parameter name for you.
+
+5.3 HTTP API — ApiDataAdapterConfig / ApiDataProviderConfig / ApiEditCommandConfig
+    Use when the user wants to call a REST/HTTP endpoint instead of a database.
+{
+  "$type": "Sprout.Core.Models.Configurations.Api.ApiDataAdapterConfig, Sprout.Core",
+  "Name": "btnCheckShipment",
+  "ParentType": "Sprout.Core.Models.Configurations.SproutButtonConfig, Sprout.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "DataProvider": {
+    "$type": "Sprout.Core.Models.Configurations.Api.ApiDataProviderConfig, Sprout.Core",
+    "Text": "",                 // GET url template, supports {parameter} + dependencies
+    "FilterConfigs": [],
+    "DataPath": null,           // dot-notation or JSONPath to the results array,
+                                 // e.g. "data.results" or "$.data.results";
+                                 // leave null when the response root IS the array
+    "AuthUrl": null,            // optional: POST AuthBody here first to get a bearer token
+    "AuthBody": null,           // JSON body template for the AuthUrl POST
+    "DeferInitialLoad": true    // buttons should defer (they only fire on click)
+  },
+  "InsertCommand": null,
+  "UpdateCommand": {
+    "$type": "Sprout.Core.Models.Configurations.Api.ApiEditCommandConfig, Sprout.Core",
+    "Text": "https://host/api/Controller/Action?type={@cmbShipmentTypes.Selected.Name}",
+    "Verb": 0,                // 0=GET,1=POST,2=PUT,3=PATCH,4=DELETE
+    "Body": null,              // optional JSON template; {ColumnName} from the row
+                                // and {@Control.Property} from UI state; omitted =
+                                // whole DataRow auto-serialized as JSON
+    "ShowResponseAsMessage": true,   // pop the raw/derived response up to the user
+    "ResponsePath": null       // optional path into the response to show/extract
+  },
+  "DeleteCommand": { "$type": "Sprout.Core.Models.Configurations.Api.ApiEditCommandConfig, Sprout.Core",
+                       "Text": null, "Verb": 3, "Body": null,
+                       "ShowResponseAsMessage": false, "ResponsePath": null }
+}
+Patterns from the sample "ShipmentData Api Call" page:
+  - A button with NO real DataProvider.Text (empty string) and DeferInitialLoad
+    true is the standard shape for an "action" button that only calls
+    UpdateCommand via the ExecuteUpdateActionConfig action.
+  - The URL/command text pulls a combo's selection via
+    "{@cmbShipmentTypes.Selected.Name}" — dependencies work identically to SQL.
+  - HttpVerb enum values: GET=0, POST=1, PUT=2, PATCH=3, DELETE=4.
+
+5.4 Read-only lookup adapters for Combo columns in a grid: set ColumnType=2
+    (Combo) on a SproutDataGridColumnConfig and give it its own small
+    "DataAdapter" whose DataProvider is a simple SELECT of (DisplayColumn,
+    ValueColumn) pairs; InsertCommand/UpdateCommand/DeleteCommand.Text stay
+    null since it's read-only.
+
+--------------------------------------------------------------------------------
+6. THE "{@...}" DEPENDENCY / BINDING LANGUAGE (used everywhere: queries, URLs,
+   command bodies, control Binding fields, combo SelectedValue)
+--------------------------------------------------------------------------------
+Anywhere you see a string field that can reference another control's live
+value, use this syntax:
+
+    {@ControlName.PropertyPath}          -> optional (missing => null/empty)
+    {@ControlName.PropertyPath!}         -> mandatory (platform may validate presence)
+    {@ControlName.PropertyPath?}         -> explicitly optional marker
+
+The part before the first "." is the target control's "Name". Everything
+after is a property path evaluated against that control's UI-state object.
+Common property paths per control type (verified from UI-state classes):
+
+  TextBox   -> {@txtName.Text}                       (current text)
+  Combo     -> {@cmbName.Selected.SomeResultColumn}   (selected row's column)
+  DataGrid  -> {@dgName.Selected.SomeResultColumn}    (selected row's column)
+              {@dgName.JsonData}                      (whole grid's rows as JSON)
+  Button    -> {@btnName.FirstRow.SomeResultColumn}   (after an ExecuteSelect action)
+  CheckBox  -> {@chkName.IsChecked}
+  DatePicker-> {@dtName.Date}                          (formatted string) or
+              {@dtName.SelectedDate}                   (raw DateTime?)
+  List      -> {@lsName.Selected.SomeColumn}
+
+Two SPECIAL scopes exist besides real control names:
+  {@Login.User.SomeColumn}   -> data from the extra columns returned by the
+                                 Login query's SELECT (see section 9). Use
+                                 this to filter data by the logged-in user
+                                 anywhere in the app, e.g.
+                                 "WHERE OwnerID = {@Login.User.UserID}".
+  {@Page.Data.SomeColumn}    -> on a DETAIL/drill-down page (one opened via a
+                                 grid's "ItemDisplayPage" or a list's "Pages"
+                                 link), refers to a column of the PARENT row
+                                 that was selected to open this page, e.g.
+                                 "SELECT * FROM Detail WHERE HeaderID =
+                                 {@Page.Data.OfferHeaderID}".
+
+How it is used per field:
+  - SQL/Duck query "Text": every "{@...}" occurrence becomes a real query
+    parameter automatically (safe from SQL injection; never string-concat
+    values yourself, always use "{@...}" placeholders).
+  - Api "Text"/"Body": same "{@...}" placeholders resolved from UI state,
+    PLUS plain "{ColumnName}" placeholders (no @) which resolve against the
+    CURRENT ROW's columns when submitting a grid edit.
+  - Control "Binding" fields (TextBox/Label/CheckBox): a single "{@...}"
+    expression that keeps the control's displayed value in sync reactively.
+  - Combo "SelectedValue": can itself be a "{@...}" binding (see 4.4).
+
+--------------------------------------------------------------------------------
+7. FILTERS — ad-hoc user-entered search boxes rendered above a grid/combo
+--------------------------------------------------------------------------------
+Each DataProvider (SQL/Duck) can declare "FilterConfigs": a list the platform
+turns into small input controls the user fills in; when filled, they are
+appended into the query at the "{!whereFilter}" (adds "WHERE ...") or
+"{!andFilter}" (adds " AND ...") marker you place in "Text".
+
+FilterConfig shape:
+{
+  "Title": "Label shown to the user",
+  "Text": "ColumnName LIKE '%'+{0}+'%'",   // {0} = the user's typed value,
+                                            // substituted as a query parameter
+  "EditorType": 0   // 0=TextBox, 1=ComboBox, 2=CheckBox
+}
+Rules:
+  - If "FilterConfigs" is non-empty, "Text" (the main query) MUST contain
+    "{!whereFilter}" (when the query has no other WHERE clause) or
+    "{!andFilter}" (when appending to an existing WHERE clause) — otherwise
+    the platform throws at query-build time. Always include exactly one of
+    these two markers whenever FilterConfigs is non-empty.
+  - "{0}" is the only currently implemented placeholder per filter (a "{1}"
+    for between/range-style filters is defined but not yet functional — do
+    not rely on it).
+  - Typical filter texts: "Col LIKE '%'+{0}+'%'" (contains), "Col LIKE {0}+'%'"
+    (starts with), "Col = {0}" (exact match).
+  - EditorType 2 (CheckBox) can be paired with an empty "Text" as a
+    placeholder toggle when the filter's value isn't meant to be substituted
+    into the query text at all — instead, the page's "Script" reads the
+    control's live state directly (e.g. via its UI-state binding) and
+    decides what to do. Only do this when you also add matching Script logic;
+    otherwise a CheckBox filter should have real "Col = {0}"-style "Text".
+
+--------------------------------------------------------------------------------
+8. PAGE SCRIPT — imperative C# glue code (the "Script" field)
+--------------------------------------------------------------------------------
+"Script" is C# source that gets compiled at runtime (Roslyn) into a class:
+
+    namespace DynamicPageLogic._<pageId>
+    {
+        public class CustomPageLogic : CustomPageLogicBase
+        {
+            // one generated property per named control on the page, e.g.:
+            private Sprout.Core.Views.Controls.SproutButton btnClearDate => ...;
+            private Sprout.Core.Views.Controls.SproutTextBox txtDate => ...;
+            // ... your Script text is inserted verbatim here ...
+        }
+    }
+
+Consequences for how you write "Script":
+  - Do NOT write the namespace/class wrapper yourself — "Script" is just the
+    BODY that goes inside the class. Write member overrides and any static
+    helper methods directly, e.g.:
+        public override async Task OnLoadAsync() { ... }
+        public static int SomeHelper(...) { ... }
+  - `CustomPageLogicBase` gives you: `Page` (the SproutPageVM, see below),
+    `OnLoadAsync()`, `OnUnloadAsync()`, `OnComponentValueChangedAsync(id, value)`,
+    `OnBeforeSaveAsync()` — override whichever you need; all are optional.
+  - EVERY named control on the page (grid, button, textbox, combo, etc.) is
+    exposed as a private property using its exact "Name". Access its
+    underlying WPF control via the wrapper's own child member, matching the
+    samples, e.g.:
+        btnClearDate.button.Click += (s, e) => { txtDate.textBox.Text = ""; };
+        txtQuery.textBox.Text
+        dgTable.dataGrid (implied for grids)
+    (the inner member name matches the control type: button/textBox/comboBox/
+    checkBox/datePicker/dataGrid).
+  - Advanced grid control from script (seen in "Execute query" sample):
+        Page.DataProviders["dgTest"].Text = txtQuery.textBox.Text;   // swap SQL text
+        var allGridActions = Page.ButtonActions["dgTest"];
+        var refreshAction = allGridActions["RefreshDataGridAction"];
+        Page.PerformActionCommand.Execute(refreshAction);            // re-run it
+  - Built-in "usings" ALWAYS available (do not re-declare these in "Usings"):
+        System, System.Collections.Generic, System.IO, System.Linq,
+        System.Threading.Tasks, Sprout.Core.Services.CPL, System.Windows,
+        ClosedXML.Excel
+    "System.Windows" is why bare `MessageBox.Show(...)` works without a using.
+    ClosedXML.Excel is why `XLWorkbook`, `XLColor`, etc. work out of the box
+    for Excel manipulation (see "Compare Excel" sample).
+  - "Usings" (page JSON field) is a list of EXTRA namespaces beyond the
+    built-ins, e.g. ["System.Text"] in the "Compare Excel" sample. Only add
+    entries here for namespaces you actually reference in Script that are NOT
+    already in the built-in list above.
+  - Escaping: in the JSON file, C# string content must be JSON-escaped —
+    newlines as \r\n or \n, quotes as \", backslashes as \\\\ (e.g. a Windows
+    path "C:\\\\Temp\\\\Foo" inside the JSON string literal).
+  - Leave "Script" as null or "" for pages that need no imperative logic
+    (most simple list/search/grid pages in the samples have Script: null).
+
+--------------------------------------------------------------------------------
+9. LOGIN (optional, top-level "Login")
+--------------------------------------------------------------------------------
+Set "Login": null to skip login. To require login:
+{
+  "Login": {
+    "IsEnabled": true,
+    "DataAdapter": <IDataAdapterConfig>   // typically SqlServerDataAdapterConfig
+  }
+}
+The login adapter's UpdateCommand.Text is executed with two implicit
+parameters, "{@Username}" and "{@Password}" (plain text fields the built-in
+login screen collects), and MUST return exactly one row containing a
+"Result" column: 1 for success, 0 for failure. On failure you may also
+surface a message by inserting into the special "#Messages" temp table:
+    SELECT * FROM Users
+    WHERE Username = {@Username}
+      AND PasswordHash = HASHBYTES('SHA2_256', CAST({@Password} AS NVARCHAR(200)))
+
+    IF (@@ROWCOUNT = 1)
+    BEGIN
+        SELECT 1 AS Result
+    END
+    ELSE
+    BEGIN
+        SELECT 0 AS Result
+        INSERT INTO #Messages (Type, Message) VALUES ('Error', 'Invalid credentials')
+    END
+On success, any EXTRA columns selected alongside "Result" (e.g. UserID,
+UserTypeID, Username) become the logged-in user's row, retrievable anywhere
+in the app afterwards via "{@Login.User.ColumnName}" (section 6). Exactly one
+result row is required on success — returning zero or multiple rows is an
+error even if Result=1.
+
+Updating a user's own password/profile (typical follow-up page) — parameterize
+every field and finish with the same "SELECT 1 AS Result" contract so the
+grid/button treats it like any other successful update:
+    UPDATE Users
+    SET Username = {@Username},
+        UserTypeID = {@UserTypeID},
+        PasswordHash = CASE WHEN PasswordHash <> {@PasswordHash}
+                            THEN HASHBYTES('SHA2_256', CAST({@PasswordHash} AS NVARCHAR(200)))
+                            ELSE PasswordHash END
+    WHERE UserID = {@UserID}
+
+    SELECT 1 AS Result
+
+--------------------------------------------------------------------------------
+10. SETTINGS (top-level "Settings")
+--------------------------------------------------------------------------------
+{
+  "SqlServerConnectionString": "Data Source=SERVER;Database=DbName;Integrated Security=True;Pooling=False;TrustServerCertificate=True;Command Timeout=0",
+     // also acceptable short form: "Server=.;Database=DbName;Trusted_Connection=True;TrustServerCertificate=Yes"
+     // used by ANY SqlServerDataAdapterConfig whose own "ConnectionString" is null/empty.
+  "CommandTimeout": 30,
+  "LastUsername": "",
+  "MigrationsFolder": "<app bin output dir>\\MigrationsFolder\\SqlServer" style path,
+  "DuckDbConnectionString": "",
+  "LogSqlQueries": true | false,
+  "GridColumnLayouts": {
+     "<GridControlName>": {
+        "FrozenColumnCount": 0,
+        "Columns": [ { "Key": "ColumnBindingPath", "IsVisible": true }, ... ]
+     }
+  }
+}
+Notes:
+  - Almost always leave each individual adapter's own "ConnectionString" null
+    so it inherits "Settings.SqlServerConnectionString" — only set a
+    per-adapter override for a genuinely different database/server.
+  - "GridColumnLayouts" is USER-PERSISTED state (column show/hide, order,
+    frozen columns) keyed by the grid control's "Name"; it also always
+    contains two built-in hidden columns per grid: "_IsDeleted" and
+    "_RowBackColor" (see below) with "IsVisible": false. You do not need to
+    author this by hand for a brand-new page — it's fine to omit the grid's
+    key entirely from "GridColumnLayouts" until the user has actually run the
+    app and customized columns. Only include it if replicating/extending an
+    existing seed exactly.
+
+--------------------------------------------------------------------------------
+11. SPECIAL / BUILT-IN COLUMN CONVENTIONS
+--------------------------------------------------------------------------------
+- "_RowBackColor": if a SELECT includes a column literally named
+  "_RowBackColor" containing a hex color string (or NULL), the grid paints
+  that row's background with it. Pattern:
+      SELECT *,
+             CASE WHEN <condition> THEN '#fac94d' ELSE NULL END AS _RowBackColor
+      FROM SomeTable
+      {!whereFilter}
+- "_IsDeleted": internal bool column the grid uses to mark a row for deletion
+  before Save runs the DeleteCommand; you never select this yourself, it's
+  added automatically to every grid's in-memory table.
+- Grid Save behavior: clicking Save/ShowSave walks every row — Added rows run
+  InsertCommand, rows flagged _IsDeleted run DeleteCommand, Modified rows run
+  UpdateCommand. Design Insert/Update/Delete command "Text" so every one of
+  its "{@ColumnName}" placeholders can be satisfied from the row itself; for
+  SQL/Duck adapters use the SAME "{@ColumnName}" dependency syntax as queries
+  but referencing DataRow column names directly (e.g. an INSERT for a
+  DuckDB "Tasks" table):
+      INSERT INTO Tasks (ShortDescription, Requester, Description)
+      VALUES ({@ShortDescription}, {@Requester}, {@Description});
+
+--------------------------------------------------------------------------------
+12. NAVIGATION PATTERNS
+--------------------------------------------------------------------------------
+- Grid -> Detail page: set the grid's "ItemDisplayPage" to another page's
+  "ID". Selecting a row opens that page and exposes the row's columns via
+  "{@Page.Data.ColumnName}" inside the detail page's own queries. Use the
+  all-zero GUID "00000000-0000-0000-0000-000000000000" when there's no
+  detail page.
+- List -> page(s): add one or more entries to the SproutListConfig's "Pages"
+  array ({ "Title", "PageId" }); the user picks a page from a launch menu and
+  the list's Selected item becomes that page's parent-row context, exactly
+  like ItemDisplayPage.
+- Combo grid-column -> lookup values: give the column ColumnType=2 (Combo)
+  plus its own DisplayColumn/ValueColumn/DataAdapter (section 4.9); this is
+  NOT page navigation, just a value picker sourced from another query.
+- Menu/categories: set a page's "CategoryID" to a "Categories" entry's "ID"
+  to group it under that category's heading in the app menu; leave
+  "CategoryID": null to show the page at the top level of the menu (still
+  gated by "AddToMenu": true).
+
+--------------------------------------------------------------------------------
+13. WORKED EXAMPLE — minimal "search + grid" page, from scratch
+--------------------------------------------------------------------------------
+Goal: "a page that lets me search Customers by name and shows results in a
+grid, with an editable IsActive checkbox column."
+
+{
+  "Title": "Customers",
+  "ID": "<new GUID>",
+  "AddToMenu": true,
+  "Icon": null, "IconFont": "Segoe MDL2 Assets", "CategoryID": null,
+  "Script": null, "Usings": [],
+  "Root": {
+    "$type": "Sprout.Core.Models.Configurations.GridConfig, Sprout.Core",
+    "Rows": [ten * {"Value":"*","Error":null} entries],
+    "Columns": [ten * {"Value":"*","Error":null} entries],
+    "ShowGridLines": false, "Background": null, "Margin": null,
+    "Height": null, "Width": null,
+    "HorizontalAlignment": null, "VerticalAlignment": null, "ToolTip": null,
+    "Children": [
+      {
+        "$type": "Sprout.Core.Models.Configurations.DataGrid.SproutDataGridConfig, Sprout.Core",
+        "DataAdapter": {
+          "$type": "Sprout.Core.Models.Configurations.SqlServerDataAdapterConfig, Sprout.Core",
+          "Name": "dgCustomers",
+          "ParentType": "Sprout.Core.Models.Configurations.DataGrid.SproutDataGridConfig, Sprout.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "ConnectionString": null,
+          "DataProvider": {
+            "$type": "Sprout.Core.Models.Configurations.SqlServerDataProviderConfig, Sprout.Core",
+            "Text": "SELECT CustomerID, Name, IsActive FROM Customers {!whereFilter}",
+            "FilterConfigs": [
+              { "Title": "Name", "Text": "Name LIKE '%'+{0}+'%'", "EditorType": 0 }
+            ],
+            "DeferInitialLoad": false
+          },
+          "InsertCommand": { "$type": "Sprout.Core.Models.Configurations.SqlServerEditCommandConfig, Sprout.Core", "Text": null },
+          "UpdateCommand": {
+            "$type": "Sprout.Core.Models.Configurations.SqlServerEditCommandConfig, Sprout.Core",
+            "Text": "UPDATE Customers SET IsActive = {@IsActive} WHERE CustomerID = {@CustomerID}\nSELECT 1 AS Result"
+          },
+          "DeleteCommand": { "$type": "Sprout.Core.Models.Configurations.SqlServerEditCommandConfig, Sprout.Core", "Text": null }
+        },
+        "AllowInsert": false, "AllowUpdate": true, "AllowDelete": false, "ShowSave": true,
+        "ItemDisplayPage": "00000000-0000-0000-0000-000000000000",
+        "RowDetailsItemsPerRow": 10,
+        "Height": null, "Width": null, "Margin": "5",
+        "HorizontalAlignment": null, "VerticalAlignment": null, "ToolTip": null,
+        "Columns": [
+          { "ComboAdapterKey": null, "Header": "ID", "BindingPath": "CustomerID", "ColumnType": 0, "IsReadOnly": true, "DisplayColumn": null, "ValueColumn": null, "DataAdapter": null, "ShowInRowDetails": false },
+          { "ComboAdapterKey": null, "Header": "Name", "BindingPath": "Name", "ColumnType": 0, "IsReadOnly": false, "DisplayColumn": null, "ValueColumn": null, "DataAdapter": null, "ShowInRowDetails": false },
+          { "ComboAdapterKey": null, "Header": "Active", "BindingPath": "IsActive", "ColumnType": 1, "IsReadOnly": false, "DisplayColumn": null, "ValueColumn": null, "DataAdapter": null, "ShowInRowDetails": false }
+        ],
+        "Name": "dgCustomers",
+        "Row": 0, "RowSpan": 10, "Column": 0, "ColumnSpan": 10
+      }
+    ],
+    "Name": "RootGrid", "Row": 0, "RowSpan": 1, "Column": 0, "ColumnSpan": 1
+  }
+}
+Why this shape: the SELECT includes "{!whereFilter}" because FilterConfigs is
+non-empty; the UPDATE ends with "SELECT 1 AS Result" by convention (mirrors
+login/password samples) even though grid saves don't strictly require it —
+still a safe, consistent habit; AllowUpdate/ShowSave are true because
+UpdateCommand.Text is non-empty while Insert/Delete stay null/false.
+
+--------------------------------------------------------------------------------
+14. QUICK CHECKLIST BEFORE EMITTING A SEED FILE
+--------------------------------------------------------------------------------
+[ ] Root object has Login (or null), Pages, Categories, Settings.
+[ ] Every page.Root is a GridConfig; every page has a fresh unique GUID ID.
+[ ] Every control has a unique Name + Row/RowSpan/Column/ColumnSpan set.
+[ ] Every "$type" string exactly matches the patterns in section 4/5
+    (including the ", Sprout.Core" suffix, and the longer
+    ", Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" suffix ONLY on
+    adapter "ParentType" string values, never on "$type" values).
+[ ] Every IDataAdapterConfig has DataProvider + InsertCommand + UpdateCommand
+    + DeleteCommand present (use "Text": null for the ones you don't need).
+[ ] Any query using FilterConfigs contains "{!whereFilter}" or "{!andFilter}".
+[ ] All cross-control values use "{@Control.Property}"; list item templates
+    use plain column-name bindings instead.
+[ ] Detail pages read parent data via "{@Page.Data.Column}"; user-scoped
+    queries read the session via "{@Login.User.Column}".
+[ ] SQL text in JSON is properly escaped (\r\n, \", \\).
+[ ] AddToMenu is false for pure-navigation-target pages (details, item
+    display pages, list-item pages), true for main menu entries.
