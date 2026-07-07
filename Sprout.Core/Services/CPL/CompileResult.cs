@@ -24,6 +24,8 @@ namespace Sprout.Core.Services.CPL
         public byte[]? Assembly { get; set; }
         public List<DiagnosticMessage> Diagnostics { get; set; } = [];
 
+        public CustomPageLogicBase LiveDebugPage { get; set; }
+
         public static CompileResult Failure(List<DiagnosticMessage> d) =>
             new() { IsSuccess = false, Assembly = null, Diagnostics = d };
 

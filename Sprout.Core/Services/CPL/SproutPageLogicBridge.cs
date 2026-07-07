@@ -22,6 +22,22 @@ namespace Sprout.Core.Services.CPL
 
         // ── Load / Hot-Reload ─────────────────────────────────────────
 
+        internal async Task<string?> LoadLiveDebug(CustomPageLogicBase liveDebugPage, SproutPageVM pageContext)
+        {
+            try
+            {
+                _instance = liveDebugPage;
+                _instance.Page = pageContext;
+
+                await _instance.OnLoadAsync();
+                return null; // null = success
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
         public async Task<string?> LoadAsync(byte[] assemblyBytes, SproutPageVM pageContext)
         {
             await UnloadAsync(); // dispose old one first (hot reload)

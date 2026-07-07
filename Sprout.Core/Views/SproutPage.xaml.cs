@@ -62,8 +62,21 @@ namespace Sprout.Core.Views
 
                 if (!string.IsNullOrWhiteSpace(vm.PageConfig.Script))
                 {
-                    var compiler = new CustomPageLogicCompiler(vm, _configurationService);
-                    vm.CompileResult = compiler.Compile();
+                    var cpl = new CustomPageLogic();
+
+                    if (cpl.IsLiveDebug)
+                    {
+                        vm.CompileResult = new()
+                        {
+                            IsSuccess = true,
+                            LiveDebugPage = cpl
+                        };
+                    }
+                    else
+                    {
+                        var compiler = new CustomPageLogicCompiler(vm, _configurationService);
+                        vm.CompileResult = compiler.Compile();
+                    }
                 }
 
                 vm.RegisterExtraUIStates();

@@ -85,6 +85,16 @@
                         ToolTip="Manage additional usings">
                     <TextBlock Text="&#xE71D;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="White"/>
                 </Button>
+
+                <Button Command="{Binding DebugInVsCommand}"
+                        ToolTip="Debug in VS">
+                    <TextBlock Text="&#xe945;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="White"/>
+                </Button>
+
+                <Button Command="{Binding MergeBackCommand}"
+                        ToolTip="Merge back to script editor">
+                    <TextBlock Text="&#xea3c;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="White"/>
+                </Button>
             </ToolBar>
         </ToolBarTray>
 

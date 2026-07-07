@@ -90,7 +90,7 @@ namespace Sprout.Core.ViewModels
                 CreateDataAdapters();
                 DynamicViewInstance = new SproutPage(_configurationService) { DataContext = this };
                 DynamicViewInstance.InitializeControls(this);
-                
+
                 _host = new SproutPageLogicBridge($"{PageConfig.ID.ToString().Replace("-", "")}");
 
                 UiStateRegistry.UiStateChanged += async (_, change) =>
@@ -123,7 +123,7 @@ namespace Sprout.Core.ViewModels
                     }
                 };
 
-                
+
                 DynamicViewInstance.InitializePage(this);
                 OnPageInitialize();
 
@@ -168,10 +168,18 @@ namespace Sprout.Core.ViewModels
                     return;
                 }
 
-                string? error = _host.LoadAsync(CompileResult.Assembly!, pageContext: this).Result;
-                if (error is not null)
-                    _dialogService.ShowError(error);
-                //return [new DiagnosticMessage("Error", error, 0, 0)];
+                if (CompileResult.LiveDebugPage != null)
+                {
+                    string? error = _host.LoadLiveDebug(CompileResult.LiveDebugPage, pageContext: this).Result;
+                    if (error is not null)
+                        _dialogService.ShowError(error);
+                }
+                else
+                {
+                    string? error = _host.LoadAsync(CompileResult.Assembly!, pageContext: this).Result;
+                    if (error is not null)
+                        _dialogService.ShowError(error);
+                }
             }
             catch (Exception ex)
             {

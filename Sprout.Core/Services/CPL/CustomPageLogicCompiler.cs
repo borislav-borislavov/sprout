@@ -22,13 +22,13 @@ namespace Sprout.Core.Services.CPL
     {
         public string UserScript { get; set; }
 
-        internal string _pageId;
+        public string PageId { get; private set; }
 
         protected abstract string[] Usings { get; }
 
         protected BaseCompiler(string pageId)
         {
-            _pageId = pageId;
+            PageId = pageId;
         }
 
         public CompileResult Compile()
@@ -36,7 +36,7 @@ namespace Sprout.Core.Services.CPL
             var syntaxTree = CSharpSyntaxTree.ParseText(GetSource());
 
             var compilation = CSharpCompilation.Create(
-                assemblyName: $"PageLogic_{_pageId}_{Guid.NewGuid():N}",
+                assemblyName: $"PageLogic_{PageId}_{Guid.NewGuid():N}",
                 syntaxTrees: [syntaxTree],
                 references: _references,
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
@@ -559,10 +559,12 @@ namespace Sprout.Core.Services.CPL
                 $$"""
                 {{BuildUsings()}}
 
-                namespace DynamicPageLogic._{{_pageId}}
+                namespace DynamicPageLogic._{{PageId}}
                 {
                     public class CustomPageLogic : CustomPageLogicBase
                     {
+                        public bool IsLiveDebug { get; set; } = true;
+
                 {{pageControlProperties}}
                 #line 1 "CustomPageLogic"
                 {{UserScript}}

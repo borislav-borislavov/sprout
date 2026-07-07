@@ -6,6 +6,7 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using Sprout.Core.Services.CPL;
 using Sprout.Core.Services.Navigation;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Xml;
 
 namespace Sprout.Core.ViewModels
@@ -163,6 +164,57 @@ namespace Sprout.Core.ViewModels
             foreach (var d in result.Diagnostics)
                 sb.AppendLine($"  ({d.Line},{d.Column})  {d.Severity,-8}  {d.Message}");
             OutputText = sb.Length > 0 ? sb.ToString().TrimEnd() : "  No issues found.";
+        }
+
+        [RelayCommand]
+        private void DebugInVs()
+        {
+            _compiler.UserScript = Document.Text;
+            var source = _compiler.GetSource();
+
+            source = source.Replace(@"#line 1 ""CustomPageLogic""", @"//#line 1 ""CustomPageLogic""");
+            source = source.Replace("#line default", "//#line default");
+            source = source.Replace($"namespace DynamicPageLogic._{_compiler.PageId}", "namespace Sprout.Core.Services.CPL");
+
+            // Climbs up till the sprout directory
+            string projectDirectory = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.Parent.FullName;
+
+            var cplFileCandidates = Directory.EnumerateFiles(projectDirectory, "CustomPageLogic.cs", SearchOption.AllDirectories);
+
+            if (cplFileCandidates.Any() == false)
+                return;
+
+            var cplFile = cplFileCandidates.First();
+
+            File.WriteAllText(cplFile, source);
+            Environment.Exit(0);
+        }
+
+        [RelayCommand]
+        private void MergeBack()
+        {
+            string projectDirectory = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.Parent.FullName;
+
+            var cplFileCandidates = Directory.EnumerateFiles(projectDirectory, "CustomPageLogic.cs", SearchOption.AllDirectories);
+
+            if (cplFileCandidates.Any() == false)
+                return;
+
+            var cplFile = cplFileCandidates.First();
+
+            var fullSource = File.ReadAllText(cplFile);
+
+            var startKey = @"//#line 1 ""CustomPageLogic""";
+            var startIdx = fullSource.IndexOf(startKey);
+
+            var endKey = "//#line default";
+            var endIdx = fullSource.IndexOf(endKey);
+
+            if (startIdx == -1 || endIdx == -1)
+                return;
+
+            Document.Text = fullSource.Substring(startIdx + startKey.Length, endIdx - (startIdx + startKey.Length));
+            //File.WriteAllText(cplFile, source);
         }
     }
 }
