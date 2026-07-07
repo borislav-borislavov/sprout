@@ -22,4 +22,9 @@ namespace Sprout.Core.Models.Configurations
     public class ExecuteSelectActionConfig : SproutButtonActionConfig
     {
     }
+
+    public class CopyToClipboardActionConfig : SproutButtonActionConfig
+    {
+        public string ClipboardText { get; set; }
+    }
 }

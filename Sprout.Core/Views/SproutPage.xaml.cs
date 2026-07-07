@@ -345,6 +345,10 @@ namespace Sprout.Core.Views
                             {
                                 compositeAction.Add(new ExecuteSelectButtonAction(sproutButton.Name));
                             }
+                            else if (actionConfig is CopyToClipboardActionConfig copyConfig)
+                            {
+                                compositeAction.Add(new CopyToClipboardButtonAction(copyConfig.ClipboardText, vm.ClipboardService));
+                            }
                         }
 
                         vm.ButtonActions[sproutButton.Name][nameof(CompositeButtonAction)] = compositeAction;

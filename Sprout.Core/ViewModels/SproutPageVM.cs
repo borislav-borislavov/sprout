@@ -59,6 +59,8 @@ namespace Sprout.Core.ViewModels
         public SproutPage DynamicViewInstance { get; private set; }
         public CompileResult CompileResult { get; set; }
 
+        public Sprout.Core.Services.Clipboard.IClipboardService ClipboardService { get; }
+
         private LoginUIState _loginUIState = new();
 
         private readonly SproutPageLogicBridge _host;
@@ -70,7 +72,8 @@ namespace Sprout.Core.ViewModels
             IDataAdapterFactory dataAdapterFactory,
             IDataServiceFactory dataServiceFactory,
             ILoggedInUserService loggedInUserService,
-            IConfigurationService configurationService)
+            IConfigurationService configurationService,
+            Sprout.Core.Services.Clipboard.IClipboardService clipboardService)
         {
             PageConfig = pageConfig;
             SproutPageUIState.Data = args?.Parameter;
@@ -80,6 +83,7 @@ namespace Sprout.Core.ViewModels
             _dataServiceFactory = dataServiceFactory;
             _loggedInUserService = loggedInUserService;
             _configurationService = configurationService;
+            ClipboardService = clipboardService;
 
             try
             {

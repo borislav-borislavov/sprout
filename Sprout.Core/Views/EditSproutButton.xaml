@@ -187,6 +187,10 @@
                             <DataTemplate DataType="{x:Type config:ExecuteSelectActionConfig}">
                                 <TextBlock Text="Execute Select (Data Adapter)" FontWeight="SemiBold"/>
                             </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type config:CopyToClipboardActionConfig}">
+                                <TextBlock Text="Copy to Clipboard" FontWeight="SemiBold"/>
+                            </DataTemplate>
                         </ListBox.Resources>
                     </ListBox>
 
@@ -217,6 +221,13 @@
                                     <Button Content="Initialize Data Adapter" Margin="0,10,0,0"
                                             HorizontalAlignment="Left" Padding="10,3"
                                             Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.InitializeButtonDataAdapterCommand}"/>
+                                </StackPanel>
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type config:CopyToClipboardActionConfig}">
+                                <StackPanel Orientation="Horizontal" Margin="5">
+                                    <TextBlock Text="Clipboard Text/Dependency:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                    <TextBox Width="300" Text="{Binding ClipboardText, UpdateSourceTrigger=PropertyChanged}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </Grid.Resources>

@@ -1,0 +1,41 @@
+﻿Add a new Sprout Button action.
+Action definition:
+•	Config class name: <ConfigClassName>
+•	Runtime action class name: <ActionClassName>
+•	Display name in editor: <EditorDisplayName>
+Behavior:
+•	The action should <describe behavior>.
+•	It should use config property/properties:
+•	<Property1Name>: <purpose>
+•	<Property2Name>: <purpose>
+•	If any property value may contain a dependency expression, do not wire it as a reactive dependency.
+•	Instead, evaluate it only when the button is pressed using BindingEvaluator.
+•	Use <ServiceInterface> / <ServiceMethod> for the external side effect.
+Codebase guidance:
+•	Add the config in Sprout.Core\Models\Configurations\SproutButtonActionConfig.cs
+•	Add the runtime implementation in Sprout.Core\Models\ButtonActions
+•	Wire config-to-runtime mapping in Sprout.Core\Views\SproutPage.xaml.cs
+•	Add the action type in Sprout.Core\ViewModels\EditPageVM.EditSproutButton.cs
+•	Add the configuration UI in Sprout.Core\Views\EditSproutButton.xaml
+Implementation requirements:
+1.	Add a new button action config class named <ConfigClassName> with the needed properties.
+2.	Add a new runtime action class named <ActionClassName> implementing IButtonAction.
+3.	In the runtime action, resolve dependency-based values on click using BindingEvaluator.
+4.	Do not introduce reactive binding for click-time-only values.
+5.	Use IClipboardService-style dependency injection if a service is required.
+6.	Wire the new action into the button action composition in SproutPage.
+7.	Add the action to AvailableActionTypes.
+8.	Add list/detail editor templates in EditSproutButton.xaml.
+9.	Keep changes minimal and consistent with the existing button action pattern.
+10.	Build the solution and verify it compiles.
+Expected behavior example:
+•	Config property: <PropertyName>
+•	On click: evaluate <PropertyName> with BindingEvaluator
+•	Then execute: <ServiceMethod> with the resolved value
+Example filled in:
+•	<ConfigClassName> = CopyToClipboardActionConfig
+•	<ActionClassName> = CopyToClipboardButtonAction
+•	<EditorDisplayName> = Copy to Clipboard
+•	<PropertyName> = ClipboardText
+•	<ServiceInterface> = IClipboardService
+•	<ServiceMethod> = SetText
