@@ -1,4 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using Sprout.Core.Features.Dependency;
+using Sprout.Core.Models;
+using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Views.Controls;
 using System;
 using System.Collections.Generic;
@@ -11,10 +14,12 @@ using System.Windows.Input;
 
 namespace Sprout.Core.UIStates
 {
-    public partial class SproutTextBoxUIState : BaseUIState
+    public partial class SproutTextBoxUIState : BaseUIState, IDependent
     {
         [ObservableProperty]
         private string _text;
+
+        public IEnumerable<DataProviderDependency> Dependencies { get; set; } = new List<DataProviderDependency>();
 
         public virtual void SetUpState(SproutTextBox control)
         {
@@ -59,6 +64,16 @@ namespace Sprout.Core.UIStates
                         UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
                     });
             }
+        }
+
+        public void DepenencyChanged(DataProviderDependency changedDependency, UiStateRegistry uiStateRegistry)
+        {
+            var targetedControlUIState = uiStateRegistry[changedDependency.ControlName];
+
+            if (targetedControlUIState == null)
+                throw new Exception($"UI State for control {changedDependency.ControlName} not found.");
+
+            this.Text = $"{BindingEvaluator.Evaluate(targetedControlUIState, changedDependency.PropertyPath)}";
         }
     }
 }

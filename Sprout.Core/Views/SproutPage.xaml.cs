@@ -291,22 +291,6 @@ namespace Sprout.Core.Views
 
                     if (kvp.Value is SproutTextBox sproutTextBox)
                     {
-                        if (!string.IsNullOrEmpty(sproutTextBox.Config.Binding))
-                        {
-                            var dependency = DependencyParser.ParseDependencies(sproutTextBox.Config.Binding).FirstOrDefault();
-
-                            if (dependency != null)
-                            {
-                                sproutTextBox.textBox.SetBinding(
-                                    TextBox.TextProperty,
-                                    new Binding
-                                    {
-                                        Source = vm.UiStateRegistry,
-                                        Path = new PropertyPath($"[{dependency.ControlName}].{dependency.PropertyPath}"),
-                                        Mode = BindingMode.TwoWay
-                                    });
-                            }
-                        }
 
                         vm.UiStateRegistry.Register(sproutTextBox.UIState.Name, sproutTextBox.UIState);
                     }

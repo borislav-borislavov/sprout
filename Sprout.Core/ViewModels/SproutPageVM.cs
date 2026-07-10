@@ -121,6 +121,22 @@ namespace Sprout.Core.ViewModels
                             }
                         }
                     }
+
+                    foreach (var kvp in UiStateRegistry.States)
+                    {
+                        if (kvp.Value is not IDependent dependent)
+                        {
+                            continue;
+                        }
+
+                        foreach (var dependency in dependent.Dependencies)
+                        {
+                            if (dependency.ControlName == change.ControlName)
+                            {
+                                dependent.DepenencyChanged(dependency, UiStateRegistry);
+                            }
+                        }
+                    }
                 };
 
 

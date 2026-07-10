@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Sprout.Core.Common;
 using Sprout.Core.Factories;
 using Sprout.Core.Models.DataAdapters.Filters;
+using Sprout.Core.UIStates;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -43,5 +44,10 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
         public bool DeferInitialLoad { get; set; } = false;
 
         public IDataAdapter Parent => _parentAdapter;
+
+        public void DepenencyChanged(DataProviderDependency changedDependency, UiStateRegistry uiStateRegistry)
+        {
+            //TODO
+        }
     }
 }

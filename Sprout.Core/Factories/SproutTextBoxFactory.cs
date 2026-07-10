@@ -1,4 +1,5 @@
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.Queries;
 using Sprout.Core.UIStates;
 using Sprout.Core.Views.Controls;
 using System;
@@ -90,6 +91,7 @@ namespace Sprout.Core.Factories
             SetPositionInGrid(sproutTextBox, config);
 
             var uiState = new SproutTextBoxUIState();
+            uiState.Dependencies = DependencyParser.ParseDependencies(sproutTextBox.Config.Binding);
             uiState.SetUpState(sproutTextBox);
 
             return sproutTextBox;
