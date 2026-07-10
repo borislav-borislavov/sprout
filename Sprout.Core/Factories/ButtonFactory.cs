@@ -37,7 +37,7 @@ namespace Sprout.Core.Factories
             if (!string.IsNullOrWhiteSpace(sproutButtonConfig.Margin))
             {
                 if (new ThicknessConverter().ConvertFromString(sproutButtonConfig.Margin) is Thickness margin)
-                    sproutButton.Margin = margin;
+                    sproutButton.gridContainer.Margin = margin;
             }
 
             if (!string.IsNullOrEmpty(sproutButtonConfig.HorizontalAlignment) &&

@@ -15,9 +15,8 @@
             x:FieldModifier="public"
             Template="{StaticResource RoundBtnHover}"
             FocusVisualStyle="{x:Null}"
-            Background="Transparent"
-            >
-        <Grid>
+            Background="Transparent">
+        <Grid x:Name="gridContainer" x:FieldModifier="public">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
