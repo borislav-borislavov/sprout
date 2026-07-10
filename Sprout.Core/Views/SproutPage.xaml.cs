@@ -352,7 +352,7 @@ namespace Sprout.Core.Views
 
                         if (sproutButton.Config.Actions.OfType<ExecuteSelectActionConfig>().Any())
                         {
-                            var buttonState = new SproutButtonUIState();
+                            var buttonState = new SproutButtonVM();
                             buttonState.SetUpState(sproutButton.Name);
                             vm.UiStateRegistry.Register(sproutButton.Name, buttonState);
                         }

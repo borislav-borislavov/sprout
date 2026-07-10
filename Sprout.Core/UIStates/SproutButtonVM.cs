@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace Sprout.Core.UIStates
 {
-    public partial class SproutButtonUIState : BaseSproutControlVM
+    public partial class SproutButtonVM : BaseSproutControlVM
     {
         [ObservableProperty]
         private object _firstRow;

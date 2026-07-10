@@ -44,7 +44,7 @@ namespace Sprout.Core.Models.ButtonActions
                 await dataService.ProvideData();
             }
 
-            var buttonState = uiStateRegistry.Get<SproutButtonUIState>(_ownControlName);
+            var buttonState = uiStateRegistry.Get<SproutButtonVM>(_ownControlName);
 
             if (buttonState != null && ownDataAdapter.DataProvider?.Data != null)
             {
