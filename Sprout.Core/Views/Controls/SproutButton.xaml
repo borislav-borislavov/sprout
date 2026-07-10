@@ -24,6 +24,7 @@
 
             <!-- Icon glyph — hidden when Icon is empty -->
             <TextBlock x:Name="iconBlock"
+                       x:FieldModifier="public"
                        Grid.Column="0"
                        Text="{Binding Icon, ElementName=root}"
                        FontSize="{Binding IconFontSize, ElementName=root}"
@@ -44,6 +45,7 @@
 
             <!-- Text label — hidden when ButtonContent is empty -->
             <TextBlock x:Name="textBlock"
+                       x:FieldModifier="public"
                        Grid.Column="1"
                        Text="{Binding ButtonContent, ElementName=root}"
                        d:Text="Sprout Button"

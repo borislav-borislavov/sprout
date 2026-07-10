@@ -37,7 +37,7 @@ namespace Sprout.Core.Factories
             if (!string.IsNullOrWhiteSpace(sproutButtonConfig.Margin))
             {
                 if (new ThicknessConverter().ConvertFromString(sproutButtonConfig.Margin) is Thickness margin)
-                    sproutButton.gridContainer.Margin = margin;
+                    sproutButton.Margin = margin;
             }
 
             if (!string.IsNullOrEmpty(sproutButtonConfig.HorizontalAlignment) &&
@@ -60,7 +60,22 @@ namespace Sprout.Core.Factories
             if (!string.IsNullOrWhiteSpace(sproutButtonConfig.Padding))
             {
                 if (new ThicknessConverter().ConvertFromString(sproutButtonConfig.Padding) is Thickness padding)
-                    sproutButton.button.Padding = padding;
+                {
+                    if (string.IsNullOrEmpty(sproutButtonConfig.Icon))
+                    {
+                        sproutButton.textBlock.Padding = padding;
+                    }
+                    else
+                    {
+                        var leftPadding = padding.Left; //save left padding for later
+                        padding.Left = 0; //don't add extra padding between icon and text
+                        sproutButton.textBlock.Padding = padding;
+                        padding.Left = leftPadding; //restore padding to be added to icon
+
+                        padding.Right = 0; //dont add extra padding between icon and text
+                        sproutButton.iconBlock.Padding = padding;
+                    }
+                }
             }
 
             AddControl(sproutButton, controls);
