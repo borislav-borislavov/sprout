@@ -7,7 +7,7 @@ using System.Windows.Data;
 
 namespace Sprout.Core.UIStates
 {
-    public partial class SproutDataGridUIState : BaseUIState, BusyUIState
+    public partial class SproutDataGridUIState : BaseSproutControlVM, BusyUIState
     {
         [ObservableProperty]
         private object _selected;

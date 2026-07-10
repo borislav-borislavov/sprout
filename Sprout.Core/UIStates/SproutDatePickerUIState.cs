@@ -6,7 +6,7 @@ using System.Windows.Data;
 
 namespace Sprout.Core.UIStates
 {
-    public partial class SproutDatePickerUIState : BaseUIState
+    public partial class SproutDatePickerUIState : BaseSproutControlVM
     {
         [ObservableProperty]
         private DateTime? _selectedDate;

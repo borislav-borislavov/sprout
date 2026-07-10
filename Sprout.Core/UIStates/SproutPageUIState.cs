@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.UIStates
 {
-    public class SproutPageUIState : BaseUIState
+    public class SproutPageUIState : BaseSproutControlVM
     {
         //private Dictionary<string, object> _data = [];
 

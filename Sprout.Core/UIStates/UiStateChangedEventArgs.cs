@@ -13,7 +13,7 @@ namespace Sprout.Core.UIStates
 
         public UiStateChangedEventArgs(object control, string propertyName)
         {
-            ControlName = (control as BaseUIState).Name;
+            ControlName = (control as BaseSproutControlVM).Name;
             PropertyName = propertyName;
         }
     }

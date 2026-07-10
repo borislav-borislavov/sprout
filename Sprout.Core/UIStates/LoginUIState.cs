@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.UIStates
 {
-    public class LoginUIState : BaseUIState
+    public class LoginUIState : BaseSproutControlVM
     {
         public object User { get; set; }
     }

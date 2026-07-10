@@ -37,7 +37,7 @@ namespace Sprout.Core.Models.ButtonActions
                     return Task.CompletedTask;
                 }
 
-                var baseUiState = uiState as BaseUIState;
+                var baseUiState = uiState as BaseSproutControlVM;
 
                 var val = BindingEvaluator.Evaluate(uiState, dep.PropertyPath);
                 textToCopy = val?.ToString() ?? string.Empty;

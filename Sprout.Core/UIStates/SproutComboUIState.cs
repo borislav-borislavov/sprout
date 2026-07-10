@@ -11,7 +11,7 @@ using System.Windows.Data;
 
 namespace Sprout.Core.UIStates
 {
-    public partial class SproutComboUIState : BaseUIState
+    public partial class SproutComboUIState : BaseSproutControlVM
     {
         [ObservableProperty]
         private object _selected;

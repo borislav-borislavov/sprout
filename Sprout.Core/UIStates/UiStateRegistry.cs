@@ -10,7 +10,7 @@ namespace Sprout.Core.UIStates
 {
     public sealed class UiStateRegistry
     {
-        public BaseUIState this[string controlName]
+        public BaseSproutControlVM this[string controlName]
         {
             get
             {
@@ -23,11 +23,11 @@ namespace Sprout.Core.UIStates
             }
         }
 
-        private readonly Dictionary<string, BaseUIState> _states = new(StringComparer.InvariantCultureIgnoreCase);
+        private readonly Dictionary<string, BaseSproutControlVM> _states = new(StringComparer.InvariantCultureIgnoreCase);
 
-        public Dictionary<string, BaseUIState> States => _states;
+        public Dictionary<string, BaseSproutControlVM> States => _states;
 
-        public void Register(string controlName, BaseUIState state)
+        public void Register(string controlName, BaseSproutControlVM state)
         {
             _states[controlName] = state;
             state.PropertyChanged += OnStateChanged;
@@ -40,7 +40,7 @@ namespace Sprout.Core.UIStates
 
         public event EventHandler<UiStateChangedEventArgs>? UiStateChanged;
 
-        public T? Get<T>(string key) where T : BaseUIState
+        public T? Get<T>(string key) where T : BaseSproutControlVM
         {
             if (_states.TryGetValue(key, out var v) && v.GetType() == typeof(T))
             {

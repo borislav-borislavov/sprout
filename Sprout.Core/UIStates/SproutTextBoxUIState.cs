@@ -14,7 +14,7 @@ using System.Windows.Input;
 
 namespace Sprout.Core.UIStates
 {
-    public partial class SproutTextBoxUIState : BaseUIState, IDependent
+    public partial class SproutTextBoxUIState : BaseSproutControlVM, IDependent
     {
         [ObservableProperty]
         private string _text;

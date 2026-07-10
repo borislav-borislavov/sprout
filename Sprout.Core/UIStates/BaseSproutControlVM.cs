@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace Sprout.Core.UIStates
 {
-    public partial class BaseUIState: ObservableObject 
+    public partial class BaseSproutControlVM: ObservableObject 
     {
         public string Name { get; set; }
 

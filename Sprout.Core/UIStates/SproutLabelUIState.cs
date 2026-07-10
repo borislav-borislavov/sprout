@@ -10,7 +10,7 @@ using System.Windows.Data;
 
 namespace Sprout.Core.UIStates
 {
-    public partial class SproutLabelUIState : BaseUIState
+    public partial class SproutLabelUIState : BaseSproutControlVM
     {
         [ObservableProperty]
         private string _text;

@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace Sprout.Core.UIStates
 {
-    public partial class SproutListUIState : BaseUIState
+    public partial class SproutListUIState : BaseSproutControlVM
     {
         /// <summary>
         /// The current search/filter text of the list. Exposed on the UI state so other controls and
