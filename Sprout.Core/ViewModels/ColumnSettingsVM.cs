@@ -12,7 +12,7 @@ namespace Sprout.Core.ViewModels
 {
     public partial class ColumnSettingsVM : ObservableObject
     {
-        private readonly SproutGridUIState _gridState;
+        private readonly SproutDataGridUIState _gridState;
 
         [ObservableProperty]
         private ObservableCollection<ColumnSettingItemVM> _columns = [];
@@ -60,7 +60,7 @@ namespace Sprout.Core.ViewModels
 
         public bool IsSaved { get; private set; }
 
-        public ColumnSettingsVM(SproutGridUIState gridState)
+        public ColumnSettingsVM(SproutDataGridUIState gridState)
         {
             _gridState = gridState;
 

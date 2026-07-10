@@ -213,7 +213,7 @@ namespace Sprout.Core.ViewModels
         /// Restores any persisted column layout for the given grid and keeps it in sync with
         /// the configuration when the user changes it.
         /// </summary>
-        public void RegisterGridColumnLayout(SproutGridUIState gridState)
+        public void RegisterGridColumnLayout(SproutDataGridUIState gridState)
         {
             if (gridState?.Grid?.Config?.Name is not string gridName || string.IsNullOrEmpty(gridName))
                 return;
@@ -325,15 +325,15 @@ namespace Sprout.Core.ViewModels
             if (parameter is not ItemDisplayPageInfo itemDisplayInfo)
                 return;
 
-            var sproutGridUiState = UiStateRegistry.Get<SproutGridUIState>(itemDisplayInfo.GridName);
+            var sproutDataGridUiState = UiStateRegistry.Get<SproutDataGridUIState>(itemDisplayInfo.GridName);
 
-            if (sproutGridUiState == null)
+            if (sproutDataGridUiState == null)
             {
                 //TODO
                 return;
             }
 
-            if (sproutGridUiState.Selected == null)
+            if (sproutDataGridUiState.Selected == null)
             {
                 //TODO
                 return;
@@ -342,7 +342,7 @@ namespace Sprout.Core.ViewModels
             var args = new OpenTabMessageArgs()
             {
                 PageConfigID = itemDisplayInfo.ItemDisplayPageID,
-                Parameter = sproutGridUiState.Selected
+                Parameter = sproutDataGridUiState.Selected
             };
 
             WeakReferenceMessenger.Default.Send(new OpenTabMessage(args));

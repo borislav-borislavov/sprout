@@ -17,10 +17,12 @@ namespace Sprout.Core.Factories
     public class DataAdapterFactory : IDataAdapterFactory
     {
         private readonly IConfigurationService _configurationService;
+        private readonly IDataServiceFactory _dataServiceFactory;
 
-        public DataAdapterFactory(IConfigurationService configurationService)
+        public DataAdapterFactory(IConfigurationService configurationService, IDataServiceFactory dataServiceFactory)
         {
             _configurationService = configurationService;
+            _dataServiceFactory = dataServiceFactory;
         }
 
         public IDataAdapter Create(IDataAdapterConfig dataAdapterConfig)

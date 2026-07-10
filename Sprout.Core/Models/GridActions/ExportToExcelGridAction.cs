@@ -96,7 +96,7 @@ namespace Sprout.Core.Models.GridActions
                     availableColumns.Add(column.ColumnName);
             }
 
-            var gridState = uiStateRegistry.Get<SproutGridUIState>(_ownControlName);
+            var gridState = uiStateRegistry.Get<SproutDataGridUIState>(_ownControlName);
             var visibleKeys = gridState?.Grid?.GetVisibleColumnKeysInDisplayOrder();
 
             if (visibleKeys == null || visibleKeys.Count == 0)

@@ -30,10 +30,10 @@ namespace Sprout.Core.Models.GridActions
                 throw new NotImplementedException();
             }
 
-            var gridUiState = uiStateRegistry.Get<SproutGridUIState>(_ownControlName);
+            var gridUiState = uiStateRegistry.Get<SproutDataGridUIState>(_ownControlName);
 
             if (gridUiState == null)
-                throw new Exception($"Failed to find SproutGridUIState for {_ownControlName}");
+                throw new Exception($"Failed to find SproutDataGridUIState for {_ownControlName}");
 
             if (gridUiState.Selected is not DataRowView selectedRowView)
                 return Task.CompletedTask;

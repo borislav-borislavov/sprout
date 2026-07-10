@@ -127,7 +127,7 @@ namespace Sprout.Core.Factories
             if (!string.IsNullOrEmpty(sproutGridConfig.ToolTip))
                 sproutDataGrid.ToolTip = sproutGridConfig.ToolTip;
 
-            var gridUIState = new SproutGridUIState();
+            var gridUIState = new SproutDataGridUIState();
             gridUIState.SetUpState(sproutDataGrid);
 
             return sproutDataGrid;

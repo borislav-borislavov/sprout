@@ -41,11 +41,11 @@ namespace Sprout.Core.Views.Controls
         public Dictionary<DataGridColumn, string> ColumnKeys { get; } = [];
 
         public static readonly DependencyProperty UIStateProperty =
-            DependencyProperty.Register(nameof(UIState), typeof(SproutGridUIState), typeof(SproutDataGrid), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(UIState), typeof(SproutDataGridUIState), typeof(SproutDataGrid), new PropertyMetadata(null));
 
-        public SproutGridUIState UIState
+        public SproutDataGridUIState UIState
         {
-            get => (SproutGridUIState)GetValue(UIStateProperty);
+            get => (SproutDataGridUIState)GetValue(UIStateProperty);
             set => SetValue(UIStateProperty, value);
         }
 
