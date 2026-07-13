@@ -22,10 +22,10 @@ namespace Sprout.Core.Views.Controls
     /// <summary>
     /// Interaction logic for SproutCombo.xaml
     /// </summary>
-    public partial class SproutCombo : UserControl, ISproutControl<SproutComboConfig>
+    public partial class SproutCombo : UserControl, ISproutControl<SproutComboConfig, SproutComboUIState>
     {
         public SproutComboConfig Config { get; set; }
-        public SproutComboUIState UIState { get; internal set; }
+        public SproutComboUIState VM { get; internal set; }
         public SproutControlType ControlType => SproutControlType.ComboBox;
 
         public SproutCombo()

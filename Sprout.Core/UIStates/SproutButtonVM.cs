@@ -16,9 +16,14 @@ namespace Sprout.Core.UIStates
 
         public Dictionary<string, IButtonAction> ButtonActions { get; } = [];
 
-        public void SetUpState(string controlName)
+        public SproutButtonVM(string name) : base(name)
         {
-            this.Name = controlName;
+            
+        }
+
+        public void SetUpState()
+        {
+
         }
     }
 }

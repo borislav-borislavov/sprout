@@ -21,11 +21,11 @@ namespace Sprout.Core.Views.Controls
     /// <summary>
     /// Interaction logic for SproutCheckBox.xaml
     /// </summary>
-    public partial class SproutCheckBox : UserControl, ISproutControl<SproutCheckBoxConfig>
+    public partial class SproutCheckBox : UserControl, ISproutControl<SproutCheckBoxConfig, SproutCheckBoxUIState>
     {
         public SproutCheckBoxConfig Config { get; set; }
         public SproutControlType ControlType => SproutControlType.CheckBox;
-        public SproutCheckBoxUIState UIState { get; internal set; }
+        public SproutCheckBoxUIState VM { get; internal set; }
 
         public SproutCheckBox()
         {

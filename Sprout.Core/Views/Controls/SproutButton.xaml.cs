@@ -1,5 +1,6 @@
 using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.UIStates;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace Sprout.Core.Views.Controls
     /// <summary>
     /// Interaction logic for SproutButton.xaml
     /// </summary>
-    public partial class SproutButton : UserControl, ISproutControl<SproutButtonConfig>
+    public partial class SproutButton : UserControl, ISproutControl<SproutButtonConfig, SproutButtonVM>
     {
         public SproutButtonConfig Config { get; set; }
         public SproutControlType ControlType => SproutControlType.Button;
@@ -131,6 +132,8 @@ namespace Sprout.Core.Views.Controls
             get => (string)GetValue(ForegroundColorProperty);
             set => SetValue(ForegroundColorProperty, value);
         }
+
+        public SproutButtonVM VM { get; set; }
 
         public SproutButton()
         {

@@ -21,11 +21,11 @@ namespace Sprout.Core.Views.Controls
     /// <summary>
     /// Interaction logic for SproutTextBox.xaml
     /// </summary>
-    public partial class SproutTextBox : UserControl, ISproutControl<SproutTextBoxConfig>
+    public partial class SproutTextBox : UserControl, ISproutControl<SproutTextBoxConfig, SproutTextBoxUIState>
     {
         public SproutTextBoxConfig Config { get; set; }
         public SproutControlType ControlType => SproutControlType.TextBox;
-        public SproutTextBoxUIState UIState { get; internal set; }
+        public SproutTextBoxUIState VM { get; internal set; }
 
         public SproutTextBox()
         {

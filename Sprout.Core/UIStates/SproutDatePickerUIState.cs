@@ -16,6 +16,11 @@ namespace Sprout.Core.UIStates
 
         private string _outputDateFormat = "yyyy-MM-dd";
 
+        public SproutDatePickerUIState(string name) : base(name)
+        {
+            
+        }
+
         partial void OnSelectedDateChanged(DateTime? value)
         {
             Date = value?.ToString(_outputDateFormat);
@@ -23,8 +28,7 @@ namespace Sprout.Core.UIStates
 
         public virtual void SetUpState(SproutDatePicker control)
         {
-            control.UIState = this;
-            this.Name = control.Name;
+            control.VM = this;
             _outputDateFormat = control.Config.OutputDateFormat ?? "yyyy-MM-dd";
 
             control.datePicker.SetBinding(DatePicker.SelectedDateProperty,

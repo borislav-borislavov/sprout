@@ -9,11 +9,11 @@ namespace Sprout.Core.Views.Controls
     /// <summary>
     /// Interaction logic for SproutBorder.xaml
     /// </summary>
-    public partial class SproutBorder : UserControl, ISproutControl<SproutBorderConfig>
+    public partial class SproutBorder : UserControl, ISproutControl<SproutBorderConfig, SproutBorderUIState>
     {
         public SproutBorderConfig Config { get; set; }
         public SproutControlType ControlType => SproutControlType.Border;
-        public SproutBorderUIState UIState { get; internal set; }
+        public SproutBorderUIState VM { get; internal set; }
 
         public SproutBorder()
         {

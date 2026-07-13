@@ -15,10 +15,14 @@ namespace Sprout.Core.UIStates
         [ObservableProperty]
         private string _text;
 
+        public SproutLabelUIState(string name) : base(name)
+        {
+
+        }
+
         public virtual void SetUpState(SproutLabel control)
         {
-            control.UIState = this;
-            this.Name = control.Name;
+            control.VM = this;
 
             control.textBlock.SetBinding(TextBlock.TextProperty,
                 new Binding(nameof(this.Text))

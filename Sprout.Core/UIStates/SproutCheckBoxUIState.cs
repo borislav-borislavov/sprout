@@ -15,10 +15,14 @@ namespace Sprout.Core.UIStates
         [ObservableProperty]
         private bool _isChecked;
 
+        public SproutCheckBoxUIState(string name) : base(name)
+        {
+            
+        }
+
         public virtual void SetUpState(SproutCheckBox control)
         {
-            control.UIState = this;
-            this.Name = control.Name;
+            control.VM = this;
 
             control.checkBox.SetBinding(CheckBox.IsCheckedProperty,
                 new Binding(nameof(this.IsChecked))

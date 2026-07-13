@@ -39,12 +39,16 @@ namespace Sprout.Core.UIStates
         /// </summary>
         public event EventHandler<SproutGridColumnLayout> ColumnLayoutChanged;
 
+        public SproutDataGridUIState(string name) : base(name)
+        {
+            
+        }
+
         public virtual void SetUpState(SproutDataGrid control)
         {
             // Bindings and other setup logic can be added here if needed
 
-            control.UIState = this;
-            this.Name = control.Name;
+            control.VM = this;
             this.Grid = control;
 
             control.dataGrid.SetBinding(DataGrid.SelectedItemProperty,

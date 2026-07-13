@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Sprout.Core.Common;
 
-namespace Sprout.Core.UIStates
+namespace Sprout.Core.UIStates;
+
+public class LoginUIState() : BaseSproutControlVM(Const.Login)
 {
-    public class LoginUIState : BaseSproutControlVM
-    {
-        public object User { get; set; }
-    }
+    public object User { get; set; }
 }

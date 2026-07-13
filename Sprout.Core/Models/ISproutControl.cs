@@ -1,14 +1,17 @@
 ﻿using Sprout.Core.Models.Configurations;
+using Sprout.Core.UIStates;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Sprout.Core.Models
 {
-    internal interface ISproutControl<T> where T : SproutControlConfig
+    internal interface ISproutControl<C, V> where C : SproutControlConfig where V : BaseSproutControlVM
     {
-        T Config { get; set; }
+        C Config { get; set; }
 
         SproutControlType ControlType { get; }
+
+        V VM { get; }
     }
 }

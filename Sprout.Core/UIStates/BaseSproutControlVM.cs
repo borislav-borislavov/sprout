@@ -12,6 +12,11 @@ namespace Sprout.Core.UIStates
     {
         public string Name { get; set; }
 
+        public BaseSproutControlVM(string name)
+        {
+            Name = name;
+        }
+
         public virtual void SetUpState<T>(T control) where T : UserControl
         {
             throw new NotImplementedException();

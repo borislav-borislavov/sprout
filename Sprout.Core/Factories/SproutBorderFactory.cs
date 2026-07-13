@@ -76,9 +76,8 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutBorder, config);
 
-            var uiState = new SproutBorderUIState();
-            uiState.SetUpState(sproutBorder.Name);
-            sproutBorder.UIState = uiState;
+            var uiState = new SproutBorderUIState(sproutBorder.Name);
+            sproutBorder.VM = uiState;
 
             return sproutBorder;
         }

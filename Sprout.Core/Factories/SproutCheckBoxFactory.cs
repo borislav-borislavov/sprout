@@ -65,7 +65,7 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutCheckBox, config);
 
-            var uiState = new SproutCheckBoxUIState();
+            var uiState = new SproutCheckBoxUIState(sproutCheckBox.Name);
             uiState.SetUpState(sproutCheckBox);
 
             return sproutCheckBox;

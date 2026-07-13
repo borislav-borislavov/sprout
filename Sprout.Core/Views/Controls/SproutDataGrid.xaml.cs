@@ -28,7 +28,7 @@ namespace Sprout.Core.Views.Controls
     /// <summary>
     /// Interaction logic for SproutDataGrid.xaml
     /// </summary>
-    public partial class SproutDataGrid : UserControl, ISproutControl<SproutDataGridConfig>
+    public partial class SproutDataGrid : UserControl, ISproutControl<SproutDataGridConfig, SproutDataGridUIState>
     {
         public SproutDataGridConfig Config { get; set; }
         public SproutControlType ControlType => SproutControlType.DataGrid;
@@ -41,9 +41,9 @@ namespace Sprout.Core.Views.Controls
         public Dictionary<DataGridColumn, string> ColumnKeys { get; } = [];
 
         public static readonly DependencyProperty UIStateProperty =
-            DependencyProperty.Register(nameof(UIState), typeof(SproutDataGridUIState), typeof(SproutDataGrid), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(VM), typeof(SproutDataGridUIState), typeof(SproutDataGrid), new PropertyMetadata(null));
 
-        public SproutDataGridUIState UIState
+        public SproutDataGridUIState VM
         {
             get => (SproutDataGridUIState)GetValue(UIStateProperty);
             set => SetValue(UIStateProperty, value);
@@ -137,7 +137,7 @@ namespace Sprout.Core.Views.Controls
 
         private void btnColumnSettings_Click(object sender, RoutedEventArgs e)
         {
-            var vm = new ColumnSettingsVM(UIState);
+            var vm = new ColumnSettingsVM(VM);
             var window = new ColumnSettings(vm)
             {
                 Owner = Window.GetWindow(this)

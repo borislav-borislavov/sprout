@@ -1,21 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Sprout.Core.Common;
 
-namespace Sprout.Core.UIStates
+namespace Sprout.Core.UIStates;
+
+public class SproutPageUIState() : BaseSproutControlVM(Const.Page)
 {
-    public class SproutPageUIState : BaseSproutControlVM
-    {
-        //private Dictionary<string, object> _data = [];
-
-        //public object this[string key]
-        //{
-        //    get { return _data[key]; }
-        //    set { _data[key] = value; }
-        //}.
-
-        public object Data { get; set; }
-    }
+    public object Data { get; set; }
 }

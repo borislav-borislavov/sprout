@@ -209,8 +209,8 @@ namespace Sprout.Core.ViewModels
 
         public void RegisterExtraUIStates()
         {
-            UiStateRegistry.Register(Const.Page, SproutPageUIState);
-            UiStateRegistry.Register(Const.Login, _loginUIState);
+            UiStateRegistry.Register(SproutPageUIState);
+            UiStateRegistry.Register(_loginUIState);
         }
 
         /// <summary>

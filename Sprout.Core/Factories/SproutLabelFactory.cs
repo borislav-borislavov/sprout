@@ -94,7 +94,7 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutLabel, config);
 
-            var uiState = new SproutLabelUIState();
+            var uiState = new SproutLabelUIState(sproutLabel.Name);
             uiState.SetUpState(sproutLabel);
             uiState.Text = config.Text;
 

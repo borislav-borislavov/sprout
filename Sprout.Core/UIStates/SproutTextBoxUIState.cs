@@ -21,9 +21,14 @@ namespace Sprout.Core.UIStates
 
         public IEnumerable<DataProviderDependency> Dependencies { get; set; } = new List<DataProviderDependency>();
 
+        public SproutTextBoxUIState(string name) : base(name)
+        {
+            
+        }
+
         public virtual void SetUpState(SproutTextBox control)
         {
-            control.UIState = this;
+            control.VM = this;
             this.Name = control.Name;
 
             if (control.Config.ChangeValueOnEnter)

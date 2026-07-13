@@ -250,9 +250,9 @@ namespace Sprout.Core.Views
                                 throw new NotImplementedException();
                         }
 
-                        vm.UiStateRegistry.Register(sproutDataGrid.UIState.Name, sproutDataGrid.UIState);
+                        vm.UiStateRegistry.Register(sproutDataGrid.VM);
 
-                        vm.RegisterGridColumnLayout(sproutDataGrid.UIState);
+                        vm.RegisterGridColumnLayout(sproutDataGrid.VM);
                     }
 
                     if (kvp.Value is SproutCombo sproutCombo)
@@ -288,13 +288,12 @@ namespace Sprout.Core.Views
                             }
                         }
 
-                        vm.UiStateRegistry.Register(sproutCombo.UIState.Name, sproutCombo.UIState);
+                        vm.UiStateRegistry.Register(sproutCombo.VM);
                     }
 
                     if (kvp.Value is SproutTextBox sproutTextBox)
                     {
-
-                        vm.UiStateRegistry.Register(sproutTextBox.UIState.Name, sproutTextBox.UIState);
+                        vm.UiStateRegistry.Register(sproutTextBox.VM);
                     }
 
                     if (kvp.Value is SproutLabel sproutLabel)
@@ -316,12 +315,12 @@ namespace Sprout.Core.Views
                             }
                         }
 
-                        vm.UiStateRegistry.Register(sproutLabel.UIState.Name, sproutLabel.UIState);
+                        vm.UiStateRegistry.Register(sproutLabel.VM);
                     }
 
                     if (kvp.Value is SproutDatePicker sproutDatePicker)
                     {
-                        vm.UiStateRegistry.Register(sproutDatePicker.UIState.Name, sproutDatePicker.UIState);
+                        vm.UiStateRegistry.Register(sproutDatePicker.VM);
                     }
 
                     if (kvp.Value is SproutButton sproutButton)
@@ -375,7 +374,7 @@ namespace Sprout.Core.Views
 
                     if (kvp.Value is SproutBorder sproutBorder)
                     {
-                        vm.UiStateRegistry.Register(sproutBorder.UIState.Name, sproutBorder.UIState);
+                        vm.UiStateRegistry.Register(sproutBorder.VM);
                     }
 
                     if (kvp.Value is SproutList sproutList)
@@ -389,7 +388,7 @@ namespace Sprout.Core.Views
                                 });
                         }
 
-                        vm.UiStateRegistry.Register(sproutList.UIState.Name, sproutList.UIState);
+                        vm.UiStateRegistry.Register(sproutList.VM);
 
                         if (sproutList.Config?.Pages is { Count: > 0 } pageLinks &&
                             !string.IsNullOrEmpty(sproutList.Name))

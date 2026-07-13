@@ -16,12 +16,14 @@ namespace Sprout.Core.UIStates
         [ObservableProperty]
         private object _selected;
 
+        public SproutComboUIState(string name) : base(name)
+        {
+            
+        }
+
         public virtual void SetUpState(SproutCombo control)
         {
-            // Bindings and other setup logic can be added here if needed
-
-            control.UIState = this;
-            this.Name = control.Name;
+            control.VM = this;
 
             control.comboBox.SetBinding(DataGrid.SelectedItemProperty,
                 new Binding(nameof(this.Selected))

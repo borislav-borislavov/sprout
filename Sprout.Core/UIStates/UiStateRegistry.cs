@@ -27,9 +27,9 @@ namespace Sprout.Core.UIStates
 
         public Dictionary<string, BaseSproutControlVM> States => _states;
 
-        public void Register(string controlName, BaseSproutControlVM state)
+        public void Register(BaseSproutControlVM state)
         {
-            _states[controlName] = state;
+            _states[state.Name] = state;
             state.PropertyChanged += OnStateChanged;
         }
 

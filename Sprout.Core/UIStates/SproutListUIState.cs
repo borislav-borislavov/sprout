@@ -21,10 +21,14 @@ namespace Sprout.Core.UIStates
         [ObservableProperty]
         private object _selected;
 
+        public SproutListUIState(string name) : base(name)
+        {
+
+        }
+
         public virtual void SetUpState(SproutList control)
         {
-            control.UIState = this;
-            this.Name = control.Name;
+            control.VM = this;
 
             control.SetBinding(SproutList.SearchTextProperty,
                 new Binding(nameof(this.SearchText))

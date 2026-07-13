@@ -55,7 +55,7 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutCombo, sproutComboConfig);
 
-            var uiState = new SproutComboUIState();
+            var uiState = new SproutComboUIState(sproutCombo.Name);
             uiState.SetUpState(sproutCombo);
 
             return sproutCombo;
