@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using Sprout.Core.Models.ButtonActions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,12 @@ using System.Windows.Controls;
 
 namespace Sprout.Core.UIStates
 {
-    public partial class SproutButtonVM : BaseSproutControlVM
+    public partial class SproutButtonVM : BaseSproutControlVM, IButtonActionHost
     {
         [ObservableProperty]
         private object _firstRow;
+
+        public Dictionary<string, IButtonAction> ButtonActions { get; } = [];
 
         public void SetUpState(string controlName)
         {

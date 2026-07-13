@@ -13,6 +13,7 @@ using Sprout.Core.Models.GridActions;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services;
 using Sprout.Core.Services.ActionMessageService;
+using Sprout.Core.Services.Clipboard;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.CPL;
 using Sprout.Core.Services.DataProviders;
@@ -35,6 +36,7 @@ namespace Sprout.Core.ViewModels
         private readonly IDataServiceFactory _dataServiceFactory;
         private readonly ILoggedInUserService _loggedInUserService;
         private readonly IConfigurationService _configurationService;
+        private readonly ISproutControlFactory _sproutControlFactory;
 
         public SproutPageConfiguration PageConfig { get; private set; }
 
@@ -73,7 +75,8 @@ namespace Sprout.Core.ViewModels
             IDataServiceFactory dataServiceFactory,
             ILoggedInUserService loggedInUserService,
             IConfigurationService configurationService,
-            Sprout.Core.Services.Clipboard.IClipboardService clipboardService)
+            IClipboardService clipboardService,
+            ISproutControlFactory sproutControlFactory)
         {
             PageConfig = pageConfig;
             SproutPageUIState.Data = args?.Parameter;
@@ -84,11 +87,12 @@ namespace Sprout.Core.ViewModels
             _loggedInUserService = loggedInUserService;
             _configurationService = configurationService;
             ClipboardService = clipboardService;
+            _sproutControlFactory = sproutControlFactory;
 
             try
             {
                 CreateDataAdapters();
-                DynamicViewInstance = new SproutPage(_configurationService) { DataContext = this };
+                DynamicViewInstance = new SproutPage(_configurationService, _sproutControlFactory) { DataContext = this };
                 DynamicViewInstance.InitializeControls(this);
 
                 _host = new SproutPageLogicBridge($"{PageConfig.ID.ToString().Replace("-", "")}");

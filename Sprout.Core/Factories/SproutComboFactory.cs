@@ -11,10 +11,9 @@ using System.Windows;
 
 namespace Sprout.Core.Factories
 {
-    public class SproutComboFactory : BaseSproutControlFactory
+    public class SproutComboFactory : BaseSproutControlFactory, ISproutComboFactory
     {
-        public static SproutCombo Create(SproutComboConfig sproutComboConfig,
-            Dictionary<string, UIElement> controls)
+        public SproutCombo Create(SproutComboConfig sproutComboConfig)
         {
             var sproutCombo = new SproutCombo
             {
@@ -53,8 +52,6 @@ namespace Sprout.Core.Factories
 
             if (!string.IsNullOrEmpty(sproutComboConfig.ToolTip))
                 sproutCombo.ToolTip = sproutComboConfig.ToolTip;
-
-            AddControl(sproutCombo, controls);
 
             SetPositionInGrid(sproutCombo, sproutComboConfig);
 

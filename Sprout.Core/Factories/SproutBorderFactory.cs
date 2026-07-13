@@ -9,10 +9,9 @@ using System.Windows.Media;
 
 namespace Sprout.Core.Factories
 {
-    public class SproutBorderFactory : BaseSproutControlFactory
+    public class SproutBorderFactory : BaseSproutControlFactory, ISproutBorderFactory
     {
-        public static SproutBorder Create(SproutBorderConfig config,
-            Dictionary<string, UIElement> controls)
+        public SproutBorder Create(SproutBorderConfig config)
         {
             var sproutBorder = new SproutBorder
             {
@@ -74,14 +73,6 @@ namespace Sprout.Core.Factories
 
             if (!string.IsNullOrEmpty(config.ToolTip))
                 sproutBorder.ToolTip = config.ToolTip;
-
-            // Render the single child control inside the border
-            if (config.Child != null)
-            {
-                sproutBorder.border.Child = SproutControlFactory.GetControl(config.Child, controls) as UIElement;
-            }
-
-            AddControl(sproutBorder, controls);
 
             SetPositionInGrid(sproutBorder, config);
 

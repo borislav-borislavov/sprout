@@ -12,10 +12,10 @@ using System.Windows.Media;
 
 namespace Sprout.Core.Factories
 {
-    public class SproutListFactory : BaseSproutControlFactory
+    public class SproutListFactory : BaseSproutControlFactory, ISproutListFactory
     {
-        public static SproutList Create(SproutListConfig config,
-            Dictionary<string, UIElement> controls)
+        public SproutList Create(SproutListConfig config,
+            UIElement? itemTemplateRoot)
         {
             var sproutList = new SproutList
             {
@@ -88,10 +88,7 @@ namespace Sprout.Core.Factories
             if (!string.IsNullOrEmpty(config.ToolTip))
                 sproutList.ToolTip = config.ToolTip;
 
-            // Use the single child control as the template for each item.
-            sproutList.itemsControl.ItemTemplate = BuildItemTemplate(config.Child, controls);
-
-            AddControl(sproutList, controls);
+            sproutList.itemsControl.ItemTemplate = BuildItemTemplate(config.Child, itemTemplateRoot);
 
             SetPositionInGrid(sproutList, config);
 
@@ -103,12 +100,12 @@ namespace Sprout.Core.Factories
 
         /// <summary>
         /// Builds the per-item <see cref="DataTemplate"/> from the configured child control.
-        /// The child is rendered once via the control factory and cloned into a reusable template.
+        /// The child is rendered by the dispatcher and cloned into a reusable template.
         /// Falls back to a simple data-summary template when no usable child is configured or
         /// when the child cannot be cloned.
         /// </summary>
         private static DataTemplate BuildItemTemplate(SproutControlConfig childConfig,
-            Dictionary<string, UIElement> controls)
+            UIElement? childElement)
         {
             // An empty grid (the default child) carries no visuals, so render the row data instead.
             if (childConfig is null ||
@@ -119,10 +116,6 @@ namespace Sprout.Core.Factories
 
             try
             {
-                // Build the child into a throw-away dictionary so it does not register as a page control.
-                var templateControls = new Dictionary<string, UIElement>();
-                var childElement = SproutControlFactory.GetControl(childConfig, templateControls);
-
                 if (childElement is null)
                 {
                     return BuildFallbackTemplate();

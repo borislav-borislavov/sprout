@@ -65,6 +65,18 @@ namespace Sprout.Core
             services.AddTransient<ManageUsingsWindow>();
             services.AddTransient<ScriptEditor>();
 
+            //Factories
+            services.AddTransient<ISproutControlFactory, SproutControlFactory>();
+            services.AddTransient<ISproutButtonFactory, SproutButtonFactory>();
+            services.AddTransient<IGridFactory, GridFactory>();
+            services.AddTransient<ISproutBorderFactory, SproutBorderFactory>();
+            services.AddTransient<ISproutCheckBoxFactory, SproutCheckBoxFactory>();
+            services.AddTransient<ISproutComboFactory, SproutComboFactory>();
+            services.AddTransient<ISproutDataGridFactory, SproutDataGridFactory>();
+            services.AddTransient<ISproutDatePickerFactory, SproutDatePickerFactory>();
+            services.AddTransient<ISproutLabelFactory, SproutLabelFactory>();
+            services.AddTransient<ISproutListFactory, SproutListFactory>();
+            services.AddTransient<ISproutTextBoxFactory, SproutTextBoxFactory>();            
         }
     }
 }

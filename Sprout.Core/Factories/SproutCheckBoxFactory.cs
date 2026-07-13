@@ -11,10 +11,9 @@ using System.Windows.Controls;
 
 namespace Sprout.Core.Factories
 {
-    public class SproutCheckBoxFactory : BaseSproutControlFactory
+    public class SproutCheckBoxFactory : BaseSproutControlFactory, ISproutCheckBoxFactory
     {
-        public static SproutCheckBox Create(SproutCheckBoxConfig config,
-            Dictionary<string, UIElement> controls)
+        public SproutCheckBox Create(SproutCheckBoxConfig config)
         {
             var sproutCheckBox = new SproutCheckBox
             {
@@ -63,8 +62,6 @@ namespace Sprout.Core.Factories
             {
                 sproutCheckBox.ToolTip = config.ToolTip;
             }
-
-            AddControl(sproutCheckBox, controls);
 
             SetPositionInGrid(sproutCheckBox, config);
 

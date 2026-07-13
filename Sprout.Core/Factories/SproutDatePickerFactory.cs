@@ -7,10 +7,9 @@ using System.Windows;
 
 namespace Sprout.Core.Factories
 {
-    public class SproutDatePickerFactory : BaseSproutControlFactory
+    public class SproutDatePickerFactory : BaseSproutControlFactory, ISproutDatePickerFactory
     {
-        public static SproutDatePicker Create(SproutDatePickerConfig config,
-            Dictionary<string, UIElement> controls)
+        public SproutDatePicker Create(SproutDatePickerConfig config)
         {
             var sproutDatePicker = new SproutDatePicker
             {
@@ -61,7 +60,6 @@ namespace Sprout.Core.Factories
                 sproutDatePicker.ToolTip = config.ToolTip;
             }
 
-            AddControl(sproutDatePicker, controls);
             SetPositionInGrid(sproutDatePicker, config);
 
             var uiState = new SproutDatePickerUIState();

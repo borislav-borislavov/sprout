@@ -10,13 +10,11 @@ using System.Windows.Media;
 
 namespace Sprout.Core.Factories
 {
-    public class GridFactory : BaseSproutControlFactory
+    public class GridFactory : BaseSproutControlFactory, IGridFactory
     {
-        public static UIElement GenerateGrid(GridConfig gridConfig, Dictionary<string, UIElement> controls)
+        public Grid Create(GridConfig gridConfig)
         {
             var grid = new Grid();
-            
-            AddControl(grid, controls);
 
             grid.ShowGridLines = gridConfig.ShowGridLines;
 
@@ -69,11 +67,6 @@ namespace Sprout.Core.Factories
             {
                 var colDef = new RowDefinition { Height = ParseGridLength(rowSize.Value) };
                 grid.RowDefinitions.Add(colDef);
-            }
-
-            foreach (var sproutControl in gridConfig.Children)
-            {
-                grid.Children.Add(SproutControlFactory.GetControl(sproutControl, controls));
             }
 
             SetPositionInGrid(grid, gridConfig);

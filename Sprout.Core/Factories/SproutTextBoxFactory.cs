@@ -13,10 +13,9 @@ using System.Windows.Media;
 
 namespace Sprout.Core.Factories
 {
-    public class SproutTextBoxFactory : BaseSproutControlFactory
+    public class SproutTextBoxFactory : BaseSproutControlFactory, ISproutTextBoxFactory
     {
-        public static SproutTextBox Create(SproutTextBoxConfig config,
-            Dictionary<string, UIElement> controls)
+        public SproutTextBox Create(SproutTextBoxConfig config)
         {
             var sproutTextBox = new SproutTextBox
             {
@@ -85,8 +84,6 @@ namespace Sprout.Core.Factories
             {
                 sproutTextBox.EnableFileDrop();
             }
-
-            AddControl(sproutTextBox, controls);
 
             SetPositionInGrid(sproutTextBox, config);
 

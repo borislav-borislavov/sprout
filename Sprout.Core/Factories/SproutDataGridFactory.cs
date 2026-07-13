@@ -17,9 +17,9 @@ using System.Windows.Media;
 
 namespace Sprout.Core.Factories
 {
-    public class SproutDataGridFactory : BaseSproutControlFactory
+    public class SproutDataGridFactory : BaseSproutControlFactory, ISproutDataGridFactory
     {
-        internal static SproutDataGrid GenerateSproutGrid(SproutDataGridConfig sproutGridConfig, Dictionary<string, UIElement> controls)
+        public SproutDataGrid Create(SproutDataGridConfig sproutGridConfig)
         {
             var sproutDataGrid = new SproutDataGrid
             {
@@ -93,8 +93,6 @@ namespace Sprout.Core.Factories
                 sproutDataGrid.dataGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.VisibleWhenSelected;
                 sproutDataGrid.dataGrid.RowDetailsTemplate = BuildRowDetailsTemplate(rowDetailColumns, sproutGridConfig.RowDetailsItemsPerRow);
             }
-
-            AddControl(sproutDataGrid, controls);
 
             SetPositionInGrid(sproutDataGrid, sproutGridConfig);
 

@@ -37,17 +37,19 @@ namespace Sprout.Core.Views
         private bool _isInitialized = false;
         public Dictionary<string, UIElement> _controls = [];
         private readonly IConfigurationService _configurationService;
+        private readonly ISproutControlFactory _sproutControlFactory;
 
-        public SproutPage(IConfigurationService configurationService)
+        public SproutPage(IConfigurationService configurationService, ISproutControlFactory sproutControlFactory)
         {
             InitializeComponent();
             _configurationService = configurationService;
+            _sproutControlFactory = sproutControlFactory;
         }
 
         public void InitializeControls(SproutPageVM vm)
         {
             //step 1 - generate UI controls
-            this.Content = SproutControlFactory.GetControl(vm.PageConfig.Root, _controls);
+            this.Content = _sproutControlFactory.GetControl(vm.PageConfig.Root, _controls);
         }
 
 
@@ -326,6 +328,7 @@ namespace Sprout.Core.Views
                     {
                         vm.ButtonActions.Add(sproutButton.Name, []);
 
+                        //TODO: Move this logic in the SproutButtonFactory after factories are set up as DI
                         var compositeAction = new CompositeButtonAction();
 
                         foreach (var actionConfig in sproutButton.Config.Actions)

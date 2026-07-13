@@ -12,10 +12,9 @@ using System.Windows.Media;
 
 namespace Sprout.Core.Factories
 {
-    public class SproutLabelFactory : BaseSproutControlFactory
+    public class SproutLabelFactory : BaseSproutControlFactory, ISproutLabelFactory
     {
-        public static SproutLabel Create(SproutLabelConfig config,
-            Dictionary<string, UIElement> controls)
+        public SproutLabel Create(SproutLabelConfig config)
         {
             var sproutLabel = new SproutLabel
             {
@@ -92,8 +91,6 @@ namespace Sprout.Core.Factories
             {
                 sproutLabel.ToolTip = config.ToolTip;
             }
-
-            AddControl(sproutLabel, controls);
 
             SetPositionInGrid(sproutLabel, config);
 
