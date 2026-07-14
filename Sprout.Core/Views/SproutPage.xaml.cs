@@ -142,6 +142,21 @@ namespace Sprout.Core.Views
                                 Mode = BindingMode.OneWay
                             });
 
+                        //preview row grid action
+                        vm.ButtonActions[sproutDataGrid.Name][nameof(PreviewRowGridAction)] = new PreviewRowGridAction(sproutDataGrid.Name, vm.ClipboardService);
+
+                        sproutDataGrid.btnRowPreview.SetBinding(Button.CommandProperty,
+                            new Binding(nameof(SproutPageVM.PerformActionCommand))
+                            {
+                                Mode = BindingMode.OneWay
+                            });
+
+                        sproutDataGrid.btnRowPreview.SetBinding(Button.CommandParameterProperty,
+                            new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(PreviewRowGridAction)}]")
+                            {
+                                Mode = BindingMode.OneWay
+                            });
+
                         if (sproutDataGrid.Config.ItemDisplayPage != Guid.Empty)
                         {
                             sproutDataGrid.dataGrid.IsReadOnly = true;
