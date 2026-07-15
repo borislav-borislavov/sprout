@@ -33,17 +33,17 @@ namespace Sprout.Core.Services.Api
 
         private static readonly string[] _tokenFieldNames = ["token", "access_token", "accessToken", "bearer", "jwt"];
 
-        public UiStateRegistry UiStateRegistry { get; }
+        public VMRegistry VMRegistry { get; }
 
         public ApiDataService(
             ApiDataAdapter dataAdapter,
-            UiStateRegistry uiStateRegistry,
+            VMRegistry vmRegistry,
             IHttpClientFactory httpClientFactory,
             ISqlQueryLogger sqlQueryLogger = null)
         {
             _dataAdapter = dataAdapter;
             _dataProvider = dataAdapter.DataProvider as ApiDataProvider;
-            UiStateRegistry = uiStateRegistry;
+            VMRegistry = vmRegistry;
             _httpClientFactory = httpClientFactory;
             _sqlQueryLogger = sqlQueryLogger;
         }
@@ -330,7 +330,7 @@ namespace Sprout.Core.Services.Api
                 {
                     var dep = DependencyParser.ParseDependency(queryParam.RawPatameter);
 
-                    var uiState = UiStateRegistry[dep.ControlName];
+                    var uiState = VMRegistry[dep.ControlName];
 
                     if (uiState == null)
                     {
@@ -468,7 +468,7 @@ namespace Sprout.Core.Services.Api
                 if (param.IsFromUIState)
                 {
                     var dep = DependencyParser.ParseDependency(param.RawPatameter);
-                    var uiState = UiStateRegistry[dep.ControlName];
+                    var uiState = VMRegistry[dep.ControlName];
 
                     if (uiState == null)
                         throw new Exception($"UI state '{dep.ControlName}' not found for body parameter '{param.RawPatameter}'.");
@@ -572,7 +572,7 @@ namespace Sprout.Core.Services.Api
 
         private void SetBusy(bool isBusy)
         {
-            if (UiStateRegistry.Get(_dataAdapter.Name) is not BusyUIState busyState)
+            if (VMRegistry.Get(_dataAdapter.Name) is not BusyUIState busyState)
                 return;
 
             busyState.IsBusy = isBusy;

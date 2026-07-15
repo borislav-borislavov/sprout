@@ -21,7 +21,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
             _ownControlName = ownControlName;
         }
 
-        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataProviders, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataProviders, VMRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             if (!dataProviders.TryGetValue(_ownControlName, out var ownDataAdapter))
             {

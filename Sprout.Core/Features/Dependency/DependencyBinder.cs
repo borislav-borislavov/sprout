@@ -20,8 +20,8 @@ namespace Sprout.Core.Services
         /// creates a binding for each one, linking it to the appropriate property in the UI state registry. This
         /// enables automatic synchronization of UI state with the underlying data model.</remarks>
         /// <param name="dataProvider">The data provider containing the dependencies to bind. Must not be null.</param>
-        /// <param name="uiStateRegistry">The UI state registry that serves as the source for binding property values. Must not be null.</param>
-        public static void BindDependencies(IDataProvider dataProvider, UiStateRegistry uiStateRegistry)
+        /// <param name="vmRegistry">The UI state registry that serves as the source for binding property values. Must not be null.</param>
+        public static void BindDependencies(IDataProvider dataProvider, VMRegistry vmRegistry)
         {
             foreach (var dep in dataProvider.Dependencies)
             {
@@ -30,7 +30,7 @@ namespace Sprout.Core.Services
                     DataProviderDependency.ValueProperty,
                     new Binding
                     {
-                        Source = uiStateRegistry,
+                        Source = vmRegistry,
                         Path = new PropertyPath($"[{dep.ControlName}].{dep.PropertyPath}")
                     });
             }

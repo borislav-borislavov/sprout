@@ -20,7 +20,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
             _ownControlName = ownControlName;
         }
 
-        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, VMRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
             {
@@ -87,7 +87,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
         /// grid's column settings (visibility and display order) when available.
         /// Falls back to all non-internal columns in their natural order.
         /// </summary>
-        private List<string> GetExportColumnNames(DataTable data, UiStateRegistry uiStateRegistry)
+        private List<string> GetExportColumnNames(DataTable data, VMRegistry uiStateRegistry)
         {
             var availableColumns = new List<string>();
             foreach (System.Data.DataColumn column in data.Columns)

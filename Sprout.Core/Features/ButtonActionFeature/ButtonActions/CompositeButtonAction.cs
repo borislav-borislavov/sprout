@@ -16,7 +16,7 @@ namespace Sprout.Core.Features.ButtonActions.Actions
             _actions.Add(action);
         }
 
-        public async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, VMRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             ResetMessages();
 

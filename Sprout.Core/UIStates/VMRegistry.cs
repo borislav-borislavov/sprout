@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.UIStates
 {
-    public sealed class UiStateRegistry
+    public sealed class VMRegistry
     {
         public BaseSproutControlVM this[string controlName]
         {

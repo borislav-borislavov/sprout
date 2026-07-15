@@ -26,7 +26,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
             _clipboardService = clipboardService;
         }
 
-        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, VMRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             var gridUiState = uiStateRegistry.Get<SproutDataGridVM>(_ownControlName);
 

@@ -33,7 +33,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
 
         public List<ActionMessage> Messages { get; } = [];
 
-        public async Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, VMRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             ResetMessages();
 

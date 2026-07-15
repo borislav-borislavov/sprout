@@ -45,7 +45,7 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
 
         public IDataAdapter Parent => _parentAdapter;
 
-        public void DepenencyChanged(DataProviderDependency changedDependency, UiStateRegistry uiStateRegistry)
+        public void DepenencyChanged(DataProviderDependency changedDependency, VMRegistry vmRegistry)
         {
             //TODO
         }

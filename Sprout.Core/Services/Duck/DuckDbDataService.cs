@@ -26,13 +26,13 @@ namespace Sprout.Core.Services.Duck
         private DuckDataProvider _dataProvider;
         private readonly ISqlQueryLogger _sqlQueryLogger;
 
-        public UiStateRegistry UiStateRegistry { get; }
+        public VMRegistry VMRegistry { get; }
 
-        public DuckDbDataService(DuckDataAdapter duckDataAdapter, UiStateRegistry uiStateRegistry, ISqlQueryLogger sqlQueryLogger = null)
+        public DuckDbDataService(DuckDataAdapter duckDataAdapter, VMRegistry vmRegistry, ISqlQueryLogger sqlQueryLogger = null)
         {
             _duckDataAdapter = duckDataAdapter;
             _dataProvider = duckDataAdapter.DataProvider as DuckDataProvider;
-            UiStateRegistry = uiStateRegistry;
+            VMRegistry = vmRegistry;
             _connection = new DuckDBConnection(duckDataAdapter.ConnectionString);
             _sqlQueryLogger = sqlQueryLogger;
         }
@@ -105,7 +105,7 @@ namespace Sprout.Core.Services.Duck
                 if (queryParam.IsFromUIState)
                 {
                     var dep = DependencyParser.ParseDependency(queryParam.RawPatameter);
-                    var uiState = UiStateRegistry[dep.ControlName];
+                    var uiState = VMRegistry[dep.ControlName];
 
                     if (uiState == null)
                         throw new Exception(
@@ -268,7 +268,7 @@ namespace Sprout.Core.Services.Duck
 
         private void SetBusy(bool isBusy)
         {
-            if (UiStateRegistry.Get(_duckDataAdapter.Name) is not BusyUIState busyState)
+            if (VMRegistry.Get(_duckDataAdapter.Name) is not BusyUIState busyState)
                 return;
 
             busyState.IsBusy = isBusy;

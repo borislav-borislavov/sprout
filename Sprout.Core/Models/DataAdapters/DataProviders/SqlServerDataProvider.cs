@@ -45,10 +45,10 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
 
         public IDataAdapter Parent => _parentAdapter;
 
-        public void DepenencyChanged(DataProviderDependency changedDependency, UiStateRegistry uiStateRegistry)
+        public void DepenencyChanged(DataProviderDependency changedDependency, VMRegistry vmRegistry)
         {
             //TODO: Implement this method to handle dependency changes
-            //using var dataService = _dataServiceFactory.Create(dataProvider.Parent, UiStateRegistry);
+            //using var dataService = _dataServiceFactory.Create(dataProvider.Parent, VMRegistry);
             //await dataService.ProvideData();
         }
     }

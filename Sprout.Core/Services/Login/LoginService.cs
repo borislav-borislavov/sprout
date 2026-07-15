@@ -45,7 +45,7 @@ namespace Sprout.Core.Services.Login
         {
             var loginResult = new LoginResult();
 
-            using (var loginDataService = _dataServiceFactory.Create(_loginDataAdapter, new UIStates.UiStateRegistry()))
+            using (var loginDataService = _dataServiceFactory.Create(_loginDataAdapter, new UIStates.VMRegistry()))
             {
                 var parameter = GetLoginParameter(login);
 

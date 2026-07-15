@@ -7,5 +7,5 @@ public interface IDependent
 {
     IEnumerable<DataProviderDependency> Dependencies { get; }
 
-    void DepenencyChanged(DataProviderDependency changedDependency, UiStateRegistry uiStateRegistry);
+    void DepenencyChanged(DataProviderDependency changedDependency, VMRegistry vmRegistry);
 }

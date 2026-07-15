@@ -43,7 +43,7 @@ namespace Sprout.Core.ViewModels
         public Dictionary<string, IDataAdapter> DataAdapters { get; set; } = [];
         public Dictionary<string, IDataProvider> DataProviders { get; set; } = [];
 
-        public UiStateRegistry UiStateRegistry { get; } = new();
+        public VMRegistry VMRegistry { get; } = new();
 
         /// <summary>
         /// Using virtualization to re-create views makes the re-binding the UI State too brittle
@@ -88,7 +88,7 @@ namespace Sprout.Core.ViewModels
 
                 _host = new SproutPageLogicBridge($"{PageConfig.ID.ToString().Replace("-", "")}");
 
-                UiStateRegistry.UiStateChanged += async (_, change) =>
+                VMRegistry.UiStateChanged += async (_, change) =>
                 {
                     foreach (var kvp in DataProviders)
                     {
@@ -107,7 +107,7 @@ namespace Sprout.Core.ViewModels
                         {
                             try
                             {
-                                using var dataService = _dataServiceFactory.Create(dataProvider.Parent, UiStateRegistry);
+                                using var dataService = _dataServiceFactory.Create(dataProvider.Parent, VMRegistry);
                                 await dataService.ProvideData();
                             }
                             catch (Exception ex)
@@ -117,7 +117,7 @@ namespace Sprout.Core.ViewModels
                         }
                     }
 
-                    foreach (var kvp in UiStateRegistry.States)
+                    foreach (var kvp in VMRegistry.States)
                     {
                         if (kvp.Value is not IDependent dependent)
                         {
@@ -128,7 +128,7 @@ namespace Sprout.Core.ViewModels
                         {
                             if (dependency.ControlName == change.ControlName)
                             {
-                                dependent.DepenencyChanged(dependency, UiStateRegistry);
+                                dependent.DepenencyChanged(dependency, VMRegistry);
                             }
                         }
                     }
@@ -200,8 +200,8 @@ namespace Sprout.Core.ViewModels
 
         public void RegisterExtraUIStates()
         {
-            UiStateRegistry.Register(SproutPageUIState);
-            UiStateRegistry.Register(_loginUIState);
+            VMRegistry.Register(SproutPageUIState);
+            VMRegistry.Register(_loginUIState);
         }
 
         /// <summary>
@@ -270,7 +270,7 @@ namespace Sprout.Core.ViewModels
                         continue;
                     }
 
-                    DependencyBinder.BindDependencies(kvp.Value, UiStateRegistry);
+                    DependencyBinder.BindDependencies(kvp.Value, VMRegistry);
                 }
 
                 foreach (var kvp in DataProviders)
@@ -284,7 +284,7 @@ namespace Sprout.Core.ViewModels
                         continue;
                     }
 
-                    using var dataservice = _dataServiceFactory.Create(kvp.Value.Parent, UiStateRegistry);
+                    using var dataservice = _dataServiceFactory.Create(kvp.Value.Parent, VMRegistry);
                     await dataservice.ProvideData();
                 }
             }
@@ -301,7 +301,7 @@ namespace Sprout.Core.ViewModels
             {
                 if (parameter is IButtonAction buttonAction)
                 {
-                    await buttonAction.Perform(DataAdapters, UiStateRegistry, _dataServiceFactory);
+                    await buttonAction.Perform(DataAdapters, VMRegistry, _dataServiceFactory);
 
                     if (parameter is IButtonActionMessenger messenge)
                         _actionMessageService.Show(messenge);
@@ -320,7 +320,7 @@ namespace Sprout.Core.ViewModels
             if (parameter is not ItemDisplayPageInfo itemDisplayInfo)
                 return;
 
-            var sproutDataGridUiState = UiStateRegistry.Get<SproutDataGridVM>(itemDisplayInfo.GridName);
+            var sproutDataGridUiState = VMRegistry.Get<SproutDataGridVM>(itemDisplayInfo.GridName);
 
             if (sproutDataGridUiState == null)
             {
@@ -349,7 +349,7 @@ namespace Sprout.Core.ViewModels
             if (parameter is not ListPageLaunchInfo launchInfo)
                 return;
 
-            var sproutListUiState = UiStateRegistry.Get<SproutListUIState>(launchInfo.ListName);
+            var sproutListUiState = VMRegistry.Get<SproutListUIState>(launchInfo.ListName);
 
             if (sproutListUiState == null)
             {

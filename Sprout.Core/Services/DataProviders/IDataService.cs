@@ -24,7 +24,7 @@ namespace Sprout.Core.Services.DataProviders
     /// should ensure proper disposal of resources by calling Dispose when the service is no longer needed.</remarks>
     public interface IDataService : IDisposable
     {
-        UiStateRegistry UiStateRegistry { get; }
+        VMRegistry VMRegistry { get; }
 
         Task ProvideData();
 

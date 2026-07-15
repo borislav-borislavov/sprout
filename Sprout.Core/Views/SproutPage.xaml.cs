@@ -114,7 +114,7 @@ namespace Sprout.Core.Views
                             }
                         }
 
-                        vm.UiStateRegistry.Register(sproutDataGrid.VM);
+                        vm.VMRegistry.Register(sproutDataGrid.VM);
 
                         vm.RegisterGridColumnLayout(sproutDataGrid.VM);
                     }
@@ -137,7 +137,7 @@ namespace Sprout.Core.Views
                                     ComboBox.SelectedValueProperty,
                                     new Binding
                                     {
-                                        Source = vm.UiStateRegistry,
+                                        Source = vm.VMRegistry,
                                         Path = new PropertyPath($"[{dependency.ControlName}].{dependency.PropertyPath}"),
                                         Mode = BindingMode.TwoWay
                                     });
@@ -152,12 +152,12 @@ namespace Sprout.Core.Views
                             }
                         }
 
-                        vm.UiStateRegistry.Register(sproutCombo.VM);
+                        vm.VMRegistry.Register(sproutCombo.VM);
                     }
 
                     if (kvp.Value is SproutTextBox sproutTextBox)
                     {
-                        vm.UiStateRegistry.Register(sproutTextBox.VM);
+                        vm.VMRegistry.Register(sproutTextBox.VM);
                     }
 
                     if (kvp.Value is SproutLabel sproutLabel)
@@ -172,29 +172,29 @@ namespace Sprout.Core.Views
                                     TextBlock.TextProperty,
                                     new Binding
                                     {
-                                        Source = vm.UiStateRegistry,
+                                        Source = vm.VMRegistry,
                                         Path = new PropertyPath($"[{dependency.ControlName}].{dependency.PropertyPath}"),
                                         Mode = BindingMode.OneWay
                                     });
                             }
                         }
 
-                        vm.UiStateRegistry.Register(sproutLabel.VM);
+                        vm.VMRegistry.Register(sproutLabel.VM);
                     }
 
                     if (kvp.Value is SproutDatePicker sproutDatePicker)
                     {
-                        vm.UiStateRegistry.Register(sproutDatePicker.VM);
+                        vm.VMRegistry.Register(sproutDatePicker.VM);
                     }
 
                     if (kvp.Value is SproutButton sproutButton)
                     {
-                        vm.UiStateRegistry.Register(sproutButton.VM);
+                        vm.VMRegistry.Register(sproutButton.VM);
                     }
 
                     if (kvp.Value is SproutBorder sproutBorder)
                     {
-                        vm.UiStateRegistry.Register(sproutBorder.VM);
+                        vm.VMRegistry.Register(sproutBorder.VM);
                     }
 
                     if (kvp.Value is SproutList sproutList)
@@ -208,7 +208,7 @@ namespace Sprout.Core.Views
                                 });
                         }
 
-                        vm.UiStateRegistry.Register(sproutList.VM);
+                        vm.VMRegistry.Register(sproutList.VM);
 
                         if (sproutList.Config?.Pages is { Count: > 0 } pageLinks &&
                             !string.IsNullOrEmpty(sproutList.Name))

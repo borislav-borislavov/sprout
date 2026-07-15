@@ -25,14 +25,14 @@ namespace Sprout.Core.Services.SqlServer
         private SqlServerDataProvider _dataProvider;
         private readonly ISqlQueryLogger _sqlQueryLogger;
 
-        public UiStateRegistry UiStateRegistry { get; }
+        public VMRegistry VMRegistry { get; }
 
-        public SqlServerDataService(SqlServerDataAdapter dataAdapter, UiStateRegistry uiStateRegistry, ISqlQueryLogger sqlQueryLogger = null)
+        public SqlServerDataService(SqlServerDataAdapter dataAdapter, VMRegistry vmRegistry, ISqlQueryLogger sqlQueryLogger = null)
         {
             _connection = SqlServerConnectionFactory.Create(dataAdapter.ConnectionString);
             _dataAdapter = dataAdapter;
             _dataProvider = dataAdapter.DataProvider as SqlServerDataProvider;
-            UiStateRegistry = uiStateRegistry;
+            VMRegistry = vmRegistry;
             _sqlQueryLogger = sqlQueryLogger;
         }
 
@@ -111,7 +111,7 @@ namespace Sprout.Core.Services.SqlServer
                 {
                     var dep = DependencyParser.ParseDependency(requestedParam.RawPatameter);
 
-                    var uiState = UiStateRegistry[dep.ControlName];
+                    var uiState = VMRegistry[dep.ControlName];
 
                     if (uiState == null)
                     {
@@ -313,7 +313,7 @@ namespace Sprout.Core.Services.SqlServer
 
         private void SetBusy(bool isBusy)
         {
-            if (UiStateRegistry.Get(_dataAdapter.Name) is not BusyUIState busyState)
+            if (VMRegistry.Get(_dataAdapter.Name) is not BusyUIState busyState)
                 return;
 
             busyState.IsBusy = isBusy;

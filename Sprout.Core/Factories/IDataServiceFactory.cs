@@ -6,6 +6,6 @@ namespace Sprout.Core.Factories
 {
     public interface IDataServiceFactory
     {
-        IDataService Create(IDataAdapter dataAdapter, UiStateRegistry uiStateRegistry);
+        IDataService Create(IDataAdapter dataAdapter, VMRegistry vmRegistry);
     }
 }

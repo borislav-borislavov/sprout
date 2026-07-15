@@ -71,9 +71,9 @@ namespace Sprout.Core.UIStates
             }
         }
 
-        public void DepenencyChanged(DataProviderDependency changedDependency, UiStateRegistry uiStateRegistry)
+        public void DepenencyChanged(DataProviderDependency changedDependency, VMRegistry vmRegistry)
         {
-            var targetedControlUIState = uiStateRegistry[changedDependency.ControlName];
+            var targetedControlUIState = vmRegistry[changedDependency.ControlName];
 
             if (targetedControlUIState == null)
                 throw new Exception($"UI State for control {changedDependency.ControlName} not found.");

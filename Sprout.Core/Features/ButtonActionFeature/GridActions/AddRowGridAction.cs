@@ -22,7 +22,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
         }
 
         public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters,
-            UiStateRegistry uiStateRegistry,
+            VMRegistry uiStateRegistry,
             IDataServiceFactory dataServiceFactory)
         {
             if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))

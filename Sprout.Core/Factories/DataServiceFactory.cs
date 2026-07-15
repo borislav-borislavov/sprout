@@ -25,21 +25,21 @@ namespace Sprout.Core.Factories
             _httpClientFactory = httpClientFactory;
         }
 
-        public IDataService Create(IDataAdapter dataAdapter, UiStateRegistry uiStateRegistry)
+        public IDataService Create(IDataAdapter dataAdapter, VMRegistry vmRegistry)
         {
             if (dataAdapter is SqlServerDataAdapter sqlServerDataAdapter)
             {
-                return new SqlServerDataService(sqlServerDataAdapter, uiStateRegistry, _sqlQueryLogger);
+                return new SqlServerDataService(sqlServerDataAdapter, vmRegistry, _sqlQueryLogger);
             }
 
             if (dataAdapter is DuckDataAdapter duckDataAdapter)
             {
-                return new DuckDbDataService(duckDataAdapter, uiStateRegistry, _sqlQueryLogger);
+                return new DuckDbDataService(duckDataAdapter, vmRegistry, _sqlQueryLogger);
             }
 
             if (dataAdapter is ApiDataAdapter apiDataAdapter)
             {
-                return new ApiDataService(apiDataAdapter, uiStateRegistry, _httpClientFactory, _sqlQueryLogger);
+                return new ApiDataService(apiDataAdapter, vmRegistry, _httpClientFactory, _sqlQueryLogger);
             }
 
             throw new NotSupportedException($"Data adapter of type {dataAdapter.GetType().Name} is not supported.");
