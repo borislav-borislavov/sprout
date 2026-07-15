@@ -1,0 +1,51 @@
+<Window x:Class="Sprout.Core.Windows.LocalSearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Sprout.Core.Windows"
+        mc:Ignorable="d"
+        Title="Local Search"
+        Height="150" Width="360"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Search all columns for:"
+                   FontWeight="Bold"
+                   Foreground="DarkSlateGray"
+                   Margin="0,0,0,6"/>
+
+        <TextBox x:Name="txtSearch"
+                 Grid.Row="1"
+                 Height="26"
+                 VerticalContentAlignment="Center"
+                 KeyDown="txtSearch_KeyDown"/>
+
+        <StackPanel Grid.Row="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,12,0,0">
+            <Button Content="Clear"
+                    Width="70"
+                    Margin="0,0,8,0"
+                    Click="btnClear_Click"/>
+            <Button Content="Search"
+                    Width="70"
+                    IsDefault="True"
+                    Click="btnSearch_Click"/>
+            <Button Content="Cancel"
+                    Width="70"
+                    Margin="8,0,0,0"
+                    IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -94,6 +94,16 @@
 
                 <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
 
+                <Button x:Name="btnLocalSearch"
+                        ToolTip="Local Search"
+                        Style="{StaticResource FlatRoundButtonStyle}"
+                        HorizontalAlignment="Left"
+                        Margin="2">
+                    <TextBlock Text="&#xE773;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
+                </Button>
+
+                <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
+
                 <Menu Background="Transparent" VerticalAlignment="Center">
                     <MenuItem ToolTip="Export data">
                         <MenuItem.Header>
