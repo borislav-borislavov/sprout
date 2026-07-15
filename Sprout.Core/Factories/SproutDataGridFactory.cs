@@ -1,6 +1,12 @@
-﻿using Sprout.Core.Models.Configurations;
+﻿using Sprout.Core.Features.ButtonActions;
+using Sprout.Core.Models;
+using Sprout.Core.Models.ButtonActions;
+using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
+using Sprout.Core.Models.GridActions;
+using Sprout.Core.Services.Clipboard;
 using Sprout.Core.UIStates;
+using Sprout.Core.ViewModels;
 using Sprout.Core.Views;
 using Sprout.Core.Views.Controls;
 using System;
@@ -11,14 +17,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Sprout.Core.Factories
 {
     public class SproutDataGridFactory : BaseSproutControlFactory, ISproutDataGridFactory
     {
+        private readonly IClipboardService _clipboardService;
+
+        public SproutDataGridFactory(IClipboardService clipboardService)
+        {
+            _clipboardService = clipboardService;
+        }
+
         public SproutDataGrid Create(SproutDataGridConfig sproutGridConfig)
         {
             var sproutDataGrid = new SproutDataGrid
@@ -125,10 +138,48 @@ namespace Sprout.Core.Factories
             if (!string.IsNullOrEmpty(sproutGridConfig.ToolTip))
                 sproutDataGrid.ToolTip = sproutGridConfig.ToolTip;
 
-            var gridUIState = new SproutDataGridUIState(sproutDataGrid.Name);
-            gridUIState.SetUpState(sproutDataGrid);
+            SetupVM(sproutDataGrid);
 
             return sproutDataGrid;
+        }
+
+
+
+        private void SetupVM(SproutDataGrid sproutDataGrid)
+        {
+            sproutDataGrid.VM = new SproutDataGridUIState(sproutDataGrid.Name);
+            sproutDataGrid.VM.SetUpState(sproutDataGrid); //currenlty binds the dataGrid to its DataSource, probably should be moved here?
+
+            #region Bind ItemsSource
+            sproutDataGrid.dataGrid.SetBinding(DataGrid.ItemsSourceProperty,
+                new Binding($"DataProviders[{sproutDataGrid.Name}].Data")
+                {
+                    Mode = BindingMode.OneWay
+                }); 
+            #endregion
+
+            #region Bind buttons
+            sproutDataGrid.BindButtonAction(sproutDataGrid.btnRefresh, new RefreshDataGridAction(sproutDataGrid.Name));
+            sproutDataGrid.BindButtonAction(sproutDataGrid.btnApplyFilters, new RefreshDataGridAction(sproutDataGrid.Name));
+            sproutDataGrid.BindButtonAction(sproutDataGrid.menuExportExcel, new ExportToExcelGridAction(sproutDataGrid.Name));
+            sproutDataGrid.BindButtonAction(sproutDataGrid.btnRowPreview, new PreviewRowGridAction(sproutDataGrid.Name, _clipboardService));
+            sproutDataGrid.BindButtonAction(sproutDataGrid.btnLocalSearch, new LocalSearchGridAction(sproutDataGrid.Name));
+
+            if (sproutDataGrid.Config.AllowInsert)
+            {
+                sproutDataGrid.BindButtonAction(sproutDataGrid.btnInsert, new AddRowGridAction(sproutDataGrid.Name));
+            }
+
+            if (sproutDataGrid.Config.AllowDelete)
+            {
+                sproutDataGrid.BindButtonAction(sproutDataGrid.btnDelete, new MarkDeletedGridAction(sproutDataGrid.Name));
+            }
+
+            if (sproutDataGrid.Config.ShowSave)
+            {
+                sproutDataGrid.BindButtonAction(sproutDataGrid.btnSave, new SaveGridAction(sproutDataGrid.Name));
+            } 
+            #endregion
         }
 
         private static DataTemplate BuildRowDetailsTemplate(List<SproutDataGridColumnConfig> columns, int itemsPerRow)

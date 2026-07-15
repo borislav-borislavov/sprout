@@ -88,90 +88,6 @@ namespace Sprout.Core.Views
                 {
                     if (kvp.Value is SproutDataGrid sproutDataGrid)
                     {
-                        if (!string.IsNullOrEmpty(sproutDataGrid.Name))
-                        {
-                            sproutDataGrid.dataGrid.SetBinding(DataGrid.ItemsSourceProperty,
-                                new Binding($"DataProviders[{sproutDataGrid.Name}].Data")
-                                {
-                                    Mode = BindingMode.OneWay
-                                });
-                        }
-
-                        //initialize grid actions
-                        vm.ButtonActions.Add(sproutDataGrid.Name, []);
-
-                        sproutDataGrid.btnRefresh.SetBinding(Button.CommandProperty,
-                            new Binding(nameof(SproutPageVM.PerformActionCommand))
-                            {
-                                Mode = BindingMode.OneWay
-                            });
-
-                        //create the grid action
-                        vm.ButtonActions[sproutDataGrid.Name][nameof(RefreshDataGridAction)] = new RefreshDataGridAction(sproutDataGrid.Name);
-
-                        sproutDataGrid.btnRefresh.SetBinding(Button.CommandParameterProperty,
-                            new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(RefreshDataGridAction)}]")
-                            {
-                                Mode = BindingMode.OneWay
-                            });
-
-                        sproutDataGrid.btnApplyFilters.SetBinding(Button.CommandProperty,
-                            new Binding(nameof(SproutPageVM.PerformActionCommand))
-                            {
-                                Mode = BindingMode.OneWay
-                            });
-
-                        sproutDataGrid.btnApplyFilters.SetBinding(Button.CommandParameterProperty,
-                            new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(RefreshDataGridAction)}]")
-                            {
-                                Mode = BindingMode.OneWay
-                            });
-
-                        //export to excel grid action
-                        vm.ButtonActions[sproutDataGrid.Name][nameof(ExportToExcelGridAction)] = new ExportToExcelGridAction(sproutDataGrid.Name);
-
-                        sproutDataGrid.menuExportExcel.SetBinding(MenuItem.CommandProperty,
-                            new Binding(nameof(SproutPageVM.PerformActionCommand))
-                            {
-                                Mode = BindingMode.OneWay
-                            });
-
-                        sproutDataGrid.menuExportExcel.SetBinding(MenuItem.CommandParameterProperty,
-                            new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(ExportToExcelGridAction)}]")
-                            {
-                                Mode = BindingMode.OneWay
-                            });
-
-                        //preview row grid action
-                        vm.ButtonActions[sproutDataGrid.Name][nameof(PreviewRowGridAction)] = new PreviewRowGridAction(sproutDataGrid.Name, vm.ClipboardService);
-
-                        sproutDataGrid.btnRowPreview.SetBinding(Button.CommandProperty,
-                            new Binding(nameof(SproutPageVM.PerformActionCommand))
-                            {
-                                Mode = BindingMode.OneWay
-                            });
-
-                        sproutDataGrid.btnRowPreview.SetBinding(Button.CommandParameterProperty,
-                            new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(PreviewRowGridAction)}]")
-                            {
-                                Mode = BindingMode.OneWay
-                            });
-
-                        //local search action (client-side filter of the current data)
-                        vm.ButtonActions[sproutDataGrid.Name][nameof(LocalSearchGridAction)] = new LocalSearchGridAction(sproutDataGrid.Name);
-
-                        sproutDataGrid.btnLocalSearch.SetBinding(Button.CommandProperty,
-                            new Binding(nameof(SproutPageVM.PerformActionCommand))
-                            {
-                                Mode = BindingMode.OneWay
-                            });
-
-                        sproutDataGrid.btnLocalSearch.SetBinding(Button.CommandParameterProperty,
-                            new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(LocalSearchGridAction)}]")
-                            {
-                                Mode = BindingMode.OneWay
-                            });
-
                         if (sproutDataGrid.Config.ItemDisplayPage != Guid.Empty)
                         {
                             sproutDataGrid.dataGrid.IsReadOnly = true;
@@ -184,100 +100,37 @@ namespace Sprout.Core.Views
                             };
 
                             DataGridDoubleClickBehavior.SetDoubleClickCommandParameter(sproutDataGrid.dataGrid, itemDisplayPageInfo);
-
-                        }
-                        else
-                        {
-                            if (sproutDataGrid.Config.AllowInsert)
-                            {
-                                sproutDataGrid.btnInsert.SetBinding(Button.CommandProperty,
-                                    new Binding(nameof(SproutPageVM.PerformActionCommand))
-                                    {
-                                        Mode = BindingMode.OneWay
-                                    });
-
-                                //create the grid action
-                                vm.ButtonActions[sproutDataGrid.Name][nameof(AddRowGridAction)] = new AddRowGridAction(sproutDataGrid.Name);
-
-
-                                //bind to the newly created grid action
-                                sproutDataGrid.btnInsert.SetBinding(Button.CommandParameterProperty,
-                                    new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(AddRowGridAction)}]")
-                                    {
-                                        Mode = BindingMode.OneWay
-                                    });
-                            }
-
-                            if (sproutDataGrid.Config.AllowDelete)
-                            {
-                                sproutDataGrid.btnDelete.SetBinding(Button.CommandProperty,
-                                            new Binding(nameof(SproutPageVM.PerformActionCommand))
-                                            {
-                                                Mode = BindingMode.OneWay
-                                            });
-
-                                //create the grid action
-                                vm.ButtonActions[sproutDataGrid.Name][nameof(MarkDeletedGridAction)] = new MarkDeletedGridAction(sproutDataGrid.Name);
-
-                                //bind to the newly created grid action
-                                sproutDataGrid.btnDelete.SetBinding(Button.CommandParameterProperty,
-                                    new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(MarkDeletedGridAction)}]")
-                                    {
-                                        Mode = BindingMode.OneWay
-                                    });
-                            }
-
-                            if (sproutDataGrid.Config.ShowSave)
-                            {
-                                sproutDataGrid.btnSave.SetBinding(Button.CommandProperty,
-                                    new Binding(nameof(SproutPageVM.PerformActionCommand))
-                                    {
-                                        Mode = BindingMode.OneWay
-                                    });
-
-                                vm.ButtonActions[sproutDataGrid.Name][nameof(SaveGridAction)] = new SaveGridAction(sproutDataGrid.Config.Name);
-
-                                sproutDataGrid.btnSave.SetBinding(Button.CommandParameterProperty,
-                                      new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutDataGrid.Name}][{nameof(SaveGridAction)}]")
-                                      {
-                                          Mode = BindingMode.OneWay
-                                      });
-                            }
                         }
 
+                        //TODO: Move to SproutDataGridFactory
                         if (sproutDataGrid.Config.DataAdapter != null)
                         {
-                            if (sproutDataGrid.Config.DataAdapter != null)
+                            var dataProvider = sproutDataGrid.Config.DataAdapter.DataProvider;
+
+                            if (dataProvider.FilterConfigs.Any())
                             {
-                                var dataProvider = sproutDataGrid.Config.DataAdapter.DataProvider;
-
-                                if (dataProvider.FilterConfigs.Any())
+                                //i should add a general apply filters button the dataGrid UI
+                                foreach (var filterConfig in dataProvider.FilterConfigs)
                                 {
-                                    //i should add a general apply filters button the dataGrid UI
-                                    foreach (var filterConfig in dataProvider.FilterConfigs)
+                                    //UI
+                                    var filterView = SproutDataGridFilterFactory.GetFilter(filterConfig);
+
+                                    sproutDataGrid.spFilters.Children.Add(filterView);
+
+                                    var filter = vm.DataProviders[sproutDataGrid.Name].Filters[filterConfig.Title];
+
+                                    if (filterView is SproutDataGridTextFilter textFilter)
                                     {
-                                        //UI
-                                        var filterView = SproutDataGridFilterFactory.GetFilter(filterConfig);
-
-                                        sproutDataGrid.spFilters.Children.Add(filterView);
-
-                                        var filter = vm.DataProviders[sproutDataGrid.Name].Filters[filterConfig.Title];
-
-                                        if (filterView is SproutDataGridTextFilter textFilter)
-                                        {
-                                            textFilter.tbFilterValue.SetBinding(TextBox.TextProperty,
-                                                new Binding($"DataProviders[{sproutDataGrid.Name}].Filters[{filterConfig.Title}].{nameof(IFilter.StartValue)}")
-                                                {
-                                                    Mode = BindingMode.OneWayToSource,
-                                                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-                                                });
-                                        }
+                                        textFilter.tbFilterValue.SetBinding(TextBox.TextProperty,
+                                            new Binding($"DataProviders[{sproutDataGrid.Name}].Filters[{filterConfig.Title}].{nameof(IFilter.StartValue)}")
+                                            {
+                                                Mode = BindingMode.OneWayToSource,
+                                                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                                            });
                                     }
-
                                 }
+
                             }
-                            else
-                                throw new NotImplementedException();
                         }
 
                         vm.UiStateRegistry.Register(sproutDataGrid.VM);
@@ -355,51 +208,7 @@ namespace Sprout.Core.Views
 
                     if (kvp.Value is SproutButton sproutButton)
                     {
-                        vm.ButtonActions.Add(sproutButton.Name, []);
-
-                        //TODO: Move this logic in the SproutButtonFactory after factories are set up as DI
-                        var compositeAction = new CompositeButtonAction();
-
-                        foreach (var actionConfig in sproutButton.Config.Actions)
-                        {
-                            if (actionConfig is ExecuteUpdateActionConfig)
-                            {
-                                compositeAction.Add(new ExecuteUpdateButtonAction(sproutButton.Name));
-                            }
-                            else if (actionConfig is RefreshDataGridActionConfig refreshConfig)
-                            {
-                                compositeAction.Add(new RefreshDataGridButtonAction(refreshConfig.TargetDataGridName));
-                            }
-                            else if (actionConfig is ExecuteSelectActionConfig)
-                            {
-                                compositeAction.Add(new ExecuteSelectButtonAction(sproutButton.Name));
-                            }
-                            else if (actionConfig is CopyToClipboardActionConfig copyConfig)
-                            {
-                                compositeAction.Add(new CopyToClipboardButtonAction(copyConfig.ClipboardText, vm.ClipboardService));
-                            }
-                        }
-
-                        vm.ButtonActions[sproutButton.Name][nameof(CompositeButtonAction)] = compositeAction;
-
-                        if (sproutButton.Config.Actions.OfType<ExecuteSelectActionConfig>().Any())
-                        {
-                            var buttonState = new SproutButtonVM();
-                            buttonState.SetUpState(sproutButton.Name);
-                            vm.UiStateRegistry.Register(sproutButton.Name, buttonState);
-                        }
-
-                        sproutButton.button.SetBinding(Button.CommandProperty,
-                            new Binding(nameof(SproutPageVM.PerformActionCommand))
-                            {
-                                Mode = BindingMode.OneWay
-                            });
-
-                        sproutButton.button.SetBinding(Button.CommandParameterProperty,
-                            new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutButton.Name}][{nameof(CompositeButtonAction)}]")
-                            {
-                                Mode = BindingMode.OneWay
-                            });
+                        vm.UiStateRegistry.Register(sproutButton.VM);
                     }
 
                     if (kvp.Value is SproutBorder sproutBorder)

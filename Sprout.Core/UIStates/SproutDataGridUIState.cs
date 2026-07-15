@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Sprout.Core.Models.ButtonActions;
 using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Views.Controls;
 using System.Data;
@@ -7,7 +8,7 @@ using System.Windows.Data;
 
 namespace Sprout.Core.UIStates
 {
-    public partial class SproutDataGridUIState : BaseSproutControlVM, BusyUIState
+    public partial class SproutDataGridUIState : BaseSproutControlVM, BusyUIState, IButtonActionHost
     {
         [ObservableProperty]
         private object _selected;
@@ -34,6 +35,8 @@ namespace Sprout.Core.UIStates
             }
         }
 
+        public Dictionary<string, IButtonAction> ButtonActions { get; } = [];
+
         /// <summary>
         /// Raised when the user changes the grid's column layout so it can be persisted by the page.
         /// </summary>
@@ -48,7 +51,6 @@ namespace Sprout.Core.UIStates
         {
             // Bindings and other setup logic can be added here if needed
 
-            control.VM = this;
             this.Grid = control;
 
             control.dataGrid.SetBinding(DataGrid.SelectedItemProperty,

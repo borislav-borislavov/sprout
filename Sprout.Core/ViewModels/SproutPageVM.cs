@@ -47,8 +47,6 @@ namespace Sprout.Core.ViewModels
         /// </summary>
         public SproutPageUIState SproutPageUIState { get; } = new();
 
-        public Dictionary<string, Dictionary<string, IButtonAction>> ButtonActions { get; set; } = [];
-
         public Dictionary<string, IDataAdapter> DataAdapters { get; set; } = [];
         public Dictionary<string, IDataProvider> DataProviders { get; set; } = [];
 

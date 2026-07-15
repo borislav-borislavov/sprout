@@ -1,4 +1,5 @@
-﻿using Sprout.Core.Models.ButtonActions;
+﻿using Sprout.Core.Features.ButtonActions;
+using Sprout.Core.Models.ButtonActions;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Clipboard;
 using Sprout.Core.UIStates;
@@ -97,50 +98,33 @@ namespace Sprout.Core.Factories
             return sproutButton;
         }
 
-        private static void SetUpVM(SproutButton sproutButton)
+        private void SetUpVM(SproutButton sproutButton)
         {
-            //var compositeAction = new CompositeButtonAction();
+            sproutButton.VM = new SproutButtonVM(sproutButton.Name);
+            
+            var compositeAction = new CompositeButtonAction();
 
-            //foreach (var actionConfig in sproutButton.Config.Actions)
-            //{
-            //    if (actionConfig is ExecuteUpdateActionConfig)
-            //    {
-            //        compositeAction.Add(new ExecuteUpdateButtonAction(sproutButton.Name));
-            //    }
-            //    else if (actionConfig is RefreshDataGridActionConfig refreshConfig)
-            //    {
-            //        compositeAction.Add(new RefreshDataGridButtonAction(refreshConfig.TargetDataGridName));
-            //    }
-            //    else if (actionConfig is ExecuteSelectActionConfig)
-            //    {
-            //        compositeAction.Add(new ExecuteSelectButtonAction(sproutButton.Name));
-            //    }
-            //    else if (actionConfig is CopyToClipboardActionConfig copyConfig)
-            //    {
-            //        compositeAction.Add(new CopyToClipboardButtonAction(copyConfig.ClipboardText, vm.ClipboardService));
-            //    }
-            //}
+            foreach (var actionConfig in sproutButton.Config.Actions)
+            {
+                if (actionConfig is ExecuteUpdateActionConfig)
+                {
+                    compositeAction.Add(new ExecuteUpdateButtonAction(sproutButton.Name));
+                }
+                else if (actionConfig is RefreshDataGridActionConfig refreshConfig)
+                {
+                    compositeAction.Add(new RefreshDataGridButtonAction(refreshConfig.TargetDataGridName));
+                }
+                else if (actionConfig is ExecuteSelectActionConfig)
+                {
+                    compositeAction.Add(new ExecuteSelectButtonAction(sproutButton.Name));
+                }
+                else if (actionConfig is CopyToClipboardActionConfig copyConfig)
+                {
+                    compositeAction.Add(new CopyToClipboardButtonAction(copyConfig.ClipboardText, _clipboardService));
+                }
+            }
 
-            //vm.ButtonActions[sproutButton.Name][nameof(CompositeButtonAction)] = compositeAction;
-
-            //if (sproutButton.Config.Actions.OfType<ExecuteSelectActionConfig>().Any())
-            //{
-            //    var buttonState = new SproutButtonVM();
-            //    buttonState.SetUpState(sproutButton.Name);
-            //    vm.UiStateRegistry.Register(sproutButton.Name, buttonState);
-            //}
-
-            //sproutButton.button.SetBinding(Button.CommandProperty,
-            //    new Binding(nameof(SproutPageVM.PerformActionCommand))
-            //    {
-            //        Mode = BindingMode.OneWay
-            //    });
-
-            //sproutButton.button.SetBinding(Button.CommandParameterProperty,
-            //    new Binding($"{nameof(SproutPageVM.ButtonActions)}[{sproutButton.Name}][{nameof(CompositeButtonAction)}]")
-            //    {
-            //        Mode = BindingMode.OneWay
-            //    });
+            sproutButton.BindButtonAction(sproutButton.button, compositeAction);
         }
     }
 }
