@@ -20,7 +20,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
             _ownControlName = ownControlName;
         }
 
-        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, VMRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
             if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
             {
@@ -33,7 +33,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
                 return Task.CompletedTask;
 
             // Respect the user's column settings (visibility and order) coming from the grid.
-            var orderedColumnNames = GetExportColumnNames(data, uiStateRegistry);
+            var orderedColumnNames = GetExportColumnNames(data, vmRegistry);
 
             var saveFileDialog = new SaveFileDialog
             {
@@ -87,7 +87,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
         /// grid's column settings (visibility and display order) when available.
         /// Falls back to all non-internal columns in their natural order.
         /// </summary>
-        private List<string> GetExportColumnNames(DataTable data, VMRegistry uiStateRegistry)
+        private List<string> GetExportColumnNames(DataTable data, VMRegistry vmRegistry)
         {
             var availableColumns = new List<string>();
             foreach (System.Data.DataColumn column in data.Columns)
@@ -96,7 +96,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
                     availableColumns.Add(column.ColumnName);
             }
 
-            var gridState = uiStateRegistry.Get<SproutDataGridVM>(_ownControlName);
+            var gridState = vmRegistry.Get<SproutDataGridVM>(_ownControlName);
             var visibleKeys = gridState?.Grid?.GetVisibleColumnKeysInDisplayOrder();
 
             if (visibleKeys == null || visibleKeys.Count == 0)

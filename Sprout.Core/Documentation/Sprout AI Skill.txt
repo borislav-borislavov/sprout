@@ -156,7 +156,7 @@ Actions (put ONE OR MORE in "Actions"; each is executed in order when clicked):
   { "$type": "Sprout.Core.Models.Configurations.ExecuteSelectActionConfig, Sprout.Core" }
       -> Re-runs this button's own DataAdapter's DataProvider (SELECT/GET),
          refreshing its dependencies first, then stores the first result row
-         on the button's UI state ("FirstRow"), so other controls can bind to
+         on the button's VM ("FirstRow"), so other controls can bind to
          "{@btnName.FirstRow.ColumnName}". Use this for "Generate"/"Calculate"
          style buttons whose "query" produces one throwaway row of output
          instead of updating a grid.
@@ -425,7 +425,7 @@ DuckDB idioms worth reusing:
     "Text": "https://host/api/Controller/Action?type={@cmbShipmentTypes.Selected.Name}",
     "Verb": 0,                // 0=GET,1=POST,2=PUT,3=PATCH,4=DELETE
     "Body": null,              // optional JSON template; {ColumnName} from the row
-                                // and {@Control.Property} from UI state; omitted =
+                                // and {@Control.Property} from VM; omitted =
                                 // whole DataRow auto-serialized as JSON
     "ShowResponseAsMessage": true,   // pop the raw/derived response up to the user
     "ResponsePath": null       // optional path into the response to show/extract
@@ -490,7 +490,7 @@ How it is used per field:
   - SQL/Duck query "Text": every "{@...}" occurrence becomes a real query
     parameter automatically (safe from SQL injection; never string-concat
     values yourself, always use "{@...}" placeholders).
-  - Api "Text"/"Body": same "{@...}" placeholders resolved from UI state,
+  - Api "Text"/"Body": same "{@...}" placeholders resolved from VM,
     PLUS plain "{ColumnName}" placeholders (no @) which resolve against the
     CURRENT ROW's columns when submitting a grid edit.
   - Control "Binding" fields (TextBox/Label/CheckBox): a single "{@...}"

@@ -10,12 +10,12 @@ using System.Windows.Data;
 
 namespace Sprout.Core.SproutControlVMs
 {
-    public partial class SproutLabelUIState : BaseSproutControlVM
+    public partial class SproutLabelVM : BaseSproutControlVM
     {
         [ObservableProperty]
         private string _text;
 
-        public SproutLabelUIState(string name) : base(name)
+        public SproutLabelVM(string name) : base(name)
         {
 
         }

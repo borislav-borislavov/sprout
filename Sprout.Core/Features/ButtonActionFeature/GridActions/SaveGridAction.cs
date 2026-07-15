@@ -33,7 +33,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
 
         public List<ActionMessage> Messages { get; } = [];
 
-        public async Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, VMRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
             ResetMessages();
 
@@ -43,7 +43,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
                 throw new NotImplementedException();
             }
 
-            using (var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry))
+            using (var dataService = dataServiceFactory.Create(ownDataAdapter, vmRegistry))
             {
                 ChangeResult changeResult = new();
 

@@ -105,13 +105,13 @@ namespace Sprout.Core.Services.Duck
                 if (queryParam.IsFromUIState)
                 {
                     var dep = DependencyParser.ParseDependency(queryParam.RawPatameter);
-                    var uiState = VMRegistry[dep.ControlName];
+                    var vm = VMRegistry[dep.ControlName];
 
-                    if (uiState == null)
+                    if (vm == null)
                         throw new Exception(
-                            $"UI State with path {queryParam.Path} not found for parameter {queryParam.Name}");
+                            $"VM with path {queryParam.Path} not found for parameter {queryParam.Name}");
 
-                    queryParam.Value = BindingEvaluator.Evaluate(uiState, dep.PropertyPath);
+                    queryParam.Value = BindingEvaluator.Evaluate(vm, dep.PropertyPath);
                 }
                 else
                 {

@@ -30,7 +30,7 @@ namespace Sprout.Core.Models.Configurations.Api
         /// <summary>
         /// Optional request body template. When set, {ColumnName} placeholders are replaced
         /// with values from the current DataRow and {@Control.Property} placeholders are
-        /// resolved from the UI state registry. When empty, all DataRow columns are
+        /// resolved from the VM registry. When empty, all DataRow columns are
         /// automatically serialised as a JSON object.
         /// </summary>
         public string Body { get; set; }

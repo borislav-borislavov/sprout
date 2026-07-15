@@ -21,7 +21,7 @@ namespace Sprout.Core.Features.ButtonActions.Actions
             _clipboardService = clipboardService;
         }
 
-        public Task Perform(Dictionary<string, IDataAdapter> dataAdapters, VMRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(Dictionary<string, IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
             if (string.IsNullOrEmpty(_clipboardText))
                 return Task.CompletedTask;
@@ -31,16 +31,14 @@ namespace Sprout.Core.Features.ButtonActions.Actions
             var dep = DependencyParser.ParseDependencies(_clipboardText).FirstOrDefault();
             if (dep != null)
             {
-                var uiState = uiStateRegistry.Get(dep.ControlName);
+                var vm = vmRegistry.Get(dep.ControlName);
 
-                if (uiState == null)
+                if (vm == null)
                 {
                     return Task.CompletedTask;
                 }
 
-                var baseUiState = uiState as BaseSproutControlVM;
-
-                var val = BindingEvaluator.Evaluate(uiState, dep.PropertyPath);
+                var val = BindingEvaluator.Evaluate(vm, dep.PropertyPath);
                 textToCopy = val?.ToString() ?? string.Empty;
             }
 

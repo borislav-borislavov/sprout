@@ -6,7 +6,7 @@ using System.Windows.Data;
 
 namespace Sprout.Core.SproutControlVMs
 {
-    public partial class SproutDatePickerUIState : BaseSproutControlVM
+    public partial class SproutDatePickerVM : BaseSproutControlVM
     {
         [ObservableProperty]
         private DateTime? _selectedDate;
@@ -16,7 +16,7 @@ namespace Sprout.Core.SproutControlVMs
 
         private string _outputDateFormat = "yyyy-MM-dd";
 
-        public SproutDatePickerUIState(string name) : base(name)
+        public SproutDatePickerVM(string name) : base(name)
         {
             
         }

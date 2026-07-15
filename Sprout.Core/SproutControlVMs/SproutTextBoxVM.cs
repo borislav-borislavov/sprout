@@ -14,14 +14,14 @@ using System.Windows.Input;
 
 namespace Sprout.Core.SproutControlVMs
 {
-    public partial class SproutTextBoxUIState : BaseSproutControlVM, IDependent
+    public partial class SproutTextBoxVM : BaseSproutControlVM, IDependent
     {
         [ObservableProperty]
         private string _text;
 
         public IEnumerable<DataProviderDependency> Dependencies { get; set; } = new List<DataProviderDependency>();
 
-        public SproutTextBoxUIState(string name) : base(name)
+        public SproutTextBoxVM(string name) : base(name)
         {
             
         }
@@ -76,7 +76,7 @@ namespace Sprout.Core.SproutControlVMs
             var targetedControlUIState = vmRegistry[changedDependency.ControlName];
 
             if (targetedControlUIState == null)
-                throw new Exception($"UI State for control {changedDependency.ControlName} not found.");
+                throw new Exception($"VM for control {changedDependency.ControlName} not found.");
 
             this.Text = $"{BindingEvaluator.Evaluate(targetedControlUIState, changedDependency.PropertyPath)}";
         }

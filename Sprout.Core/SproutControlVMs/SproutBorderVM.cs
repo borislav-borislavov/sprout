@@ -2,9 +2,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Sprout.Core.SproutControlVMs
 {
-    public partial class SproutBorderUIState : BaseSproutControlVM
+    public partial class SproutBorderVM : BaseSproutControlVM
     {
-        public SproutBorderUIState(string name) : base(name)
+        public SproutBorderVM(string name) : base(name)
         {
             
         }

@@ -20,7 +20,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
             _ownControlName = ownControlName;
         }
 
-        public async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, VMRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
             if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
             {
@@ -29,7 +29,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
                 throw new NotImplementedException();
             }
 
-            using var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry);
+            using var dataService = dataServiceFactory.Create(ownDataAdapter, vmRegistry);
             await dataService.ProvideData();
         }
     }

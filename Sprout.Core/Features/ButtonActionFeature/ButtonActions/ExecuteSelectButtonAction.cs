@@ -14,7 +14,7 @@ namespace Sprout.Core.Features.ButtonActions.Actions
             _ownControlName = ownControlName;
         }
 
-        public async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, VMRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
             if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
             {
@@ -25,20 +25,20 @@ namespace Sprout.Core.Features.ButtonActions.Actions
             //The code below refreshes the values of the dependencies manually to provide up to date data.
             foreach (var dependency in ownDataAdapter.DataProvider.Dependencies)
             {
-                var targetedControlUIState = uiStateRegistry[dependency.ControlName];
+                var targetedControlVM = vmRegistry[dependency.ControlName];
 
-                if (targetedControlUIState == null)
-                    throw new Exception($"UI State for control {dependency.ControlName} not found.");
+                if (targetedControlVM == null)
+                    throw new Exception($"VM for control {dependency.ControlName} not found.");
 
-                dependency.Value = BindingEvaluator.Evaluate(targetedControlUIState, dependency.PropertyPath);
+                dependency.Value = BindingEvaluator.Evaluate(targetedControlVM, dependency.PropertyPath);
             }
 
-            using (var dataService = dataServiceFactory.Create(ownDataAdapter, uiStateRegistry))
+            using (var dataService = dataServiceFactory.Create(ownDataAdapter, vmRegistry))
             {
                 await dataService.ProvideData();
             }
 
-            var buttonState = uiStateRegistry.Get<SproutButtonVM>(_ownControlName);
+            var buttonState = vmRegistry.Get<SproutButtonVM>(_ownControlName);
 
             if (buttonState != null && ownDataAdapter.DataProvider?.Data != null)
             {

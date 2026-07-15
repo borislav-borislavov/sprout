@@ -216,7 +216,7 @@
 
                             <DataTemplate DataType="{x:Type config:ExecuteSelectActionConfig}">
                                 <StackPanel Margin="5">
-                                    <TextBlock Text="This action executes the Select query from the DataAdapter and stores the first row in the button's UI state."
+                                    <TextBlock Text="This action executes the Select query from the DataAdapter and stores the first row in the button's VM."
                                                TextWrapping="Wrap" Foreground="Gray"/>
                                     <Button Content="Initialize Data Adapter" Margin="0,10,0,0"
                                             HorizontalAlignment="Left" Padding="10,3"

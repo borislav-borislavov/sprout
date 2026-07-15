@@ -330,14 +330,14 @@ namespace Sprout.Core.Services.Api
                 {
                     var dep = DependencyParser.ParseDependency(queryParam.RawPatameter);
 
-                    var uiState = VMRegistry[dep.ControlName];
+                    var vm = VMRegistry[dep.ControlName];
 
-                    if (uiState == null)
+                    if (vm == null)
                     {
-                        throw new Exception($"UI State with path {queryParam.Path} not found for parameter {queryParam.Name}");
+                        throw new Exception($"VM with path {queryParam.Path} not found for parameter {queryParam.Name}");
                     }
 
-                    queryParam.Value = BindingEvaluator.Evaluate(uiState, dep.PropertyPath);
+                    queryParam.Value = BindingEvaluator.Evaluate(vm, dep.PropertyPath);
                 }
                 else
                 {
@@ -468,12 +468,12 @@ namespace Sprout.Core.Services.Api
                 if (param.IsFromUIState)
                 {
                     var dep = DependencyParser.ParseDependency(param.RawPatameter);
-                    var uiState = VMRegistry[dep.ControlName];
+                    var vm = VMRegistry[dep.ControlName];
 
-                    if (uiState == null)
-                        throw new Exception($"UI state '{dep.ControlName}' not found for body parameter '{param.RawPatameter}'.");
+                    if (vm == null)
+                        throw new Exception($"VM '{dep.ControlName}' not found for body parameter '{param.RawPatameter}'.");
 
-                    var resolved = BindingEvaluator.Evaluate(uiState, dep.PropertyPath);
+                    var resolved = BindingEvaluator.Evaluate(vm, dep.PropertyPath);
                     rawValue = resolved?.ToString() ?? string.Empty;
                 }
                 else

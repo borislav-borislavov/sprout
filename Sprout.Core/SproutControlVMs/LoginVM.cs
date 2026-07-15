@@ -2,7 +2,7 @@
 
 namespace Sprout.Core.SproutControlVMs;
 
-public class LoginUIState() : BaseSproutControlVM(Const.Login)
+public class LoginVM() : BaseSproutControlVM(Const.Login)
 {
     public object User { get; set; }
 }

@@ -21,11 +21,11 @@ namespace Sprout.Core.Views.Controls
     /// <summary>
     /// Interaction logic for SproutLabel.xaml
     /// </summary>
-    public partial class SproutLabel : UserControl, ISproutControl<SproutLabelConfig, SproutLabelUIState>
+    public partial class SproutLabel : UserControl, ISproutControl<SproutLabelConfig, SproutLabelVM>
     {
         public SproutLabelConfig Config { get; set; }
         public SproutControlType ControlType => SproutControlType.Label;
-        public SproutLabelUIState VM { get; internal set; }
+        public SproutLabelVM VM { get; internal set; }
 
         public SproutLabel()
         {

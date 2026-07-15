@@ -87,11 +87,11 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutTextBox, config);
 
-            var uiState = new SproutTextBoxUIState(sproutTextBox.Name);
-            sproutTextBox.VM = uiState;
+            var vm = new SproutTextBoxVM(sproutTextBox.Name);
+            sproutTextBox.VM = vm;
 
-            uiState.Dependencies = DependencyParser.ParseDependencies(sproutTextBox.Config.Binding);
-            uiState.SetUpState(sproutTextBox);
+            vm.Dependencies = DependencyParser.ParseDependencies(sproutTextBox.Config.Binding);
+            vm.SetUpState(sproutTextBox);
             return sproutTextBox;
         }
     }

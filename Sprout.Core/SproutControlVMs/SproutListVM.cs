@@ -5,10 +5,10 @@ using System.Windows.Data;
 
 namespace Sprout.Core.SproutControlVMs
 {
-    public partial class SproutListUIState : BaseSproutControlVM
+    public partial class SproutListVM : BaseSproutControlVM
     {
         /// <summary>
-        /// The current search/filter text of the list. Exposed on the UI state so other controls and
+        /// The current search/filter text of the list. Exposed on the VM so other controls and
         /// data providers can react to it through the dependency system.
         /// </summary>
         [ObservableProperty]
@@ -21,7 +21,7 @@ namespace Sprout.Core.SproutControlVMs
         [ObservableProperty]
         private object _selected;
 
-        public SproutListUIState(string name) : base(name)
+        public SproutListVM(string name) : base(name)
         {
 
         }

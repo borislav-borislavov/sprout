@@ -11,12 +11,12 @@ using System.Windows.Data;
 
 namespace Sprout.Core.SproutControlVMs
 {
-    public partial class SproutComboUIState : BaseSproutControlVM
+    public partial class SproutComboVM : BaseSproutControlVM
     {
         [ObservableProperty]
         private object _selected;
 
-        public SproutComboUIState(string name) : base(name)
+        public SproutComboVM(string name) : base(name)
         {
             
         }

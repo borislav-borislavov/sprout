@@ -2,7 +2,7 @@
 
 namespace Sprout.Core.SproutControlVMs;
 
-public class SproutPageUIState() : BaseSproutControlVM(Const.Page)
+public class SproutPageInternalVM() : BaseSproutControlVM(Const.Page)
 {
     public object Data { get; set; }
 }

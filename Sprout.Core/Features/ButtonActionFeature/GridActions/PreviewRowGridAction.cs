@@ -26,9 +26,9 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
             _clipboardService = clipboardService;
         }
 
-        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, VMRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
-            var gridUiState = uiStateRegistry.Get<SproutDataGridVM>(_ownControlName);
+            var gridUiState = vmRegistry.Get<SproutDataGridVM>(_ownControlName);
 
             if (gridUiState == null)
                 throw new Exception($"Failed to find SproutDataGridUIState for {_ownControlName}");

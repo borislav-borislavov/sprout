@@ -62,11 +62,11 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutDatePicker, config);
 
-            var uiState = new SproutDatePickerUIState(sproutDatePicker.Name);
-            uiState.SetUpState(sproutDatePicker);
+            var vm = new SproutDatePickerVM(sproutDatePicker.Name);
+            vm.SetUpState(sproutDatePicker);
 
             // Set the initial date via UIState so it flows through the binding
-            uiState.SelectedDate = ComputeInitialDate(config);
+            vm.SelectedDate = ComputeInitialDate(config);
 
             return sproutDatePicker;
         }

@@ -10,12 +10,12 @@ using System.Windows.Data;
 
 namespace Sprout.Core.SproutControlVMs
 {
-    public partial class SproutCheckBoxUIState : BaseSproutControlVM
+    public partial class SproutCheckBoxVM : BaseSproutControlVM
     {
         [ObservableProperty]
         private bool _isChecked;
 
-        public SproutCheckBoxUIState(string name) : base(name)
+        public SproutCheckBoxVM(string name) : base(name)
         {
             
         }

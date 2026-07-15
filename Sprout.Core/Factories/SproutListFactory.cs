@@ -92,8 +92,8 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutList, config);
 
-            var uiState = new SproutListUIState(sproutList.Name);
-            uiState.SetUpState(sproutList);
+            var vm = new SproutListVM(sproutList.Name);
+            vm.SetUpState(sproutList);
 
             return sproutList;
         }

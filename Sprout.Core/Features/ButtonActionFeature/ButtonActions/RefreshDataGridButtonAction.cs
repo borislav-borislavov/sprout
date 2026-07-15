@@ -13,14 +13,14 @@ namespace Sprout.Core.Features.ButtonActions.Actions
             _targetDataGridName = targetDataGridName;
         }
 
-        public async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, VMRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
             if (!dataAdapters.TryGetValue(_targetDataGridName, out var targetDataAdapter))
             {
                 throw new Exception($"DataGrid '{_targetDataGridName}' does not exist, grid refresh failed.");
             }
 
-            using (var dataService = dataServiceFactory.Create(targetDataAdapter, uiStateRegistry))
+            using (var dataService = dataServiceFactory.Create(targetDataAdapter, vmRegistry))
             {
                 await dataService.ProvideData();
             }

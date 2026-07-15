@@ -10,39 +10,39 @@ namespace Sprout.Core.SproutControlVMs
 {
     public sealed class VMRegistry
     {
+        private readonly Dictionary<string, BaseSproutControlVM> _viewModels = new(StringComparer.InvariantCultureIgnoreCase);
+
+        public Dictionary<string, BaseSproutControlVM> ViewModels => _viewModels;
+
         public BaseSproutControlVM this[string controlName]
         {
             get
             {
-                if (_states.TryGetValue(controlName, out var state))
+                if (_viewModels.TryGetValue(controlName, out var vm))
                 {
-                    return state;
+                    return vm;
                 }
 
-                throw new KeyNotFoundException($"No UI state registered with the name '{controlName}'.");
+                throw new KeyNotFoundException($"No VM registered with the name '{controlName}'.");
             }
         }
 
-        private readonly Dictionary<string, BaseSproutControlVM> _states = new(StringComparer.InvariantCultureIgnoreCase);
-
-        public Dictionary<string, BaseSproutControlVM> States => _states;
-
-        public void Register(BaseSproutControlVM state)
+        public void Register(BaseSproutControlVM vm)
         {
-            _states[state.Name] = state;
-            state.PropertyChanged += OnStateChanged;
+            _viewModels[vm.Name] = vm;
+            vm.PropertyChanged += OnVMChanged;
         }
 
-        private void OnStateChanged(object? sender, PropertyChangedEventArgs e)
+        private void OnVMChanged(object? sender, PropertyChangedEventArgs e)
         {
-            UiStateChanged?.Invoke(this, new UiStateChangedEventArgs(sender!, e.PropertyName!));
+            VMChanged?.Invoke(this, new VMChangedEventArgs(sender!, e.PropertyName!));
         }
 
-        public event EventHandler<UiStateChangedEventArgs>? UiStateChanged;
+        public event EventHandler<VMChangedEventArgs>? VMChanged;
 
         public T? Get<T>(string key) where T : BaseSproutControlVM
         {
-            if (_states.TryGetValue(key, out var v) && v.GetType() == typeof(T))
+            if (_viewModels.TryGetValue(key, out var v) && v.GetType() == typeof(T))
             {
                 return (T)v;
             }
@@ -53,7 +53,7 @@ namespace Sprout.Core.SproutControlVMs
 
         public object? Get(string key)
         {
-            if (_states.TryGetValue(key, out var v))
+            if (_viewModels.TryGetValue(key, out var v))
                 return v;
 
             return null;

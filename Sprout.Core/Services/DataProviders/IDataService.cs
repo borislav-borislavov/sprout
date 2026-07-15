@@ -16,11 +16,11 @@ using System.Windows.Data;
 namespace Sprout.Core.Services.DataProviders
 {
     /// <summary>
-    /// A contract for a data service that manages data operations and UI state integration.
+    /// A contract for a data service that manages data operations and VM integration.
     /// </summary>
     /// <remarks>Implementations of this interface provide methods for inserting, updating, and deleting data
     /// rows. The interface also supports binding dependencies between
-    /// data providers and UI state, facilitating synchronization between data and user interface components. Consumers
+    /// data providers and VM, facilitating synchronization between data and user interface components. Consumers
     /// should ensure proper disposal of resources by calling Dispose when the service is no longer needed.</remarks>
     public interface IDataService : IDisposable
     {

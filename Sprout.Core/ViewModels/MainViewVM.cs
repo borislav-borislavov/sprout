@@ -156,7 +156,7 @@ namespace Sprout.Core.ViewModels
 
             _navigationService.ShowEditPage(selectedPageVM.PageConfig, _configService, _dialogService);
 
-            var uiState = selectedPageVM.SproutPageUIState;
+            var vm = selectedPageVM.SproutPageInternalVM;
 
             Tabs.Remove(selectedPageVM);
 
@@ -173,7 +173,7 @@ namespace Sprout.Core.ViewModels
             var newTab = _sproutPageVMFactory.Create(currentPageConfig, new OpenTabMessageArgs
             {
                 PageConfigID = currentPageConfig.ID,
-                Parameter = uiState.Data
+                Parameter = vm.Data
             });
 
             Tabs.Add(newTab);
@@ -219,7 +219,7 @@ namespace Sprout.Core.ViewModels
 
                 _navigationService.ShowScriptEditor(compiler);
 
-                var uiState = selectedPageVM.SproutPageUIState; //the data that is passed by another page
+                var vm = selectedPageVM.SproutPageInternalVM; //the data that is passed by another page
 
                 Tabs.Remove(selectedPageVM);
 
@@ -237,7 +237,7 @@ namespace Sprout.Core.ViewModels
                 var newTab = _sproutPageVMFactory.Create(currentPageConfig, new OpenTabMessageArgs
                 {
                     PageConfigID = currentPageConfig.ID,
-                    Parameter = uiState.Data
+                    Parameter = vm.Data
                 });
 
                 Tabs.Add(newTab);

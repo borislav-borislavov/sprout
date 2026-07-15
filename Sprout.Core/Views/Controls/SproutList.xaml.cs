@@ -14,11 +14,11 @@ namespace Sprout.Core.Views.Controls
     /// <summary>
     /// Interaction logic for SproutList.xaml
     /// </summary>
-    public partial class SproutList : UserControl, ISproutControl<SproutListConfig, SproutListUIState>
+    public partial class SproutList : UserControl, ISproutControl<SproutListConfig, SproutListVM>
     {
         public SproutListConfig Config { get; set; }
         public SproutControlType ControlType => SproutControlType.List;
-        public SproutListUIState VM { get; internal set; }
+        public SproutListVM VM { get; internal set; }
 
         public SproutList()
         {

@@ -38,7 +38,7 @@ namespace Sprout.Core.ViewModels
         /// <summary>
         /// The starting args that a page receives when started as a child page
         /// </summary>
-        public SproutPageUIState SproutPageUIState { get; } = new();
+        public SproutPageInternalVM SproutPageInternalVM { get; } = new();
 
         public Dictionary<string, IDataAdapter> DataAdapters { get; set; } = [];
         public Dictionary<string, IDataProvider> DataProviders { get; set; } = [];
@@ -46,7 +46,7 @@ namespace Sprout.Core.ViewModels
         public VMRegistry VMRegistry { get; } = new();
 
         /// <summary>
-        /// Using virtualization to re-create views makes the re-binding the UI State too brittle
+        /// Using virtualization to re-create views makes the re-binding the VM too brittle
         /// and it increases the complexity of the code and the chances for bugs. Code is a liability and this reduces greatly the code complexity.
         /// </summary>
         public SproutPage DynamicViewInstance { get; private set; }
@@ -54,7 +54,7 @@ namespace Sprout.Core.ViewModels
 
         public Sprout.Core.Services.Clipboard.IClipboardService ClipboardService { get; }
 
-        private LoginUIState _loginUIState = new();
+        private SproutControlVMs.LoginVM _loginUIState = new();
 
         private readonly SproutPageLogicBridge _host;
 
@@ -70,7 +70,7 @@ namespace Sprout.Core.ViewModels
             ISproutControlFactory sproutControlFactory)
         {
             PageConfig = pageConfig;
-            SproutPageUIState.Data = args?.Parameter;
+            SproutPageInternalVM.Data = args?.Parameter;
             _dialogService = dialogService;
             _actionMessageService = actionMessageService;
             _dataAdapterFactory = dataAdapterFactory;
@@ -88,7 +88,7 @@ namespace Sprout.Core.ViewModels
 
                 _host = new SproutPageLogicBridge($"{PageConfig.ID.ToString().Replace("-", "")}");
 
-                VMRegistry.UiStateChanged += async (_, change) =>
+                VMRegistry.VMChanged += async (_, change) =>
                 {
                     foreach (var kvp in DataProviders)
                     {
@@ -117,7 +117,7 @@ namespace Sprout.Core.ViewModels
                         }
                     }
 
-                    foreach (var kvp in VMRegistry.States)
+                    foreach (var kvp in VMRegistry.ViewModels)
                     {
                         if (kvp.Value is not IDependent dependent)
                         {
@@ -200,7 +200,7 @@ namespace Sprout.Core.ViewModels
 
         public void RegisterExtraUIStates()
         {
-            VMRegistry.Register(SproutPageUIState);
+            VMRegistry.Register(SproutPageInternalVM);
             VMRegistry.Register(_loginUIState);
         }
 
@@ -278,7 +278,7 @@ namespace Sprout.Core.ViewModels
                     if (kvp.Value.DeferInitialLoad)
                         continue;
 
-                    if (SproutPageUIState.Data == null && //detail pages should load initially if they have data
+                    if (SproutPageInternalVM.Data == null && //detail pages should load initially if they have data
                         kvp.Value.Dependencies.Count() > 0) //experimental optimization to not run queries which depend on other values for nothing
                     {
                         continue;
@@ -349,7 +349,7 @@ namespace Sprout.Core.ViewModels
             if (parameter is not ListPageLaunchInfo launchInfo)
                 return;
 
-            var sproutListUiState = VMRegistry.Get<SproutListUIState>(launchInfo.ListName);
+            var sproutListUiState = VMRegistry.Get<SproutListVM>(launchInfo.ListName);
 
             if (sproutListUiState == null)
             {

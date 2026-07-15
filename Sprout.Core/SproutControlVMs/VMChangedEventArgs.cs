@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.SproutControlVMs
 {
-    public sealed record UiStateChangedEventArgs
+    public sealed record VMChangedEventArgs
     {
         public string ControlName { get; set; }
         public string PropertyName { get; set; }
 
-        public UiStateChangedEventArgs(object control, string propertyName)
+        public VMChangedEventArgs(object control, string propertyName)
         {
             ControlName = (control as BaseSproutControlVM).Name;
             PropertyName = propertyName;

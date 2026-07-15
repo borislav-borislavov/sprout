@@ -111,14 +111,14 @@ namespace Sprout.Core.Services.SqlServer
                 {
                     var dep = DependencyParser.ParseDependency(requestedParam.RawPatameter);
 
-                    var uiState = VMRegistry[dep.ControlName];
+                    var vm = VMRegistry[dep.ControlName];
 
-                    if (uiState == null)
+                    if (vm == null)
                     {
-                        throw new Exception($"UI State with path {requestedParam.Path} not found for parameter {requestedParam.Name}");
+                        throw new Exception($"VM with path {requestedParam.Path} not found for parameter {requestedParam.Name}");
                     }
 
-                    requestedParam.Value = BindingEvaluator.Evaluate(uiState, dep.PropertyPath);
+                    requestedParam.Value = BindingEvaluator.Evaluate(vm, dep.PropertyPath);
                 }
                 else
                 {
