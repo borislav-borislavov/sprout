@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace Sprout.Core.UIStates
+namespace Sprout.Core.SproutControlVMs
 {
     public partial class BaseSproutControlVM: ObservableObject 
     {

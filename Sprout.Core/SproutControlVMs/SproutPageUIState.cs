@@ -1,6 +1,6 @@
 ﻿using Sprout.Core.Common;
 
-namespace Sprout.Core.UIStates;
+namespace Sprout.Core.SproutControlVMs;
 
 public class SproutPageUIState() : BaseSproutControlVM(Const.Page)
 {

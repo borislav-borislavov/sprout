@@ -11,7 +11,7 @@ using Sprout.Core.Models.DataAdapters.Filters;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.DataProviders;
 using Sprout.Core.Services.Logging;
-using Sprout.Core.UIStates;
+using Sprout.Core.SproutControlVMs;
 using System.Data;
 using System.Diagnostics;
 using System.Net.Http;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sprout.Core.UIStates
+namespace Sprout.Core.SproutControlVMs
 {
     public interface BusyUIState
     {

@@ -3,6 +3,7 @@ using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
+using Sprout.Core.SproutControlVMs;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -45,7 +46,7 @@ namespace Sprout.Core.Services.Login
         {
             var loginResult = new LoginResult();
 
-            using (var loginDataService = _dataServiceFactory.Create(_loginDataAdapter, new UIStates.VMRegistry()))
+            using (var loginDataService = _dataServiceFactory.Create(_loginDataAdapter, new VMRegistry()))
             {
                 var parameter = GetLoginParameter(login);
 

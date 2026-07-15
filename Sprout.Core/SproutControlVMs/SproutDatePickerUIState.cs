@@ -4,7 +4,7 @@ using System;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace Sprout.Core.UIStates
+namespace Sprout.Core.SproutControlVMs
 {
     public partial class SproutDatePickerUIState : BaseSproutControlVM
     {

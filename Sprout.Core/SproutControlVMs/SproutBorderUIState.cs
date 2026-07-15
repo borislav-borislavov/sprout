@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Sprout.Core.UIStates
+namespace Sprout.Core.SproutControlVMs
 {
     public partial class SproutBorderUIState : BaseSproutControlVM
     {

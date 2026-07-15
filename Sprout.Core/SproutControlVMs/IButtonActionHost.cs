@@ -1,6 +1,6 @@
 ﻿using Sprout.Core.Features.ButtonActions;
 
-namespace Sprout.Core.UIStates;
+namespace Sprout.Core.SproutControlVMs;
 
 public interface IButtonActionHost
 {

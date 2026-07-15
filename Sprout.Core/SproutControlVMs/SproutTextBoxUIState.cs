@@ -12,7 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace Sprout.Core.UIStates
+namespace Sprout.Core.SproutControlVMs
 {
     public partial class SproutTextBoxUIState : BaseSproutControlVM, IDependent
     {

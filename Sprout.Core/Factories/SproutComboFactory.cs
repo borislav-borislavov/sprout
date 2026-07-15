@@ -1,5 +1,5 @@
 ﻿using Sprout.Core.Models.Configurations;
-using Sprout.Core.UIStates;
+using Sprout.Core.SproutControlVMs;
 using Sprout.Core.Views;
 using Sprout.Core.Views.Controls;
 using System;

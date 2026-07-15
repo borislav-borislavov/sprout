@@ -6,7 +6,7 @@ using System.Data;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace Sprout.Core.UIStates
+namespace Sprout.Core.SproutControlVMs
 {
     public partial class SproutDataGridVM : BaseSproutControlVM, BusyUIState, IButtonActionHost
     {

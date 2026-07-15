@@ -9,7 +9,7 @@ using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
 using Sprout.Core.Services.DataProviders;
 using Sprout.Core.Services.Logging;
-using Sprout.Core.UIStates;
+using Sprout.Core.SproutControlVMs;
 using System.Data;
 using System.Windows;
 using System.Windows.Data;

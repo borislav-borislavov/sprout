@@ -1,6 +1,6 @@
 ﻿using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Services.DataProviders;
-using Sprout.Core.UIStates;
+using Sprout.Core.SproutControlVMs;
 
 namespace Sprout.Core.Factories
 {

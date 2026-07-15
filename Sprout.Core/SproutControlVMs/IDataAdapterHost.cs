@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using IDataAdapter = Sprout.Core.Models.DataAdapters.IDataAdapter;
 
-namespace Sprout.Core.UIStates
+namespace Sprout.Core.SproutControlVMs
 {
     public interface IDataAdapterHost
     {
