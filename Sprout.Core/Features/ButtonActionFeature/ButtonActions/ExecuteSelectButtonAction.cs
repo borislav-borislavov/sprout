@@ -1,15 +1,9 @@
 using Sprout.Core.Factories;
 using Sprout.Core.Features.Dependency;
 using Sprout.Core.Models.DataAdapters;
-using Sprout.Core.Models.GridActions;
 using Sprout.Core.UIStates;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Sprout.Core.Models.ButtonActions
+namespace Sprout.Core.Features.ButtonActions.Actions
 {
     public class ExecuteSelectButtonAction : IButtonAction
     {

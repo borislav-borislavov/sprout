@@ -2,7 +2,8 @@
 using Sprout.Core.Common;
 using Sprout.Core.Common.Models;
 using Sprout.Core.Factories;
-using Sprout.Core.Models.ButtonActions;
+using Sprout.Core.Features.ButtonActions;
+using Sprout.Core.Models;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
@@ -19,7 +20,7 @@ using System.Threading.Tasks;
 using System.Windows.Interop;
 using static Sprout.Core.Services.SqlServer.SqlServerDataService;
 
-namespace Sprout.Core.Models.GridActions
+namespace Sprout.Core.Features.ButtonActions.GridActions
 {
     public class SaveGridAction : IButtonAction, IButtonActionMessenger
     {
@@ -32,7 +33,7 @@ namespace Sprout.Core.Models.GridActions
 
         public List<ActionMessage> Messages { get; } = [];
 
-        public async Task Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             ResetMessages();
 

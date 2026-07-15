@@ -1,5 +1,5 @@
 using Sprout.Core.Factories;
-using Sprout.Core.Models.ButtonActions;
+using Sprout.Core.Features.ButtonActions;
 using Sprout.Core.UIStates;
 using Sprout.Core.ViewModels;
 using Sprout.Core.Windows;
@@ -9,7 +9,7 @@ using System.Data;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Sprout.Core.Models.GridActions
+namespace Sprout.Core.Features.ButtonActions.GridActions
 {
     /// <summary>
     /// Opens a lightweight, read-only window that previews the currently selected grid row
@@ -18,15 +18,15 @@ namespace Sprout.Core.Models.GridActions
     public class PreviewRowGridAction : IButtonAction
     {
         private readonly string _ownControlName;
-        private readonly Sprout.Core.Services.Clipboard.IClipboardService _clipboardService;
+        private readonly Services.Clipboard.IClipboardService _clipboardService;
 
-        public PreviewRowGridAction(string ownControlName, Sprout.Core.Services.Clipboard.IClipboardService clipboardService)
+        public PreviewRowGridAction(string ownControlName, Services.Clipboard.IClipboardService clipboardService)
         {
             _ownControlName = ownControlName;
             _clipboardService = clipboardService;
         }
 
-        public Task Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             var gridUiState = uiStateRegistry.Get<SproutDataGridUIState>(_ownControlName);
 

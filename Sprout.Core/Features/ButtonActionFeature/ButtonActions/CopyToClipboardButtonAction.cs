@@ -6,8 +6,9 @@ using Sprout.Core.Features.Dependency;
 using Sprout.Core.Models.Queries;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Sprout.Core.Features.ButtonActions;
 
-namespace Sprout.Core.Models.ButtonActions
+namespace Sprout.Core.Features.ButtonActions.Actions
 {
     public class CopyToClipboardButtonAction : IButtonAction
     {

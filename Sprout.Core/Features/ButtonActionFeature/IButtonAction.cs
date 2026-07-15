@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sprout.Core.Models.ButtonActions
+namespace Sprout.Core.Features.ButtonActions
 {
     public interface IButtonAction
     {

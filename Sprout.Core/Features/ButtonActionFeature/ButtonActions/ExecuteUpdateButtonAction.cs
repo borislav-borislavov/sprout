@@ -1,18 +1,8 @@
-using Microsoft.Data.SqlClient;
 using Sprout.Core.Factories;
-using Sprout.Core.Models.DataAdapters;
-using Sprout.Core.Models.DataAdapters.DataProviders;
-using Sprout.Core.Models.GridActions;
-using Sprout.Core.Models.Queries;
+using Sprout.Core.Models;
 using Sprout.Core.UIStates;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Sprout.Core.Models.ButtonActions
+namespace Sprout.Core.Features.ButtonActions.Actions
 {
     public class ExecuteUpdateButtonAction : IButtonAction, IButtonActionMessenger
     {
@@ -25,7 +15,7 @@ namespace Sprout.Core.Models.ButtonActions
             _ownControlName = ownControlName;
         }
 
-        public async Task Perform(Dictionary<string, DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             ResetMessages();
 

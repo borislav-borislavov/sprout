@@ -1,15 +1,15 @@
 using ClosedXML.Excel;
 using Microsoft.Win32;
 using Sprout.Core.Factories;
-using Sprout.Core.Models.ButtonActions;
 using Sprout.Core.UIStates;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DataTable = System.Data.DataTable;
 using DataRow = System.Data.DataRow;
+using Sprout.Core.Features.ButtonActions;
 
-namespace Sprout.Core.Models.GridActions
+namespace Sprout.Core.Features.ButtonActions.GridActions
 {
     public class ExportToExcelGridAction : IButtonAction
     {
@@ -20,7 +20,7 @@ namespace Sprout.Core.Models.GridActions
             _ownControlName = ownControlName;
         }
 
-        public Task Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
             {

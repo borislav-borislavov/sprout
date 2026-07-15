@@ -1,5 +1,5 @@
 ﻿using Sprout.Core.Features.ButtonActions;
-using Sprout.Core.Models.ButtonActions;
+using Sprout.Core.Features.ButtonActions.Actions;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Clipboard;
 using Sprout.Core.UIStates;

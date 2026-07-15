@@ -1,5 +1,5 @@
 ﻿using Sprout.Core.Factories;
-using Sprout.Core.Models.ButtonActions;
+using Sprout.Core.Features.ButtonActions;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Services.DataProviders;
 using Sprout.Core.UIStates;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sprout.Core.Models.GridActions
+namespace Sprout.Core.Features.ButtonActions.GridActions
 {
     internal class RefreshDataGridAction : IButtonAction
     {

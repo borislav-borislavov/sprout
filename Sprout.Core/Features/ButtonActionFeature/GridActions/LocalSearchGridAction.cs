@@ -1,6 +1,6 @@
 using Sprout.Core.Common;
 using Sprout.Core.Factories;
-using Sprout.Core.Models.ButtonActions;
+using Sprout.Core.Features.ButtonActions;
 using Sprout.Core.UIStates;
 using Sprout.Core.Windows;
 using System;
@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Sprout.Core.Models.GridActions
+namespace Sprout.Core.Features.ButtonActions.GridActions
 {
     /// <summary>
     /// Performs a Local Search: filters the grid's currently loaded data (client-side)
@@ -35,7 +35,7 @@ namespace Sprout.Core.Models.GridActions
             _ownControlName = ownControlName;
         }
 
-        public Task Perform(Dictionary<string, Sprout.Core.Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
             var gridUiState = uiStateRegistry.Get<SproutDataGridUIState>(_ownControlName);
 
