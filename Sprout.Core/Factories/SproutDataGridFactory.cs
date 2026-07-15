@@ -136,7 +136,7 @@ namespace Sprout.Core.Factories
 
         private void SetupVM(SproutDataGrid sproutDataGrid)
         {
-            sproutDataGrid.VM = new SproutDataGridUIState(sproutDataGrid.Name);
+            sproutDataGrid.VM = new SproutDataGridVM(sproutDataGrid.Name);
             sproutDataGrid.VM.SetUpState(sproutDataGrid); //currenlty binds the dataGrid to its DataSource, probably should be moved here?
 
             #region Bind ItemsSource

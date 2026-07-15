@@ -30,7 +30,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
                 throw new NotImplementedException();
             }
 
-            var gridUiState = uiStateRegistry.Get<SproutDataGridUIState>(_ownControlName);
+            var gridUiState = uiStateRegistry.Get<SproutDataGridVM>(_ownControlName);
 
             if (gridUiState == null)
                 throw new Exception($"Failed to find SproutDataGridUIState for {_ownControlName}");

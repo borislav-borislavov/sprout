@@ -208,7 +208,7 @@ namespace Sprout.Core.ViewModels
         /// Restores any persisted column layout for the given grid and keeps it in sync with
         /// the configuration when the user changes it.
         /// </summary>
-        public void RegisterGridColumnLayout(SproutDataGridUIState gridState)
+        public void RegisterGridColumnLayout(SproutDataGridVM gridState)
         {
             if (gridState?.Grid?.Config?.Name is not string gridName || string.IsNullOrEmpty(gridName))
                 return;
@@ -320,7 +320,7 @@ namespace Sprout.Core.ViewModels
             if (parameter is not ItemDisplayPageInfo itemDisplayInfo)
                 return;
 
-            var sproutDataGridUiState = UiStateRegistry.Get<SproutDataGridUIState>(itemDisplayInfo.GridName);
+            var sproutDataGridUiState = UiStateRegistry.Get<SproutDataGridVM>(itemDisplayInfo.GridName);
 
             if (sproutDataGridUiState == null)
             {

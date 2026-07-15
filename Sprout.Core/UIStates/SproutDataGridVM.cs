@@ -8,7 +8,7 @@ using System.Windows.Data;
 
 namespace Sprout.Core.UIStates
 {
-    public partial class SproutDataGridUIState : BaseSproutControlVM, BusyUIState, IButtonActionHost
+    public partial class SproutDataGridVM : BaseSproutControlVM, BusyUIState, IButtonActionHost
     {
         [ObservableProperty]
         private object _selected;
@@ -42,7 +42,7 @@ namespace Sprout.Core.UIStates
         /// </summary>
         public event EventHandler<SproutGridColumnLayout> ColumnLayoutChanged;
 
-        public SproutDataGridUIState(string name) : base(name)
+        public SproutDataGridVM(string name) : base(name)
         {
             
         }

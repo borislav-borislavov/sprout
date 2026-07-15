@@ -37,7 +37,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
 
         public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, UiStateRegistry uiStateRegistry, IDataServiceFactory dataServiceFactory)
         {
-            var gridUiState = uiStateRegistry.Get<SproutDataGridUIState>(_ownControlName);
+            var gridUiState = uiStateRegistry.Get<SproutDataGridVM>(_ownControlName);
 
             if (gridUiState == null)
                 throw new Exception($"Failed to find SproutDataGridUIState for {_ownControlName}");
