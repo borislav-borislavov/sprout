@@ -18,10 +18,16 @@ namespace Sprout.Core.Common
     {
         public static void LoadDataTableColumnsFromSchema(this DbDataReader reader, DataTable dt)
         {
+            char[] wpfBindingReservedChars = ['.', '/', '[', ']', '(', ')'];
+
             var schemaTable = reader.GetSchemaTable();
             foreach (DataRow schemaRow in schemaTable.Rows)
             {
                 var colName = (string)schemaRow["ColumnName"];
+
+                if (colName.IndexOfAny(wpfBindingReservedChars) > -1)
+                    throw new Exception($"Column '{colName}' contains reserved characters '.', '/', '[', ']', '(', ')'. Operation failed.");
+
                 var colType = (Type)schemaRow["DataType"];
 
                 if (colType == typeof(double)) //double type adds too many decimals and it doesn't reflect the actual value in the database
