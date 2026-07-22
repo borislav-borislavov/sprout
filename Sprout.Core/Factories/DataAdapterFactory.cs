@@ -152,6 +152,9 @@ namespace Sprout.Core.Factories
 
             dataAdapter.DataProvider = dataProvider;
 
+#warning polish this
+            (dataAdapter.DataProvider as DuckDataProvider).Dependencies = DependencyParser.ParseDependencies(dataProviderConfig.Text);
+
             if (duckAdapterConfig.InsertCommand != null)
             {
                 var insertCommandConfig = duckAdapterConfig.InsertCommand as DuckEditCommandConfig;
