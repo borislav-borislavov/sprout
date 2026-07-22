@@ -1,4 +1,5 @@
 ﻿using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.Queries;
 using Sprout.Core.SproutControlVMs;
 using Sprout.Core.Views;
 using Sprout.Core.Views.Controls;
@@ -8,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Sprout.Core.Factories
 {
@@ -19,6 +22,7 @@ namespace Sprout.Core.Factories
             {
                 Name = sproutComboConfig.Name,
                 Config = sproutComboConfig,
+                VM = new SproutComboVM(sproutComboConfig.Name)
             };
 
             sproutCombo.comboBox.DisplayMemberPath = sproutComboConfig.DisplayColumn;
@@ -55,10 +59,48 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutCombo, sproutComboConfig);
 
-            var vm = new SproutComboVM(sproutCombo.Name);
-            vm.SetUpState(sproutCombo);
+            SetupVM(sproutCombo);
 
             return sproutCombo;
+        }
+
+        private void SetupVM(SproutCombo sproutCombo)
+        {
+            sproutCombo.VM.SetUpState(sproutCombo);
+
+            sproutCombo.comboBox.SetBinding(ComboBox.ItemsSourceProperty,
+                new Binding()
+                {
+                    Mode = BindingMode.OneWay,
+                    Source = sproutCombo.VM,
+                    Path = new PropertyPath("DataAdapter.DataProvider.Data")
+                });
+
+            if (!string.IsNullOrEmpty(sproutCombo.Config.SelectedValue))
+            {
+                var dependency = DependencyParser.ParseDependencies(sproutCombo.Config.SelectedValue).FirstOrDefault();
+
+                if (dependency != null)
+                {
+                    sproutCombo.comboBox.SetBinding(
+                        ComboBox.SelectedValueProperty,
+                        new Binding
+                        {
+#warning this will not work anymore
+                            //Source = vm.VMRegistry,
+                            Path = new PropertyPath($"[{dependency.ControlName}].{dependency.PropertyPath}"),
+                            Mode = BindingMode.TwoWay
+                        });
+                }
+                else if (int.TryParse(sproutCombo.Config.SelectedValue, out var selIdx))
+                {
+                    sproutCombo.comboBox.SelectedIndex = selIdx;
+                }
+                else
+                {
+                    sproutCombo.comboBox.SelectedValue = sproutCombo.Config.SelectedValue;
+                }
+            }
         }
     }
 }

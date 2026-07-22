@@ -26,26 +26,26 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
             _clipboardService = clipboardService;
         }
 
-        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
-            var gridUiState = vmRegistry.Get<SproutDataGridVM>(_ownControlName);
+            var gridVm = vmRegistry.Get<SproutDataGridVM>(_ownControlName);
 
-            if (gridUiState == null)
+            if (gridVm == null)
                 throw new Exception($"Failed to find SproutDataGridUIState for {_ownControlName}");
 
-            if (gridUiState.Selected is not DataRowView selectedRowView)
+            if (gridVm.Selected is not DataRowView selectedRowView)
             {
                 // No selection: if the grid contains exactly one row, preview it anyway.
-                if (gridUiState.Grid?.dataGrid?.ItemsSource is DataView dataView && dataView.Count == 1)
+                if (gridVm.Grid?.dataGrid?.ItemsSource is DataView dataView && dataView.Count == 1)
                     selectedRowView = dataView[0];
                 else
                     return Task.CompletedTask;
             }
 
-            var vm = new RowPreviewVM(selectedRowView, gridUiState.Grid?.Config?.Columns, _clipboardService);
+            var vm = new RowPreviewVM(selectedRowView, gridVm.Grid?.Config?.Columns, _clipboardService);
             var window = new RowPreviewWindow(vm)
             {
-                Owner = Window.GetWindow(gridUiState.Grid)
+                Owner = Window.GetWindow(gridVm.Grid)
             };
 
             window.Show();

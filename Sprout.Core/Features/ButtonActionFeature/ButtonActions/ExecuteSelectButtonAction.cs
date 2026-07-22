@@ -1,3 +1,4 @@
+using Sprout.Core.Common;
 using Sprout.Core.Factories;
 using Sprout.Core.Features.Dependency;
 using Sprout.Core.Models.DataAdapters;
@@ -14,12 +15,9 @@ namespace Sprout.Core.Features.ButtonActions.Actions
             _ownControlName = ownControlName;
         }
 
-        public async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
-            if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
-            {
-                throw new Exception($"DataAdapter not found for control '{_ownControlName}'");
-            }
+            var ownDataAdapter = vmRegistry.GetAdapterOrThrow(_ownControlName);
 
             //The DataProvider dependencies of buttons are intentionally skipped to provide a more intuitive behavior of the control.
             //The code below refreshes the values of the dependencies manually to provide up to date data.

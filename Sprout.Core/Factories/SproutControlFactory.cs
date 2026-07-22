@@ -1,5 +1,8 @@
-﻿using Sprout.Core.Models.Configurations;
+﻿using Sprout.Core.Models;
+using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
+using Sprout.Core.SproutControlVMs;
+using Sprout.Core.Views.Controls;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -18,6 +21,7 @@ namespace Sprout.Core.Factories
         private readonly ISproutLabelFactory _sproutLabelFactory;
         private readonly ISproutListFactory _sproutListFactory;
         private readonly ISproutTextBoxFactory _sproutTextBoxFactory;
+        private readonly IDataAdapterFactory _dataAdapterFactory;
 
         public SproutControlFactory(
             ISproutButtonFactory sproutButtonFactory,
@@ -29,9 +33,10 @@ namespace Sprout.Core.Factories
             ISproutDatePickerFactory sproutDatePickerFactory,
             ISproutLabelFactory sproutLabelFactory,
             ISproutListFactory sproutListFactory,
-            ISproutTextBoxFactory sproutTextBoxFactory
-            )
+            ISproutTextBoxFactory sproutTextBoxFactory,
+            IDataAdapterFactory dataAdapterFactory)
         {
+            _dataAdapterFactory = dataAdapterFactory;
             _sproutButtonFactory = sproutButtonFactory;
             _gridFactory = gridFactory;
             _sproutBorderFactory = sproutBorderFactory;
@@ -44,65 +49,87 @@ namespace Sprout.Core.Factories
             _sproutTextBoxFactory = sproutTextBoxFactory;
         }
 
-        public UIElement GetControl(SproutControlConfig sControl,
-            Dictionary<string, UIElement> controls)
+        public UIElement GetControl(SproutControlConfig sControl, Dictionary<string, UIElement> controls)
+        {
+            var control = GetControlInternal(sControl, controls);
+
+            if (control is ISproutControl sproutControl)
+            {
+                if (sproutControl.VM is IDataAdapterHost dataAdapterHost)
+                {
+                    if (sproutControl.Config is IDataAdapterConfigHost adapterConfigHost)
+                    {
+                        if (adapterConfigHost.DataAdapter != null)
+                        {
+                            //TODO: remove the creation of the DataAdapter from the control factories and let this code do the work.
+                            dataAdapterHost.DataAdapter = _dataAdapterFactory.Create(adapterConfigHost.DataAdapter);
+                        }
+                    }
+                }
+            }
+
+            RegisterControl(control, controls);
+
+            return control;
+        }
+
+        private FrameworkElement GetControlInternal(SproutControlConfig sControl, Dictionary<string, UIElement> controls)
         {
             switch (sControl)
             {
                 case GridConfig gridConfig:
-                {
-                    var grid = RegisterControl(_gridFactory.Create(gridConfig), controls);
-
-                    foreach (var childConfig in gridConfig.Children)
                     {
-                        grid.Children.Add(GetControl(childConfig, controls));
-                    }
+                        var grid = _gridFactory.Create(gridConfig);
 
-                    return grid;
-                }
+                        foreach (var childConfig in gridConfig.Children)
+                        {
+                            grid.Children.Add(GetControl(childConfig, controls));
+                        }
+
+                        return grid;
+                    }
                 case SproutBorderConfig sproutBorderConfig:
-                {
-                    var sproutBorder = RegisterControl(_sproutBorderFactory.Create(sproutBorderConfig), controls);
-
-                    if (sproutBorderConfig.Child != null)
                     {
-                        sproutBorder.border.Child = GetControl(sproutBorderConfig.Child, controls);
-                    }
+                        var sproutBorder = _sproutBorderFactory.Create(sproutBorderConfig);
 
-                    return sproutBorder;
-                }
+                        if (sproutBorderConfig.Child != null)
+                        {
+                            sproutBorder.border.Child = GetControl(sproutBorderConfig.Child, controls);
+                        }
+
+                        return sproutBorder;
+                    }
                 case SproutListConfig sproutListConfig:
-                {
-                    UIElement? itemTemplateRoot = null;
-
-                    if (sproutListConfig.Child != null)
                     {
-                        itemTemplateRoot = GetControl(sproutListConfig.Child, new Dictionary<string, UIElement>());
-                    }
+                        UIElement? itemTemplateRoot = null;
 
-                    return RegisterControl(_sproutListFactory.Create(sproutListConfig, itemTemplateRoot), controls);
-                }
+                        if (sproutListConfig.Child != null)
+                        {
+                            itemTemplateRoot = GetControl(sproutListConfig.Child, new Dictionary<string, UIElement>());
+                        }
+
+                        return _sproutListFactory.Create(sproutListConfig, itemTemplateRoot);
+                    }
                 case SproutButtonConfig sproutButtonConfig:
-                    return RegisterControl(_sproutButtonFactory.Create(sproutButtonConfig), controls);
+                    return _sproutButtonFactory.Create(sproutButtonConfig);
                 case SproutDataGridConfig sproutDataGridConfig:
-                    return RegisterControl(_sproutDataGridFactory.Create(sproutDataGridConfig), controls);
+                    return _sproutDataGridFactory.Create(sproutDataGridConfig);
                 case SproutComboConfig sproutComboConfig:
-                    return RegisterControl(_sproutComboFactory.Create(sproutComboConfig), controls);
+                    return _sproutComboFactory.Create(sproutComboConfig);
                 case SproutTextBoxConfig sproutTextBoxConfig:
-                    return RegisterControl(_sproutTextBoxFactory.Create(sproutTextBoxConfig), controls);
+                    return _sproutTextBoxFactory.Create(sproutTextBoxConfig);
                 case SproutCheckBoxConfig sproutCheckBoxConfig:
-                    return RegisterControl(_sproutCheckBoxFactory.Create(sproutCheckBoxConfig), controls);
+                    return _sproutCheckBoxFactory.Create(sproutCheckBoxConfig);
                 case SproutDatePickerConfig sproutDatePickerConfig:
-                    return RegisterControl(_sproutDatePickerFactory.Create(sproutDatePickerConfig), controls);
+                    return _sproutDatePickerFactory.Create(sproutDatePickerConfig);
                 case SproutLabelConfig sproutLabelConfig:
-                    return RegisterControl(_sproutLabelFactory.Create(sproutLabelConfig), controls);
+                    return _sproutLabelFactory.Create(sproutLabelConfig);
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private static T RegisterControl<T>(T control, Dictionary<string, UIElement> controls)
-            where T : FrameworkElement
+        private static FrameworkElement RegisterControl(FrameworkElement control, Dictionary<string, UIElement> controls)
         {
             if (string.IsNullOrWhiteSpace(control.Name))
             {

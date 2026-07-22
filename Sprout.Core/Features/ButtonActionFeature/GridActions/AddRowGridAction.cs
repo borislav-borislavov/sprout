@@ -1,4 +1,5 @@
-﻿using Sprout.Core.Factories;
+﻿using Sprout.Core.Common;
+using Sprout.Core.Factories;
 using Sprout.Core.Features.ButtonActions;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.Queries;
@@ -21,16 +22,9 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
             _ownControlName = ownControlName;
         }
 
-        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters,
-            VMRegistry vmRegistry,
-            IDataServiceFactory dataServiceFactory)
+        public Task Perform(VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
-            if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
-            {
-                //find a nice way to route logs to the screen
-
-                throw new NotImplementedException();
-            }
+            var ownDataAdapter = vmRegistry.GetAdapterOrThrow(_ownControlName);
 
             var newRow = ownDataAdapter.DataProvider.Data.NewRow();
             ownDataAdapter.DataProvider.Data.Rows.Add(newRow);

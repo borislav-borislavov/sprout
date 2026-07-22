@@ -1,6 +1,8 @@
 ﻿using Sprout.Core.Features.ButtonActions;
 using Sprout.Core.Features.ButtonActions.GridActions;
+using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
+using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Services.Clipboard;
 using Sprout.Core.SproutControlVMs;
 using Sprout.Core.Views.Controls;
@@ -15,10 +17,12 @@ namespace Sprout.Core.Factories
     public class SproutDataGridFactory : BaseSproutControlFactory, ISproutDataGridFactory
     {
         private readonly IClipboardService _clipboardService;
+        private readonly IDataAdapterFactory _dataAdapterFactory;
 
-        public SproutDataGridFactory(IClipboardService clipboardService)
+        public SproutDataGridFactory(IClipboardService clipboardService, IDataAdapterFactory dataAdapterFactory)
         {
             _clipboardService = clipboardService;
+            _dataAdapterFactory = dataAdapterFactory;
         }
 
         public SproutDataGrid Create(SproutDataGridConfig sproutGridConfig)
@@ -27,6 +31,7 @@ namespace Sprout.Core.Factories
             {
                 Name = sproutGridConfig.Name,
                 Config = sproutGridConfig,
+                VM = new SproutDataGridVM(sproutGridConfig.Name)
             };
 
             foreach (var colConfig in (sproutGridConfig.Columns ?? []).Where(c => !c.ShowInRowDetails))
@@ -45,6 +50,9 @@ namespace Sprout.Core.Factories
                 }
                 else if (colConfig.ColumnType == ColumnType.Combo)
                 {
+                    //Create the DataAdapter to which the ComboBox will bind
+                    sproutDataGrid.VM.DataAdapters.Add(colConfig.ComboAdapterKey, _dataAdapterFactory.Create(colConfig.DataAdapter));
+
                     var comboCol = new DataGridComboBoxColumn()
                     {
                         Header = colConfig.Header,
@@ -55,17 +63,17 @@ namespace Sprout.Core.Factories
                         IsReadOnly = colConfig.IsReadOnly
                     };
 
-                    // Bind to the DataContext of the DataGrid itself
-                    Binding vmBinding = new ($"DataContext.DataProviders[{colConfig.ComboAdapterKey}].Data")
+                    var vmBinding = new Binding()
                     {
-                        RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(DataGrid), 1)
+                        //Bind directly to the DataProvider instance (a plain Dictionary raises no
+                        //change notifications). DataTable is not IEnumerable, so use its DefaultView.
+                        Source = sproutDataGrid.VM.DataAdapters[colConfig.ComboAdapterKey].DataProvider,
+                        Path = new PropertyPath("Data")
                     };
 
-                    var style = new Style(typeof(ComboBox));
-                    style.Setters.Add(new Setter(ComboBox.ItemsSourceProperty, vmBinding));
-
-                    comboCol.ElementStyle = style;
-                    comboCol.EditingElementStyle = style;
+                    //Bind the column's own ItemsSource so both the display and editing
+                    //elements get their items and can resolve the selected value.
+                    BindingOperations.SetBinding(comboCol, DataGridComboBoxColumn.ItemsSourceProperty, vmBinding);
 
                     col = comboCol;
                 }
@@ -132,19 +140,18 @@ namespace Sprout.Core.Factories
             return sproutDataGrid;
         }
 
-
-
         private void SetupVM(SproutDataGrid sproutDataGrid)
         {
-            sproutDataGrid.VM = new SproutDataGridVM(sproutDataGrid.Name);
             sproutDataGrid.VM.SetUpState(sproutDataGrid); //currenlty binds the dataGrid to its DataSource, probably should be moved here?
 
             #region Bind ItemsSource
             sproutDataGrid.dataGrid.SetBinding(DataGrid.ItemsSourceProperty,
-                new Binding($"DataProviders[{sproutDataGrid.Name}].Data")
+                new Binding()
                 {
-                    Mode = BindingMode.OneWay
-                }); 
+                    Mode = BindingMode.OneWay,
+                    Source = sproutDataGrid.VM,
+                    Path = new PropertyPath("DataAdapter.DataProvider.Data")
+                });
             #endregion
 
             #region Bind buttons

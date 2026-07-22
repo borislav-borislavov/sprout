@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Views;
 using Sprout.Core.Views.Controls;
 using System;
@@ -11,10 +12,13 @@ using System.Windows.Data;
 
 namespace Sprout.Core.SproutControlVMs
 {
-    public partial class SproutComboVM : BaseSproutControlVM
+    public partial class SproutComboVM : BaseSproutControlVM, IDataAdapterHost
     {
         [ObservableProperty]
         private object _selected;
+
+        [ObservableProperty]
+        private IDataAdapter _dataAdapter;
 
         public SproutComboVM(string name) : base(name)
         {

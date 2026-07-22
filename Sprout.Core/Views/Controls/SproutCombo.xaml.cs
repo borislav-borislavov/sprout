@@ -1,5 +1,6 @@
 ﻿using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.SproutControlVMs;
 using System;
 using System.Collections.Generic;

@@ -35,7 +35,7 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
             _ownControlName = ownControlName;
         }
 
-        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
             var gridUiState = vmRegistry.Get<SproutDataGridVM>(_ownControlName);
 

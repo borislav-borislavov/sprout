@@ -98,7 +98,8 @@ namespace Sprout.Core.Views
 
                                     sproutDataGrid.spFilters.Children.Add(filterView);
 
-                                    var filter = vm.DataProviders[sproutDataGrid.Name].Filters[filterConfig.Title];
+                                    var filter = sproutDataGrid.VM.DataAdapter.DataProvider.Filters[filterConfig.Title];
+                                    //var filter = vm.DataProviders[sproutDataGrid.Name].Filters[filterConfig.Title];
 
                                     if (filterView is SproutDataGridTextFilter textFilter)
                                     {
@@ -121,37 +122,6 @@ namespace Sprout.Core.Views
 
                     if (kvp.Value is SproutCombo sproutCombo)
                     {
-                        sproutCombo.comboBox.SetBinding(ComboBox.ItemsSourceProperty,
-                            new Binding($"DataProviders[{sproutCombo.Name}].Data")
-                            {
-                                Mode = BindingMode.OneWay
-                            });
-
-                        if (!string.IsNullOrEmpty(sproutCombo.Config.SelectedValue))
-                        {
-                            var dependency = DependencyParser.ParseDependencies(sproutCombo.Config.SelectedValue).FirstOrDefault();
-
-                            if (dependency != null)
-                            {
-                                sproutCombo.comboBox.SetBinding(
-                                    ComboBox.SelectedValueProperty,
-                                    new Binding
-                                    {
-                                        Source = vm.VMRegistry,
-                                        Path = new PropertyPath($"[{dependency.ControlName}].{dependency.PropertyPath}"),
-                                        Mode = BindingMode.TwoWay
-                                    });
-                            }
-                            else if (int.TryParse(sproutCombo.Config.SelectedValue, out var selIdx))
-                            {
-                                sproutCombo.comboBox.SelectedIndex = selIdx;
-                            }
-                            else
-                            {
-                                sproutCombo.comboBox.SelectedValue = sproutCombo.Config.SelectedValue;
-                            }
-                        }
-
                         vm.VMRegistry.Register(sproutCombo.VM);
                     }
 

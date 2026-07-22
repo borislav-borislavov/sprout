@@ -1,14 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Sprout.Core.Features.ButtonActions;
 using Sprout.Core.Models.Configurations.DataGrid;
+using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Views.Controls;
-using System.Data;
+
 using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace Sprout.Core.SproutControlVMs
 {
-    public partial class SproutDataGridVM : BaseSproutControlVM, BusyUIState, IButtonActionHost
+    public partial class SproutDataGridVM : BaseSproutControlVM, BusyUIState, IButtonActionHost, IDataAdapterHost, IDataAdapterDictionaryHost
     {
         [ObservableProperty]
         private object _selected;
@@ -26,7 +27,7 @@ namespace Sprout.Core.SproutControlVMs
         {
             get
             {
-                if (Grid.dataGrid.ItemsSource is not DataView dv)
+                if (Grid.dataGrid.ItemsSource is not System.Data.DataView dv)
                 {
                     return string.Empty;
                 }
@@ -36,6 +37,12 @@ namespace Sprout.Core.SproutControlVMs
         }
 
         public Dictionary<string, IButtonAction> ButtonActions { get; } = [];
+        //public IDataAdapter DataAdapter { get; set; }
+
+        [ObservableProperty]
+        private IDataAdapter _dataAdapter;
+
+        public Dictionary<string, IDataAdapter> DataAdapters { get; set; } = [];
 
         /// <summary>
         /// Raised when the user changes the grid's column layout so it can be persisted by the page.

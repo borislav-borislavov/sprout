@@ -33,15 +33,11 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
 
         public List<ActionMessage> Messages { get; } = [];
 
-        public async Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
             ResetMessages();
 
-            if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
-            {
-                //find a nice way to route logs to the screen
-                throw new NotImplementedException();
-            }
+            var ownDataAdapter = vmRegistry.GetAdapterOrThrow(_ownControlName);
 
             using (var dataService = dataServiceFactory.Create(ownDataAdapter, vmRegistry))
             {

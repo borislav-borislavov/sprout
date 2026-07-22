@@ -168,7 +168,7 @@
 
             <DataGrid
               x:Name="dataGrid"
-                
+              x:FieldModifier="public"
               VirtualizingStackPanel.IsVirtualizing="True"
               VirtualizingStackPanel.VirtualizationMode="Recycling"
               EnableRowVirtualization="True"

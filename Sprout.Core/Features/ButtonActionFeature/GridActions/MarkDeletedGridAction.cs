@@ -21,21 +21,14 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
             _ownControlName = ownControlName;
         }
 
-        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataProviders, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
-            if (!dataProviders.TryGetValue(_ownControlName, out var ownDataAdapter))
-            {
-                //find a nice way to route logs to the screen
+            var gridVm = vmRegistry.Get<SproutDataGridVM>(_ownControlName);
 
-                throw new NotImplementedException();
-            }
-
-            var gridUiState = vmRegistry.Get<SproutDataGridVM>(_ownControlName);
-
-            if (gridUiState == null)
+            if (gridVm == null)
                 throw new Exception($"Failed to find SproutDataGridUIState for {_ownControlName}");
 
-            if (gridUiState.Selected is not DataRowView selectedRowView)
+            if (gridVm.Selected is not DataRowView selectedRowView)
                 return Task.CompletedTask;
 
             if (selectedRowView.Row[Const.BuiltInDataTableColumns._IsDeleted] is not bool isDeleted)

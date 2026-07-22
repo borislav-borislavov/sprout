@@ -16,13 +16,13 @@ namespace Sprout.Core.Features.ButtonActions.Actions
             _actions.Add(action);
         }
 
-        public async Task Perform(Dictionary<string, IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
             ResetMessages();
 
             foreach (var action in _actions)
             {
-                await action.Perform(dataAdapters, vmRegistry, dataServiceFactory);
+                await action.Perform(vmRegistry, dataServiceFactory);
 
                 if (action is IButtonActionMessenger messenger && messenger.Messages.Any())
                     Messages.AddRange(messenger.Messages);

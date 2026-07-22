@@ -19,10 +19,12 @@ namespace Sprout.Core.Factories
     public class SproutButtonFactory : BaseSproutControlFactory, ISproutButtonFactory
     {
         private readonly IClipboardService _clipboardService;
+        private readonly IDataAdapterFactory _dataAdapterFactory;
 
-        public SproutButtonFactory(IClipboardService clipboardService)
+        public SproutButtonFactory(IClipboardService clipboardService, IDataAdapterFactory dataAdapterFactory)
         {
             _clipboardService = clipboardService;
+            _dataAdapterFactory = dataAdapterFactory;
         }
 
         public SproutButton Create(SproutButtonConfig sproutButtonConfig)
@@ -31,6 +33,7 @@ namespace Sprout.Core.Factories
             {
                 Name = sproutButtonConfig.Name,
                 Config = sproutButtonConfig,
+                VM = new SproutButtonVM(sproutButtonConfig.Name)
             };
 
             sproutButton.ButtonContent = sproutButtonConfig.Content ?? string.Empty;
@@ -100,8 +103,6 @@ namespace Sprout.Core.Factories
 
         private void SetUpVM(SproutButton sproutButton)
         {
-            sproutButton.VM = new SproutButtonVM(sproutButton.Name);
-            
             var compositeAction = new CompositeButtonAction();
 
             foreach (var actionConfig in sproutButton.Config.Actions)

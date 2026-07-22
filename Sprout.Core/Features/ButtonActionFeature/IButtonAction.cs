@@ -11,6 +11,6 @@ namespace Sprout.Core.Features.ButtonActions
 {
     public interface IButtonAction
     {
-        public abstract Task Perform(Dictionary<string, IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory);
+        public abstract Task Perform(VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory);
     }
 }

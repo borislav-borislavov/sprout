@@ -7,6 +7,7 @@ using Sprout.Core.Features.ButtonActions;
 using Sprout.Core.Messages;
 using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Services;
@@ -18,6 +19,7 @@ using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Login;
 using Sprout.Core.SproutControlVMs;
 using Sprout.Core.Views;
+using System.Diagnostics;
 
 namespace Sprout.Core.ViewModels
 {
@@ -40,8 +42,8 @@ namespace Sprout.Core.ViewModels
         /// </summary>
         public SproutPageInternalVM SproutPageInternalVM { get; } = new();
 
-        public Dictionary<string, IDataAdapter> DataAdapters { get; set; } = [];
-        public Dictionary<string, IDataProvider> DataProviders { get; set; } = [];
+        //public Dictionary<string, IDataAdapter> DataAdapters { get; set; } = [];
+        //public Dictionary<string, IDataProvider> DataProviders { get; set; } = [];
 
         public VMRegistry VMRegistry { get; } = new();
 
@@ -82,7 +84,7 @@ namespace Sprout.Core.ViewModels
 
             try
             {
-                CreateDataAdapters();
+                //CreateDataAdapters();
                 DynamicViewInstance = new SproutPage(_configurationService, _sproutControlFactory) { DataContext = this };
                 DynamicViewInstance.InitializeControls(this);
 
@@ -90,45 +92,74 @@ namespace Sprout.Core.ViewModels
 
                 VMRegistry.VMChanged += async (_, change) =>
                 {
-                    foreach (var kvp in DataProviders)
+                    if (change.PropertyName == "IsBusy")
                     {
-                        var dataProvider = kvp.Value;
-                        var dependencyHasChanged = false;
-
-                        foreach (var dependency in dataProvider.Dependencies)
-                        {
-                            if (dependency.ControlName == change.ControlName)
-                            {
-                                dependencyHasChanged = true;
-                            }
-                        }
-
-                        if (dependencyHasChanged)
-                        {
-                            try
-                            {
-                                using var dataService = _dataServiceFactory.Create(dataProvider.Parent, VMRegistry);
-                                await dataService.ProvideData();
-                            }
-                            catch (Exception ex)
-                            {
-                                _dialogService.ShowMessage(ex.Message, "Dependency changed Error", DialogButton.OK, DialogImage.Error);
-                            }
-                        }
+                        return;
                     }
+                    //foreach (var kvp in DataProviders)
+                    //{
+                    //    var dataProvider = kvp.Value;
+                    //    var dependencyHasChanged = false;
+
+                    //    foreach (var dependency in dataProvider.Dependencies)
+                    //    {
+                    //        if (dependency.ControlName == change.ControlName)
+                    //        {
+                    //            dependencyHasChanged = true;
+                    //        }
+                    //    }
+
+                    //    if (dependencyHasChanged)
+                    //    {
+                    //        try
+                    //        {
+                    //            using var dataService = _dataServiceFactory.Create(dataProvider.Parent, VMRegistry);
+                    //            await dataService.ProvideData();
+                    //        }
+                    //        catch (Exception ex)
+                    //        {
+                    //            _dialogService.ShowMessage(ex.Message, "Dependency changed Error", DialogButton.OK, DialogImage.Error);
+                    //        }
+                    //    }
+                    //}
+                    Debug.WriteLine($"{change.ControlName}.{change.PropertyName} Changed");
 
                     foreach (var kvp in VMRegistry.ViewModels)
                     {
-                        if (kvp.Value is not IDependent dependent)
+                        if (kvp.Value is IDependent dependent)
                         {
-                            continue;
+                            foreach (var dependency in dependent.Dependencies)
+                            {
+                                if (dependency.ControlName == change.ControlName)
+                                {
+                                    dependent.DepenencyChanged(dependency, VMRegistry);
+                                }
+                            }
                         }
 
-                        foreach (var dependency in dependent.Dependencies)
+                        if (kvp.Value is IDataAdapterHost dataAdapterHost && dataAdapterHost.DataAdapter != null)
                         {
-                            if (dependency.ControlName == change.ControlName)
+                            var dependencyHasChanged = false;
+
+                            foreach (var dependency in dataAdapterHost.DataAdapter.DataProvider.Dependencies)
                             {
-                                dependent.DepenencyChanged(dependency, VMRegistry);
+                                if (dependency.ControlName == change.ControlName)
+                                {
+                                    dependencyHasChanged = true;
+                                }
+                            }
+
+                            if (dependencyHasChanged)
+                            {
+                                try
+                                {
+                                    using var dataService = _dataServiceFactory.Create(dataAdapterHost.DataAdapter, VMRegistry);
+                                    await dataService.ProvideData();
+                                }
+                                catch (Exception ex)
+                                {
+                                    _dialogService.ShowMessage(ex.Message, "Dependency changed Error", DialogButton.OK, DialogImage.Error);
+                                }
                             }
                         }
                     }
@@ -235,57 +266,113 @@ namespace Sprout.Core.ViewModels
             };
         }
 
-        public void CreateDataAdapters()
-        {
-            foreach (var kvp in PageConfig.GetDataAdapterConfigs())
-            {
-                DataAdapters[kvp.Key] = _dataAdapterFactory.Create(kvp.Value);
+        //public void CreateDataAdapters()
+        //{
+        //    foreach (var kvp in PageConfig.GetDataAdapterConfigs())
+        //    {
+        //        DataAdapters[kvp.Key] = _dataAdapterFactory.Create(kvp.Value);
 
-                //done for convenience
-                if (DataAdapters[kvp.Key].DataProvider != null)
-                {
-                    DataProviders[kvp.Key] = DataAdapters[kvp.Key].DataProvider;
-                }
-            }
+        //        //done for convenience
+        //        if (DataAdapters[kvp.Key].DataProvider != null)
+        //        {
+        //            DataProviders[kvp.Key] = DataAdapters[kvp.Key].DataProvider;
+        //        }
+        //    }
 
-            //Add special data adapters
-            if (_loggedInUserService.UserDataAdapter != null)
-            {
-                DataAdapters[Const.Login] = _loggedInUserService.UserDataAdapter;
-            }
-        }
+        //    //Add special data adapters
+        //    if (_loggedInUserService.UserDataAdapter != null)
+        //    {
+        //        DataAdapters[Const.Login] = _loggedInUserService.UserDataAdapter;
+        //    }
+        //}
 
         public async void OnPageInitialize()
         {
             try
             {
                 LoadCPL();
+                /*old logic*/
+                //foreach (var kvp in DataProviders)
+                //{
+                //    if (kvp.Value.Parent.ParentType == typeof(SproutButtonConfig))
+                //    {
+                //        //The DataProvider dependencies of buttons are intentionally skipped to provide a more intuitive behavior of the control.
+                //        //Their values are set manually before the button action executes ProvideData.
+                //        continue;
+                //    }
 
-                foreach (var kvp in DataProviders)
+                //    DependencyBinder.BindDependencies(kvp.Value, VMRegistry);
+                //}
+
+                /*new logic for binding data adapter dependencies*/
+                foreach ((string vmKey, BaseSproutControlVM vm) in VMRegistry.ViewModels)
                 {
-                    if (kvp.Value.Parent.ParentType == typeof(SproutButtonConfig))
+                    if (vm is SproutButtonVM)
                     {
                         //The DataProvider dependencies of buttons are intentionally skipped to provide a more intuitive behavior of the control.
                         //Their values are set manually before the button action executes ProvideData.
                         continue;
                     }
 
-                    DependencyBinder.BindDependencies(kvp.Value, VMRegistry);
-                }
-
-                foreach (var kvp in DataProviders)
-                {
-                    if (kvp.Value.DeferInitialLoad)
-                        continue;
-
-                    if (SproutPageInternalVM.Data == null && //detail pages should load initially if they have data
-                        kvp.Value.Dependencies.Count() > 0) //experimental optimization to not run queries which depend on other values for nothing
+                    if (vm is IDataAdapterHost dataAdapterHost)
                     {
-                        continue;
+                        DependencyBinder.BindDependencies(dataAdapterHost.DataAdapter.DataProvider, VMRegistry);
                     }
 
-                    using var dataservice = _dataServiceFactory.Create(kvp.Value.Parent, VMRegistry);
-                    await dataservice.ProvideData();
+                    if (vm is IDataAdapterDictionaryHost adapterDictionaryHost)
+                    {
+                        foreach ((string adapterKey, IDataAdapter dataAdapter) in adapterDictionaryHost.DataAdapters)
+                        {
+                            DependencyBinder.BindDependencies(dataAdapter.DataProvider, VMRegistry);
+                        }
+                    }
+
+                }
+
+                /*New logic for providing data*/
+                foreach ((string key, BaseSproutControlVM viewModel) in VMRegistry.ViewModels)
+                {
+                    if (viewModel is IDataAdapterDictionaryHost dataAdapterDictionaryHost)
+                    {
+                        foreach ((_, IDataAdapter dataAdapter) in dataAdapterDictionaryHost.DataAdapters)
+                        {
+                            var dataProvider = dataAdapter.DataProvider;
+
+                            if (dataProvider.DeferInitialLoad)
+                                continue;
+
+                            if (SproutPageInternalVM.Data == null && //detail pages should load initially if they have data
+                                dataProvider.Dependencies.Count() > 0) //experimental optimization to not run queries which depend on other values for nothing
+                            {
+                                continue;
+                            }
+
+                            using var dataservice = _dataServiceFactory.Create(dataProvider.Parent, VMRegistry);
+                            await dataservice.ProvideData();
+                        }
+                    }
+
+                    if (viewModel is IDataAdapterHost dataAdapterHost && dataAdapterHost.DataAdapter != null)
+                    {
+                        var dataProvider = dataAdapterHost.DataAdapter.DataProvider;
+
+                        var loadData = true;
+
+                        if (dataProvider.DeferInitialLoad)
+                            loadData = false;
+
+                        if (SproutPageInternalVM.Data == null && //detail pages should load initially if they have data
+                            dataProvider.Dependencies.Count() > 0) //experimental optimization to not run queries which depend on other values for nothing
+                        {
+                            loadData = false;
+                        }
+
+                        if (loadData)
+                        {
+                            using var dataservice = _dataServiceFactory.Create(dataProvider.Parent, VMRegistry);
+                            await dataservice.ProvideData();
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -301,7 +388,7 @@ namespace Sprout.Core.ViewModels
             {
                 if (parameter is IButtonAction buttonAction)
                 {
-                    await buttonAction.Perform(DataAdapters, VMRegistry, _dataServiceFactory);
+                    await buttonAction.Perform(VMRegistry, _dataServiceFactory);
 
                     if (parameter is IButtonActionMessenger messenge)
                         _actionMessageService.Show(messenge);

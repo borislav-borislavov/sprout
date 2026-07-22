@@ -47,5 +47,7 @@
     </UserControl.Resources>
     <ComboBox 
         BorderThickness="0"
-        Name="comboBox"/>
+        Name="comboBox"
+        x:FieldModifier="public"
+        />
 </UserControl>

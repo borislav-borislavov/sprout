@@ -1,3 +1,4 @@
+using Sprout.Core.Common;
 using Sprout.Core.Factories;
 using Sprout.Core.Models;
 using Sprout.Core.SproutControlVMs;
@@ -15,14 +16,11 @@ namespace Sprout.Core.Features.ButtonActions.Actions
             _ownControlName = ownControlName;
         }
 
-        public async Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
+        public async Task Perform(VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
             ResetMessages();
 
-            if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
-            {
-                throw new Exception($"DataAdapter not found for control '{_ownControlName}'");
-            }
+            var ownDataAdapter = vmRegistry.GetAdapterOrThrow(_ownControlName);
 
             using (var dataService = dataServiceFactory.Create(ownDataAdapter, vmRegistry))
             {

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DataTable = System.Data.DataTable;
 using DataRow = System.Data.DataRow;
 using Sprout.Core.Features.ButtonActions;
+using Sprout.Core.Common;
 
 namespace Sprout.Core.Features.ButtonActions.GridActions
 {
@@ -20,12 +21,9 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
             _ownControlName = ownControlName;
         }
 
-        public Task Perform(Dictionary<string, Models.DataAdapters.IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
-            if (!dataAdapters.TryGetValue(_ownControlName, out var ownDataAdapter))
-            {
-                throw new NotImplementedException();
-            }
+            var ownDataAdapter = vmRegistry.GetAdapterOrThrow(_ownControlName);
 
             var data = ownDataAdapter.DataProvider.Data;
 

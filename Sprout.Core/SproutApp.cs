@@ -27,10 +27,6 @@ namespace Sprout.Core
         {
             AppArgs.Parse();
 
-            //var args = AppArgs.Args.Select(kvp => $"{kvp.Key}={kvp.Value}").ToArray();
-
-            //MessageBox.Show($"Starting Sprout with arguments: {string.Join(", ", args)}", "Sprout Startup", MessageBoxButton.OK, MessageBoxImage.Information);
-
             var services = new ServiceCollection();
             services.AddCoreServices();
 

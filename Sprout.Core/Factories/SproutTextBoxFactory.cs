@@ -21,6 +21,7 @@ namespace Sprout.Core.Factories
             {
                 Name = config.Name,
                 Config = config,
+                VM = new SproutTextBoxVM(config.Name)
             };
 
             if (config.Height.HasValue)
@@ -87,11 +88,8 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutTextBox, config);
 
-            var vm = new SproutTextBoxVM(sproutTextBox.Name);
-            sproutTextBox.VM = vm;
-
-            vm.Dependencies = DependencyParser.ParseDependencies(sproutTextBox.Config.Binding);
-            vm.SetUpState(sproutTextBox);
+            sproutTextBox.VM.Dependencies = DependencyParser.ParseDependencies(sproutTextBox.Config.Binding);
+            sproutTextBox.VM.SetUpState(sproutTextBox);
             return sproutTextBox;
         }
     }

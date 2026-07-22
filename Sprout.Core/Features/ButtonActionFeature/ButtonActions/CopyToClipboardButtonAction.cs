@@ -21,7 +21,7 @@ namespace Sprout.Core.Features.ButtonActions.Actions
             _clipboardService = clipboardService;
         }
 
-        public Task Perform(Dictionary<string, IDataAdapter> dataAdapters, VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
+        public Task Perform(VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
             if (string.IsNullOrEmpty(_clipboardText))
                 return Task.CompletedTask;
