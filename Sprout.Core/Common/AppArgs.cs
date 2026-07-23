@@ -41,6 +41,11 @@ namespace Sprout.Core.Common
             {
                 SeedPath = seedPath;
             }
+            else if (Args.Any() && Args.First().Key.EndsWith(".seed", StringComparison.OrdinalIgnoreCase))
+            {
+                // If the first argument is a .seed file, treat it as the seed path
+                SeedPath = Args.First().Key;
+            }
         }
     }
 }
