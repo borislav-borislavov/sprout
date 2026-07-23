@@ -21,8 +21,11 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <StackPanel x:Name="gridButtonsPanel" Grid.Row="0" Orientation="Horizontal">
-
+            <ToolBar x:Name="gridButtonsPanel"
+                     Background="Transparent"
+                     ToolBarTray.IsLocked="True"
+                     MinHeight="35"
+                     Grid.Row="0">
                 <Button x:Name="btnFilters"
                         ToolTip="Filter data"
                         Style="{StaticResource FlatRoundButtonStyle}"
@@ -43,7 +46,7 @@
                                      Converter={StaticResource BoolToVis}}"
                         HorizontalAlignment="Left"
                         Margin="2">
-                    
+
                     <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
 
@@ -118,7 +121,7 @@
                         </MenuItem>
                     </MenuItem>
                 </Menu>
-            </StackPanel>
+            </ToolBar>
 
             <Border
                 x:Name="filtersBorder"
@@ -126,32 +129,32 @@
                 Grid.Row="0"
                 BorderThickness="0, 0, 0 0.8"
                 BorderBrush="DarkSlateGray">
-            <StackPanel x:Name="filtersButtonPanel"
-                        Orientation="Horizontal">
+                <ToolBar x:Name="filtersButtonPanel"
+                         MinHeight="35"
+                         Background="Transparent"
+                         ToolBarTray.IsLocked="True">
+                    <Button
+                        ToolTip="Filter data"
+                        Style="{StaticResource FlatRoundButtonStyle}"
+                        HorizontalAlignment="Left"
+                        Click="btnFilters_Click"
+                        Margin="2">
+                        <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
+                    </Button>
 
-                <Button
-                    ToolTip="Filter data"
-                    Style="{StaticResource FlatRoundButtonStyle}"
-                    HorizontalAlignment="Left"
-                    Click="btnFilters_Click"
-                    Margin="2">
+                    <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
 
-                    <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
-
-                </Button>
-
-                <Button
-                    x:Name="btnApplyFilters"
-                    ToolTip="Apply filters"
-                    Style="{StaticResource FlatRoundButtonStyle}"
-                    HorizontalAlignment="Left"
-                    Click="btnApplyFilters_Click"
-                    Margin="2">
-
-                    <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
-
-                </Button>
-            </StackPanel>
+                    <Button
+                        x:Name="btnApplyFilters"
+                        ToolTip="Apply filters"
+                        Style="{StaticResource FlatRoundButtonStyle}"
+                        HorizontalAlignment="Left"
+                        Click="btnApplyFilters_Click"
+                        Margin="2">
+                        <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
+                    </Button>
+                    
+                </ToolBar>
             </Border>
 
             <Grid x:Name="FiltersGrid"
@@ -200,7 +203,7 @@
                         <Setter Property="Opacity">
                             <Setter.Value>
                                 <MultiBinding Converter="{StaticResource DeletedConverter}" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding Path="." /> <!--this triggers the converter when the view comes back in to view--> 
+                                    <Binding Path="." /> <!--this triggers the converter when the view comes back in to view-->
                                     <Binding Path="[_IsDeleted]" /> <!--This triggers the converter instantly after the value changed-->
                                 </MultiBinding>
                             </Setter.Value>
