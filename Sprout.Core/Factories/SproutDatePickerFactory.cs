@@ -15,6 +15,7 @@ namespace Sprout.Core.Factories
             {
                 Name = config.Name,
                 Config = config,
+                VM = new SproutDatePickerVM(config.Name)
             };
 
             if (config.Height.HasValue)
@@ -62,11 +63,10 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutDatePicker, config);
 
-            var vm = new SproutDatePickerVM(sproutDatePicker.Name);
-            vm.SetUpState(sproutDatePicker);
+            sproutDatePicker.VM.SetUpState(sproutDatePicker);
 
-            // Set the initial date via UIState so it flows through the binding
-            vm.SelectedDate = ComputeInitialDate(config);
+            // Set the initial date via VM so it flows through the binding
+            sproutDatePicker.VM.SelectedDate = ComputeInitialDate(config);
 
             return sproutDatePicker;
         }

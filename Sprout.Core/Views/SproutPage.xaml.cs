@@ -30,7 +30,10 @@ namespace Sprout.Core.Views
         public void InitializeControls(SproutPageVM vm)
         {
             //step 1 - generate UI controls
-            this.Content = _sproutControlFactory.GetControl(vm.PageConfig.Root, _controls);
+            this.Content = _sproutControlFactory.GetControl(vm.PageConfig.Root, _controls, vm.VMRegistry);
+
+            //step 1.1 Register extra VMs (all other VMs are registered in the SproutControlFactory)
+            vm.RegisterExtraVMs();
         }
 
 
@@ -62,152 +65,52 @@ namespace Sprout.Core.Views
                     }
                 }
 
-                vm.RegisterExtraUIStates();
-
-                //step 2 - hook up control bindings (move this to a better place)
+                //step 2 - hook up registry path bindings (labels, two way text boxes).
+                //Runs after all VMs are registered so the registry indexer path resolves
+                //regardless of the order the controls appear on the page.
                 foreach (var kvp in _controls)
                 {
-                    if (kvp.Value is SproutDataGrid sproutDataGrid)
+                    if (kvp.Value is SproutLabel sproutLabel &&
+                        !string.IsNullOrEmpty(sproutLabel.Config.Binding))
                     {
-                        if (sproutDataGrid.Config.ItemDisplayPage != Guid.Empty)
+                        var dependency = DependencyParser.ParseDependencies(sproutLabel.Config.Binding).FirstOrDefault();
+
+                        if (dependency != null)
                         {
-                            sproutDataGrid.dataGrid.IsReadOnly = true;
-
-                            DataGridDoubleClickBehavior.SetDoubleClickCommand(sproutDataGrid.dataGrid, vm.DisplayItemPageCommand);
-                            var itemDisplayPageInfo = new ItemDisplayPageInfo
-                            {
-                                GridName = sproutDataGrid.Name,
-                                ItemDisplayPageID = sproutDataGrid.Config.ItemDisplayPage
-                            };
-
-                            DataGridDoubleClickBehavior.SetDoubleClickCommandParameter(sproutDataGrid.dataGrid, itemDisplayPageInfo);
-                        }
-
-                        //TODO: Move to SproutDataGridFactory
-                        if (sproutDataGrid.Config.DataAdapter != null)
-                        {
-                            var dataProvider = sproutDataGrid.Config.DataAdapter.DataProvider;
-
-                            if (dataProvider.FilterConfigs.Any())
-                            {
-                                //i should add a general apply filters button the dataGrid UI
-                                foreach (var filterConfig in dataProvider.FilterConfigs)
+                            sproutLabel.textBlock.SetBinding(
+                                TextBlock.TextProperty,
+                                new Binding
                                 {
-                                    //UI
-                                    var filterView = SproutDataGridFilterFactory.GetFilter(filterConfig);
-
-                                    sproutDataGrid.spFilters.Children.Add(filterView);
-
-                                    var filter = sproutDataGrid.VM.DataAdapter.DataProvider.Filters[filterConfig.Title];
-                                    //var filter = vm.DataProviders[sproutDataGrid.Name].Filters[filterConfig.Title];
-
-                                    if (filterView is SproutDataGridTextFilter textFilter)
-                                    {
-                                        textFilter.tbFilterValue.SetBinding(TextBox.TextProperty,
-                                            new Binding($"DataProviders[{sproutDataGrid.Name}].Filters[{filterConfig.Title}].{nameof(IFilter.StartValue)}")
-                                            {
-                                                Mode = BindingMode.OneWayToSource,
-                                                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-                                            });
-                                    }
-                                }
-
-                            }
-                        }
-
-                        vm.VMRegistry.Register(sproutDataGrid.VM);
-
-                        vm.RegisterGridColumnLayout(sproutDataGrid.VM);
-                    }
-
-                    if (kvp.Value is SproutCombo sproutCombo)
-                    {
-                        vm.VMRegistry.Register(sproutCombo.VM);
-                    }
-
-                    if (kvp.Value is SproutTextBox sproutTextBox)
-                    {
-                        vm.VMRegistry.Register(sproutTextBox.VM);
-                    }
-
-                    if (kvp.Value is SproutLabel sproutLabel)
-                    {
-                        if (!string.IsNullOrEmpty(sproutLabel.Config.Binding))
-                        {
-                            var dependency = DependencyParser.ParseDependencies(sproutLabel.Config.Binding).FirstOrDefault();
-
-                            if (dependency != null)
-                            {
-                                sproutLabel.textBlock.SetBinding(
-                                    TextBlock.TextProperty,
-                                    new Binding
-                                    {
-                                        Source = vm.VMRegistry,
-                                        Path = new PropertyPath($"[{dependency.ControlName}].{dependency.PropertyPath}"),
-                                        Mode = BindingMode.OneWay
-                                    });
-                            }
-                        }
-
-                        vm.VMRegistry.Register(sproutLabel.VM);
-                    }
-
-                    if (kvp.Value is SproutDatePicker sproutDatePicker)
-                    {
-                        vm.VMRegistry.Register(sproutDatePicker.VM);
-                    }
-
-                    if (kvp.Value is SproutButton sproutButton)
-                    {
-                        vm.VMRegistry.Register(sproutButton.VM);
-                    }
-
-                    if (kvp.Value is SproutBorder sproutBorder)
-                    {
-                        vm.VMRegistry.Register(sproutBorder.VM);
-                    }
-
-                    if (kvp.Value is SproutList sproutList)
-                    {
-                        if (!string.IsNullOrEmpty(sproutList.Name))
-                        {
-                            sproutList.SetBinding(SproutList.SourceDataProperty,
-                                new Binding($"DataProviders[{sproutList.Name}].Data")
-                                {
+                                    Source = vm.VMRegistry,
+                                    Path = new PropertyPath($"[{dependency.ControlName}].{dependency.PropertyPath}"),
                                     Mode = BindingMode.OneWay
                                 });
                         }
+                    }
 
-                        vm.VMRegistry.Register(sproutList.VM);
+                    if (kvp.Value is SproutTextBox sproutTextBox &&
+                        sproutTextBox.Config.TwoWayBinding &&
+                        !string.IsNullOrEmpty(sproutTextBox.Config.Binding))
+                    {
+                        var dependency = DependencyParser.ParseDependencies(sproutTextBox.Config.Binding).FirstOrDefault();
 
-                        if (sproutList.Config?.Pages is { Count: > 0 } pageLinks &&
-                            !string.IsNullOrEmpty(sproutList.Name))
+                        if (dependency != null)
                         {
-                            sproutList.pageLaunchMenuRoot.Items.Clear();
-
-                            foreach (var pageLink in pageLinks)
-                            {
-                                var menuItem = new MenuItem
+                            //Replaces the VM.Text binding from SetUpState. The binding engine keeps
+                            //both directions in sync and suppresses feedback loops natively.
+                            sproutTextBox.textBox.SetBinding(TextBox.TextProperty,
+                                new Binding($"[{dependency.ControlName}].{dependency.PropertyPath}")
                                 {
-                                    Header = string.IsNullOrWhiteSpace(pageLink.Title)
-                                        ? "Open page"
-                                        : pageLink.Title,
-                                    Command = vm.DisplayListItemPageCommand,
-                                    CommandParameter = new ListPageLaunchInfo
-                                    {
-                                        ListName = sproutList.Name,
-                                        PageId = pageLink.PageId
-                                    }
-                                };
+                                    Source = vm.VMRegistry,
+                                    Mode = BindingMode.TwoWay,
+                                    UpdateSourceTrigger = sproutTextBox.Config.ChangeValueOnEnter
+                                        ? UpdateSourceTrigger.Explicit
+                                        : UpdateSourceTrigger.PropertyChanged
+                                });
 
-                                sproutList.pageLaunchMenuRoot.Items.Add(menuItem);
-                            }
-
-                            sproutList.pageLaunchMenu.Visibility = Visibility.Visible;
-                        }
-                        else
-                        {
-                            sproutList.pageLaunchMenu.Visibility = Visibility.Collapsed;
+                            //Keep VM.Text in sync so page logic reading the VM still sees the value.
+                            sproutTextBox.textBox.TextChanged += (s, e) =>
+                                sproutTextBox.VM.Text = sproutTextBox.textBox.Text;
                         }
                     }
                 }

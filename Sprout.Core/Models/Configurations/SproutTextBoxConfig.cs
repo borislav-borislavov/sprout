@@ -26,6 +26,12 @@ namespace Sprout.Core.Models.Configurations
         /// </summary>
         public string Binding { get; set; }
 
+        /// <summary>
+        /// When true and <see cref="Binding"/> is set, edits to the text box are pushed back
+        /// to the source control's property, making the dependency two-way.
+        /// </summary>
+        public bool TwoWayBinding { get; set; }
+
         public bool MultiLine { get; set; }
 
         public string HorizontalAlignment { get; set; }

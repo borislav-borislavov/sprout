@@ -1,10 +1,16 @@
-﻿using Sprout.Core.Features.ButtonActions;
+﻿using Sprout.Core.Behaviours;
+using Sprout.Core.Features.ButtonActions;
 using Sprout.Core.Features.ButtonActions.GridActions;
+using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.DataAdapters.DataProviders;
+using Sprout.Core.Models.DataAdapters.Filters;
 using Sprout.Core.Services.Clipboard;
+using Sprout.Core.Services.Configurations;
+using Sprout.Core.Services.Dialog;
 using Sprout.Core.SproutControlVMs;
+using Sprout.Core.Views;
 using Sprout.Core.Views.Controls;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,11 +24,15 @@ namespace Sprout.Core.Factories
     {
         private readonly IClipboardService _clipboardService;
         private readonly IDataAdapterFactory _dataAdapterFactory;
+        private readonly IConfigurationService _configurationService;
+        private readonly IDialogService _dialogService;
 
-        public SproutDataGridFactory(IClipboardService clipboardService, IDataAdapterFactory dataAdapterFactory)
+        public SproutDataGridFactory(IClipboardService clipboardService, IDataAdapterFactory dataAdapterFactory, IConfigurationService configurationService, IDialogService dialogService)
         {
             _clipboardService = clipboardService;
             _dataAdapterFactory = dataAdapterFactory;
+            _configurationService = configurationService;
+            _dialogService = dialogService;
         }
 
         public SproutDataGrid Create(SproutDataGridConfig sproutGridConfig)
@@ -31,7 +41,7 @@ namespace Sprout.Core.Factories
             {
                 Name = sproutGridConfig.Name,
                 Config = sproutGridConfig,
-                VM = new SproutDataGridVM(sproutGridConfig.Name)
+                VM = new SproutDataGridVM(sproutGridConfig.Name, _configurationService, _dialogService)
             };
 
             foreach (var colConfig in (sproutGridConfig.Columns ?? []).Where(c => !c.ShowInRowDetails))
@@ -135,7 +145,59 @@ namespace Sprout.Core.Factories
             if (!string.IsNullOrEmpty(sproutGridConfig.ToolTip))
                 sproutDataGrid.ToolTip = sproutGridConfig.ToolTip;
 
+            #region Set up which page opens on double click
+            if (sproutDataGrid.Config.ItemDisplayPage != Guid.Empty)
+            {
+                sproutDataGrid.dataGrid.IsReadOnly = true;
+
+                DataGridDoubleClickBehavior.SetDoubleClickCommand(sproutDataGrid.dataGrid, sproutDataGrid.VM.DisplayItemPageCommand);
+                var itemDisplayPageInfo = new ItemDisplayPageInfo
+                {
+                    GridName = sproutDataGrid.Name,
+                    ItemDisplayPageID = sproutDataGrid.Config.ItemDisplayPage
+                };
+
+                DataGridDoubleClickBehavior.SetDoubleClickCommandParameter(sproutDataGrid.dataGrid, itemDisplayPageInfo);
+            } 
+            #endregion
+
+            if (sproutDataGrid.Config.DataAdapter != null)
+            {
+                var dataProvider = sproutDataGrid.Config.DataAdapter.DataProvider;
+
+                if (dataProvider.FilterConfigs.Any())
+                {
+                    //The adapter must exist here so the filter views can bind to its filter
+                    //instances. SproutControlFactory skips creation when it is already set.
+                    sproutDataGrid.VM.DataAdapter ??= _dataAdapterFactory.Create(sproutDataGrid.Config.DataAdapter);
+
+                    //i should add a general apply filters button the dataGrid UI
+                    foreach (var filterConfig in dataProvider.FilterConfigs)
+                    {
+                        //UI
+                        var filterView = SproutDataGridFilterFactory.GetFilter(filterConfig);
+
+                        sproutDataGrid.spFilters.Children.Add(filterView);
+
+                        var filter = sproutDataGrid.VM.DataAdapter.DataProvider.Filters[filterConfig.Title];
+
+                        if (filterView is SproutDataGridTextFilter textFilter)
+                        {
+                            textFilter.tbFilterValue.SetBinding(TextBox.TextProperty,
+                                new Binding(nameof(IFilter.StartValue))
+                                {
+                                    Source = filter,
+                                    Mode = BindingMode.OneWayToSource,
+                                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                                });
+                        }
+                    }
+                }
+            }
+
             SetupVM(sproutDataGrid);
+
+            sproutDataGrid.VM.RegisterGridColumnLayout();
 
             return sproutDataGrid;
         }

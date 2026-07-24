@@ -218,6 +218,253 @@ namespace Sprout.Tests.Integration.SqlServer.PageTests
             }
         }
 
+        [WpfFact]
+        public async Task TestTextBoxTwoWayBindingToGridSelectedRow()
+        {
+            //Arrange
+            await EnsureTestDatabaseExists();
+            await SQLServerUserTaskTestCase.Create(_sqlServerService);
+            var dataGridTasksName = "dgTasks";
+            var textBoxName = "txtDescription";
+
+            var config = new SproutPageConfiguration
+            {
+                Root = new GridConfig
+                {
+                    Rows = ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+                    Columns = ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+
+                    Children =
+                    [
+                        new SproutTextBoxConfig
+                        {
+                            Name = textBoxName,
+                            Column = 0,
+                            Row = 0,
+                            ColumnSpan = 10,
+                            Binding = "{@dgTasks.Selected.TaskDescription}",
+                            TwoWayBinding = true
+                        },
+                        new SproutDataGridConfig
+                        {
+                            Name = dataGridTasksName,
+                            Column = 0,
+                            Row = 1,
+                            ColumnSpan = 10,
+                            RowSpan = 9,
+                            Columns = [
+                                new SproutDataGridColumnConfig
+                                {
+                                    Header = "Description",
+                                    BindingPath = "TaskDescription",
+                                    ColumnType = ColumnType.Text,
+                                }
+                                ],
+                            DataAdapter = new SqlServerDataAdapterConfig
+                            {
+                                Name = dataGridTasksName,
+                                ConnectionString = _connectionString,
+                                InsertCommand = new SqlServerEditCommandConfig(),
+                                UpdateCommand = new SqlServerEditCommandConfig(),
+                                DeleteCommand = new SqlServerEditCommandConfig(),
+                                DataProvider = new SqlServerDataProviderConfig
+                                {
+                                    Text = "SELECT ID, TaskDescription FROM Tasks"
+                                }
+                            }
+                        }
+                    ]
+                }
+            };
+
+            var pageVMFactory = _serviceProvider.GetRequiredService<ISproutPageVMFactory>();
+            var sproutPageVM = pageVMFactory.Create(config, null);
+
+            var textBox = sproutPageVM.DynamicViewInstance._controls[textBoxName] as SproutTextBox;
+            var dataGrid = sproutPageVM.DynamicViewInstance._controls[dataGridTasksName] as SproutDataGrid;
+
+            //var window = new Window
+            //{
+            //    Content = sproutPageVM.DynamicViewInstance,
+            //    DataContext = sproutPageVM,
+            //    Width = 800,
+            //    Height = 600,
+            //};
+
+            //window.ShowDialog();
+
+            var hwndSource = new HwndSource(new HwndSourceParameters("SproutTestHost")
+            {
+                Width = 800,
+                Height = 600
+            })
+            {
+                RootVisual = sproutPageVM.DynamicViewInstance
+            };
+
+            try
+            {
+                sproutPageVM.DynamicViewInstance.Measure(new Size(800, 600));
+                sproutPageVM.DynamicViewInstance.Arrange(new Rect(0, 0, 800, 600));
+                sproutPageVM.DynamicViewInstance.UpdateLayout();
+
+                await PumpDispatcherUntilAsync(
+                    () => dataGrid.dataGrid.ItemsSource != null,
+                    TimeSpan.FromSeconds(15));
+
+                var dataView = dataGrid.dataGrid.ItemsSource as DataView;
+                Assert.NotNull(dataView);
+                Assert.True(dataView.Count > 0);
+
+                //Act 1 - select a row and verify the text box picks up the value (one-way pull)
+                dataGrid.dataGrid.SelectedItem = dataView[0];
+
+                await PumpDispatcherUntilAsync(
+                    () => textBox.textBox.Text == (string)dataView[0]["TaskDescription"],
+                    TimeSpan.FromSeconds(5));
+
+                Assert.Equal((string)dataView[0]["TaskDescription"], textBox.textBox.Text);
+
+                //Act 2 - type into the text box and verify the change flows back to the grid row (two-way push)
+                var newDescription = "Updated via two-way binding";
+                textBox.textBox.Text = newDescription;
+
+                await PumpDispatcherUntilAsync(
+                    () => (string)dataView[0]["TaskDescription"] == newDescription,
+                    TimeSpan.FromSeconds(5));
+
+                //Assert
+                Assert.Equal(newDescription, (string)dataView[0]["TaskDescription"]);
+                Assert.Equal(newDescription, (string)dataView[0].Row["TaskDescription"]);
+            }
+            finally
+            {
+                hwndSource.Dispose();
+            }
+        }
+
+        [WpfFact]
+        public async Task TestLabelBindingToGridSelectedRow()
+        {
+            //Arrange
+            await EnsureTestDatabaseExists();
+            await SQLServerUserTaskTestCase.Create(_sqlServerService);
+            var dataGridTasksName = "dgTasks";
+            var labelName = "lblDescription";
+
+            var config = new SproutPageConfiguration
+            {
+                Root = new GridConfig
+                {
+                    Rows = ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+                    Columns = ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+
+                    Children =
+                    [
+                        new SproutLabelConfig
+                        {
+                            Name = labelName,
+                            Column = 0,
+                            Row = 0,
+                            ColumnSpan = 10,
+                            Binding = "{@dgTasks.Selected.TaskDescription}"
+                        },
+                        new SproutDataGridConfig
+                        {
+                            Name = dataGridTasksName,
+                            Column = 0,
+                            Row = 1,
+                            ColumnSpan = 10,
+                            RowSpan = 9,
+                            Columns = [
+                                new SproutDataGridColumnConfig
+                                {
+                                    Header = "Description",
+                                    BindingPath = "TaskDescription",
+                                    ColumnType = ColumnType.Text,
+                                }
+                                ],
+                            DataAdapter = new SqlServerDataAdapterConfig
+                            {
+                                Name = dataGridTasksName,
+                                ConnectionString = _connectionString,
+                                InsertCommand = new SqlServerEditCommandConfig(),
+                                UpdateCommand = new SqlServerEditCommandConfig(),
+                                DeleteCommand = new SqlServerEditCommandConfig(),
+                                DataProvider = new SqlServerDataProviderConfig
+                                {
+                                    Text = "SELECT ID, TaskDescription FROM Tasks"
+                                }
+                            }
+                        }
+                    ]
+                }
+            };
+
+            var pageVMFactory = _serviceProvider.GetRequiredService<ISproutPageVMFactory>();
+            var sproutPageVM = pageVMFactory.Create(config, null);
+
+            var label = sproutPageVM.DynamicViewInstance._controls[labelName] as SproutLabel;
+            var dataGrid = sproutPageVM.DynamicViewInstance._controls[dataGridTasksName] as SproutDataGrid;
+
+            var hwndSource = new HwndSource(new HwndSourceParameters("SproutTestHost")
+            {
+                Width = 800,
+                Height = 600
+            })
+            {
+                RootVisual = sproutPageVM.DynamicViewInstance
+            };
+
+            try
+            {
+                sproutPageVM.DynamicViewInstance.Measure(new Size(800, 600));
+                sproutPageVM.DynamicViewInstance.Arrange(new Rect(0, 0, 800, 600));
+                sproutPageVM.DynamicViewInstance.UpdateLayout();
+
+                await PumpDispatcherUntilAsync(
+                    () => dataGrid.dataGrid.ItemsSource != null,
+                    TimeSpan.FromSeconds(15));
+
+                var dataView = dataGrid.dataGrid.ItemsSource as DataView;
+                Assert.NotNull(dataView);
+                Assert.True(dataView.Count > 1);
+
+                //Act 1 - select a row and verify the label picks up the value
+                dataGrid.dataGrid.SelectedItem = dataView[0];
+
+                await PumpDispatcherUntilAsync(
+                    () => label.textBlock.Text == (string)dataView[0]["TaskDescription"],
+                    TimeSpan.FromSeconds(5));
+
+                Assert.Equal((string)dataView[0]["TaskDescription"], label.textBlock.Text);
+
+                //Act 2 - select another row and verify the label follows the selection
+                dataGrid.dataGrid.SelectedItem = dataView[1];
+
+                await PumpDispatcherUntilAsync(
+                    () => label.textBlock.Text == (string)dataView[1]["TaskDescription"],
+                    TimeSpan.FromSeconds(5));
+
+                Assert.Equal((string)dataView[1]["TaskDescription"], label.textBlock.Text);
+
+                //Act 3 - change the selected row's value and verify the label reacts
+                var newDescription = "Updated task description";
+                dataView[1]["TaskDescription"] = newDescription;
+
+                await PumpDispatcherUntilAsync(
+                    () => label.textBlock.Text == newDescription,
+                    TimeSpan.FromSeconds(5));
+
+                //Assert
+                Assert.Equal(newDescription, label.textBlock.Text);
+            }
+            finally
+            {
+                hwndSource.Dispose();
+            }
+        }
+
         /// <summary>
         /// Pumps the WPF dispatcher, allowing queued operations, async continuations and
         /// binding updates to run, until <paramref name="condition"/> is met or the timeout elapses.

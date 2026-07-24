@@ -49,19 +49,22 @@ namespace Sprout.Core.Factories
             _sproutTextBoxFactory = sproutTextBoxFactory;
         }
 
-        public UIElement GetControl(SproutControlConfig sControl, Dictionary<string, UIElement> controls)
+        public UIElement GetControl(SproutControlConfig sControl, Dictionary<string, UIElement> controls, VMRegistry vmRegistry)
         {
-            var control = GetControlInternal(sControl, controls);
+            var control = GetControlInternal(sControl, controls, vmRegistry);
 
             if (control is ISproutControl sproutControl)
             {
+                vmRegistry.Register(sproutControl.VM);
+
                 if (sproutControl.VM is IDataAdapterHost dataAdapterHost)
                 {
                     if (sproutControl.Config is IDataAdapterConfigHost adapterConfigHost)
                     {
-                        if (adapterConfigHost.DataAdapter != null)
+                        //Only create when the control factory hasn't already done so
+                        //(e.g. grids with filters need the adapter during creation).
+                        if (adapterConfigHost.DataAdapter != null && dataAdapterHost.DataAdapter == null)
                         {
-                            //TODO: remove the creation of the DataAdapter from the control factories and let this code do the work.
                             dataAdapterHost.DataAdapter = _dataAdapterFactory.Create(adapterConfigHost.DataAdapter);
                         }
                     }
@@ -73,7 +76,7 @@ namespace Sprout.Core.Factories
             return control;
         }
 
-        private FrameworkElement GetControlInternal(SproutControlConfig sControl, Dictionary<string, UIElement> controls)
+        private FrameworkElement GetControlInternal(SproutControlConfig sControl, Dictionary<string, UIElement> controls, VMRegistry vmRegistry)
         {
             switch (sControl)
             {
@@ -83,7 +86,7 @@ namespace Sprout.Core.Factories
 
                         foreach (var childConfig in gridConfig.Children)
                         {
-                            grid.Children.Add(GetControl(childConfig, controls));
+                            grid.Children.Add(GetControl(childConfig, controls, vmRegistry));
                         }
 
                         return grid;
@@ -94,7 +97,7 @@ namespace Sprout.Core.Factories
 
                         if (sproutBorderConfig.Child != null)
                         {
-                            sproutBorder.border.Child = GetControl(sproutBorderConfig.Child, controls);
+                            sproutBorder.border.Child = GetControl(sproutBorderConfig.Child, controls, vmRegistry);
                         }
 
                         return sproutBorder;
@@ -105,7 +108,7 @@ namespace Sprout.Core.Factories
 
                         if (sproutListConfig.Child != null)
                         {
-                            itemTemplateRoot = GetControl(sproutListConfig.Child, new Dictionary<string, UIElement>());
+                            itemTemplateRoot = GetControl(sproutListConfig.Child, new Dictionary<string, UIElement>(), vmRegistry);
                         }
 
                         return _sproutListFactory.Create(sproutListConfig, itemTemplateRoot);

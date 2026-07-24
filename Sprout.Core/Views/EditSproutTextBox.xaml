@@ -22,6 +22,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
@@ -97,9 +98,27 @@
                         Margin="5"
                         Text="{Binding Binding, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <!--Multi Line-->
+                    <!--Two Way Binding-->
                     <TextBlock
                         Grid.Row="4"
+                        Grid.Column="0"
+                        Margin="5"
+                        VerticalAlignment="Center"
+                        Text="Two Way Binding"
+                        FontWeight="Bold"
+                        FontSize="16"/>
+
+                    <CheckBox
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Margin="5"
+                        ToolTip="When checked, edits in the text box are pushed back to the bound control's property."
+                        IsChecked="{Binding TwoWayBinding, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--Multi Line-->
+                    <TextBlock
+                        Grid.Row="5"
                         Grid.Column="0"
                         Margin="5"
                         VerticalAlignment="Center"
@@ -108,7 +127,7 @@
                         FontSize="16"/>
 
                     <CheckBox
-                        Grid.Row="4"
+                        Grid.Row="5"
                         Grid.Column="1"
                         VerticalAlignment="Center"
                         Margin="5"
@@ -116,7 +135,7 @@
 
                     <!--Change Value On Enter-->
                     <TextBlock
-                        Grid.Row="5"
+                        Grid.Row="6"
                         Grid.Column="0"
                         Margin="5"
                         VerticalAlignment="Center"
@@ -125,7 +144,7 @@
                         FontSize="16"/>
 
                     <CheckBox
-                        Grid.Row="5"
+                        Grid.Row="6"
                         Grid.Column="1"
                         VerticalAlignment="Center"
                         Margin="5"
@@ -133,7 +152,7 @@
 
                     <!--Allow File Drop-->
                     <TextBlock
-                        Grid.Row="6"
+                        Grid.Row="7"
                         Grid.Column="0"
                         Margin="5"
                         VerticalAlignment="Center"
@@ -142,7 +161,7 @@
                         FontSize="16"/>
 
                     <CheckBox
-                        Grid.Row="6"
+                        Grid.Row="7"
                         Grid.Column="1"
                         VerticalAlignment="Center"
                         Margin="5"

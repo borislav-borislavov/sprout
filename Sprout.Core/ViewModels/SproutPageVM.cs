@@ -42,9 +42,6 @@ namespace Sprout.Core.ViewModels
         /// </summary>
         public SproutPageInternalVM SproutPageInternalVM { get; } = new();
 
-        //public Dictionary<string, IDataAdapter> DataAdapters { get; set; } = [];
-        //public Dictionary<string, IDataProvider> DataProviders { get; set; } = [];
-
         public VMRegistry VMRegistry { get; } = new();
 
         /// <summary>
@@ -84,7 +81,6 @@ namespace Sprout.Core.ViewModels
 
             try
             {
-                //CreateDataAdapters();
                 DynamicViewInstance = new SproutPage(_configurationService, _sproutControlFactory) { DataContext = this };
                 DynamicViewInstance.InitializeControls(this);
 
@@ -96,33 +92,6 @@ namespace Sprout.Core.ViewModels
                     {
                         return;
                     }
-                    //foreach (var kvp in DataProviders)
-                    //{
-                    //    var dataProvider = kvp.Value;
-                    //    var dependencyHasChanged = false;
-
-                    //    foreach (var dependency in dataProvider.Dependencies)
-                    //    {
-                    //        if (dependency.ControlName == change.ControlName)
-                    //        {
-                    //            dependencyHasChanged = true;
-                    //        }
-                    //    }
-
-                    //    if (dependencyHasChanged)
-                    //    {
-                    //        try
-                    //        {
-                    //            using var dataService = _dataServiceFactory.Create(dataProvider.Parent, VMRegistry);
-                    //            await dataService.ProvideData();
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            _dialogService.ShowMessage(ex.Message, "Dependency changed Error", DialogButton.OK, DialogImage.Error);
-                    //        }
-                    //    }
-                    //}
-                    Debug.WriteLine($"{change.ControlName}.{change.PropertyName} Changed");
 
                     foreach (var kvp in VMRegistry.ViewModels)
                     {
@@ -162,9 +131,36 @@ namespace Sprout.Core.ViewModels
                                 }
                             }
                         }
+
+                        if (kvp.Value is IDataAdapterDictionaryHost dataAdapterDictionary)
+                        {
+                            foreach (var dataAdapter in dataAdapterDictionary.DataAdapters)
+                            {
+                                var dependencyHasChanged = false;
+                                foreach (var dependency in dataAdapter.Value.DataProvider.Dependencies)
+                                {
+                                    if (dependency.ControlName == change.ControlName)
+                                    {
+                                        dependencyHasChanged = true;
+                                    }
+                                }
+
+                                if (dependencyHasChanged)
+                                {
+                                    try
+                                    {
+                                        using var dataService = _dataServiceFactory.Create(dataAdapter.Value, VMRegistry);
+                                        await dataService.ProvideData();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        _dialogService.ShowMessage(ex.Message, "Dependency changed Error", DialogButton.OK, DialogImage.Error);
+                                    }
+                                }
+                            }
+                        }
                     }
                 };
-
 
                 DynamicViewInstance.InitializePage(this);
                 OnPageInitialize();
@@ -179,20 +175,6 @@ namespace Sprout.Core.ViewModels
                 _dialogService.ShowMessage(ex.Message, "Ctor Error", DialogButton.OK, DialogImage.Error);
             }
         }
-
-        //public async Task<List<DiagnosticMessage>> ApplyUserCodeAsync(string userCode)
-        //{
-        //    var result = _compiler.Compile(userCode, $"{PageConfig.ID.ToString().Replace("-", "")}", this);
-
-        //    if (!result.IsSuccess)
-        //        return result.Diagnostics; // Surface errors in your code editor UI
-
-        //    string? error = await _host.LoadAsync(result.Assembly!, pageContext: this);
-        //    if (error is not null)
-        //        return [new DiagnosticMessage("Error", error, 0, 0)];
-
-        //    return result.Diagnostics; // May contain warnings
-        //}
 
         /// <summary>
         /// Load the custom page logic
@@ -229,80 +211,17 @@ namespace Sprout.Core.ViewModels
             }
         }
 
-        public void RegisterExtraUIStates()
+        public void RegisterExtraVMs()
         {
             VMRegistry.Register(SproutPageInternalVM);
             VMRegistry.Register(_loginUIState);
         }
-
-        /// <summary>
-        /// Restores any persisted column layout for the given grid and keeps it in sync with
-        /// the configuration when the user changes it.
-        /// </summary>
-        public void RegisterGridColumnLayout(SproutDataGridVM gridState)
-        {
-            if (gridState?.Grid?.Config?.Name is not string gridName || string.IsNullOrEmpty(gridName))
-                return;
-
-            var settings = _configurationService.Load().Settings;
-
-            if (settings.GridColumnLayouts.TryGetValue(gridName, out var layout))
-            {
-                gridState.ApplyColumnLayout(layout);
-            }
-
-            gridState.ColumnLayoutChanged += (_, updatedLayout) =>
-            {
-                try
-                {
-                    var config = _configurationService.Load();
-                    config.Settings.GridColumnLayouts[gridName] = updatedLayout;
-                    _configurationService.Save(config);
-                }
-                catch (Exception ex)
-                {
-                    _dialogService.ShowMessage(ex.Message, "Column layout Error", DialogButton.OK, DialogImage.Error);
-                }
-            };
-        }
-
-        //public void CreateDataAdapters()
-        //{
-        //    foreach (var kvp in PageConfig.GetDataAdapterConfigs())
-        //    {
-        //        DataAdapters[kvp.Key] = _dataAdapterFactory.Create(kvp.Value);
-
-        //        //done for convenience
-        //        if (DataAdapters[kvp.Key].DataProvider != null)
-        //        {
-        //            DataProviders[kvp.Key] = DataAdapters[kvp.Key].DataProvider;
-        //        }
-        //    }
-
-        //    //Add special data adapters
-        //    if (_loggedInUserService.UserDataAdapter != null)
-        //    {
-        //        DataAdapters[Const.Login] = _loggedInUserService.UserDataAdapter;
-        //    }
-        //}
 
         public async void OnPageInitialize()
         {
             try
             {
                 LoadCPL();
-                /*old logic*/
-                //foreach (var kvp in DataProviders)
-                //{
-                //    if (kvp.Value.Parent.ParentType == typeof(SproutButtonConfig))
-                //    {
-                //        //The DataProvider dependencies of buttons are intentionally skipped to provide a more intuitive behavior of the control.
-                //        //Their values are set manually before the button action executes ProvideData.
-                //        continue;
-                //    }
-
-                //    DependencyBinder.BindDependencies(kvp.Value, VMRegistry);
-                //}
 
                 /*new logic for binding data adapter dependencies*/
                 foreach ((string vmKey, BaseSproutControlVM vm) in VMRegistry.ViewModels)
@@ -398,36 +317,6 @@ namespace Sprout.Core.ViewModels
             {
                 _dialogService.ShowMessage(ex.Message, "Action Error", DialogButton.OK, DialogImage.Error);
             }
-        }
-
-
-        [RelayCommand]
-        private void DisplayItemPage(object parameter)
-        {
-            if (parameter is not ItemDisplayPageInfo itemDisplayInfo)
-                return;
-
-            var sproutDataGridUiState = VMRegistry.Get<SproutDataGridVM>(itemDisplayInfo.GridName);
-
-            if (sproutDataGridUiState == null)
-            {
-                //TODO
-                return;
-            }
-
-            if (sproutDataGridUiState.Selected == null)
-            {
-                //TODO
-                return;
-            }
-
-            var args = new OpenTabMessageArgs()
-            {
-                PageConfigID = itemDisplayInfo.ItemDisplayPageID,
-                Parameter = sproutDataGridUiState.Selected
-            };
-
-            WeakReferenceMessenger.Default.Send(new OpenTabMessage(args));
         }
 
         [RelayCommand]

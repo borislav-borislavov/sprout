@@ -76,15 +76,17 @@ namespace Sprout.Tests.Integration.SqlServer.ControlTests
                 }
             };
 
+            var vmRegistry = new VMRegistry();
+
             //Act
-            var control = _serviceProvider.GetRequiredService<ISproutControlFactory>().GetControl(config, []);
+            var control = _serviceProvider.GetRequiredService<ISproutControlFactory>().GetControl(config, [], vmRegistry);
 
             //Assert
             var combo = control as SproutCombo;
             Assert.NotNull(combo);
 
             var dataServiceFactory = _serviceProvider.GetRequiredService<IDataServiceFactory>();
-            var vmRegistry = new VMRegistry();
+            
             vmRegistry.Register(combo.VM);
 
             using var dataService = dataServiceFactory.Create(combo.VM.DataAdapter, vmRegistry);

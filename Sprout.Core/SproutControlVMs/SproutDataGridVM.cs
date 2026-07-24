@@ -1,9 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Sprout.Core.Features.ButtonActions;
+using Sprout.Core.Messages;
+using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.DataAdapters;
+using Sprout.Core.Services.Configurations;
+using Sprout.Core.Services.Dialog;
 using Sprout.Core.Views.Controls;
-
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -41,6 +46,8 @@ namespace Sprout.Core.SproutControlVMs
 
         [ObservableProperty]
         private IDataAdapter _dataAdapter;
+        private IConfigurationService _configurationService;
+        private IDialogService _dialogService;
 
         public Dictionary<string, IDataAdapter> DataAdapters { get; set; } = [];
 
@@ -49,9 +56,10 @@ namespace Sprout.Core.SproutControlVMs
         /// </summary>
         public event EventHandler<SproutGridColumnLayout> ColumnLayoutChanged;
 
-        public SproutDataGridVM(string name) : base(name)
+        public SproutDataGridVM(string name, IConfigurationService configurationService, IDialogService dialogService) : base(name)
         {
-            
+            _configurationService = configurationService;
+            _dialogService = dialogService;
         }
 
         public virtual void SetUpState(SproutDataGrid control)
@@ -90,6 +98,51 @@ namespace Sprout.Core.SproutControlVMs
         {
             Grid?.ApplyColumnLayout(layout);
             ColumnLayoutChanged?.Invoke(this, layout);
+        }
+
+        [RelayCommand]
+        private void DisplayItemPage(object parameter)
+        {
+            if (Selected == null) return;
+
+            var args = new OpenTabMessageArgs()
+            {
+                PageConfigID = Grid.Config.ItemDisplayPage,
+                Parameter = this.Selected
+            };
+
+            WeakReferenceMessenger.Default.Send(new OpenTabMessage(args));
+        }
+
+        /// <summary>
+        /// Restores any persisted column layout for the given grid and keeps it in sync with
+        /// the configuration when the user changes it.
+        /// </summary>
+        public void RegisterGridColumnLayout()
+        {
+            if (Grid?.Config?.Name is not string gridName || string.IsNullOrEmpty(gridName))
+                return;
+
+            var settings = _configurationService.Load().Settings;
+
+            if (settings.GridColumnLayouts.TryGetValue(gridName, out var layout))
+            {
+                ApplyColumnLayout(layout);
+            }
+
+            ColumnLayoutChanged += (_, updatedLayout) =>
+            {
+                try
+                {
+                    var config = _configurationService.Load();
+                    config.Settings.GridColumnLayouts[gridName] = updatedLayout;
+                    _configurationService.Save(config);
+                }
+                catch (Exception ex)
+                {
+                    _dialogService.ShowMessage(ex.Message, "Column layout Error", DialogButton.OK, DialogImage.Error);
+                }
+            };
         }
     }
 }

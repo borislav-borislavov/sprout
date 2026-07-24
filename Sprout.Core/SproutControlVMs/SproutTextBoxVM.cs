@@ -5,6 +5,7 @@ using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Views.Controls;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,10 @@ namespace Sprout.Core.SproutControlVMs
 
         public IEnumerable<DataProviderDependency> Dependencies { get; set; } = new List<DataProviderDependency>();
 
-        public SproutTextBoxVM(string name) : base(name)
+        private bool _ignoreChange = false;
+
+        public SproutTextBoxVM(string name) 
+            : base(name)
         {
             
         }

@@ -146,6 +146,7 @@
 
                     <Button
                         x:Name="btnApplyFilters"
+                        x:FieldModifier="public"
                         ToolTip="Apply filters"
                         Style="{StaticResource FlatRoundButtonStyle}"
                         HorizontalAlignment="Left"
@@ -163,7 +164,7 @@
                 <ScrollViewer
                     HorizontalScrollBarVisibility="Auto"
                     VerticalScrollBarVisibility="Auto">
-                    <StackPanel Name="spFilters">
+                    <StackPanel Name="spFilters" x:FieldModifier="public">
 
                     </StackPanel>
                 </ScrollViewer>

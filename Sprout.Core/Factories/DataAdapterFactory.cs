@@ -49,6 +49,11 @@ namespace Sprout.Core.Factories
             dataAdapter.ParentType = dataAdapterConfig.ParentType;
             dataAdapter.Name = dataAdapterConfig.Name;
 
+            if (dataAdapter.DataProvider.Filters?.Any() == true)
+            {
+
+            }
+
             return dataAdapter;
         }
 

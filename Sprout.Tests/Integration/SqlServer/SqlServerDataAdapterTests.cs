@@ -3,6 +3,8 @@ using Sprout.Core;
 using Sprout.Core.Factories;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.DataAdapters;
+using Sprout.Core.Services.Configurations;
+using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.SqlServer;
 using Sprout.Core.SproutControlVMs;
 using Sprout.Tests.Integration.SqlServer.TestCases;
@@ -75,8 +77,10 @@ namespace Sprout.Tests.Integration.SqlServer
             Assert.NotNull(sqlServerDataAdapter);
 
             var dataServiceFactory = _serviceProvider.GetRequiredService<IDataServiceFactory>();
+            var configurationService = _serviceProvider.GetRequiredService<IConfigurationService>();
+            var dialogService = _serviceProvider.GetRequiredService<IDialogService>();
             var vmRegistry = new VMRegistry();
-            SproutDataGridVM dataGridVM = new(testName);
+            SproutDataGridVM dataGridVM = new(testName, configurationService, dialogService);
             dataGridVM.DataAdapter = dataAdapter;
             vmRegistry.Register(dataGridVM);
 
@@ -123,7 +127,9 @@ namespace Sprout.Tests.Integration.SqlServer
 
             var dataServiceFactory = _serviceProvider.GetRequiredService<IDataServiceFactory>();
             var vmRegistry = new VMRegistry();
-            SproutDataGridVM dataGridVM = new(testName);
+            var configurationService = _serviceProvider.GetRequiredService<IConfigurationService>();
+            var dialogService = _serviceProvider.GetRequiredService<IDialogService>();
+            SproutDataGridVM dataGridVM = new(testName, configurationService, dialogService);
             dataGridVM.DataAdapter = dataAdapter;
             vmRegistry.Register(dataGridVM);
 
@@ -186,7 +192,9 @@ namespace Sprout.Tests.Integration.SqlServer
 
             var dataServiceFactory = _serviceProvider.GetRequiredService<IDataServiceFactory>();
             var vmRegistry = new VMRegistry();
-            SproutDataGridVM dataGridVM = new(testName);
+            var configurationService = _serviceProvider.GetRequiredService<IConfigurationService>();
+            var dialogService = _serviceProvider.GetRequiredService<IDialogService>();
+            SproutDataGridVM dataGridVM = new(testName, configurationService, dialogService);
             dataGridVM.DataAdapter = dataAdapter;
             vmRegistry.Register(dataGridVM);
 
@@ -245,7 +253,9 @@ namespace Sprout.Tests.Integration.SqlServer
 
             var dataServiceFactory = _serviceProvider.GetRequiredService<IDataServiceFactory>();
             var vmRegistry = new VMRegistry();
-            SproutDataGridVM dataGridVM = new(testName);
+            var configurationService = _serviceProvider.GetRequiredService<IConfigurationService>();
+            var dialogService = _serviceProvider.GetRequiredService<IDialogService>();
+            SproutDataGridVM dataGridVM = new(testName, configurationService, dialogService);
             dataGridVM.DataAdapter = dataAdapter;
             vmRegistry.Register(dataGridVM);
 

@@ -24,6 +24,7 @@
                   HorizontalAlignment="Left" 
                  >
             <TextBox x:Name="tbFilterValue"
+                     x:FieldModifier="public"
                      Grid.Row="1"
                      Foreground="DarkSlateGray" />
         </GroupBox>
