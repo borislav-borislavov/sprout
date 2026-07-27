@@ -15,7 +15,6 @@ namespace Sprout.Core.Views
 {
     public partial class SproutPage : UserControl
     {
-        private bool _isInitialized = false;
         public Dictionary<string, UIElement> _controls = [];
         private readonly IConfigurationService _configurationService;
         private readonly ISproutControlFactory _sproutControlFactory;
@@ -41,11 +40,6 @@ namespace Sprout.Core.Views
         {
             try
             {
-                if (_isInitialized)
-                {
-                    return;
-                }
-
                 if (!string.IsNullOrWhiteSpace(vm.PageConfig.Script))
                 {
                     var cpl = new CustomPageLogic();

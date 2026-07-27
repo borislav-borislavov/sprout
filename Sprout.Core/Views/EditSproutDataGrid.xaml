@@ -82,6 +82,12 @@
                                      Text="{Binding SelectedDataGrid.RowDetailsItemsPerRow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      VerticalContentAlignment="Center"/>
                         </StackPanel>
+
+                        <CheckBox Content="Read Only"
+                                  Margin="10,5,0,0"
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding SelectedDataGrid.IsReadOnly, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  ToolTip="When checked, the grid cells cannot be edited."/>
                     </StackPanel>
 
                     <DataGrid

@@ -23,6 +23,11 @@ namespace Sprout.Core.Models.Configurations.DataGrid
 		public Guid ItemDisplayPage { get; set; }
 
 		/// <summary>
+		/// When set, the internal data grid is read only and cells cannot be edited.
+		/// </summary>
+		public bool IsReadOnly { get; set; }
+
+		/// <summary>
 		/// Number of detail fields shown per row in the RowDetailsTemplate. Default is 10.
 		/// </summary>
 		public int RowDetailsItemsPerRow { get; set; } = 10;

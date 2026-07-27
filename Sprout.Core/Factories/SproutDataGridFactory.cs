@@ -44,6 +44,8 @@ namespace Sprout.Core.Factories
                 VM = new SproutDataGridVM(sproutGridConfig.Name, _configurationService, _dialogService)
             };
 
+            sproutDataGrid.dataGrid.IsReadOnly = sproutGridConfig.IsReadOnly;
+
             foreach (var colConfig in (sproutGridConfig.Columns ?? []).Where(c => !c.ShowInRowDetails))
             {
                 DataGridColumn col = null;
