@@ -168,6 +168,8 @@ namespace Sprout.Core.Factories
             {
                 sproutDataGrid.menuRow.Visibility = Visibility.Visible;
 
+                var rowContextMenu = new ContextMenu();
+
                 foreach (var rowAction in sproutDataGrid.Config.RowActions.Where(ra => ra.PageID != Guid.Empty))
                 {
                     sproutDataGrid.menuRowRoot.Items.Add(new MenuItem
@@ -176,7 +178,31 @@ namespace Sprout.Core.Factories
                         Command = sproutDataGrid.VM.OpenRowActionPageCommand,
                         CommandParameter = rowAction
                     });
+
+                    rowContextMenu.Items.Add(new MenuItem
+                    {
+                        Header = rowAction.Title,
+                        Command = sproutDataGrid.VM.OpenRowActionPageCommand,
+                        CommandParameter = rowAction
+                    });
                 }
+
+                sproutDataGrid.dataGrid.ContextMenu = rowContextMenu;
+
+                //Right click does not select the row by default, so the context menu would
+                //act on a stale selection. Select the row under the cursor before it opens.
+                sproutDataGrid.dataGrid.PreviewMouseRightButtonDown += (s, e) =>
+                {
+                    var source = e.OriginalSource as DependencyObject;
+
+                    while (source != null && source is not DataGridRow)
+                        source = VisualTreeHelper.GetParent(source);
+
+                    if (source is DataGridRow row)
+                    {
+                        row.IsSelected = true;
+                    }
+                };
             }
             #endregion
 
