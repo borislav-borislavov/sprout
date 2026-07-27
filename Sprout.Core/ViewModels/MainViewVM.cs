@@ -33,6 +33,7 @@ namespace Sprout.Core.ViewModels
         private ObservableCollection<ObservableObject> _tabs = [];
 
         [NotifyCanExecuteChangedFor(nameof(EditPageCommand))]
+        [NotifyCanExecuteChangedFor(nameof(EditPageScriptCommand))]
         [ObservableProperty]
         private ObservableObject _selectedTab;
 
