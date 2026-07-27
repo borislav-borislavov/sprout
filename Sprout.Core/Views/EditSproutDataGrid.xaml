@@ -201,6 +201,15 @@
                                     </Style>
                                 </DataGridComboBoxColumn.EditingElementStyle>
                             </DataGridComboBoxColumn>
+                            <DataGridCheckBoxColumn Header="Close Current Page"
+                                                    Binding="{Binding CloseCurrentPage, UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="Auto"/>
+                            <DataGridCheckBoxColumn Header="Open Parent On Close"
+                                                    Binding="{Binding OpenParentPageOnClose, UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="Auto"/>
+                            <DataGridCheckBoxColumn Header="Open As Dialog"
+                                                    Binding="{Binding OpenAsDialog, UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="Auto"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

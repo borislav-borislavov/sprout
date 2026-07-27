@@ -125,8 +125,22 @@ namespace Sprout.Core.SproutControlVMs
             var args = new OpenTabMessageArgs()
             {
                 PageConfigID = rowAction.PageID,
-                Parameter = this.Selected
+                Parameter = this.Selected,
+                OpenAsDialog = rowAction.OpenAsDialog,
+                ParentPageID = OwnerPageID,
+                OpenParentPageOnClose = rowAction.OpenParentPageOnClose
             };
+
+            //Close the current page before opening the new one. Opening as a dialog
+            //blocks until the dialog is dismissed, so closing afterwards would leave
+            //the current page visible for the dialog's whole lifetime.
+            if (rowAction.CloseCurrentPage)
+            {
+                WeakReferenceMessenger.Default.Send(new CloseTabMessage(new CloseTabMessageArgs
+                {
+                    PageConfigID = OwnerPageID
+                }));
+            }
 
             WeakReferenceMessenger.Default.Send(new OpenTabMessage(args));
         }

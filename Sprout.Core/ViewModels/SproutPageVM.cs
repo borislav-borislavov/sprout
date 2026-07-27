@@ -97,6 +97,11 @@ namespace Sprout.Core.ViewModels
                 DynamicViewInstance = new SproutPage(_configurationService, _sproutControlFactory) { DataContext = this };
                 DynamicViewInstance.InitializeControls(this);
 
+                foreach (var controlVM in VMRegistry.ViewModels.Values)
+                {
+                    controlVM.OwnerPageID = PageConfig.ID;
+                }
+
                 _host = new SproutPageLogicBridge($"{PageConfig.ID.ToString().Replace("-", "")}");
 
                 VMRegistry.VMChanged += async (_, change) =>

@@ -22,5 +22,11 @@ namespace Sprout.Core.Messages
         public Guid PageConfigID { get; set; }
         public object Parameter { get; set; }
         public bool OpenAsDialog { get; set; }
+
+        /// <summary>
+        /// When set, this page is opened after the new page closes.
+        /// </summary>
+        public Guid ParentPageID { get; set; }
+        public bool OpenParentPageOnClose { get; set; }
     }
 }

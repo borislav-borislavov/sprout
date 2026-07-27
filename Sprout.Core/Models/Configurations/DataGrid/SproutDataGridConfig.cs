@@ -60,5 +60,20 @@ namespace Sprout.Core.Models.Configurations.DataGrid
 		public string Title { get; set; }
 
 		public Guid PageID { get; set; }
+
+		/// <summary>
+		/// Close the page that owns the grid after opening the new page.
+		/// </summary>
+		public bool CloseCurrentPage { get; set; }
+
+		/// <summary>
+		/// Re-open the page that owns the grid when the newly opened page is closed.
+		/// </summary>
+		public bool OpenParentPageOnClose { get; set; }
+
+		/// <summary>
+		/// Open the page as a modal dialog instead of a tab.
+		/// </summary>
+		public bool OpenAsDialog { get; set; }
 	}
 }

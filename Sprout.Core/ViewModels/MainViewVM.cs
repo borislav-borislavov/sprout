@@ -41,6 +41,11 @@ namespace Sprout.Core.ViewModels
 
         private SproutConfiguration _sproutConfig;
 
+        /// <summary>
+        /// Tabs that should re-open their parent page when they are closed.
+        /// </summary>
+        private readonly Dictionary<SproutPageVM, Guid> _reopenParentOnClose = [];
+
         public MainViewVM(IConfigurationService configService,
             INavigationService navigationService,
             IDialogService dialogService,
@@ -53,6 +58,19 @@ namespace Sprout.Core.ViewModels
             _sproutPageVMFactory = sproutPageVMFactory;
             _vmFactory = vmFactory;
             LoadMenuPages();
+
+            Tabs.CollectionChanged += (_, e) =>
+            {
+                if (e.OldItems == null) return;
+
+                foreach (var oldItem in e.OldItems)
+                {
+                    if (oldItem is SproutPageVM closedTab && _reopenParentOnClose.Remove(closedTab, out var parentPageID))
+                    {
+                        OpenParentPage(parentPageID);
+                    }
+                }
+            };
 
             WeakReferenceMessenger.Default.Register<OpenTabMessage>(this, (r, msg) =>
             {
@@ -139,8 +157,29 @@ namespace Sprout.Core.ViewModels
         {
             var sproutPageVM = _sproutPageVMFactory.Create(pageConfig, args);
 
+            if (args?.OpenParentPageOnClose == true && args.ParentPageID != Guid.Empty)
+            {
+                _reopenParentOnClose[sproutPageVM] = args.ParentPageID;
+            }
+
             SelectedTab = sproutPageVM;
             Tabs.Add(sproutPageVM);
+        }
+
+        private void OpenParentPage(Guid parentPageID)
+        {
+            var parentConfig = _sproutConfig.Pages.FirstOrDefault(p => p.ID == parentPageID);
+            if (parentConfig == null) return;
+
+            //If the parent page is already open, just focus it.
+            var existing = Tabs.OfType<SproutPageVM>().FirstOrDefault(t => t.PageConfig?.ID == parentPageID);
+            if (existing != null)
+            {
+                SelectedTab = existing;
+                return;
+            }
+
+            OpenTab(parentConfig, null);
         }
 
         private void OpenPageAsDialog(SproutPageConfiguration pageConfig, OpenTabMessageArgs? args)
@@ -160,6 +199,11 @@ namespace Sprout.Core.ViewModels
                 };
 
                 window.ShowDialog();
+
+                if (args?.OpenParentPageOnClose == true && args.ParentPageID != Guid.Empty)
+                {
+                    OpenParentPage(args.ParentPageID);
+                }
             }
             catch (Exception ex)
             {

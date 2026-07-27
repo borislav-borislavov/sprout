@@ -15,6 +15,11 @@ namespace Sprout.Core.SproutControlVMs
     {
         public string Name { get; set; }
 
+        /// <summary>
+        /// The ID of the page configuration that owns this control.
+        /// </summary>
+        public Guid OwnerPageID { get; set; }
+
         public BaseSproutControlVM(string name)
         {
             Name = name;
