@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Sprout.Core.Common;
+using Sprout.Core.Factories;
 using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.Api;
@@ -41,6 +42,7 @@ namespace Sprout.Core.ViewModels
         private readonly IConfigurationService _configService;
         private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
+        private readonly ISproutPageVMFactory _sproutPageVMFactory;
 
         public string[] AdapterTypes { get; set; } = ["SqlServer", "Duck", "Api"];
 
@@ -65,11 +67,13 @@ namespace Sprout.Core.ViewModels
 
         public EditPageVM(IConfigurationService configService,
             INavigationService navigationService,
-            IDialogService dialogService)
+            IDialogService dialogService,
+            ISproutPageVMFactory sproutPageVMFactory)
         {
             _configService = configService;
             _navigationService = navigationService;
             _dialogService = dialogService;
+            _sproutPageVMFactory = sproutPageVMFactory;
 
 
             var nonMenuPages = _configService.Load().Pages.Where(p => p.AddToMenu == false);
@@ -87,6 +91,38 @@ namespace Sprout.Core.ViewModels
             }
 
             Controls.Add(gridConfig);
+        }
+
+        [RelayCommand]
+        private void Preview()
+        {
+            try
+            {
+                var previewVM = _sproutPageVMFactory.Create(PageConfig.Clone(), null);
+
+                var window = new System.Windows.Window
+                {
+                    Title = $"Preview - {PageConfig.Title}",
+                    Content = previewVM.DynamicViewInstance,
+                    Width = System.Windows.SystemParameters.PrimaryScreenWidth * 0.75,
+                    Height = System.Windows.SystemParameters.PrimaryScreenHeight * 0.75,
+                    WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen
+                };
+
+                window.PreviewKeyDown += (_, e) =>
+                {
+                    if (e.Key == System.Windows.Input.Key.Escape)
+                    {
+                        window.Close();
+                    }
+                };
+
+                window.Show();
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError(ex.Message);
+            }
         }
 
         [RelayCommand]

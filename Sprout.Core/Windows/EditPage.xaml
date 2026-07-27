@@ -17,6 +17,10 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </Window.Resources>
 
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Control" Key="Q" Command="{Binding PreviewCommand}" />
+    </Window.InputBindings>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.3*"/>
@@ -30,7 +34,22 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Label Content="Controls" FontWeight="Bold" FontSize="16" Margin="10" Foreground="DarkSlateGray"/>
+            <DockPanel>
+                <Button
+                    DockPanel.Dock="Right"
+                    VerticalAlignment="Center"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ToolTip="Preview (CTRL + Q)"
+                    Command="{Binding PreviewCommand}"
+                    Margin="0, 5, 10, 5">
+                    <TextBlock
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="23"
+                        Text="&#xE7B3;" />
+                </Button>
+                <Label Content="Controls" FontWeight="Bold" FontSize="16" Margin="10" Foreground="DarkSlateGray"/>
+            </DockPanel>
 
             <TreeView
                 Name="ControlsTree"
