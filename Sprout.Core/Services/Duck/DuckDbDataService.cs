@@ -229,6 +229,9 @@ namespace Sprout.Core.Services.Duck
         {
             var result = QueryBuilder.Build(_dataProvider.Text, _dataProvider, "$");
 
+            //a button which used to have a select action but now has only update action
+            if (string.IsNullOrEmpty(result.QueryText)) return;
+
             if (_connection.State == ConnectionState.Closed)
             {
                 await _connection.OpenAsync();
