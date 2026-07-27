@@ -38,5 +38,40 @@ namespace Sprout.Core.Features.Dependency
                 dummy.DataContext = null;
             }
         }
+
+        /// <summary>
+        /// Used to set a value on an object using a binding path.
+        /// </summary>
+        public static void SetValue(object source, string path, object value)
+        {
+            if (source == null) return;
+
+            // 1. Create the dummy
+            var dummy = new FrameworkElement { DataContext = source };
+
+            // Note: TwoWay mode and PropertyChanged trigger are strictly required 
+            // so the target (Tag) can push the value back to the source.
+            var binding = new Binding(path)
+            {
+                Source = source,
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+
+            try
+            {
+                // 2. Attach the binding
+                BindingOperations.SetBinding(dummy, FrameworkElement.TagProperty, binding);
+
+                // 3. Push the value to the source via the dummy's bound property
+                dummy.Tag = value;
+            }
+            finally
+            {
+                // 4. CLEAN UP: Explicitly break the link between the source and the dummy
+                BindingOperations.ClearBinding(dummy, FrameworkElement.TagProperty);
+                dummy.DataContext = null;
+            }
+        }
     }
 }

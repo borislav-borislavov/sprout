@@ -241,7 +241,7 @@ namespace Sprout.Core.ViewModels
             {
                 LoadCPL();
 
-                /*new logic for binding data adapter dependencies*/
+                //Making sure that each Dependency.Value has the latest value at all times
                 foreach ((string vmKey, BaseSproutControlVM vm) in VMRegistry.ViewModels)
                 {
                     if (vm is SproutButtonVM)
@@ -264,11 +264,24 @@ namespace Sprout.Core.ViewModels
                         }
                     }
 
+                    if (vm is IDependent dependent)
+                    {
+                        DependencyBinder.BindDependencies(dependent, VMRegistry);
+                    }
+
                 }
 
                 /*New logic for providing data*/
                 foreach ((string key, BaseSproutControlVM viewModel) in VMRegistry.ViewModels)
                 {
+                    if (viewModel is IDependent dependent)
+                    {
+                        foreach (var dependency in dependent.Dependencies)
+                        {
+                            dependent.DepenencyChanged(dependency, VMRegistry);
+                        }
+                    }
+
                     if (viewModel is IDataAdapterDictionaryHost dataAdapterDictionaryHost)
                     {
                         foreach ((_, IDataAdapter dataAdapter) in dataAdapterDictionaryHost.DataAdapters)
