@@ -1,4 +1,5 @@
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.Queries;
 using Sprout.Core.SproutControlVMs;
 using Sprout.Core.Views.Controls;
 using System;
@@ -8,13 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Sprout.Core.Factories
 {
     public class SproutLabelFactory : BaseSproutControlFactory, ISproutLabelFactory
     {
-        public SproutLabel Create(SproutLabelConfig config)
+        public SproutLabel Create(SproutLabelConfig config, VMRegistry vmRegistry)
         {
             var sproutLabel = new SproutLabel
             {
@@ -97,6 +99,30 @@ namespace Sprout.Core.Factories
             var vm = new SproutLabelVM(sproutLabel.Name);
             vm.SetUpState(sproutLabel);
             vm.Text = config.Text;
+
+            if (!string.IsNullOrEmpty(config.Binding))
+            {
+                var dependency = DependencyParser.ParseDependencies(config.Binding).FirstOrDefault();
+
+                if (dependency != null)
+                {
+                    //The source VM may not be registered yet (control order), so the
+                    //binding is attached on Loaded, after the whole page is constructed.
+                    sproutLabel.Loaded += (s, e) =>
+                    {
+                        if (BindingOperations.GetBinding(sproutLabel.textBlock, TextBlock.TextProperty)?.Source == vmRegistry[dependency.ControlName])
+                            return;
+
+                        sproutLabel.textBlock.SetBinding(
+                            TextBlock.TextProperty,
+                            new Binding(dependency.PropertyPath)
+                            {
+                                Source = vmRegistry[dependency.ControlName],
+                                Mode = BindingMode.OneWay
+                            });
+                    };
+                }
+            }
 
             return sproutLabel;
         }

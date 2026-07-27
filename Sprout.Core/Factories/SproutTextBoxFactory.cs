@@ -9,13 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Sprout.Core.Factories
 {
     public class SproutTextBoxFactory : BaseSproutControlFactory, ISproutTextBoxFactory
     {
-        public SproutTextBox Create(SproutTextBoxConfig config)
+        public SproutTextBox Create(SproutTextBoxConfig config, VMRegistry vmRegistry)
         {
             var sproutTextBox = new SproutTextBox
             {
@@ -90,6 +91,41 @@ namespace Sprout.Core.Factories
 
             sproutTextBox.VM.Dependencies = DependencyParser.ParseDependencies(sproutTextBox.Config.Binding);
             sproutTextBox.VM.SetUpState(sproutTextBox);
+
+            if (config.TwoWayBinding && !string.IsNullOrEmpty(config.Binding))
+            {
+                var dependency = sproutTextBox.VM.Dependencies.FirstOrDefault();
+
+                if (dependency != null)
+                {
+                    //The source VM may not be registered yet (control order), so the
+                    //binding is attached on Loaded, after the whole page is constructed.
+                    sproutTextBox.Loaded += (s, e) =>
+                    {
+                        var sourceVM = vmRegistry[dependency.ControlName];
+
+                        if (BindingOperations.GetBinding(sproutTextBox.textBox, TextBox.TextProperty)?.Source == sourceVM)
+                            return;
+
+                        //Replaces the VM.Text binding from SetUpState. The binding engine keeps
+                        //both directions in sync and suppresses feedback loops natively.
+                        sproutTextBox.textBox.SetBinding(TextBox.TextProperty,
+                            new Binding(dependency.PropertyPath)
+                            {
+                                Source = sourceVM,
+                                Mode = BindingMode.TwoWay,
+                                UpdateSourceTrigger = config.ChangeValueOnEnter
+                                    ? UpdateSourceTrigger.Explicit
+                                    : UpdateSourceTrigger.PropertyChanged
+                            });
+                    };
+
+                    //Keep VM.Text in sync so page logic reading the VM still sees the value.
+                    sproutTextBox.textBox.TextChanged += (s, e) =>
+                        sproutTextBox.VM.Text = sproutTextBox.textBox.Text;
+                }
+            }
+
             return sproutTextBox;
         }
     }

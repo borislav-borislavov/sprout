@@ -295,7 +295,7 @@ namespace Sprout.Core.Services.Duck
 
             {commandText}
 
-            SELECT * FROM _messages;
+            ;SELECT * FROM _messages;
             """;
 
         private static void SetQueryParamFromDataRow(

@@ -120,13 +120,13 @@ namespace Sprout.Core.Factories
                 case SproutComboConfig sproutComboConfig:
                     return _sproutComboFactory.Create(sproutComboConfig);
                 case SproutTextBoxConfig sproutTextBoxConfig:
-                    return _sproutTextBoxFactory.Create(sproutTextBoxConfig);
+                    return _sproutTextBoxFactory.Create(sproutTextBoxConfig, vmRegistry);
                 case SproutCheckBoxConfig sproutCheckBoxConfig:
                     return _sproutCheckBoxFactory.Create(sproutCheckBoxConfig);
                 case SproutDatePickerConfig sproutDatePickerConfig:
                     return _sproutDatePickerFactory.Create(sproutDatePickerConfig);
                 case SproutLabelConfig sproutLabelConfig:
-                    return _sproutLabelFactory.Create(sproutLabelConfig);
+                    return _sproutLabelFactory.Create(sproutLabelConfig, vmRegistry);
                 default:
                     throw new NotImplementedException();
             }

@@ -22,8 +22,6 @@ namespace Sprout.Core.SproutControlVMs
 
         public IEnumerable<DataProviderDependency> Dependencies { get; set; } = new List<DataProviderDependency>();
 
-        private bool _ignoreChange = false;
-
         public SproutTextBoxVM(string name) 
             : base(name)
         {

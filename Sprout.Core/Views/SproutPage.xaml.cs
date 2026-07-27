@@ -64,56 +64,6 @@ namespace Sprout.Core.Views
                         vm.CompileResult = compiler.Compile();
                     }
                 }
-
-                //step 2 - hook up registry path bindings (labels, two way text boxes).
-                //Runs after all VMs are registered so the registry indexer path resolves
-                //regardless of the order the controls appear on the page.
-                foreach (var kvp in _controls)
-                {
-                    if (kvp.Value is SproutLabel sproutLabel &&
-                        !string.IsNullOrEmpty(sproutLabel.Config.Binding))
-                    {
-                        var dependency = DependencyParser.ParseDependencies(sproutLabel.Config.Binding).FirstOrDefault();
-
-                        if (dependency != null)
-                        {
-                            sproutLabel.textBlock.SetBinding(
-                                TextBlock.TextProperty,
-                                new Binding
-                                {
-                                    Source = vm.VMRegistry,
-                                    Path = new PropertyPath($"[{dependency.ControlName}].{dependency.PropertyPath}"),
-                                    Mode = BindingMode.OneWay
-                                });
-                        }
-                    }
-
-                    if (kvp.Value is SproutTextBox sproutTextBox &&
-                        sproutTextBox.Config.TwoWayBinding &&
-                        !string.IsNullOrEmpty(sproutTextBox.Config.Binding))
-                    {
-                        var dependency = DependencyParser.ParseDependencies(sproutTextBox.Config.Binding).FirstOrDefault();
-
-                        if (dependency != null)
-                        {
-                            //Replaces the VM.Text binding from SetUpState. The binding engine keeps
-                            //both directions in sync and suppresses feedback loops natively.
-                            sproutTextBox.textBox.SetBinding(TextBox.TextProperty,
-                                new Binding($"[{dependency.ControlName}].{dependency.PropertyPath}")
-                                {
-                                    Source = vm.VMRegistry,
-                                    Mode = BindingMode.TwoWay,
-                                    UpdateSourceTrigger = sproutTextBox.Config.ChangeValueOnEnter
-                                        ? UpdateSourceTrigger.Explicit
-                                        : UpdateSourceTrigger.PropertyChanged
-                                });
-
-                            //Keep VM.Text in sync so page logic reading the VM still sees the value.
-                            sproutTextBox.textBox.TextChanged += (s, e) =>
-                                sproutTextBox.VM.Text = sproutTextBox.textBox.Text;
-                        }
-                    }
-                }
             }
             catch (Exception ex)
             {

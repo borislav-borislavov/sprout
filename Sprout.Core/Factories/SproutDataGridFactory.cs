@@ -148,7 +148,7 @@ namespace Sprout.Core.Factories
             #region Set up which page opens on double click
             if (sproutDataGrid.Config.ItemDisplayPage != Guid.Empty)
             {
-                sproutDataGrid.dataGrid.IsReadOnly = true;
+                //sproutDataGrid.dataGrid.IsReadOnly = true;
 
                 DataGridDoubleClickBehavior.SetDoubleClickCommand(sproutDataGrid.dataGrid, sproutDataGrid.VM.DisplayItemPageCommand);
                 var itemDisplayPageInfo = new ItemDisplayPageInfo
