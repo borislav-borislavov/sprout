@@ -35,7 +35,20 @@ namespace Sprout.Core.ViewModels
 
         public SproutPageConfiguration PageConfig { get; private set; }
 
-        public string Title => PageConfig?.Title;
+        private string _customTitle;
+
+        public string Title => _customTitle ?? PageConfig?.Title;
+
+        public void RenameTab(string newTitle)
+        {
+            if (string.IsNullOrWhiteSpace(newTitle))
+            {
+                return;
+            }
+
+            _customTitle = newTitle;
+            OnPropertyChanged(nameof(Title));
+        }
 
         /// <summary>
         /// The starting args that a page receives when started as a child page

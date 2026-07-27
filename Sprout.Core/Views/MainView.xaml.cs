@@ -53,5 +53,24 @@ namespace Sprout.Core.Views
                 CloseTab(sender);
             }
         }
+
+        private void RenameTabMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not FrameworkElement menuItem
+                || menuItem.DataContext is not SproutPageVM pageVM)
+            {
+                return;
+            }
+
+            var renameWindow = new Windows.RenameTabWindow(pageVM.Title)
+            {
+                Owner = Window.GetWindow(this)
+            };
+
+            if (renameWindow.ShowDialog() == true)
+            {
+                pageVM.RenameTab(renameWindow.NewName);
+            }
+        }
     }
 }

@@ -222,8 +222,15 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
                 <DataTemplate>
                     <StackPanel Name="TabHeaderStackPanel"
                                 Orientation="Horizontal"
+                                Background="Transparent"
                                 MouseDown="TabHeaderStackPanel_MouseDown">
-                        
+
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Rename" Click="RenameTabMenuItem_Click" />
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+
                         <TextBlock Text="{Binding Title}" />
                         
                         
