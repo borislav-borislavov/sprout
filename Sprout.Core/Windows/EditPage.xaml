@@ -58,6 +58,11 @@
                 SelectedItemChanged="ControlsTree_SelectedItemChanged"
                 ContextMenuOpening="ControlsTree_ContextMenuOpening"
                 ItemsSource="{Binding Controls}">
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Setter Property="IsExpanded" Value="True"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>
                 <TreeView.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Move to" Name="MoveToMenuItem"/>
