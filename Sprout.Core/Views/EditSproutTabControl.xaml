@@ -1,0 +1,169 @@
+<UserControl x:Class="Sprout.Core.Views.EditSproutTabControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Sprout.Core.Views"
+             xmlns:config="clr-namespace:Sprout.Core.Models.Configurations"
+             xmlns:conv="clr-namespace:Sprout.Core.Converters"
+
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance config:SproutTabControlConfig}">
+    <UserControl.Resources>
+        <conv:NullableDoubleConverter x:Key="NullableDoubleConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*" MinWidth="150"/>
+        </Grid.ColumnDefinitions>
+
+        <!--Name-->
+        <TextBlock
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="5"
+            VerticalAlignment="Top"
+            Text="Name"
+            FontWeight="Bold"
+            FontSize="16"/>
+
+        <TextBox
+            Grid.Row="0"
+            Grid.Column="1"
+            VerticalAlignment="Top"
+            Margin="5"
+            Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!--Height-->
+        <TextBlock
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="5"
+            VerticalAlignment="Top"
+            Text="Height"
+            FontWeight="Bold"
+            FontSize="16"/>
+
+        <TextBox
+            Grid.Row="1"
+            Grid.Column="1"
+            VerticalAlignment="Top"
+            Margin="5"
+            Text="{Binding Height, Converter={StaticResource NullableDoubleConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!--Width-->
+        <TextBlock
+            Grid.Row="2"
+            Grid.Column="0"
+            Margin="5"
+            VerticalAlignment="Top"
+            Text="Width"
+            FontWeight="Bold"
+            FontSize="16"/>
+
+        <TextBox
+            Grid.Row="2"
+            Grid.Column="1"
+            VerticalAlignment="Top"
+            Margin="5"
+            Text="{Binding Width, Converter={StaticResource NullableDoubleConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!--Margin-->
+        <TextBlock
+            Grid.Row="3"
+            Grid.Column="0"
+            Margin="5"
+            VerticalAlignment="Top"
+            Text="Margin"
+            FontWeight="Bold"
+            FontSize="16"/>
+
+        <TextBox
+            Grid.Row="3"
+            Grid.Column="1"
+            VerticalAlignment="Top"
+            Margin="5"
+            Text="{Binding Margin, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!--ToolTip-->
+        <TextBlock
+            Grid.Row="4"
+            Grid.Column="0"
+            Margin="5"
+            VerticalAlignment="Top"
+            Text="ToolTip"
+            FontWeight="Bold"
+            FontSize="16"/>
+
+        <TextBox
+            Grid.Row="4"
+            Grid.Column="1"
+            VerticalAlignment="Top"
+            Margin="5"
+            Text="{Binding ToolTip, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!--Tabs-->
+        <TextBlock
+            Grid.Row="5"
+            Grid.Column="0"
+            Margin="5"
+            VerticalAlignment="Top"
+            Text="Tabs"
+            FontWeight="Bold"
+            FontSize="16"/>
+
+        <Button
+            Grid.Row="5"
+            Grid.Column="1"
+            HorizontalAlignment="Left"
+            Margin="5"
+            Padding="10, 2"
+            Content="Add Tab"
+            Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.AddTabCommand}"/>
+
+        <ListBox
+            Grid.Row="6"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Margin="5"
+            ItemsSource="{Binding Tabs}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="{Binding Header}" VerticalAlignment="Center"/>
+
+                        <Button
+                            Grid.Column="1"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ToolTip="Remove Tab"
+                            Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.RemoveTabCommand}"
+                            CommandParameter="{Binding}">
+                            <TextBlock
+                                FontFamily="Segoe MDL2 Assets"
+                                Text="&#xE74D;"/>
+                        </Button>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

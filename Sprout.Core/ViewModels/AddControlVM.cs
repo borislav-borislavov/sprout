@@ -111,6 +111,12 @@ namespace Sprout.Core.ViewModels
                         Name = ControlName
                     };
                     break;
+                case SproutControlType.TabControl:
+                    NewControl = new SproutTabControlConfig()
+                    {
+                        Name = ControlName
+                    };
+                    break;
                 default:
                     throw new NotImplementedException(
                         $"Control type '{controlType}' is not implemented yet.");

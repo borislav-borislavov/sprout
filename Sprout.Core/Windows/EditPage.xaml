@@ -169,6 +169,26 @@
                             <TextBlock Text="{Binding Name}"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
+
+                    <HierarchicalDataTemplate DataType="{x:Type config:SproutTabControlConfig}" ItemsSource="{Binding ChildCollection}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                FontFamily="Segoe Fluent Icons"
+                                Text="&#xE8A9;"
+                                Margin="3"/>
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+
+                    <HierarchicalDataTemplate DataType="{x:Type config:SproutTabItemConfig}" ItemsSource="{Binding ChildCollection}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                FontFamily="Segoe Fluent Icons"
+                                Text="&#xE7C4;"
+                                Margin="3"/>
+                            <TextBlock Text="{Binding Header}"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
                 </TreeView.Resources>
             </TreeView>
 
@@ -303,6 +323,14 @@
 
                         <DataTemplate DataType="{x:Type config:SproutListConfig}">
                             <views:EditSproutList/>
+                        </DataTemplate>
+
+                        <DataTemplate DataType="{x:Type config:SproutTabControlConfig}">
+                            <views:EditSproutTabControl/>
+                        </DataTemplate>
+
+                        <DataTemplate DataType="{x:Type config:SproutTabItemConfig}">
+                            <views:EditSproutTabItem/>
                         </DataTemplate>
                     </Grid.Resources>
 

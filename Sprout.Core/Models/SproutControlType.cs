@@ -18,5 +18,6 @@ namespace Sprout.Core.Models
         Border,
         List,
         Label,
+        TabControl,
     }
 }

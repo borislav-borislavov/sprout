@@ -76,7 +76,9 @@ namespace Sprout.Core
             services.AddTransient<ISproutDatePickerFactory, SproutDatePickerFactory>();
             services.AddTransient<ISproutLabelFactory, SproutLabelFactory>();
             services.AddTransient<ISproutListFactory, SproutListFactory>();
-            services.AddTransient<ISproutTextBoxFactory, SproutTextBoxFactory>();            
+            services.AddTransient<ISproutTextBoxFactory, SproutTextBoxFactory>();
+            services.AddTransient<ISproutTabControlFactory, SproutTabControlFactory>();
+
         }
     }
 }

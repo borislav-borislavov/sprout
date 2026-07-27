@@ -187,6 +187,10 @@ namespace Sprout.Core.ViewModels
                 {
                     gridParent.Children.Remove(SelectedNode);
                 }
+                else if (parent is SproutTabControlConfig tabControlParent && SelectedNode is SproutTabItemConfig tabItem)
+                {
+                    tabControlParent.Tabs.Remove(tabItem);
+                }
                 else if (parent is IChildControlHost childHost)
                 {
                     childHost.Child = null;
@@ -212,6 +216,17 @@ namespace Sprout.Core.ViewModels
                     }
 
                     var result = FindParent(gridConfig.Children, target);
+                    if (result != null) return result;
+                }
+
+                if (node is SproutTabControlConfig tabControlConfig)
+                {
+                    if (tabControlConfig.Tabs.Contains(target))
+                    {
+                        return tabControlConfig;
+                    }
+
+                    var result = FindParent(tabControlConfig.Tabs, target);
                     if (result != null) return result;
                 }
 
@@ -336,6 +351,14 @@ namespace Sprout.Core.ViewModels
                     }
                 }
 
+                if (node is SproutTabControlConfig tabControlConfig)
+                {
+                    foreach (var childGrid in GetAllGridConfigs(tabControlConfig.Tabs))
+                    {
+                        yield return childGrid;
+                    }
+                }
+
                 if (node is IChildControlHost childHost && childHost.Child != null)
                 {
                     foreach (var childGrid in GetAllGridConfigs([childHost.Child]))
@@ -354,6 +377,19 @@ namespace Sprout.Core.ViewModels
 
                 if (child is GridConfig childGrid && IsDescendant(childGrid, target))
                     return true;
+
+                if (child is SproutTabControlConfig childTabControl)
+                {
+                    foreach (var tab in childTabControl.Tabs)
+                    {
+                        if (tab == target) return true;
+
+                        if (tab.Child == target) return true;
+
+                        if (tab.Child is GridConfig tabGrid && IsDescendant(tabGrid, target))
+                            return true;
+                    }
+                }
 
                 if (child is IChildControlHost childHost && childHost.Child != null)
                 {
@@ -518,6 +554,43 @@ namespace Sprout.Core.ViewModels
             if (SelectedGridConfig == null) return;
 
             SelectedGridConfig.Rows.Add("*");
+        }
+
+        [RelayCommand]
+        private void AddTab()
+        {
+            try
+            {
+                if (SelectedNode is not SproutTabControlConfig tabControlConfig) return;
+
+                var index = tabControlConfig.Tabs.Count + 1;
+
+                tabControlConfig.Tabs.Add(new SproutTabItemConfig
+                {
+                    Name = $"{tabControlConfig.Name}Tab{index}",
+                    Header = $"Tab {index}",
+                });
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError(ex.Message);
+            }
+        }
+
+        [RelayCommand]
+        private void RemoveTab(SproutTabItemConfig tabItem)
+        {
+            try
+            {
+                if (tabItem == null) return;
+                if (SelectedNode is not SproutTabControlConfig tabControlConfig) return;
+
+                tabControlConfig.Tabs.Remove(tabItem);
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError(ex.Message);
+            }
         }
 
         [RelayCommand]

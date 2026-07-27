@@ -21,6 +21,7 @@ namespace Sprout.Core.Factories
         private readonly ISproutLabelFactory _sproutLabelFactory;
         private readonly ISproutListFactory _sproutListFactory;
         private readonly ISproutTextBoxFactory _sproutTextBoxFactory;
+        private readonly ISproutTabControlFactory _sproutTabControlFactory;
         private readonly IDataAdapterFactory _dataAdapterFactory;
 
         public SproutControlFactory(
@@ -34,6 +35,7 @@ namespace Sprout.Core.Factories
             ISproutLabelFactory sproutLabelFactory,
             ISproutListFactory sproutListFactory,
             ISproutTextBoxFactory sproutTextBoxFactory,
+            ISproutTabControlFactory sproutTabControlFactory,
             IDataAdapterFactory dataAdapterFactory)
         {
             _dataAdapterFactory = dataAdapterFactory;
@@ -47,6 +49,7 @@ namespace Sprout.Core.Factories
             _sproutLabelFactory = sproutLabelFactory;
             _sproutListFactory = sproutListFactory;
             _sproutTextBoxFactory = sproutTextBoxFactory;
+            _sproutTabControlFactory = sproutTabControlFactory;
         }
 
         public UIElement GetControl(SproutControlConfig sControl, Dictionary<string, UIElement> controls, VMRegistry vmRegistry)
@@ -90,6 +93,27 @@ namespace Sprout.Core.Factories
                         }
 
                         return grid;
+                    }
+                case SproutTabControlConfig sproutTabControlConfig:
+                    {
+                        var sproutTabControl = _sproutTabControlFactory.Create(sproutTabControlConfig);
+
+                        foreach (var tabConfig in sproutTabControlConfig.Tabs)
+                        {
+                            var tabItem = new System.Windows.Controls.TabItem
+                            {
+                                Header = tabConfig.Header,
+                            };
+
+                            if (tabConfig.Child != null)
+                            {
+                                tabItem.Content = GetControl(tabConfig.Child, controls, vmRegistry);
+                            }
+
+                            sproutTabControl.tabControl.Items.Add(tabItem);
+                        }
+
+                        return sproutTabControl;
                     }
                 case SproutBorderConfig sproutBorderConfig:
                     {
