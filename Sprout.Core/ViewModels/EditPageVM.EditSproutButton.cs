@@ -100,6 +100,9 @@ namespace Sprout.Core.ViewModels
 
                 SelectedButton.DataAdapter = new SqlServerDataAdapterConfig
                 {
+                    Name = SelectedButton.Name,
+                    ParentType = SelectedButton.GetType(),
+
                     ConnectionString = string.Empty,
                     DataProvider = new SqlServerDataProviderConfig
                     {

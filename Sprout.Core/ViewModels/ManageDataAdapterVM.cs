@@ -67,6 +67,8 @@ namespace Sprout.Core.ViewModels
                         UpdateCommand = new SqlServerEditCommandConfig(),
                         DeleteCommand = new SqlServerEditCommandConfig(),
                     };
+
+                    SetAdapterOwnerInfo();
                     OnAdapterConfigHostChanged(AdapterConfigHost);
                 }
                 else if (SelectedAdapterType == "Duck")
@@ -85,6 +87,7 @@ namespace Sprout.Core.ViewModels
                         DeleteCommand = new DuckEditCommandConfig(),
                     };
 
+                    SetAdapterOwnerInfo();
                     OnAdapterConfigHostChanged(AdapterConfigHost);
                 }
                 else
@@ -95,6 +98,18 @@ namespace Sprout.Core.ViewModels
             catch (Exception ex)
             {
                 _dialogService.ShowError(ex.Message);
+            }
+        }
+
+        private void SetAdapterOwnerInfo()
+        {
+            if (AdapterConfigHost?.DataAdapter == null) return;
+
+            AdapterConfigHost.DataAdapter.ParentType = AdapterConfigHost.GetType();
+
+            if (AdapterConfigHost is SproutControlConfig controlConfig)
+            {
+                AdapterConfigHost.DataAdapter.Name = controlConfig.Name;
             }
         }
     }

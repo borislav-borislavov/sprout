@@ -47,15 +47,29 @@ namespace Sprout.Core.Models.Configurations
 					GetDataAdapterConfigsRecursive(child, dataAdapterConfigs);
 				}
 			}
-			else if (control is IDataAdapterConfigHost dataAdapterControlConfig)
+
+			if (control is SproutTabControlConfig tabControlConfig)
+			{
+				foreach (var tab in tabControlConfig.Tabs)
+				{
+					GetDataAdapterConfigsRecursive(tab, dataAdapterConfigs);
+				}
+			}
+
+			if (control is IChildControlHost childHost && childHost.Child is not null)
+			{
+				GetDataAdapterConfigsRecursive(childHost.Child, dataAdapterConfigs);
+			}
+
+			if (control is IDataAdapterConfigHost dataAdapterControlConfig)
 			{
 				if (dataAdapterControlConfig.DataAdapter is not null)
 				{
-                    //this helps the DataAdapter fetch the correct UIState for the control it's associated with
-                    dataAdapterControlConfig.DataAdapter.ParentType = control.GetType();
-                    dataAdapterControlConfig.DataAdapter.Name = control.Name;
+					//this helps the DataAdapter fetch the correct UIState for the control it's associated with
+					dataAdapterControlConfig.DataAdapter.ParentType = control.GetType();
+					dataAdapterControlConfig.DataAdapter.Name = control.Name;
 
-                    dataAdapterConfigs.Add(control.Name, dataAdapterControlConfig.DataAdapter);
+					dataAdapterConfigs.Add(control.Name, dataAdapterControlConfig.DataAdapter);
 				}
 
 				if (control is SproutDataGridConfig dataGridConfig)

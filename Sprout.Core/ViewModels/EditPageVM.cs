@@ -497,6 +497,9 @@ namespace Sprout.Core.ViewModels
                 {
                     adapterControl.DataAdapter = new SqlServerDataAdapterConfig
                     {
+                        Name = SelectedNode.Name,
+                        ParentType = SelectedNode.GetType(),
+
                         DataProvider = new SqlServerDataProviderConfig
                         {
                             Text = string.Empty
@@ -511,6 +514,9 @@ namespace Sprout.Core.ViewModels
                 {
                     adapterControl.DataAdapter = new DuckDataAdapterConfig
                     {
+                        Name = SelectedNode.Name,
+                        ParentType = SelectedNode.GetType(),
+
                         ConnectionString = "DataSource=:memory:",
 
                         DataProvider = new DuckDataProviderConfig
@@ -527,6 +533,9 @@ namespace Sprout.Core.ViewModels
                 {
                     adapterControl.DataAdapter = new ApiDataAdapterConfig
                     {
+                        Name = SelectedNode.Name,
+                        ParentType = SelectedNode.GetType(),
+
                         DataProvider = new ApiDataProviderConfig
                         {
                             Text = string.Empty
