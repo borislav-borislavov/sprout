@@ -65,6 +65,8 @@ namespace Sprout.Core.ViewModels
 
         public ObservableCollection<SproutPageConfiguration> NonMenuPages { get; set; }
 
+        public ObservableCollection<SproutPageConfiguration> AllPages { get; set; }
+
         public EditPageVM(IConfigurationService configService,
             INavigationService navigationService,
             IDialogService dialogService,
@@ -79,6 +81,8 @@ namespace Sprout.Core.ViewModels
             var nonMenuPages = _configService.Load().Pages.Where(p => p.AddToMenu == false);
             NonMenuPages = new ObservableCollection<SproutPageConfiguration>(nonMenuPages);
             NonMenuPages.Insert(0, new SproutPageConfiguration { Title = "NULL", ID = Guid.Empty });
+
+            AllPages = new ObservableCollection<SproutPageConfiguration>(_configService.Load().Pages);
         }
 
         public void Initialize(SproutPageConfiguration pageConfig)

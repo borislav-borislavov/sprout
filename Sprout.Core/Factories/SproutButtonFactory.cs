@@ -127,6 +127,10 @@ namespace Sprout.Core.Factories
                 {
                     compositeAction.Add(new OpenPageButtonAction(openPageConfig.PageID, openPageConfig.OpenAsDialog));
                 }
+                else if (actionConfig is ClosePageActionConfig closePageConfig)
+                {
+                    compositeAction.Add(new ClosePageButtonAction(closePageConfig.PageID));
+                }
             }
 
             sproutButton.BindButtonAction(sproutButton.button, compositeAction);

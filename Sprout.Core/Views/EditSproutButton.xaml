@@ -200,6 +200,10 @@
                                                Visibility="{Binding OpenAsDialog, Converter={StaticResource BoolToVis}}"/>
                                 </StackPanel>
                             </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type config:ClosePageActionConfig}">
+                                <TextBlock Text="Close Page" FontWeight="SemiBold"/>
+                            </DataTemplate>
                         </ListBox.Resources>
                     </ListBox>
 
@@ -250,6 +254,17 @@
                                               SelectedValue="{Binding PageID, Mode=TwoWay}"/>
                                     <CheckBox Content="Open as dialog" VerticalAlignment="Center" Margin="10,0,0,0"
                                               IsChecked="{Binding OpenAsDialog, Mode=TwoWay}"/>
+                                </StackPanel>
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type config:ClosePageActionConfig}">
+                                <StackPanel Orientation="Horizontal" Margin="5">
+                                    <TextBlock Text="Page:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                    <ComboBox Width="200"
+                                              ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.AllPages}"
+                                              DisplayMemberPath="Title"
+                                              SelectedValuePath="ID"
+                                              SelectedValue="{Binding PageID, Mode=TwoWay}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </Grid.Resources>

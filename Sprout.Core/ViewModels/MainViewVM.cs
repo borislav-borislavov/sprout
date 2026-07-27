@@ -10,7 +10,9 @@ using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.CPL;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Navigation;
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Sprout.Core.ViewModels
 {
@@ -72,6 +74,30 @@ namespace Sprout.Core.ViewModels
                     _dialogService.ShowMessage($"Page with ID {msg.Value.PageConfigID} not found.", "Error");
                 }
             });
+
+            WeakReferenceMessenger.Default.Register<CloseTabMessage>(this, (r, msg) =>
+            {
+                CloseTabs(msg.Value.PageConfigID);
+            });
+        }
+
+        private void CloseTabs(Guid pageConfigID)
+        {
+            var tabsToClose = Tabs.OfType<SproutPageVM>()
+                .Where(t => t.PageConfig?.ID == pageConfigID)
+                .ToList();
+
+            if (tabsToClose.Count == 0) return;
+
+            foreach (var tab in tabsToClose)
+            {
+                Tabs.Remove(tab);
+            }
+
+            if (tabsToClose.Contains(SelectedTab))
+            {
+                SelectedTab = Tabs.Count > 0 ? Tabs[0] : null;
+            }
         }
 
         private void LoadMenuPages()

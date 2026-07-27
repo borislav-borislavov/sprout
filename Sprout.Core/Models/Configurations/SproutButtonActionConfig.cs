@@ -33,4 +33,9 @@ namespace Sprout.Core.Models.Configurations
         public Guid PageID { get; set; }
         public bool OpenAsDialog { get; set; }
     }
+
+    public class ClosePageActionConfig : SproutButtonActionConfig
+    {
+        public Guid PageID { get; set; }
+    }
 }

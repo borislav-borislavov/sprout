@@ -18,7 +18,7 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private SproutButtonActionConfig _selectedButtonAction;
 
-        public string[] AvailableActionTypes { get; } = [nameof(ExecuteUpdateActionConfig), nameof(RefreshDataGridActionConfig), nameof(ExecuteSelectActionConfig), nameof(CopyToClipboardActionConfig), nameof(OpenPageActionConfig)];
+        public string[] AvailableActionTypes { get; } = [nameof(ExecuteUpdateActionConfig), nameof(RefreshDataGridActionConfig), nameof(ExecuteSelectActionConfig), nameof(CopyToClipboardActionConfig), nameof(OpenPageActionConfig), nameof(ClosePageActionConfig)];
 
         [ObservableProperty]
         private string _selectedActionType;
@@ -39,6 +39,7 @@ namespace Sprout.Core.ViewModels
                     nameof(ExecuteSelectActionConfig) => new ExecuteSelectActionConfig(),
                     nameof(CopyToClipboardActionConfig) => new CopyToClipboardActionConfig(),
                     nameof(OpenPageActionConfig) => new OpenPageActionConfig(),
+                    nameof(ClosePageActionConfig) => new ClosePageActionConfig(),
                     _ => throw new NotImplementedException($"Action type '{SelectedActionType}' is not implemented.")
                 };
 
