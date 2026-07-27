@@ -120,12 +120,31 @@ namespace Sprout.Core.SproutControlVMs
         [RelayCommand]
         private void OpenRowActionPage(SproutDataGridRowActionConfig rowAction)
         {
-            if (Selected == null || rowAction == null) return;
+            if (rowAction == null) return;
+
+            var row = Selected;
+
+            //No selection, but the grid has exactly one row: act on that row.
+            //Exclude WPF's "new row" placeholder present on editable grids.
+            if (row == null && Grid != null)
+            {
+                var rows = Grid.dataGrid.Items.Cast<object>()
+                    .Where(i => i != CollectionView.NewItemPlaceholder)
+                    .Take(2)
+                    .ToList();
+
+                if (rows.Count == 1)
+                {
+                    row = rows[0];
+                }
+            }
+
+            if (row == null) return;
 
             var args = new OpenTabMessageArgs()
             {
                 PageConfigID = rowAction.PageID,
-                Parameter = this.Selected,
+                Parameter = row,
                 OpenAsDialog = rowAction.OpenAsDialog,
                 ParentPageID = OwnerPageID,
                 OpenParentPageOnClose = rowAction.OpenParentPageOnClose
