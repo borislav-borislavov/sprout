@@ -123,6 +123,10 @@ namespace Sprout.Core.Factories
                 {
                     compositeAction.Add(new CopyToClipboardButtonAction(copyConfig.ClipboardText, _clipboardService));
                 }
+                else if (actionConfig is OpenPageActionConfig openPageConfig)
+                {
+                    compositeAction.Add(new OpenPageButtonAction(openPageConfig.PageID, openPageConfig.OpenAsDialog));
+                }
             }
 
             sproutButton.BindButtonAction(sproutButton.button, compositeAction);

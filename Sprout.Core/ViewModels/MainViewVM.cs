@@ -58,7 +58,14 @@ namespace Sprout.Core.ViewModels
 
                 if (pageConfig != null)
                 {
-                    OpenTab(pageConfig, msg.Value);
+                    if (msg.Value.OpenAsDialog)
+                    {
+                        OpenPageAsDialog(pageConfig, msg.Value);
+                    }
+                    else
+                    {
+                        OpenTab(pageConfig, msg.Value);
+                    }
                 }
                 else
                 {
@@ -108,6 +115,30 @@ namespace Sprout.Core.ViewModels
 
             SelectedTab = sproutPageVM;
             Tabs.Add(sproutPageVM);
+        }
+
+        private void OpenPageAsDialog(SproutPageConfiguration pageConfig, OpenTabMessageArgs? args)
+        {
+            try
+            {
+                var sproutPageVM = _sproutPageVMFactory.Create(pageConfig, args);
+
+                var window = new System.Windows.Window
+                {
+                    Title = pageConfig.Title,
+                    Content = sproutPageVM.DynamicViewInstance,
+                    Width = System.Windows.SystemParameters.PrimaryScreenWidth * 0.85,
+                    Height = System.Windows.SystemParameters.PrimaryScreenHeight * 0.85,
+                    WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner,
+                    Owner = System.Windows.Application.Current?.MainWindow
+                };
+
+                window.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError(ex.Message);
+            }
         }
 
         [RelayCommand]

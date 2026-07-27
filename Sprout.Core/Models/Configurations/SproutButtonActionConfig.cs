@@ -27,4 +27,10 @@ namespace Sprout.Core.Models.Configurations
     {
         public string ClipboardText { get; set; }
     }
+
+    public class OpenPageActionConfig : SproutButtonActionConfig
+    {
+        public Guid PageID { get; set; }
+        public bool OpenAsDialog { get; set; }
+    }
 }

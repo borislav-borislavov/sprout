@@ -21,5 +21,6 @@ namespace Sprout.Core.Messages
     {
         public Guid PageConfigID { get; set; }
         public object Parameter { get; set; }
+        public bool OpenAsDialog { get; set; }
     }
 }

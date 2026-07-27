@@ -16,6 +16,7 @@
         <conv:IconStringConverter x:Key="IconStringConverter"/>
         <conv:NullableDoubleConverter x:Key="NullableDoubleConverter"/>
         <conv:StringToBrushConverter x:Key="StringToBrush"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </UserControl.Resources>
 
     <Grid>
@@ -191,6 +192,14 @@
                             <DataTemplate DataType="{x:Type config:CopyToClipboardActionConfig}">
                                 <TextBlock Text="Copy to Clipboard" FontWeight="SemiBold"/>
                             </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type config:OpenPageActionConfig}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Open Page" FontWeight="SemiBold"/>
+                                    <TextBlock Text=" (Dialog)" Foreground="DarkSlateGray"
+                                               Visibility="{Binding OpenAsDialog, Converter={StaticResource BoolToVis}}"/>
+                                </StackPanel>
+                            </DataTemplate>
                         </ListBox.Resources>
                     </ListBox>
 
@@ -228,6 +237,19 @@
                                 <StackPanel Orientation="Horizontal" Margin="5">
                                     <TextBlock Text="Clipboard Text/Dependency:" VerticalAlignment="Center" Margin="0,0,5,0"/>
                                     <TextBox Width="300" Text="{Binding ClipboardText, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type config:OpenPageActionConfig}">
+                                <StackPanel Orientation="Horizontal" Margin="5">
+                                    <TextBlock Text="Page:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                    <ComboBox Width="200"
+                                              ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.NonMenuPages}"
+                                              DisplayMemberPath="Title"
+                                              SelectedValuePath="ID"
+                                              SelectedValue="{Binding PageID, Mode=TwoWay}"/>
+                                    <CheckBox Content="Open as dialog" VerticalAlignment="Center" Margin="10,0,0,0"
+                                              IsChecked="{Binding OpenAsDialog, Mode=TwoWay}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </Grid.Resources>
