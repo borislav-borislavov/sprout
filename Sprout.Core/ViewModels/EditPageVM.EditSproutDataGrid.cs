@@ -26,6 +26,25 @@ namespace Sprout.Core.ViewModels
         private SproutDataGridColumnConfig _selectedColumn;
 
         [ObservableProperty]
+        private SproutDataGridRowActionConfig _selectedRowAction;
+
+        [RelayCommand]
+        private void AddRowAction()
+        {
+            if (SelectedDataGrid == null) return;
+
+            SelectedDataGrid.RowActions.Add(new SproutDataGridRowActionConfig());
+        }
+
+        [RelayCommand]
+        private void DeleteRowAction()
+        {
+            if (SelectedDataGrid == null || SelectedRowAction == null) return;
+
+            SelectedDataGrid.RowActions.Remove(SelectedRowAction);
+        }
+
+        [ObservableProperty]
         private bool _isComboColumnSelected;
 
         [ObservableProperty]

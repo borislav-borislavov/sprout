@@ -163,6 +163,23 @@ namespace Sprout.Core.Factories
             } 
             #endregion
 
+            #region Set up the Row button pages
+            if (sproutDataGrid.Config.RowActions.Any(ra => ra.PageID != Guid.Empty))
+            {
+                sproutDataGrid.menuRow.Visibility = Visibility.Visible;
+
+                foreach (var rowAction in sproutDataGrid.Config.RowActions.Where(ra => ra.PageID != Guid.Empty))
+                {
+                    sproutDataGrid.menuRowRoot.Items.Add(new MenuItem
+                    {
+                        Header = rowAction.Title,
+                        Command = sproutDataGrid.VM.OpenRowActionPageCommand,
+                        CommandParameter = rowAction
+                    });
+                }
+            }
+            #endregion
+
             if (sproutDataGrid.Config.DataAdapter != null)
             {
                 var dataProvider = sproutDataGrid.Config.DataAdapter.DataProvider;

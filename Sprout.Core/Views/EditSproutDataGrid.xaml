@@ -153,6 +153,59 @@
                 </Grid>
             </TabItem>
 
+            <TabItem Header="Row">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Add"
+                                Height="35"
+                                Width="50"
+                                Margin="5"
+                                Command="{Binding AddRowActionCommand}"
+                                VerticalAlignment="Top"/>
+
+                        <Button Content="Remove"
+                                Height="35"
+                                Width="50"
+                                Margin="5"
+                                Command="{Binding DeleteRowActionCommand}"
+                                VerticalAlignment="Top"/>
+                    </StackPanel>
+
+                    <DataGrid
+                        Grid.Row="1"
+                        Margin="5"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        SelectedItem="{Binding SelectedRowAction}"
+                        ItemsSource="{Binding SelectedDataGrid.RowActions}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Title" Binding="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                            <DataGridComboBoxColumn Header="Page"
+                                                    SelectedValueBinding="{Binding PageID, UpdateSourceTrigger=PropertyChanged}"
+                                                    SelectedValuePath="ID"
+                                                    DisplayMemberPath="Title"
+                                                    Width="*">
+                                <DataGridComboBoxColumn.ElementStyle>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="ItemsSource" Value="{Binding DataContext.NonMenuPages, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                    </Style>
+                                </DataGridComboBoxColumn.ElementStyle>
+                                <DataGridComboBoxColumn.EditingElementStyle>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="ItemsSource" Value="{Binding DataContext.NonMenuPages, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                    </Style>
+                                </DataGridComboBoxColumn.EditingElementStyle>
+                            </DataGridComboBoxColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
             <TabItem Header="Common">
                 <Grid>
                     <Grid.RowDefinitions>

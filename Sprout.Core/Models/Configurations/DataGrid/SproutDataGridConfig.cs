@@ -45,5 +45,20 @@ namespace Sprout.Core.Models.Configurations.DataGrid
 		public string ToolTip { get; set; }
 
 		public ObservableCollection<SproutDataGridColumnConfig> Columns { get; set; } = [];
+
+		/// <summary>
+		/// Pages that can be opened for the selected row from the grid's "Row" button.
+		/// </summary>
+		public ObservableCollection<SproutDataGridRowActionConfig> RowActions { get; set; } = [];
+	}
+
+	/// <summary>
+	/// A single entry of the grid's "Row" button: opens the given page with the selected row as parameter.
+	/// </summary>
+	public class SproutDataGridRowActionConfig
+	{
+		public string Title { get; set; }
+
+		public Guid PageID { get; set; }
 	}
 }

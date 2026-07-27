@@ -121,6 +121,23 @@
                         </MenuItem>
                     </MenuItem>
                 </Menu>
+
+                <Menu x:Name="menuRow"
+                      x:FieldModifier="public"
+                      Background="Transparent"
+                      VerticalAlignment="Center"
+                      Visibility="Collapsed">
+                    <MenuItem x:Name="menuRowRoot"
+                              x:FieldModifier="public"
+                              ToolTip="Open a page for the selected row">
+                        <MenuItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE8A7;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
+                                <TextBlock Text="Row" VerticalAlignment="Center" Margin="3,0,0,0"/>
+                            </StackPanel>
+                        </MenuItem.Header>
+                    </MenuItem>
+                </Menu>
             </ToolBar>
 
             <Border

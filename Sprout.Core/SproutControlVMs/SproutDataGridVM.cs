@@ -115,6 +115,23 @@ namespace Sprout.Core.SproutControlVMs
         }
 
         /// <summary>
+        /// Opens one of the configured "Row" pages for the currently selected row.
+        /// </summary>
+        [RelayCommand]
+        private void OpenRowActionPage(SproutDataGridRowActionConfig rowAction)
+        {
+            if (Selected == null || rowAction == null) return;
+
+            var args = new OpenTabMessageArgs()
+            {
+                PageConfigID = rowAction.PageID,
+                Parameter = this.Selected
+            };
+
+            WeakReferenceMessenger.Default.Send(new OpenTabMessage(args));
+        }
+
+        /// <summary>
         /// Restores any persisted column layout for the given grid and keeps it in sync with
         /// the configuration when the user changes it.
         /// </summary>
