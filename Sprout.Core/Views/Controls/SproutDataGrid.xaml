@@ -24,6 +24,7 @@
             <ToolBar x:Name="gridButtonsPanel"
                      Background="Transparent"
                      ToolBarTray.IsLocked="True"
+                     FocusManager.IsFocusScope="False"
                      MinHeight="35"
                      Grid.Row="0">
                 <Button x:Name="btnFilters"
