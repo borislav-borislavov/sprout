@@ -145,7 +145,15 @@
 
     <!-- Standard SQL & DuckDB Specific Keywords -->
     <Keywords color="Keywords">
-      <Word>SELECT</Word>
+	  <Word>SELECT</Word>
+	  <Word>SEQUENCE</Word>
+	  <Word>IF</Word>
+	  <Word>EXISTS</Word>
+	  <Word>PRIMARY KEY</Word>
+	  <Word>REFERENCES</Word>
+	  <Word>START</Word>
+	  <Word>DEFAULT</Word>
+	  <Word>CURRENT_TIMESTAMP</Word>
       <Word>FROM</Word>
       <Word>WHERE</Word>
       <Word>GROUP</Word>
@@ -214,7 +222,8 @@
     <!-- Data Types -->
     <Keywords fontWeight="bold" foreground="DarkCyan">
       <Word>BIGINT</Word>
-      <Word>BOOLEAN</Word>
+	  <Word>BOOLEAN</Word>
+	  <Word>BOOL</Word>
       <Word>BLOB</Word>
       <Word>DATE</Word>
       <Word>DOUBLE</Word>
@@ -235,11 +244,13 @@
       <Word>MAP</Word>
       <Word>STRUCT</Word>
       <Word>GEOMETRY</Word>
+	  <Word>INT</Word>
     </Keywords>
 
     <!-- Core Table/Scalar Functions -->
     <Keywords foreground="DarkMagenta">
-      <Word>read_csv</Word>
+	  <Word>read_csv</Word>
+	  <Word>nextval</Word>
       <Word>read_csv_auto</Word>
       <Word>read_parquet</Word>
       <Word>read_json</Word>

@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Sprout.Core.Views"
              xmlns:config="clr-namespace:Sprout.Core.Models.Configurations"
-             
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance config:SproutControlConfig}">
@@ -20,8 +19,10 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
+        <!--Row-->
         <TextBlock
             Grid.Row="0"
             Grid.Column="0"
@@ -36,8 +37,28 @@
             Grid.Column="1"
             VerticalAlignment="top"
             Margin="5"
-            Text="{Binding Row, UpdateSourceTrigger=PropertyChanged}"
-            />
+            Text="{Binding Row, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <StackPanel
+            Grid.Row="0"
+            Grid.Column="2"
+            Orientation="Horizontal"
+            VerticalAlignment="Center">
+            <Button
+                Padding="6,2"
+                Margin="2,5,0,5"
+                ToolTip="Row up (decrease)"
+                Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.RowUpCommand}">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE70E;"/>
+            </Button>
+            <Button
+                Padding="6,2"
+                Margin="2,5"
+                ToolTip="Row down (increase)"
+                Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.RowDownCommand}">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE70D;"/>
+            </Button>
+        </StackPanel>
 
         <!--RowSpan-->
         <TextBlock
@@ -52,10 +73,10 @@
         <TextBox
             Grid.Row="1"
             Grid.Column="1"
+            Grid.ColumnSpan="2"
             VerticalAlignment="top"
             Margin="5"
-            Text="{Binding RowSpan, UpdateSourceTrigger=PropertyChanged}"
-            />
+            Text="{Binding RowSpan, UpdateSourceTrigger=PropertyChanged}"/>
 
         <!--Column-->
         <TextBlock
@@ -72,8 +93,28 @@
             Grid.Column="1"
             VerticalAlignment="top"
             Margin="5"
-            Text="{Binding Column, UpdateSourceTrigger=PropertyChanged}"
-            />
+            Text="{Binding Column, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="2"
+            Orientation="Horizontal"
+            VerticalAlignment="Center">
+            <Button
+                Padding="6,2"
+                Margin="2,5,0,5"
+                ToolTip="Column left (decrease)"
+                Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ColumnLeftCommand}">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE76B;"/>
+            </Button>
+            <Button
+                Padding="6,2"
+                Margin="2,5"
+                ToolTip="Column right (increase)"
+                Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ColumnRightCommand}">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE76C;"/>
+            </Button>
+        </StackPanel>
 
         <!--Column Span-->
         <TextBlock
@@ -88,9 +129,9 @@
         <TextBox
             Grid.Row="3"
             Grid.Column="1"
+            Grid.ColumnSpan="2"
             VerticalAlignment="top"
             Margin="5"
-            Text="{Binding ColumnSpan, UpdateSourceTrigger=PropertyChanged}"
-            />
+            Text="{Binding ColumnSpan, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
 </UserControl>

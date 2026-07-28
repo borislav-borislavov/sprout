@@ -264,24 +264,6 @@
         </Grid>
 
         <TabControl Grid.Row="1" Grid.Column="1" Margin="5" DataContext="{Binding SelectedNode}">
-            <TabControl.Resources>
-                <!--<DataTemplate DataType="{x:Type gridConfig:SproutDataGridConfig}">
-                    -->
-                <!--<StackPanel>
-                        <TextBlock Text="Hello world"/>
-                        <TextBlock Text="{Binding AllowInsert}"/>
-                    </StackPanel>-->
-                <!--
-                    <views:EditSproutDataGrid/>
-                </DataTemplate>
-
-                <DataTemplate DataType="{x:Type config:SproutComboConfig}">
-                    <StackPanel>
-                        <TextBlock Text="Combo Config Content"/>
-                    </StackPanel>
-                </DataTemplate>-->
-            </TabControl.Resources>
-
             <TabItem Header="Control">
                 <Grid>
                     <Grid.Resources>

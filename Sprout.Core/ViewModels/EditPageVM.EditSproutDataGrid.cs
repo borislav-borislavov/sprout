@@ -86,6 +86,12 @@ namespace Sprout.Core.ViewModels
             if (SelectedColumn == null || SelectedColumn.ColumnType != ColumnType.Combo) return;
 
             _navigationService.ShowManageAdapter(SelectedColumn);
+
+            if (SelectedColumn.DataAdapter != null)
+            {
+                SelectedColumn.ComboAdapterKey = $"{SelectedDataGrid.Name}.Column.{SelectedColumn.BindingPath}";
+                SelectedColumn.DataAdapter.Name = SelectedColumn.ComboAdapterKey;
+            }
         }
 
         [RelayCommand]

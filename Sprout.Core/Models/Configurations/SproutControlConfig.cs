@@ -7,13 +7,18 @@ using System.Threading.Tasks;
 
 namespace Sprout.Core.Models.Configurations
 {
-    public abstract class SproutControlConfig
+    public partial class SproutControlConfig : ObservableObject
     {
         public string Name { get; set; }
-        public int Row { get; set; }
+
+        [ObservableProperty]
+        private int _row;
+
         public int RowSpan { get; set; } = 1;
 
-        public int Column { get; set; }
+        [ObservableProperty]
+        private int _column;
+
         public int ColumnSpan { get; set; } = 1;
     }
 }

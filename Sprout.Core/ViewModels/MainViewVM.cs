@@ -155,15 +155,22 @@ namespace Sprout.Core.ViewModels
 
         private void OpenTab(SproutPageConfiguration pageConfig, OpenTabMessageArgs? args)
         {
-            var sproutPageVM = _sproutPageVMFactory.Create(pageConfig, args);
-
-            if (args?.OpenParentPageOnClose == true && args.ParentPageID != Guid.Empty)
+            try
             {
-                _reopenParentOnClose[sproutPageVM] = args.ParentPageID;
-            }
+                var sproutPageVM = _sproutPageVMFactory.Create(pageConfig, args);
 
-            SelectedTab = sproutPageVM;
-            Tabs.Add(sproutPageVM);
+                if (args?.OpenParentPageOnClose == true && args.ParentPageID != Guid.Empty)
+                {
+                    _reopenParentOnClose[sproutPageVM] = args.ParentPageID;
+                }
+
+                SelectedTab = sproutPageVM;
+                Tabs.Add(sproutPageVM);
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError(ex.Message);
+            }
         }
 
         private void OpenParentPage(Guid parentPageID)

@@ -566,6 +566,36 @@ namespace Sprout.Core.ViewModels
         }
 
         [RelayCommand]
+        private void RowUp()
+        {
+            if (SelectedNode == null) return;
+            if (SelectedNode.Row > 0)
+                SelectedNode.Row--;
+        }
+
+        [RelayCommand]
+        private void RowDown()
+        {
+            if (SelectedNode == null) return;
+            SelectedNode.Row++;
+        }
+
+        [RelayCommand]
+        private void ColumnLeft()
+        {
+            if (SelectedNode == null) return;
+            if (SelectedNode.Column > 0)
+                SelectedNode.Column--;
+        }
+
+        [RelayCommand]
+        private void ColumnRight()
+        {
+            if (SelectedNode == null) return;
+            SelectedNode.Column++;
+        }
+
+        [RelayCommand]
         private void AddTab()
         {
             try

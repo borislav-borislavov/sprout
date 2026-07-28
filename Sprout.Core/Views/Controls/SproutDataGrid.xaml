@@ -62,7 +62,7 @@
                 <Button x:Name="btnDelete"
                         ToolTip="Delete row"
                         Style="{StaticResource FlatRoundButtonStyle}"
-                        Visibility="{Binding Config.ShowSave,
+                        Visibility="{Binding Config.AllowDelete,
                                         RelativeSource={RelativeSource AncestorType=local:SproutDataGrid},
                                         Converter={StaticResource BoolToVis}}"
                         HorizontalAlignment="Left"
