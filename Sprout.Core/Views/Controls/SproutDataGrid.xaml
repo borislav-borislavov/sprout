@@ -31,7 +31,6 @@
                         x:FieldModifier="public"
                         ToolTip="Filter data"
                         Style="{StaticResource FlatRoundButtonStyle}"
-                        HorizontalAlignment="Left"
                         Click="btnFilters_Click"
                         Margin="2">
 
@@ -72,19 +71,21 @@
                     <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
 
+                <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
+                
                 <Button x:Name="btnRefresh"
                         ToolTip="Refresh data"
                         Style="{StaticResource FlatRoundButtonStyle}"
-                        HorizontalAlignment="Left"
                         Margin="2">
                     <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
 
+
                 <Button x:Name="btnColumnSettings"
                         ToolTip="Column settings"
                         Style="{StaticResource FlatRoundButtonStyle}"
-                        HorizontalAlignment="Left"
                         Click="btnColumnSettings_Click"
+                        ToolBar.OverflowMode="Always"
                         Margin="2">
                     <TextBlock Text="&#xF579;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
@@ -92,24 +93,20 @@
                 <Button x:Name="btnRowPreview"
                         ToolTip="Preview row"
                         Style="{StaticResource FlatRoundButtonStyle}"
-                        HorizontalAlignment="Left"
+                        ToolBar.OverflowMode="Always"
                         Margin="2">
                     <TextBlock Text="&#xE890;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
 
-                <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
-
                 <Button x:Name="btnLocalSearch"
                         ToolTip="Local Search"
                         Style="{StaticResource FlatRoundButtonStyle}"
-                        HorizontalAlignment="Left"
+                        ToolBar.OverflowMode="Always"
                         Margin="2">
                     <TextBlock Text="&#xE773;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
 
-                <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
-
-                <Menu Background="Transparent" VerticalAlignment="Center">
+                <Menu Background="Transparent" VerticalAlignment="Center" ToolBar.OverflowMode="Always">
                     <MenuItem ToolTip="Export data">
                         <MenuItem.Header>
                             <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
