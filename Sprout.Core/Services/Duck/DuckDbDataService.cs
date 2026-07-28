@@ -304,6 +304,9 @@ namespace Sprout.Core.Services.Duck
         private static void SetQueryParamFromDataRow(
             DependencyMeta queryParam, DataRow dataRow)
         {
+            if (queryParam != null && dataRow == null)
+                throw new Exception($"Cannot get parameter {queryParam.Name} from a DataRow because there is none. Did you mean to fetch it via a control?");
+
             var version = dataRow.RowState == DataRowState.Deleted
                 ? DataRowVersion.Original
                 : DataRowVersion.Current;

@@ -332,6 +332,9 @@ namespace Sprout.Core.Services.SqlServer
 
         private static void SetQueryParamFromDataRow(DependencyMeta queryParam, System.Data.DataRow dataRow)
         {
+            if (queryParam != null && dataRow == null)
+                throw new Exception($"Cannot get parameter {queryParam.Name} from a DataRow because there is none. Did you mean to fetch it via a control?");
+
             // Check if the row is deleted first to avoid the exception
             var version = dataRow.RowState == DataRowState.Deleted
                           ? DataRowVersion.Original
