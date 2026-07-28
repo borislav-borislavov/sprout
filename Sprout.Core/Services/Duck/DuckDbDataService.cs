@@ -294,7 +294,7 @@ namespace Sprout.Core.Services.Duck
 
         private static string CreateMessagesTable(string commandText) =>
             $"""
-            CREATE TEMPORARY TABLE _messages (Type VARCHAR, Message VARCHAR);
+            CREATE TEMPORARY TABLE IF NOT EXISTS _messages (Type VARCHAR, Message VARCHAR);
 
             {commandText}
 
