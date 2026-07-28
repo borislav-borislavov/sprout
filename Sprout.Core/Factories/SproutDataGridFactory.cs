@@ -238,6 +238,11 @@ namespace Sprout.Core.Factories
                         }
                     }
                 }
+                else
+                {
+                    sproutDataGrid.btnFilters.Visibility = Visibility.Collapsed;
+                    sproutDataGrid.filtersSeparator.Visibility = Visibility.Collapsed;
+                }
             }
 
             SetupVM(sproutDataGrid);

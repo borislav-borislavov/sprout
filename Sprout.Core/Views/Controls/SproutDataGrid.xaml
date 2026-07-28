@@ -28,6 +28,7 @@
                      MinHeight="35"
                      Grid.Row="0">
                 <Button x:Name="btnFilters"
+                        x:FieldModifier="public"
                         ToolTip="Filter data"
                         Style="{StaticResource FlatRoundButtonStyle}"
                         HorizontalAlignment="Left"
@@ -37,7 +38,7 @@
                     <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
 
-                <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
+                <Rectangle x:Name="filtersSeparator" x:FieldModifier="public" Width="1" Height="20" Fill="Gray" Margin="5,0"/>
 
                 <Button x:Name="btnInsert"
                         ToolTip="Add new row"
