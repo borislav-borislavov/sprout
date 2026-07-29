@@ -84,37 +84,6 @@ namespace Sprout.Core.SproutControlVMs
         }
 
         /// <summary>
-        /// Applies a column layout to the grid without raising <see cref="ColumnLayoutChanged"/>.
-        /// Used when restoring a persisted layout.
-        /// </summary>
-        public void ApplyColumnLayout(SproutGridColumnLayout layout)
-            => Grid?.ApplyColumnLayout(layout);
-
-        /// <summary>
-        /// Applies a user-selected column layout to the grid and notifies listeners
-        /// (e.g. the page) so the change can be persisted.
-        /// </summary>
-        public void UpdateColumnLayout(SproutGridColumnLayout layout)
-        {
-            Grid?.ApplyColumnLayout(layout);
-            ColumnLayoutChanged?.Invoke(this, layout);
-        }
-
-        [RelayCommand]
-        private void DisplayItemPage(object parameter)
-        {
-            if (Selected == null) return;
-
-            var args = new OpenTabMessageArgs()
-            {
-                PageConfigID = Grid.Config.ItemDisplayPage,
-                Parameter = this.Selected
-            };
-
-            WeakReferenceMessenger.Default.Send(new OpenTabMessage(args));
-        }
-
-        /// <summary>
         /// Opens one of the configured "Row" pages for the currently selected row.
         /// </summary>
         [RelayCommand]
@@ -164,6 +133,38 @@ namespace Sprout.Core.SproutControlVMs
             WeakReferenceMessenger.Default.Send(new OpenTabMessage(args));
         }
 
+        [RelayCommand]
+        private void DisplayItemPage(object parameter)
+        {
+            if (Selected == null) return;
+
+            var args = new OpenTabMessageArgs()
+            {
+                PageConfigID = Grid.Config.ItemDisplayPage,
+                Parameter = this.Selected
+            };
+
+            WeakReferenceMessenger.Default.Send(new OpenTabMessage(args));
+        }
+
+        #region ColumnLayout
+        /// <summary>
+        /// Applies a column layout to the grid without raising <see cref="ColumnLayoutChanged"/>.
+        /// Used when restoring a persisted layout.
+        /// </summary>
+        public void ApplyColumnLayout(SproutGridColumnLayout layout)
+            => Grid?.ApplyColumnLayout(layout);
+
+        /// <summary>
+        /// Applies a user-selected column layout to the grid and notifies listeners
+        /// (e.g. the page) so the change can be persisted.
+        /// </summary>
+        public void UpdateColumnLayout(SproutGridColumnLayout layout)
+        {
+            Grid?.ApplyColumnLayout(layout);
+            ColumnLayoutChanged?.Invoke(this, layout);
+        }
+
         /// <summary>
         /// Restores any persisted column layout for the given grid and keeps it in sync with
         /// the configuration when the user changes it.
@@ -193,6 +194,7 @@ namespace Sprout.Core.SproutControlVMs
                     _dialogService.ShowMessage(ex.Message, "Column layout Error", DialogButton.OK, DialogImage.Error);
                 }
             };
-        }
+        } 
+        #endregion
     }
 }
