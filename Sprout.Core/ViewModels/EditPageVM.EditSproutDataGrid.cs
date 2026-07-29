@@ -154,19 +154,27 @@ namespace Sprout.Core.ViewModels
             {
                 return;
             }
+
+            try
+            {
 #warning this should be put in a factory which repsonds properly based on the type of adapter
-            if (SelectedDataGrid.DataAdapter is SqlServerDataAdapterConfig adapterConfig)
-            {
-                SqlServerPopulateColumns(adapterConfig);
-                return;
+                if (SelectedDataGrid.DataAdapter is SqlServerDataAdapterConfig adapterConfig)
+                {
+                    SqlServerPopulateColumns(adapterConfig);
+                    return;
+                }
+                else if (SelectedDataGrid.DataAdapter is DuckDataAdapterConfig duckAdapterConfig)
+                {
+                    DuckDbPopulateColumns(duckAdapterConfig);
+                }
+                else if (SelectedDataGrid.DataAdapter is ApiDataAdapterConfig apiAdapterConfig)
+                {
+                    await ApiPopulateColumns(apiAdapterConfig);
+                }
             }
-            else if (SelectedDataGrid.DataAdapter is DuckDataAdapterConfig duckAdapterConfig)
+            catch (Exception ex)
             {
-                DuckDbPopulateColumns(duckAdapterConfig);
-            }
-            else if (SelectedDataGrid.DataAdapter is ApiDataAdapterConfig apiAdapterConfig)
-            {
-                await ApiPopulateColumns(apiAdapterConfig);
+                _dialogService.ShowError(ex.Message);
             }
         }
 
@@ -301,19 +309,52 @@ namespace Sprout.Core.ViewModels
             query = query.Replace("{!whereFilter}", string.Empty, StringComparison.OrdinalIgnoreCase);
             query = query.Replace("{!andFilter}", string.Empty, StringComparison.OrdinalIgnoreCase);
 
+            var requestedParameters = DependencyParser.ParseDependencyMetas(query);
+            List<SqlParameter> sqlParams = [];
+
+            foreach (var queryParam in requestedParameters)
+            {
+                if (string.IsNullOrEmpty(queryParam.Name))
+                    continue;
+
+                var safeParamName = $"{queryParam.Name.Replace(".", "_")}";
+
+                //if a variable is used multiple times in the query we only want to add it once to the parameters collection
+                if (sqlParams.Any(sp => sp.ParameterName == safeParamName))
+                {
+                    continue;
+                }
+
+                var param = new SqlParameter
+                {
+                    ParameterName = safeParamName,
+                    Value = DBNull.Value
+                };
+
+                sqlParams.Add(param);
+
+                query = query.Replace($"{{{queryParam.RawPatameter}}}", $"${safeParamName}", StringComparison.CurrentCultureIgnoreCase);
+            }
+
             var connectionString = adapterConfig.ConnectionString;
             if (string.IsNullOrEmpty(connectionString))
             {
                 connectionString = _configService.Load().Settings.DuckDbConnectionString;
             }
 
-            //TODO: Missing dependencies replace
-
             using (var conn = new DuckDBConnection(connectionString))
             using (var cmd = conn.CreateCommand())
             {
                 try
                 {
+                    foreach (SqlParameter p in sqlParams)
+                    {
+                        var param = cmd.CreateParameter();
+                        param.ParameterName = p.ParameterName;
+                        param.Value = DBNull.Value;
+                        cmd.Parameters.Add(param);
+                    }
+
                     conn.Open();
 
                     cmd.CommandText = query;
