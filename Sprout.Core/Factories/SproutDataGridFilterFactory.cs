@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Sprout.Core.Factories
 {
@@ -13,10 +14,20 @@ namespace Sprout.Core.Factories
     {
         internal static UIElement GetFilter(FilterConfig filterConfig)
         {
-            var filter = new SproutDataGridTextFilter();
-            filter.GroupBox.Header = filterConfig.Title;
+            if (filterConfig.EditorType == EditorType.TextBox)
+            {
+                var filter = new SproutDataGridTextFilter();
+                filter.GroupBox.Header = filterConfig.Title;
+                return filter;
+            }
+            else if (filterConfig.EditorType == EditorType.CheckBox)
+            {
+                var filter = new SproutDataGridCheckBoxFilter();
+                filter.GroupBox.Header = filterConfig.Title;
+                return filter;
+            }
 
-            return filter;
+            throw new NotImplementedException($"Filter of type {filterConfig.EditorType} is not implemented.");
         }
     }
 }

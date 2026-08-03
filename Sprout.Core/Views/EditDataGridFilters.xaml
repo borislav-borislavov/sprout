@@ -49,7 +49,7 @@
         </Grid>
 
         <Grid Name="Content" Grid.Column="1">
-            <StackPanel>
+            <StackPanel Margin="5">
                 <TextBlock Text="Title"/>
                 <TextBox Text="{Binding SelectedFilter.Title, UpdateSourceTrigger=PropertyChanged}"/>
                 <TextBlock Text="Text"/>
@@ -58,6 +58,9 @@
 
                 <ComboBox ItemsSource="{Binding EditorTypes}"
                           SelectedItem="{Binding SelectedFilter.EditorType, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Default Value"/>
+                <TextBox Text="{Binding SelectedFilter.DefaultValue, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
         </Grid>
     </Grid>

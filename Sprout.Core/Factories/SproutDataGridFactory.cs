@@ -110,7 +110,7 @@ namespace Sprout.Core.Factories
                 };
 
                 DataGridDoubleClickBehavior.SetDoubleClickCommandParameter(sproutDataGrid.dataGrid, itemDisplayPageInfo);
-            } 
+            }
             #endregion
 
             #region Set up the Row button pages
@@ -180,11 +180,35 @@ namespace Sprout.Core.Factories
 
                         if (filterView is SproutDataGridTextFilter textFilter)
                         {
+                            if (!string.IsNullOrEmpty(filter.DefaultValue))
+                                filter.StartValue = filter.DefaultValue;
+
                             textFilter.tbFilterValue.SetBinding(TextBox.TextProperty,
                                 new Binding(nameof(IFilter.StartValue))
                                 {
                                     Source = filter,
                                     Mode = BindingMode.OneWayToSource,
+                                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                                });
+                        }
+                        else if (filterView is SproutDataGridCheckBoxFilter checkBoxFilter)
+                        {
+                            if (!string.IsNullOrEmpty(filter.DefaultValue))
+                            {
+                                if (bool.TryParse(filter.DefaultValue, out var defaultBool))
+                                {
+                                    filter.StartValue = defaultBool.ToString();
+                                }
+                                else
+                                {
+                                    throw new Exception($"Filter '{filterConfig.Title}' has a default value of '{filter.DefaultValue}' which is not a valid boolean.");
+                                }
+                            }
+
+                            checkBoxFilter.cbFilterValue.SetBinding(CheckBox.IsCheckedProperty,
+                                new Binding(nameof(IFilter.StartValue))
+                                {
+                                    Source = filter,
                                     UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
                                 });
                         }
@@ -238,7 +262,7 @@ namespace Sprout.Core.Factories
             if (sproutDataGrid.Config.ShowSave)
             {
                 sproutDataGrid.BindButtonAction(sproutDataGrid.btnSave, new SaveGridAction(sproutDataGrid.Name));
-            } 
+            }
             #endregion
         }
 

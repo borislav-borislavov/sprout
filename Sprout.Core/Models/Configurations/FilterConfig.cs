@@ -11,6 +11,7 @@ namespace Sprout.Core.Models.Configurations
         public string Title { get; set; }
         public string Text { get; set; }
         public EditorType EditorType { get; set; }
+        public string DefaultValue { get; set; }
 
     }
 

@@ -16,5 +16,6 @@ namespace Sprout.Core.Models.DataAdapters.Filters
 
         object EndValue { get; set; }
         bool IsRange { get; set;}
+        string DefaultValue { get; set; }
     }
 }

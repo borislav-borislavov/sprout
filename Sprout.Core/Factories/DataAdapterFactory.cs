@@ -128,6 +128,7 @@ namespace Sprout.Core.Factories
                     {
                         Title = filterConfig.Title,
                         Text = filterConfig.Text,
+                        DefaultValue = filterConfig.DefaultValue
                     };
                 }
             }
@@ -207,6 +208,7 @@ namespace Sprout.Core.Factories
                     {
                         Title = filterConfig.Title,
                         Text = filterConfig.Text,
+                        DefaultValue = filterConfig.DefaultValue
                     };
                 }
             }
@@ -294,6 +296,7 @@ namespace Sprout.Core.Factories
                     {
                         Title = filterConfig.Title,
                         Text = filterConfig.Text,
+                        DefaultValue = filterConfig.DefaultValue
                     };
                 }
             }

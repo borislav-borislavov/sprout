@@ -20,7 +20,7 @@ namespace Sprout.Core.Models.DataAdapters.Filters
         public object EndValue { get; set; }
 
         public bool IsRange { get; set; }
-
+        public string DefaultValue { get; set; }
         /// <summary>
         /// Returns the effective query-parameter name used when building the request URL.
         /// </summary>
