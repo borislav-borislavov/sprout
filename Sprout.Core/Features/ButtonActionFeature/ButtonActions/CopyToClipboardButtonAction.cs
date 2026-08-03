@@ -1,12 +1,7 @@
 using Sprout.Core.Factories;
-using Sprout.Core.Models.DataAdapters;
 using Sprout.Core.SproutControlVMs;
 using Sprout.Core.Services.Clipboard;
-using Sprout.Core.Features.Dependency;
 using Sprout.Core.Models.Queries;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Sprout.Core.Features.ButtonActions;
 
 namespace Sprout.Core.Features.ButtonActions.Actions
 {
@@ -26,23 +21,7 @@ namespace Sprout.Core.Features.ButtonActions.Actions
             if (string.IsNullOrEmpty(_clipboardText))
                 return Task.CompletedTask;
 
-            string textToCopy = _clipboardText;
-
-            var dep = DependencyParser.ParseDependencies(_clipboardText).FirstOrDefault();
-            if (dep != null)
-            {
-                var vm = vmRegistry.Get(dep.ControlName);
-
-                if (vm == null)
-                {
-                    return Task.CompletedTask;
-                }
-
-                var val = BindingEvaluator.Evaluate(vm, dep.PropertyPath);
-                textToCopy = val?.ToString() ?? string.Empty;
-            }
-
-            _clipboardService.SetText(textToCopy);
+            _clipboardService.SetText(_clipboardText.ResolveDependencies(vmRegistry, false));
 
             return Task.CompletedTask;
         }

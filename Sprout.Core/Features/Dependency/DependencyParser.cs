@@ -1,6 +1,8 @@
 ﻿using Sprout.Core.Common;
 using Sprout.Core.Common.Models;
+using Sprout.Core.Features.Dependency;
 using Sprout.Core.Models.DataAdapters.DataProviders;
+using Sprout.Core.SproutControlVMs;
 
 namespace Sprout.Core.Models.Queries
 {
@@ -82,6 +84,54 @@ namespace Sprout.Core.Models.Queries
 
                 scope = text.NextScope(startIndex: startIndex);
             }
+        }
+
+        /// <summary>
+        /// Resolve all dependencies from a text and return it
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="vmRegistry"></param>
+        /// <param name="strict"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public static string? ResolveDependencies(this string text, VMRegistry vmRegistry, bool strict = true)
+        {
+            if (strict && string.IsNullOrEmpty(text))
+            {
+                throw new Exception($"Dependency cannot be empty: {text}");
+            }
+            else if (string.IsNullOrEmpty(text))
+            {
+                return null;
+            }
+
+            var deps = ParseDependencies(text);
+
+            if (strict && !deps.Any())
+            {
+                throw new Exception($"Dependency {text} is not found!");
+            }
+
+            foreach (var dep in deps)
+            {
+                var value = dep.GetValue(vmRegistry, strict);
+
+                text = text.Replace($"{{{dep.RawDependency}}}", $"{value}");
+            }
+
+            return text;
+        }
+
+        public static object GetValue(this DataProviderDependency dep, VMRegistry vmRegistry, bool strict = true)
+        {
+            var vm = vmRegistry.Get(dep.ControlName);
+
+            if (strict && vm == null)
+            {
+                throw new Exception($"Invalid dependency: {dep.RawDependency}");
+            }
+
+            return BindingEvaluator.Evaluate(vm, dep.PropertyPath);
         }
     }
 }

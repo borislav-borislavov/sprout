@@ -1,15 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Sprout.Core.Common;
 using Sprout.Core.Factories;
 using Sprout.Core.Features.ButtonActions;
 using Sprout.Core.Messages;
 using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
-using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.DataAdapters;
-using Sprout.Core.Models.DataAdapters.DataProviders;
+using Sprout.Core.Models.Queries;
 using Sprout.Core.Services;
 using Sprout.Core.Services.ActionMessageService;
 using Sprout.Core.Services.Clipboard;
@@ -19,7 +17,6 @@ using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Login;
 using Sprout.Core.SproutControlVMs;
 using Sprout.Core.Views;
-using System.Diagnostics;
 
 namespace Sprout.Core.ViewModels
 {
@@ -35,9 +32,10 @@ namespace Sprout.Core.ViewModels
 
         public SproutPageConfiguration PageConfig { get; private set; }
 
-        private string _customTitle;
+        private string? _customTitle;
+        private string? _boundTitle;
 
-        public string Title => _customTitle ?? PageConfig?.Title;
+        public string Title => _customTitle ?? _boundTitle ?? PageConfig?.Title;
 
         public void RenameTab(string newTitle)
         {
@@ -323,6 +321,18 @@ namespace Sprout.Core.ViewModels
                             await dataservice.ProvideData();
                         }
                     }
+                }
+
+                if (!string.IsNullOrEmpty(PageConfig.TitleBinding))
+                {
+                    var title = PageConfig.TitleBinding.ResolveDependencies(VMRegistry, false);
+
+                    if (title != null)
+                    {
+                        _boundTitle = $"{title}";
+                        OnPropertyChanged(nameof(Title));
+                    }
+
                 }
             }
             catch (Exception ex)

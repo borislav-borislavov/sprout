@@ -353,6 +353,28 @@
                 <views:EditDataGridFilters DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext}"/>
             </TabItem>
 
+            <TabItem Header="Page">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Label Content="Title Binding"
+                           VerticalAlignment="Top" />
+                    
+                    <TextBox
+                        Grid.Column="1"
+                        VerticalAlignment="Top"
+                        MinWidth="100"
+                        Text="{Binding
+                            RelativeSource={RelativeSource AncestorType=Window}, 
+                            Path=DataContext.PageConfig.TitleBinding,
+                            UpdateSourceTrigger=PropertyChanged}"
+                        Margin="5"/>
+                </Grid>
+            </TabItem>
+
         </TabControl>
     </Grid>
 </Window>

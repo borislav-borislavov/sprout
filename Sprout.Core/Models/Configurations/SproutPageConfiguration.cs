@@ -5,8 +5,9 @@ namespace Sprout.Core.Models.Configurations
 	public class SproutPageConfiguration
 	{
 		public string Title { get; set; }
+        public string? TitleBinding { get; set; }
 
-		public Guid ID { get; set; }
+        public Guid ID { get; set; }
 
 		public bool AddToMenu { get; set; }
 
