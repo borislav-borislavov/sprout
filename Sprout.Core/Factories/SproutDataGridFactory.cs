@@ -43,63 +43,15 @@ namespace Sprout.Core.Factories
                 Config = sproutGridConfig,
                 VM = new SproutDataGridVM(sproutGridConfig.Name, _configurationService, _dialogService)
             };
+            sproutDataGrid.VM.Grid = sproutDataGrid;
 
             sproutDataGrid.dataGrid.IsReadOnly = sproutGridConfig.IsReadOnly;
 
+            var columnFactory = new SproutDataGridColumnFactory(_dataAdapterFactory, sproutDataGrid);
+
             foreach (var colConfig in (sproutGridConfig.Columns ?? []).Where(c => !c.ShowInRowDetails))
             {
-                DataGridColumn col = null;
-
-                if (colConfig.ColumnType == ColumnType.Check)
-                {
-                    col = new DataGridCheckBoxColumn()
-                    {
-                        Header = colConfig.Header,
-                        Binding = new Binding(colConfig.BindingPath),
-                        Width = DataGridLength.Auto,
-                        IsReadOnly = colConfig.IsReadOnly
-                    };
-                }
-                else if (colConfig.ColumnType == ColumnType.Combo)
-                {
-                    //Create the DataAdapter to which the ComboBox will bind
-                    sproutDataGrid.VM.DataAdapters.Add(colConfig.ComboAdapterKey, _dataAdapterFactory.Create(colConfig.DataAdapter));
-
-                    var comboCol = new DataGridComboBoxColumn()
-                    {
-                        Header = colConfig.Header,
-                        DisplayMemberPath = colConfig.DisplayColumn,
-                        SelectedValuePath = colConfig.ValueColumn,
-                        SelectedValueBinding = new Binding(colConfig.BindingPath),
-                        Width = DataGridLength.Auto,
-                        IsReadOnly = colConfig.IsReadOnly
-                    };
-
-                    var vmBinding = new Binding()
-                    {
-                        //Bind directly to the DataProvider instance (a plain Dictionary raises no
-                        //change notifications). DataTable is not IEnumerable, so use its DefaultView.
-                        Source = sproutDataGrid.VM.DataAdapters[colConfig.ComboAdapterKey].DataProvider,
-                        Path = new PropertyPath("Data")
-                    };
-
-                    //Bind the column's own ItemsSource so both the display and editing
-                    //elements get their items and can resolve the selected value.
-                    BindingOperations.SetBinding(comboCol, DataGridComboBoxColumn.ItemsSourceProperty, vmBinding);
-
-                    col = comboCol;
-                }
-                else
-                {
-                    col = new DataGridTextColumn()
-                    {
-                        Header = colConfig.Header,
-                        Binding = new Binding(colConfig.BindingPath),
-                        Width = DataGridLength.Auto,
-                        IsReadOnly = colConfig.IsReadOnly
-                    };
-                }
-
+                var col = columnFactory.Create(colConfig);
                 sproutDataGrid.dataGrid.Columns.Add(col);
                 sproutDataGrid.ColumnKeys[col] = colConfig.BindingPath ?? colConfig.Header;
             }
@@ -150,8 +102,6 @@ namespace Sprout.Core.Factories
             #region Set up which page opens on double click
             if (sproutDataGrid.Config.ItemDisplayPage != Guid.Empty)
             {
-                //sproutDataGrid.dataGrid.IsReadOnly = true;
-
                 DataGridDoubleClickBehavior.SetDoubleClickCommand(sproutDataGrid.dataGrid, sproutDataGrid.VM.DisplayItemPageCommand);
                 var itemDisplayPageInfo = new ItemDisplayPageInfo
                 {
@@ -208,13 +158,15 @@ namespace Sprout.Core.Factories
 
             if (sproutDataGrid.Config.DataAdapter != null)
             {
+                sproutDataGrid.VM.DataAdapter ??= _dataAdapterFactory.Create(sproutDataGrid.Config.DataAdapter);
+
                 var dataProvider = sproutDataGrid.Config.DataAdapter.DataProvider;
 
                 if (dataProvider.FilterConfigs.Any())
                 {
                     //The adapter must exist here so the filter views can bind to its filter
                     //instances. SproutControlFactory skips creation when it is already set.
-                    sproutDataGrid.VM.DataAdapter ??= _dataAdapterFactory.Create(sproutDataGrid.Config.DataAdapter);
+                    //sproutDataGrid.VM.DataAdapter ??= _dataAdapterFactory.Create(sproutDataGrid.Config.DataAdapter);
 
                     //i should add a general apply filters button the dataGrid UI
                     foreach (var filterConfig in dataProvider.FilterConfigs)

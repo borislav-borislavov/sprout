@@ -51,13 +51,45 @@
                     <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
 
-                <Button x:Name="btnSave"
+                <!--<Button x:Name="btnSave"
                         ToolTip="Save grid changes"
                         Style="{StaticResource FlatRoundButtonStyle}"
                         Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
                         HorizontalAlignment="Left"
                         Margin="2">
                     <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
+                </Button>-->
+
+                <Button x:Name="btnSave"
+                    ToolTip="Save grid changes"
+                    Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
+                    HorizontalAlignment="Left"
+                    Margin="2">
+                        <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="23">
+                            <TextBlock.Style>
+                            <!-- Inherit your existing style -->
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <!-- Watch the VM.HasChanges property -->
+                                    <DataTrigger Binding="{Binding VM.HasChanges, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}}" Value="True">
+                                        <!-- Apply the green background when true -->
+                                        <Setter Property="Foreground" Value="Green"/>
+
+                                        <!-- Optional: You may also need to change the Foreground if Green makes the icon hard to read -->
+                                        <!-- <Setter Property="Foreground" Value="White"/> -->
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding VM.HasChanges, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}}" Value="False">
+                                        <!-- Apply the green background when true -->
+                                        <Setter Property="Foreground" Value="#2C3E50"/>
+
+                                        <!-- Optional: You may also need to change the Foreground if Green makes the icon hard to read -->
+                                        <!-- <Setter Property="Foreground" Value="White"/> -->
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                 </Button>
 
                 <Button x:Name="btnDelete"

@@ -205,8 +205,8 @@ namespace Sprout.Tests.Integration.SqlServer.PageTests
                 Assert.Equal(1, dataView.Count);
                 Assert.Equal("alice_admin", dataView[0]["UserName"]);
 
-                var comboCol = dataGrid.dataGrid.Columns[2] as DataGridComboBoxColumn;
-                Assert.NotNull(comboCol.ItemsSource);
+                //var comboCol = dataGrid.dataGrid.Columns[2] as DataGridComboBoxColumn;
+                //Assert.NotNull(comboCol.ItemsSource);
 
                 //this section tests the combo box column in the data grid
                 var comboDisplayText = dataGrid.dataGrid.ComboDisplayText(0, 2);

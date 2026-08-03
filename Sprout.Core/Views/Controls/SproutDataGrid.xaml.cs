@@ -148,23 +148,39 @@ namespace Sprout.Core.Views.Controls
 
         private void dataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key != Key.C || (Keyboard.Modifiers & ModifierKeys.Control) == 0)
-                return;
-
-            var cell = dataGrid.CurrentCell;
-            if (!cell.IsValid || cell.Column == null)
-                return;
-
-            var content = cell.Column.GetCellContent(cell.Item);
-            var value = content switch
+            if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control)
             {
-                TextBlock tb => tb.Text,
-                ContentPresenter cp => cp.Content?.ToString(),
-                _ => content?.ToString()
-            };
+                var cell = dataGrid.CurrentCell;
+                if (!cell.IsValid || cell.Column == null)
+                    return;
 
-            Clipboard.SetText(value ?? string.Empty);
-            e.Handled = true;
+                var content = cell.Column.GetCellContent(cell.Item);
+                var value = content switch
+                {
+                    TextBlock tb => tb.Text,
+                    ContentPresenter cp => cp.Content?.ToString(),
+                    _ => content?.ToString()
+                };
+
+                Clipboard.SetText(value ?? string.Empty);
+                e.Handled = true;
+            }
+
+            //Needed to submit submit TextBoxGrid cells with enter key.
+            //The other cells use templated columns and they reflect changes instantly
+            if (e.Key == Key.Enter)
+            {
+                var grid = (DataGrid)sender;
+
+                // 1. Force the current cell edit to finish
+                grid.CommitEdit(DataGridEditingUnit.Cell, true);
+
+                // 2. Force the entire row transaction to finish and push to the DataTable
+                grid.CommitEdit(DataGridEditingUnit.Row, true);
+
+                //Stop the DataGrid from automatically moving selection to the row below
+                e.Handled = true;
+            }
         }
 
         private void btnFilters_Click(object sender, RoutedEventArgs e)

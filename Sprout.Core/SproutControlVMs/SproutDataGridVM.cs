@@ -6,9 +6,11 @@ using Sprout.Core.Messages;
 using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations.DataGrid;
 using Sprout.Core.Models.DataAdapters;
+using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Views.Controls;
+using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -26,7 +28,7 @@ namespace Sprout.Core.SproutControlVMs
         /// The grid this state is associated with. Used to read/apply the column settings
         /// (visibility, order and frozen count) e.g. from the column settings dialog or when exporting.
         /// </summary>
-        public SproutDataGrid Grid { get; private set; }
+        public SproutDataGrid Grid { get; set; }
 
         public string JsonData
         {
@@ -41,8 +43,10 @@ namespace Sprout.Core.SproutControlVMs
             }
         }
 
+        [ObservableProperty]
+        private bool _hasChanges;
+
         public Dictionary<string, IButtonAction> ButtonActions { get; } = [];
-        //public IDataAdapter DataAdapter { get; set; }
 
         [ObservableProperty]
         private IDataAdapter _dataAdapter;
@@ -64,10 +68,6 @@ namespace Sprout.Core.SproutControlVMs
 
         public virtual void SetUpState(SproutDataGrid control)
         {
-            // Bindings and other setup logic can be added here if needed
-
-            this.Grid = control;
-
             control.dataGrid.SetBinding(DataGrid.SelectedItemProperty,
                 new Binding(nameof(this.Selected))
                 {
@@ -81,6 +81,67 @@ namespace Sprout.Core.SproutControlVMs
                     Source = this,
                     Mode = BindingMode.OneWay
                 });
+
+            //Needed to properly track HasChanges which is responsible for providing a visual cue to the user that the grid has unsaved changes.
+            //This approach is extremely light and it doesn't require a full DataTable scan.
+            if (DataAdapter?.DataProvider is ObservableObject observableDataProvider)
+            {
+                observableDataProvider.PropertyChanged += ObservableDataProvider_PropertyChanged;
+            }
+        }
+
+        private void ObservableDataProvider_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(IDataProvider.Data)) return;
+
+            HasChanges = false;
+            //Upon refreshing the data, the DataTable will be replaced with a new instance.
+            //This means that the DataTable's RowChanged event will no longer be subscribed to. We need to re-subscribe to it.
+            DataAdapter.DataProvider.Data?.DefaultView.ListChanged += DefaultView_ListChanged;
+        }
+
+        private void DefaultView_ListChanged(object? sender, ListChangedEventArgs e)
+        {
+            try
+            {
+                //When doing local search NewIndex is -1, I chose to keep the old state here
+                if (e.NewIndex == -1) return;
+
+                var dataRow = DataAdapter.DataProvider.Data?.Rows[e.NewIndex];
+                if (dataRow == null)
+                {
+                    HasChanges = false;
+                    return;
+                }
+
+                if (dataRow.RowState == System.Data.DataRowState.Added)
+                {
+                    HasChanges = true;
+                    return;
+                }
+
+                if (dataRow.RowState != System.Data.DataRowState.Unchanged)
+                {
+                    // If it's Modified, we must diff the columns
+                    foreach (System.Data.DataColumn col in dataRow.Table.Columns)
+                    {
+                        object originalVal = dataRow[col, System.Data.DataRowVersion.Original];
+                        object currentVal = dataRow[col, System.Data.DataRowVersion.Current];
+
+                        if (!Equals(originalVal, currentVal))
+                        {
+                            HasChanges = true;
+                            return;
+                        }
+                    }
+                }
+
+                HasChanges = false;
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError($"Error while checking for changes in the data grid. {ex.Message}");
+            }
         }
 
         /// <summary>
