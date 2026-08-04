@@ -506,7 +506,19 @@ namespace Sprout.Core.Services.CPL
         {
             _pageVM = vm;
             _configurationService = configurationService;
-            UserScript = _pageVM.PageConfig.Script;
+            UserScript = _pageVM.PageConfig.Script ?? GetDefaultScript();
+        }
+
+
+        private string GetDefaultScript()
+        {
+            return
+                """
+                public override async Task OnLoadAsync()
+                {
+                    
+                }
+                """;
         }
 
         public override IEnumerable<string> GetCompletionHints()
