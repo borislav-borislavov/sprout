@@ -6,6 +6,7 @@ using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Login;
 using Sprout.Core.Services.Navigation;
+using Sprout.Core.Services.Jobs;
 using Sprout.Core.Windows;
 using System;
 using System;
@@ -31,6 +32,9 @@ namespace Sprout.Core
             services.AddCoreServices();
 
             var serviceProvider = services.BuildServiceProvider();
+            Application.Current.Exit += (_, _) => serviceProvider.Dispose();
+
+            serviceProvider.GetRequiredService<IJobScheduler>().Start();
 
             var navigationService = serviceProvider.GetRequiredService<INavigationService>();
 

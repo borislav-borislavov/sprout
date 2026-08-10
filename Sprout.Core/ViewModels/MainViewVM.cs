@@ -69,6 +69,8 @@ namespace Sprout.Core.ViewModels
                     {
                         OpenParentPage(parentPageID);
                     }
+
+                    (oldItem as IDisposable)?.Dispose();
                 }
             };
 
@@ -247,6 +249,21 @@ namespace Sprout.Core.ViewModels
 
             Tabs.Add(migrationVM);
             SelectedTab = migrationVM;
+        }
+
+        [RelayCommand]
+        private void OpenJobs()
+        {
+            var existing = Tabs.OfType<JobsVM>().FirstOrDefault();
+            if (existing != null)
+            {
+                SelectedTab = existing;
+                return;
+            }
+
+            var jobsVM = _vmFactory.Create<JobsVM>();
+            Tabs.Add(jobsVM);
+            SelectedTab = jobsVM;
         }
 
         private bool CanExecuteOpenPage(SproutPageConfiguration pageConfig)

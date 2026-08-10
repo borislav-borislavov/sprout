@@ -5,6 +5,7 @@
         public LoginConfiguration? Login { get; set; }
         public List<SproutPageConfiguration> Pages { get; set; } = [];
         public List<SproutMenuCategory> Categories { get; set; } = [];
+        public List<SproutJobConfiguration> Jobs { get; set; } = [];
         public SproutSettings Settings { get; set; } = new();
     }
 }

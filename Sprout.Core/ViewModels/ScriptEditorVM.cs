@@ -4,6 +4,7 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using Sprout.Core.Services.CPL;
+using Sprout.Core.Services.Jobs;
 using Sprout.Core.Services.Navigation;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -169,52 +170,103 @@ namespace Sprout.Core.ViewModels
         [RelayCommand]
         private void DebugInVs()
         {
-            _compiler.UserScript = Document.Text;
-            var source = _compiler.GetSource();
+            if (_compiler is CustomPageLogicCompiler)
+            {
+                _compiler.UserScript = Document.Text;
+                var source = _compiler.GetSource();
 
-            source = source.Replace(@"#line 1 ""CustomPageLogic""", @"//#line 1 ""CustomPageLogic""");
-            source = source.Replace("#line default", "//#line default");
-            source = source.Replace($"namespace DynamicPageLogic._{_compiler.PageId}", "namespace Sprout.Core.Services.CPL");
+                source = source.Replace(@"#line 1 ""CustomPageLogic""", @"//#line 1 ""CustomPageLogic""");
+                source = source.Replace("#line default", "//#line default");
+                source = source.Replace($"namespace DynamicPageLogic._{_compiler.PageId}", "namespace Sprout.Core.Services.CPL");
 
-            // Climbs up till the sprout directory
-            string projectDirectory = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.Parent.FullName;
+                // Climbs up till the sprout directory
+                string projectDirectory = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.Parent.FullName;
 
-            var cplFileCandidates = Directory.EnumerateFiles(projectDirectory, "CustomPageLogic.cs", SearchOption.AllDirectories);
+                var cplFileCandidates = Directory.EnumerateFiles(projectDirectory, "CustomPageLogic.cs", SearchOption.AllDirectories);
 
-            if (cplFileCandidates.Any() == false)
-                return;
+                if (cplFileCandidates.Any() == false)
+                    return;
 
-            var cplFile = cplFileCandidates.First();
+                var cplFile = cplFileCandidates.First();
 
-            File.WriteAllText(cplFile, source);
-            Environment.Exit(0);
+                File.WriteAllText(cplFile, source);
+                Environment.Exit(0);
+            }
+            else if (_compiler is JobCompiler)
+            {
+                _compiler.UserScript = Document.Text;
+                var source = _compiler.GetSource();
+
+                source = source.Replace(@"#line 1 ""JobScript""", @"//#line 1 ""JobScript""");
+                source = source.Replace("#line default", "//#line default");
+                source = source.Replace($"namespace DynamicJob._{_compiler.PageId}", "namespace Sprout.Core.Services.Jobs");
+
+                // Climbs up till the sprout directory
+                string projectDirectory = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.Parent.FullName;
+
+                var cplFileCandidates = Directory.EnumerateFiles(projectDirectory, "Job.cs", SearchOption.AllDirectories);
+
+                if (cplFileCandidates.Any() == false)
+                    return;
+
+                var cplFile = cplFileCandidates.First();
+
+                File.WriteAllText(cplFile, source);
+                Environment.Exit(0);
+            }
         }
 
         [RelayCommand]
         private void MergeBack()
         {
-            string projectDirectory = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.Parent.FullName;
+            if (_compiler is CustomPageLogicCompiler)
+            {
+                string projectDirectory = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.Parent.FullName;
 
-            var cplFileCandidates = Directory.EnumerateFiles(projectDirectory, "CustomPageLogic.cs", SearchOption.AllDirectories);
+                var cplFileCandidates = Directory.EnumerateFiles(projectDirectory, "CustomPageLogic.cs", SearchOption.AllDirectories);
 
-            if (cplFileCandidates.Any() == false)
-                return;
+                if (cplFileCandidates.Any() == false)
+                    return;
 
-            var cplFile = cplFileCandidates.First();
+                var cplFile = cplFileCandidates.First();
 
-            var fullSource = File.ReadAllText(cplFile);
+                var fullSource = File.ReadAllText(cplFile);
 
-            var startKey = @"//#line 1 ""CustomPageLogic""";
-            var startIdx = fullSource.IndexOf(startKey);
+                var startKey = @"//#line 1 ""CustomPageLogic""";
+                var startIdx = fullSource.IndexOf(startKey);
 
-            var endKey = "//#line default";
-            var endIdx = fullSource.IndexOf(endKey);
+                var endKey = "//#line default";
+                var endIdx = fullSource.IndexOf(endKey);
 
-            if (startIdx == -1 || endIdx == -1)
-                return;
+                if (startIdx == -1 || endIdx == -1)
+                    return;
 
-            Document.Text = fullSource.Substring(startIdx + startKey.Length, endIdx - (startIdx + startKey.Length));
-            //File.WriteAllText(cplFile, source);
+                Document.Text = fullSource.Substring(startIdx + startKey.Length, endIdx - (startIdx + startKey.Length));
+            }
+            else if (_compiler is JobCompiler)
+            {
+                string projectDirectory = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.Parent.FullName;
+
+                var cplFileCandidates = Directory.EnumerateFiles(projectDirectory, "Job.cs", SearchOption.AllDirectories);
+
+                if (cplFileCandidates.Any() == false)
+                    return;
+
+                var cplFile = cplFileCandidates.First();
+
+                var fullSource = File.ReadAllText(cplFile);
+
+                var startKey = @"//#line 1 ""JobScript""";
+                var startIdx = fullSource.IndexOf(startKey);
+
+                var endKey = "//#line default";
+                var endIdx = fullSource.IndexOf(endKey);
+
+                if (startIdx == -1 || endIdx == -1)
+                    return;
+
+                Document.Text = fullSource.Substring(startIdx + startKey.Length, endIdx - (startIdx + startKey.Length));
+            }
         }
     }
 }
