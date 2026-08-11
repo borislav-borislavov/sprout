@@ -10,6 +10,7 @@ namespace Sprout.Core.Models.Configurations
         public Guid ID { get; set; }
 
 		public bool AddToMenu { get; set; }
+		public bool OpenOnStartup { get; set; }
 
         //"\uE74E"
         public string Icon { get; set; }

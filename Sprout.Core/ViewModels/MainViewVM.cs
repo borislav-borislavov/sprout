@@ -99,6 +99,16 @@ namespace Sprout.Core.ViewModels
             {
                 CloseTabs(msg.Value.PageConfigID);
             });
+
+            OpenStartupPages();
+        }
+
+        private void OpenStartupPages()
+        {
+            foreach (var pageConfig in _sproutConfig.Pages.Where(p => p.OpenOnStartup))
+            {
+                OpenTab(pageConfig, null);
+            }
         }
 
         private void CloseTabs(Guid pageConfigID)

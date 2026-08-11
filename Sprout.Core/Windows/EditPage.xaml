@@ -359,6 +359,10 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
                     
                     <Label Content="Title Binding"
                            VerticalAlignment="Top" />
@@ -371,6 +375,15 @@
                             RelativeSource={RelativeSource AncestorType=Window}, 
                             Path=DataContext.PageConfig.TitleBinding,
                             UpdateSourceTrigger=PropertyChanged}"
+                        Margin="5"/>
+
+                    <CheckBox
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        Content="Open on startup"
+                        IsChecked="{Binding
+                            RelativeSource={RelativeSource AncestorType=Window},
+                            Path=DataContext.PageConfig.OpenOnStartup}"
                         Margin="5"/>
                 </Grid>
             </TabItem>
