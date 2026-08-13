@@ -50,7 +50,7 @@ namespace Sprout.Core.Factories
                 var templateCol = new DataGridTemplateColumn()
                 {
                     Header = colConfig.Header,
-                    Width = DataGridLength.Auto,
+                    Width = GetWidth(colConfig),
                     IsReadOnly = colConfig.IsReadOnly
                 };
 
@@ -80,7 +80,7 @@ namespace Sprout.Core.Factories
                 {
                     Header = colConfig.Header,
                     Binding = new Binding(colConfig.BindingPath),
-                    Width = DataGridLength.Auto,
+                    Width = GetWidth(colConfig),
                     IsReadOnly = colConfig.IsReadOnly
                 };
 
@@ -100,7 +100,7 @@ namespace Sprout.Core.Factories
                 var templateColumn = new DataGridTemplateColumn()
                 {
                     Header = colConfig.Header,
-                    Width = DataGridLength.Auto,
+                    Width = GetWidth(colConfig),
                     IsReadOnly = colConfig.IsReadOnly
                 };
 
@@ -149,7 +149,7 @@ namespace Sprout.Core.Factories
                     DisplayMemberPath = colConfig.DisplayColumn,
                     SelectedValuePath = colConfig.ValueColumn,
                     SelectedValueBinding = new Binding(colConfig.BindingPath),
-                    Width = DataGridLength.Auto,
+                    Width = GetWidth(colConfig),
                     IsReadOnly = colConfig.IsReadOnly
                 };
 
@@ -185,11 +185,18 @@ namespace Sprout.Core.Factories
             {
                 Header = colConfig.Header,
                 Binding = new Binding(colConfig.BindingPath),
-                Width = DataGridLength.Auto,
+                Width = GetWidth(colConfig),
                 IsReadOnly = colConfig.IsReadOnly
             };
 
             return col;
+        }
+
+        private static DataGridLength GetWidth(SproutDataGridColumnConfig colConfig)
+        {
+            return colConfig.Width.HasValue
+                ? new DataGridLength(colConfig.Width.Value)
+                : DataGridLength.Auto;
         }
     }
 }

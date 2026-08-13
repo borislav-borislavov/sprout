@@ -106,6 +106,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Header" Binding="{Binding Header, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
                             <DataGridTextColumn Header="Binding Path" Binding="{Binding BindingPath, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
+                            <DataGridTextColumn Header="Width" Binding="{Binding Width, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
                             <DataGridComboBoxColumn Header="Type"
                                                     SelectedItemBinding="{Binding ColumnType, UpdateSourceTrigger=PropertyChanged}"
                                                     ItemsSource="{Binding Source={StaticResource ColumnTypeValues}}"

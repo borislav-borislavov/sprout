@@ -18,6 +18,8 @@ namespace Sprout.Core.Models.Configurations.DataGrid
         public ColumnType ColumnType { get; set; }
         public bool IsReadOnly { get; set; }
 
+        public double? Width { get; set; }
+
         /// <summary>
         /// The column name from the ComboBox data source used for display text.
         /// Only applicable when ColumnType is Combo.
