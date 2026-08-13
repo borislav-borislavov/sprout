@@ -117,17 +117,33 @@ namespace Sprout.Core.ViewModels
                 .Where(t => t.PageConfig?.ID == pageConfigID)
                 .ToList();
 
-            if (tabsToClose.Count == 0) return;
-
             foreach (var tab in tabsToClose)
             {
-                Tabs.Remove(tab);
+                CloseTab(tab);
+            }
+        }
+
+        public bool CloseTab(ObservableObject tab)
+        {
+            if (tab is SproutPageVM pageVM
+                && pageVM.PageConfig.ConfirmBeforeClosing
+                && _dialogService.ShowMessage(
+                    $"Are you sure you want to close '{pageVM.Title}'?",
+                    "Confirm Close",
+                    DialogButton.YesNo,
+                    DialogImage.Question) != DialogResult.Yes)
+            {
+                return false;
             }
 
-            if (tabsToClose.Contains(SelectedTab))
+            Tabs.Remove(tab);
+
+            if (SelectedTab == tab || SelectedTab is null)
             {
                 SelectedTab = Tabs.Count > 0 ? Tabs[0] : null;
             }
+
+            return true;
         }
 
         private void LoadMenuPages()
@@ -215,6 +231,19 @@ namespace Sprout.Core.ViewModels
                     Height = System.Windows.SystemParameters.PrimaryScreenHeight * 0.85,
                     WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner,
                     Owner = System.Windows.Application.Current?.MainWindow
+                };
+
+                window.Closing += (_, e) =>
+                {
+                    if (pageConfig.ConfirmBeforeClosing
+                        && _dialogService.ShowMessage(
+                            $"Are you sure you want to close '{pageConfig.Title}'?",
+                            "Confirm Close",
+                            DialogButton.YesNo,
+                            DialogImage.Question) != DialogResult.Yes)
+                    {
+                        e.Cancel = true;
+                    }
                 };
 
                 window.ShowDialog();

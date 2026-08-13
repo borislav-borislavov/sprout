@@ -362,6 +362,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     
                     <Label Content="Title Binding"
@@ -384,6 +385,15 @@
                         IsChecked="{Binding
                             RelativeSource={RelativeSource AncestorType=Window},
                             Path=DataContext.PageConfig.OpenOnStartup}"
+                        Margin="5"/>
+
+                    <CheckBox
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2"
+                        Content="Confirm before closing"
+                        IsChecked="{Binding
+                            RelativeSource={RelativeSource AncestorType=Window},
+                            Path=DataContext.PageConfig.ConfirmBeforeClosing}"
                         Margin="5"/>
                 </Grid>
             </TabItem>

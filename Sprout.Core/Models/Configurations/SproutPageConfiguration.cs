@@ -11,6 +11,7 @@ namespace Sprout.Core.Models.Configurations
 
 		public bool AddToMenu { get; set; }
 		public bool OpenOnStartup { get; set; }
+		public bool ConfirmBeforeClosing { get; set; }
 
         //"\uE74E"
         public string Icon { get; set; }

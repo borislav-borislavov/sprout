@@ -36,13 +36,7 @@ namespace Sprout.Core.Views
 
             Dispatcher.BeginInvoke(() =>
             {
-                viewModel.Tabs.Remove(tabVM);
-
-                // Update SelectedTab if it was the closed tab
-                if (viewModel.SelectedTab == tabVM)
-                {
-                    viewModel.SelectedTab = viewModel.Tabs.Count > 0 ? viewModel.Tabs[0] : null;
-                }
+                viewModel.CloseTab(tabVM);
             }, DispatcherPriority.Render);
         }
 
