@@ -42,9 +42,9 @@ namespace Sprout.Core.SproutControlVMs
 
         public T? Get<T>(string key) where T : BaseSproutControlVM
         {
-            if (_viewModels.TryGetValue(key, out var v) && v.GetType() == typeof(T))
+            if (_viewModels.TryGetValue(key, out var v) && v is T typed)
             {
-                return (T)v;
+                return typed;
             }
 
             return default;

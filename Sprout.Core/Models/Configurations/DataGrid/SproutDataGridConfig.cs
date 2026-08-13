@@ -28,6 +28,12 @@ namespace Sprout.Core.Models.Configurations.DataGrid
 		public bool IsReadOnly { get; set; }
 
 		/// <summary>
+		/// When set, the grid's scroll position and selected row are preserved when the data is refreshed.
+		/// Disabled by default.
+		/// </summary>
+		public bool PreserveStateOnRefresh { get; set; }
+
+		/// <summary>
 		/// Number of detail fields shown per row in the RowDetailsTemplate. Default is 10.
 		/// </summary>
 		public int RowDetailsItemsPerRow { get; set; } = 10;

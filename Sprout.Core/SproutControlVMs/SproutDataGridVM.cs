@@ -94,6 +94,13 @@ namespace Sprout.Core.SproutControlVMs
         {
             if (e.PropertyName != nameof(IDataProvider.Data)) return;
 
+            //This runs before the ItemsSource binding pushes the new table into the grid,
+            //so the current scroll position and selection can still be captured and later restored.
+            if (Grid?.Config?.PreserveStateOnRefresh == true)
+            {
+                Grid.StatePreserver.Capture();
+            }
+
             HasChanges = false;
             //Upon refreshing the data, the DataTable will be replaced with a new instance.
             //This means that the DataTable's RowChanged event will no longer be subscribed to. We need to re-subscribe to it.

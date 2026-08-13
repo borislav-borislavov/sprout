@@ -88,6 +88,12 @@
                                   VerticalAlignment="Center"
                                   IsChecked="{Binding SelectedDataGrid.IsReadOnly, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                   ToolTip="When checked, the grid cells cannot be edited."/>
+
+                        <CheckBox Content="Preserve State On Refresh"
+                                  Margin="10,5,0,0"
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding SelectedDataGrid.PreserveStateOnRefresh, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  ToolTip="When checked, the grid keeps its scroll position and selected row when the data is refreshed."/>
                     </StackPanel>
 
                     <DataGrid

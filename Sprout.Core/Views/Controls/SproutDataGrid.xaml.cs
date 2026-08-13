@@ -52,7 +52,15 @@ namespace Sprout.Core.Views.Controls
         public SproutDataGrid()
         {
             InitializeComponent();
+
+            StatePreserver = new DataGridStatePreserver(dataGrid);
         }
+
+        /// <summary>
+        /// Preserves scroll position and selection across data refreshes.
+        /// <see cref="DataGridStatePreserver.Capture"/> is called by the VM right before the data is replaced.
+        /// </summary>
+        public DataGridStatePreserver StatePreserver { get; }
 
         /// <summary>
         /// Returns the stable key (binding path) for the given column.
