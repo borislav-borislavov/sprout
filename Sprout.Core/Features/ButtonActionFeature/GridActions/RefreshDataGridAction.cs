@@ -23,6 +23,11 @@ namespace Sprout.Core.Features.ButtonActions.GridActions
 
         public async Task Perform(VMRegistry vmRegistry, IDataServiceFactory dataServiceFactory)
         {
+            if (vmRegistry.Get<SproutDataGridVM>(_ownControlName)?.ConfirmRefresh() == false)
+            {
+                return;
+            }
+
             var ownDataAdapter = vmRegistry.GetAdapterOrThrow(_ownControlName);
             using var dataService = dataServiceFactory.Create(ownDataAdapter, vmRegistry);
             await dataService.ProvideData();

@@ -66,6 +66,15 @@ namespace Sprout.Core.SproutControlVMs
             _dialogService = dialogService;
         }
 
+        public bool ConfirmRefresh()
+        {
+            return !HasChanges || _dialogService.ShowMessage(
+                "Refreshing this grid will discard unsaved changes. Do you want to continue?",
+                "Confirm Refresh",
+                DialogButton.YesNo,
+                DialogImage.Warning) == DialogResult.Yes;
+        }
+
         public virtual void SetUpState(SproutDataGrid control)
         {
             control.dataGrid.SetBinding(DataGrid.SelectedItemProperty,
