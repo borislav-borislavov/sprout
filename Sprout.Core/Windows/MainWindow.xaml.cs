@@ -19,12 +19,10 @@ namespace Sprout.Core.Windows
             var fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly()!.Location).FileVersion;
             Title = string.IsNullOrWhiteSpace(fileVersion) ? "Sprout" : $"Sprout - v{fileVersion}";
 
-            // Calculate 85% of the Primary Screen resolution
-            this.Width = SystemParameters.PrimaryScreenWidth * 0.85;
-            this.Height = SystemParameters.PrimaryScreenHeight * 0.85;
-
-            // Optional: Center the window on the screen
-            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            var currentScreen = System.Windows.Forms.Screen.FromPoint(System.Windows.Forms.Cursor.Position);
+            Width = currentScreen.WorkingArea.Width * 0.85;
+            Height = currentScreen.WorkingArea.Height * 0.85;
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
         protected override void OnClosing(CancelEventArgs e)
