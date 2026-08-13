@@ -42,6 +42,8 @@ namespace Sprout.Core.Models.Configurations.DataGrid
 
 		public double? Width { get; set; }
 
+		public double? RowHeight { get; set; }
+
 		public string Margin { get; set; }
 
 		public string HorizontalAlignment { get; set; }

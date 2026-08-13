@@ -76,6 +76,9 @@ namespace Sprout.Core.Factories
             if (sproutGridConfig.Width.HasValue)
                 sproutDataGrid.dataGrid.Width = sproutGridConfig.Width.Value;
 
+            if (sproutGridConfig.RowHeight.HasValue)
+                sproutDataGrid.dataGrid.RowHeight = sproutGridConfig.RowHeight.Value;
+
             if (!string.IsNullOrWhiteSpace(sproutGridConfig.Margin))
             {
                 if (new ThicknessConverter().ConvertFromString(sproutGridConfig.Margin) is Thickness margin)

@@ -230,6 +230,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
@@ -247,33 +248,43 @@
                         VerticalAlignment="Top" Margin="5"
                         Text="{Binding SelectedDataGrid.Height, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <!--Width-->
+                    <!--RowHeight-->
                     <TextBlock
                         Grid.Row="1" Grid.Column="0"
                         Margin="5" VerticalAlignment="Top"
-                        Text="Width" FontWeight="Bold" FontSize="16"/>
+                        Text="Row Height" FontWeight="Bold" FontSize="16"/>
                     <TextBox
                         Grid.Row="1" Grid.Column="1"
+                        VerticalAlignment="Top" Margin="5"
+                        Text="{Binding SelectedDataGrid.RowHeight, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--Width-->
+                    <TextBlock
+                        Grid.Row="2" Grid.Column="0"
+                        Margin="5" VerticalAlignment="Top"
+                        Text="Width" FontWeight="Bold" FontSize="16"/>
+                    <TextBox
+                        Grid.Row="2" Grid.Column="1"
                         VerticalAlignment="Top" Margin="5"
                         Text="{Binding SelectedDataGrid.Width, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <!--Margin-->
                     <TextBlock
-                        Grid.Row="2" Grid.Column="0"
+                        Grid.Row="3" Grid.Column="0"
                         Margin="5" VerticalAlignment="Top"
                         Text="Margin" FontWeight="Bold" FontSize="16"/>
                     <TextBox
-                        Grid.Row="2" Grid.Column="1"
+                        Grid.Row="3" Grid.Column="1"
                         VerticalAlignment="Top" Margin="5"
                         Text="{Binding SelectedDataGrid.Margin, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <!--HorizontalAlignment-->
                     <TextBlock
-                        Grid.Row="3" Grid.Column="0"
+                        Grid.Row="4" Grid.Column="0"
                         Margin="5" VerticalAlignment="Center"
                         Text="Horizontal Alignment" FontWeight="Bold" FontSize="16"/>
                     <ComboBox
-                        Grid.Row="3" Grid.Column="1" Margin="5"
+                        Grid.Row="4" Grid.Column="1" Margin="5"
                         SelectedItem="{Binding SelectedDataGrid.HorizontalAlignment, UpdateSourceTrigger=PropertyChanged}">
                         <sys:String>(Default)</sys:String>
                         <sys:String>Left</sys:String>
@@ -284,11 +295,11 @@
 
                     <!--VerticalAlignment-->
                     <TextBlock
-                        Grid.Row="4" Grid.Column="0"
+                        Grid.Row="5" Grid.Column="0"
                         Margin="5" VerticalAlignment="Center"
                         Text="Vertical Alignment" FontWeight="Bold" FontSize="16"/>
                     <ComboBox
-                        Grid.Row="4" Grid.Column="1" Margin="5"
+                        Grid.Row="5" Grid.Column="1" Margin="5"
                         SelectedItem="{Binding SelectedDataGrid.VerticalAlignment, UpdateSourceTrigger=PropertyChanged}">
                         <sys:String>(Default)</sys:String>
                         <sys:String>Top</sys:String>
@@ -299,11 +310,11 @@
 
                     <!--ToolTip-->
                     <TextBlock
-                        Grid.Row="5" Grid.Column="0"
+                        Grid.Row="6" Grid.Column="0"
                         Margin="5" VerticalAlignment="Top"
                         Text="Tooltip" FontWeight="Bold" FontSize="16"/>
                     <TextBox
-                        Grid.Row="5" Grid.Column="1"
+                        Grid.Row="6" Grid.Column="1"
                         VerticalAlignment="Top" Margin="5"
                         Text="{Binding SelectedDataGrid.ToolTip, UpdateSourceTrigger=PropertyChanged}"/>
                 </Grid>
