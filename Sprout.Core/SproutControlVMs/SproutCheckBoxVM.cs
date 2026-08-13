@@ -1,4 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using Sprout.Core.Features.Dependency;
+using Sprout.Core.Models;
+using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Views.Controls;
 using System;
 using System.Collections.Generic;
@@ -10,10 +13,12 @@ using System.Windows.Data;
 
 namespace Sprout.Core.SproutControlVMs
 {
-    public partial class SproutCheckBoxVM : BaseSproutControlVM
+    public partial class SproutCheckBoxVM : BaseSproutControlVM, IDependent
     {
         [ObservableProperty]
         private bool _isChecked;
+
+        public IEnumerable<DataProviderDependency> Dependencies { get; set; } = new List<DataProviderDependency>();
 
         public SproutCheckBoxVM(string name) : base(name)
         {
@@ -31,6 +36,25 @@ namespace Sprout.Core.SproutControlVMs
                     Mode = BindingMode.TwoWay,
                     UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
                 });
+        }
+
+        public void DepenencyChanged(DataProviderDependency changedDependency, VMRegistry vmRegistry)
+        {
+            var targetedControlUIState = vmRegistry[changedDependency.ControlName];
+
+            if (targetedControlUIState == null)
+                throw new Exception($"VM for control {changedDependency.ControlName} not found.");
+
+            var value = BindingEvaluator.Evaluate(targetedControlUIState, changedDependency.PropertyPath);
+
+            if (value is bool boolValue)
+            {
+                this.IsChecked = boolValue;
+            }
+            else
+            {
+                this.IsChecked = Convert.ToBoolean(value);
+            }
         }
     }
 }

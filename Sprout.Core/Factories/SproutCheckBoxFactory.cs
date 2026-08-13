@@ -1,4 +1,5 @@
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Models.Queries;
 using Sprout.Core.SproutControlVMs;
 using Sprout.Core.Views.Controls;
 using System;
@@ -67,6 +68,11 @@ namespace Sprout.Core.Factories
 
             var vm = new SproutCheckBoxVM(sproutCheckBox.Name);
             vm.SetUpState(sproutCheckBox);
+
+            if (!string.IsNullOrEmpty(config.Binding))
+            {
+                vm.Dependencies = DependencyParser.ParseDependencies(sproutCheckBox.Config.Binding);
+            }
 
             return sproutCheckBox;
         }
