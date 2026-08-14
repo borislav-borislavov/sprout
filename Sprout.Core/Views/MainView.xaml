@@ -77,6 +77,10 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
                 <Separator/>
                 <MenuItem Opacity="0.9" Header="Settings" Command="{Binding OpenSettingsCommand}"/>
             </MenuItem>
+
+            <MenuItem Header="About">
+                <MenuItem Opacity="0.9" Header="Check for newer version" Command="{Binding CheckForUpdatesCommand}"/>
+            </MenuItem>
         </Menu>
 
         <!--to remove blurryness of text i added UseLayoutRounding="True" SnapsToDevicePixels="True"-->

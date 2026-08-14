@@ -13,6 +13,7 @@ using Sprout.Core.Views;
 using Sprout.Core.Windows;
 using Sprout.Core.Common;
 using Sprout.Core.Services.Jobs;
+using Sprout.Core.Services.Updates;
 
 namespace Sprout.Core
 {
@@ -37,7 +38,8 @@ namespace Sprout.Core
             services.AddTransient<ISqlServerMigrationService, SqlServerMigrationService>();
             services.AddSingleton<ISqlQueryLogger, FileSqlQueryLogger>();
             services.AddSingleton<IJobScheduler, JobScheduler>();
-            
+            services.AddTransient<IUpdateService, GitHubUpdateService>();
+
             //ViewModels
             services.AddTransient<LoginVM>();
             services.AddTransient<MainViewVM>();

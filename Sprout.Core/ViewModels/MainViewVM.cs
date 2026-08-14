@@ -10,9 +10,11 @@ using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.CPL;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Navigation;
+using Sprout.Core.Services.Updates;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sprout.Core.ViewModels
 {
@@ -23,6 +25,7 @@ namespace Sprout.Core.ViewModels
         private readonly IDialogService _dialogService;
         private readonly ISproutPageVMFactory _sproutPageVMFactory;
         private readonly IVMFactory _vmFactory;
+        private readonly IUpdateService _updateService;
 
         [ObservableProperty]
         private ObservableCollection<SproutPageConfiguration> _pageConfigs;
@@ -50,13 +53,15 @@ namespace Sprout.Core.ViewModels
             INavigationService navigationService,
             IDialogService dialogService,
             ISproutPageVMFactory sproutPageVMFactory,
-            IVMFactory vmFactory)
+            IVMFactory vmFactory,
+            IUpdateService updateService)
         {
             _configService = configService;
             _navigationService = navigationService;
             _dialogService = dialogService;
             _sproutPageVMFactory = sproutPageVMFactory;
             _vmFactory = vmFactory;
+            _updateService = updateService;
             LoadMenuPages();
 
             Tabs.CollectionChanged += (_, e) =>
@@ -257,6 +262,12 @@ namespace Sprout.Core.ViewModels
             {
                 _dialogService.ShowError(ex.Message);
             }
+        }
+
+        [RelayCommand]
+        private Task CheckForUpdatesAsync()
+        {
+            return _updateService.CheckForUpdatesAsync();
         }
 
         [RelayCommand]
