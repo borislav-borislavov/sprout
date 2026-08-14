@@ -463,7 +463,8 @@ namespace Sprout.Core.Services.CPL
         {
             // Pull in all trusted runtime assemblies
             var refs = (AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") as string)!
-                .Split(Path.PathSeparator)
+                .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
+                .Where(File.Exists)
                 .Select(p => MetadataReference.CreateFromFile(p))
                 .Cast<MetadataReference>()
                 .ToList();
