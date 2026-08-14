@@ -176,6 +176,8 @@ namespace Sprout.Core.ViewModels
                             }
                         }
                     }
+
+                    _host.PropertyChanged(change);
                 };
 
                 DynamicViewInstance.InitializePage(this);

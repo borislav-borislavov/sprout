@@ -1,4 +1,5 @@
-﻿using Sprout.Core.ViewModels;
+﻿using Sprout.Core.SproutControlVMs;
+using Sprout.Core.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,6 +21,8 @@ namespace Sprout.Core.Services.CPL
 
         public virtual Task<bool> OnBeforeSaveAsync()
             => Task.FromResult(true);
+
+        public virtual Task OnPropertyChanged(VMChangedEventArgs change) => Task.CompletedTask;
 
         //// ── Convenience helpers the user can call ─────────────────────
         //protected void SetValue(string id, object value) => Page.SetValue(id, value);

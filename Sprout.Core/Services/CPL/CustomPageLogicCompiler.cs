@@ -488,7 +488,8 @@ namespace Sprout.Core.Services.CPL
             "System.Threading.Tasks",
             "Sprout.Core.Services.CPL",
             "System.Windows",
-            "ClosedXML.Excel"
+            "ClosedXML.Excel",
+            "Sprout.Core.SproutControlVMs"
         ];
 
         // Built-in defaults plus the page's extra usings (deduped, defaults win).
@@ -516,6 +517,11 @@ namespace Sprout.Core.Services.CPL
             return
                 """
                 public override async Task OnLoadAsync()
+                {
+                    
+                }
+
+                public override async Task OnPropertyChanged(VMChangedEventArgs change)
                 {
                     
                 }

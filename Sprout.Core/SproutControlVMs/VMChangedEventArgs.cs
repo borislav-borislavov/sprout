@@ -8,6 +8,9 @@ namespace Sprout.Core.SproutControlVMs
 {
     public sealed record VMChangedEventArgs
     {
+        /// <summary>
+        /// The name of the ViewModel that changed.
+        /// </summary>
         public string ControlName { get; set; }
         public string PropertyName { get; set; }
 

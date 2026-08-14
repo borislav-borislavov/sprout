@@ -1,4 +1,5 @@
-﻿using Sprout.Core.ViewModels;
+﻿using Sprout.Core.SproutControlVMs;
+using Sprout.Core.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -58,6 +59,11 @@ namespace Sprout.Core.Services.CPL
             {
                 return ex.Message;
             }
+        }
+
+        internal void PropertyChanged(VMChangedEventArgs change)
+        {
+            _instance?.OnPropertyChanged(change);
         }
 
         public async Task UnloadAsync()
