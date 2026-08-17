@@ -217,17 +217,20 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
                       />
         
         <TabControl Name="MyTabControl"
-                         Grid.Column="1"
-                         Grid.Row="1"
-                         Grid.RowSpan="3"
-                        Margin="0 5 5 5"
-                        ItemsSource="{Binding Tabs}"
-                        SelectedItem="{Binding SelectedTab}">
+                    Grid.Column="1"
+                    Grid.Row="1"
+                    Grid.RowSpan="3"
+                    Margin="0 5 5 5"
+                    ItemsSource="{Binding Tabs}"
+                    SelectedItem="{Binding SelectedTab}">
 
             <TabControl.Resources>
+                <!--The dynamic sprout page-->
                 <DataTemplate DataType="{x:Type viewModels:SproutPageVM}">
                     <ContentPresenter Content="{Binding DynamicViewInstance}" />
                 </DataTemplate>
+                
+                <!--Non dynamic pages which are opened as a tab-->
                 <DataTemplate DataType="{x:Type viewModels:SettingsVM}">
                     <local:SettingsView />
                 </DataTemplate>
@@ -245,7 +248,6 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
                                 Orientation="Horizontal"
                                 Background="Transparent"
                                 MouseDown="TabHeaderStackPanel_MouseDown">
-
                         <StackPanel.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Rename" Click="RenameTabMenuItem_Click" />
@@ -254,19 +256,12 @@ d:DataContext="{d:DesignInstance viewModels:MainViewVM}">
 
                         <TextBlock Text="{Binding Title}" />
                         
-                        
                         <Grid MouseDown="Grid_MouseDown">
-                            <TextBlock FontFamily="Segoe Fluent Icons"
-                                       Text="&#xef2c;"
-                                       FontWeight="Bold"
-                                       Margin="7,3,0,0"/>
+                            <!--This gives a 3D effect to the close-->
+                            <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xef2c;" FontWeight="Bold" Margin="7,3,0,0"/>
                             
-                            <TextBlock ToolTip="Close Tab"
-                                       FontFamily="Segoe Fluent Icons"
-                                       Foreground="Red"
-                                       Text="&#xef2c;"
-                                       Margin="7,3,0,0">
-                                
+                            <!--The actual close button-->
+                            <TextBlock ToolTip="Close Tab" FontFamily="Segoe Fluent Icons" Foreground="Red" Text="&#xef2c;" Margin="7,3,0,0">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Style.Triggers>
