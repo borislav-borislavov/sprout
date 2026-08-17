@@ -1,0 +1,111 @@
+<Window x:Class="Sprout.Core.Windows.ConnectionStringBuilderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Sprout.Core.Windows"
+        mc:Ignorable="d"
+        Title="Connect to SQL Server"
+        Width="420"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="SQL Server Connection"
+                   FontSize="16"
+                   FontWeight="Bold"
+                   Foreground="DarkSlateGray"
+                   Margin="0,0,0,10"/>
+
+        <GroupBox Grid.Row="1" Header="Server" Padding="10" Margin="0,0,0,8">
+            <StackPanel>
+                <TextBlock Text="Server name" Margin="0,0,0,3"/>
+                <TextBox x:Name="txtServer"
+                         TextChanged="Input_Changed"
+                         ToolTip="e.g. localhost, .\SQLEXPRESS, server,1433"/>
+
+                <TextBlock Text="Database name (optional)" Margin="0,8,0,3"/>
+                <TextBox x:Name="txtDatabase" TextChanged="Input_Changed"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Grid.Row="2" Header="Authentication" Padding="10" Margin="0,0,0,8">
+            <StackPanel>
+                <ComboBox x:Name="cmbAuth"
+                          SelectionChanged="Auth_Changed"
+                          Margin="0,0,0,8">
+                    <ComboBoxItem Content="Windows Authentication" IsSelected="True"/>
+                    <ComboBoxItem Content="SQL Server Authentication"/>
+                </ComboBox>
+
+                <TextBlock x:Name="lblUser" Text="User name" Margin="0,0,0,3"/>
+                <TextBox x:Name="txtUser" TextChanged="Input_Changed"/>
+
+                <TextBlock x:Name="lblPassword" Text="Password" Margin="0,8,0,3"/>
+                <PasswordBox x:Name="txtPassword" PasswordChanged="Input_Changed"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Grid.Row="3" Header="Options" Padding="10" Margin="0,0,0,8">
+            <StackPanel>
+                <CheckBox x:Name="chkEncrypt"
+                          Content="Encrypt connection"
+                          IsChecked="True"
+                          Checked="Input_Changed" Unchecked="Input_Changed"
+                          Margin="0,0,0,5"/>
+                <CheckBox x:Name="chkTrustCert"
+                          Content="Trust server certificate"
+                          IsChecked="True"
+                          Checked="Input_Changed" Unchecked="Input_Changed"/>
+            </StackPanel>
+        </GroupBox>
+
+        <StackPanel Grid.Row="4" Margin="0,0,0,8">
+            <TextBlock Text="Connection string preview" FontWeight="Bold" Foreground="DarkSlateGray" Margin="0,0,0,3"/>
+            <TextBox x:Name="txtPreview"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap"
+                     Height="40"
+                     VerticalScrollBarVisibility="Auto"
+                     Background="WhiteSmoke"/>
+        </StackPanel>
+
+        <Grid Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    x:Name="btnTest"
+                    Content="Test Connection"
+                    Padding="12,4"
+                    Click="BtnTest_Click"/>
+
+            <Button Grid.Column="2"
+                    x:Name="btnOk"
+                    Content="OK"
+                    Padding="20,4"
+                    Margin="0,0,6,0"
+                    IsDefault="True"
+                    Click="BtnOk_Click"/>
+            <Button Grid.Column="3"
+                    Content="Cancel"
+                    Padding="12,4"
+                    IsCancel="True"/>
+        </Grid>
+    </Grid>
+</Window>
