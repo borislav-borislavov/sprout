@@ -1,4 +1,5 @@
 ﻿using Sprout.Core.Models.Configurations;
+using Sprout.Core.Services.WindowSize;
 using Sprout.Core.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -25,11 +26,7 @@ namespace Sprout.Core.Windows
         {
             InitializeComponent();
 
-            this.Width = SystemParameters.PrimaryScreenWidth * 0.85;
-            this.Height = SystemParameters.PrimaryScreenHeight * 0.85;
-
-            // Optional: Center the window on the screen
-            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            WindowScreenSizer.SizeToScreen(this);
 
             DataContext = vm;
         }

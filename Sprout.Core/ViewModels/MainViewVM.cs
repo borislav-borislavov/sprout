@@ -11,6 +11,7 @@ using Sprout.Core.Services.CPL;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Navigation;
 using Sprout.Core.Services.Updates;
+using Sprout.Core.Services.WindowSize;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -232,11 +233,10 @@ namespace Sprout.Core.ViewModels
                 {
                     Title = pageConfig.Title,
                     Content = sproutPageVM.DynamicViewInstance,
-                    Width = System.Windows.SystemParameters.PrimaryScreenWidth * 0.85,
-                    Height = System.Windows.SystemParameters.PrimaryScreenHeight * 0.85,
-                    WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner,
                     Owner = System.Windows.Application.Current?.MainWindow
                 };
+
+                WindowScreenSizer.SizeToScreen(window);
 
                 window.Closing += (_, e) =>
                 {

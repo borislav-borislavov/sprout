@@ -1,4 +1,5 @@
-﻿using Sprout.Core.Views;
+﻿using Sprout.Core.Services.WindowSize;
+using Sprout.Core.Views;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
@@ -18,11 +19,8 @@ namespace Sprout.Core.Windows
             Content = mainView;
             var fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly()!.Location).FileVersion;
             Title = string.IsNullOrWhiteSpace(fileVersion) ? "Sprout" : $"Sprout - v{fileVersion}";
-
-            var currentScreen = System.Windows.Forms.Screen.FromPoint(System.Windows.Forms.Cursor.Position);
-            Width = currentScreen.WorkingArea.Width * 0.85;
-            Height = currentScreen.WorkingArea.Height * 0.85;
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                
+            WindowScreenSizer.SizeToScreen(this);
         }
 
         protected override void OnClosing(CancelEventArgs e)
