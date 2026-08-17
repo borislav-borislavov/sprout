@@ -6,15 +6,13 @@
         xmlns:local="clr-namespace:Sprout.Core.Windows"
         mc:Ignorable="d"
         Title="Connect to SQL Server"
-        Width="420"
+        Width="440"
         SizeToContent="Height"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner">
 
     <Grid Margin="15">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -28,50 +26,153 @@
                    Foreground="DarkSlateGray"
                    Margin="0,0,0,10"/>
 
-        <GroupBox Grid.Row="1" Header="Server" Padding="10" Margin="0,0,0,8">
-            <StackPanel>
-                <TextBlock Text="Server name" Margin="0,0,0,3"/>
-                <TextBox x:Name="txtServer"
-                         TextChanged="Input_Changed"
-                         ToolTip="e.g. localhost, .\SQLEXPRESS, server,1433"/>
+        <TabControl Grid.Row="1" Margin="0,0,0,8" MinHeight="380">
+            <TabItem Header="Login">
+                <StackPanel Margin="8">
+                    <GroupBox Header="Server" Padding="10" Margin="0,0,0,8">
+                        <StackPanel>
+                            <TextBlock Text="Server name" Margin="0,0,0,3"/>
+                            <TextBox x:Name="txtServer"
+                                     TextChanged="Input_Changed"
+                                     ToolTip="e.g. localhost, .\SQLEXPRESS, server,1433"/>
 
-                <TextBlock Text="Database name (optional)" Margin="0,8,0,3"/>
-                <TextBox x:Name="txtDatabase" TextChanged="Input_Changed"/>
-            </StackPanel>
-        </GroupBox>
+                            <TextBlock Text="Database name (optional)" Margin="0,8,0,3"/>
+                            <ComboBox x:Name="cmbDatabase"
+                                      IsEditable="True"
+                                      SelectionChanged="Input_Changed"
+                                      KeyUp="Input_Changed"
+                                      DropDownOpened="Database_DropDownOpened"/>
+                        </StackPanel>
+                    </GroupBox>
 
-        <GroupBox Grid.Row="2" Header="Authentication" Padding="10" Margin="0,0,0,8">
-            <StackPanel>
-                <ComboBox x:Name="cmbAuth"
-                          SelectionChanged="Auth_Changed"
-                          Margin="0,0,0,8">
-                    <ComboBoxItem Content="Windows Authentication" IsSelected="True"/>
-                    <ComboBoxItem Content="SQL Server Authentication"/>
-                </ComboBox>
+                    <GroupBox Header="Authentication" Padding="10" Margin="0,0,0,8">
+                        <StackPanel>
+                            <ComboBox x:Name="cmbAuth"
+                                      SelectionChanged="Auth_Changed"
+                                      Margin="0,0,0,8">
+                                <ComboBoxItem Content="Windows Authentication" IsSelected="True"/>
+                                <ComboBoxItem Content="SQL Server Authentication"/>
+                            </ComboBox>
 
-                <TextBlock x:Name="lblUser" Text="User name" Margin="0,0,0,3"/>
-                <TextBox x:Name="txtUser" TextChanged="Input_Changed"/>
+                            <TextBlock x:Name="lblUser" Text="User name" Margin="0,0,0,3"/>
+                            <TextBox x:Name="txtUser" TextChanged="Input_Changed"/>
 
-                <TextBlock x:Name="lblPassword" Text="Password" Margin="0,8,0,3"/>
-                <PasswordBox x:Name="txtPassword" PasswordChanged="Input_Changed"/>
-            </StackPanel>
-        </GroupBox>
+                            <TextBlock x:Name="lblPassword" Text="Password" Margin="0,8,0,3"/>
+                            <PasswordBox x:Name="txtPassword" PasswordChanged="Input_Changed"/>
+                        </StackPanel>
+                    </GroupBox>
 
-        <GroupBox Grid.Row="3" Header="Options" Padding="10" Margin="0,0,0,8">
-            <StackPanel>
-                <CheckBox x:Name="chkEncrypt"
-                          Content="Encrypt connection"
-                          IsChecked="True"
-                          Checked="Input_Changed" Unchecked="Input_Changed"
-                          Margin="0,0,0,5"/>
-                <CheckBox x:Name="chkTrustCert"
-                          Content="Trust server certificate"
-                          IsChecked="True"
-                          Checked="Input_Changed" Unchecked="Input_Changed"/>
-            </StackPanel>
-        </GroupBox>
+                    <GroupBox Header="Options" Padding="10">
+                        <StackPanel>
+                            <CheckBox x:Name="chkEncrypt"
+                                      Content="Encrypt connection"
+                                      IsChecked="True"
+                                      Checked="Input_Changed" Unchecked="Input_Changed"
+                                      Margin="0,0,0,5"/>
+                            <CheckBox x:Name="chkTrustCert"
+                                      Content="Trust server certificate"
+                                      IsChecked="True"
+                                      Checked="Input_Changed" Unchecked="Input_Changed"/>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </TabItem>
 
-        <StackPanel Grid.Row="4" Margin="0,0,0,8">
+            <TabItem Header="Advanced">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="8">
+                        <GroupBox Header="Timeouts" Padding="10" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="90"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Connect timeout (seconds)" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtConnectTimeout" Text="15" TextChanged="Input_Changed" Margin="0,0,0,5"/>
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Command timeout (seconds)" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" x:Name="txtCommandTimeout" Text="30" TextChanged="Input_Changed"/>
+                            </Grid>
+                        </GroupBox>
+
+                        <GroupBox Header="Connection" Padding="10" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="150"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Application name" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtAppName" TextChanged="Input_Changed" Margin="0,0,0,5"/>
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Application intent" VerticalAlignment="Center"/>
+                                <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cmbAppIntent" SelectionChanged="Input_Changed" Margin="0,0,0,5">
+                                    <ComboBoxItem Content="ReadWrite" IsSelected="True"/>
+                                    <ComboBoxItem Content="ReadOnly"/>
+                                </ComboBox>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Packet size (bytes)" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" x:Name="txtPacketSize" Text="8000" TextChanged="Input_Changed" Margin="0,0,0,5"/>
+
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Connect retry count" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtRetryCount" Text="1" TextChanged="Input_Changed" Margin="0,0,0,5"/>
+
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Connect retry interval (seconds)" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="4" Grid.Column="1" x:Name="txtRetryInterval" Text="10" TextChanged="Input_Changed"/>
+                            </Grid>
+                        </GroupBox>
+
+                        <GroupBox Header="Pooling" Padding="10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="90"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                                          x:Name="chkPooling"
+                                          Content="Enable connection pooling"
+                                          IsChecked="True"
+                                          Checked="Input_Changed" Unchecked="Input_Changed"
+                                          Margin="0,0,0,5"/>
+
+                                <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                          x:Name="chkMars"
+                                          Content="Multiple active result sets (MARS)"
+                                          Checked="Input_Changed" Unchecked="Input_Changed"
+                                          Margin="0,0,0,5"/>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Min pool size" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" x:Name="txtMinPoolSize" Text="0" TextChanged="Input_Changed" Margin="0,0,0,5"/>
+
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Max pool size" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtMaxPoolSize" Text="100" TextChanged="Input_Changed"/>
+                            </Grid>
+                        </GroupBox>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+
+        <StackPanel Grid.Row="2" Margin="0,0,0,8">
             <TextBlock Text="Connection string preview" FontWeight="Bold" Foreground="DarkSlateGray" Margin="0,0,0,3"/>
             <TextBox x:Name="txtPreview"
                      IsReadOnly="True"
@@ -81,7 +182,7 @@
                      Background="WhiteSmoke"/>
         </StackPanel>
 
-        <Grid Grid.Row="5">
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
