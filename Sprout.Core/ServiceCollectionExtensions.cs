@@ -14,6 +14,7 @@ using Sprout.Core.Windows;
 using Sprout.Core.Common;
 using Sprout.Core.Services.Jobs;
 using Sprout.Core.Services.Updates;
+using Sprout.Core.Services.ValueStore;
 
 namespace Sprout.Core
 {
@@ -39,6 +40,7 @@ namespace Sprout.Core
             services.AddSingleton<ISqlQueryLogger, FileSqlQueryLogger>();
             services.AddSingleton<IJobScheduler, JobScheduler>();
             services.AddTransient<IUpdateService, GitHubUpdateService>();
+            services.AddSingleton<IValueStoreFactory, ValueStoreFactory>(x => new ValueStoreFactory());
 
             //ViewModels
             services.AddTransient<LoginVM>();

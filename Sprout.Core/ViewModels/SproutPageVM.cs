@@ -15,6 +15,7 @@ using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.CPL;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Login;
+using Sprout.Core.Services.ValueStore;
 using Sprout.Core.SproutControlVMs;
 using Sprout.Core.Views;
 
@@ -77,7 +78,8 @@ namespace Sprout.Core.ViewModels
             ILoggedInUserService loggedInUserService,
             IConfigurationService configurationService,
             IClipboardService clipboardService,
-            ISproutControlFactory sproutControlFactory)
+            ISproutControlFactory sproutControlFactory,
+            IValueStoreFactory valueStoreFactory)
         {
             PageConfig = pageConfig;
             SproutPageInternalVM.Data = args?.Parameter;
@@ -100,7 +102,7 @@ namespace Sprout.Core.ViewModels
                     controlVM.OwnerPageID = PageConfig.ID;
                 }
 
-                _host = new SproutPageLogicBridge($"{PageConfig.ID.ToString().Replace("-", "")}");
+                _host = new SproutPageLogicBridge($"{PageConfig.ID.ToString().Replace("-", "")}", valueStoreFactory);
 
                 VMRegistry.VMChanged += async (_, change) =>
                 {

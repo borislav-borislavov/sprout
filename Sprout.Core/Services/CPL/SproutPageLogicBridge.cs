@@ -1,4 +1,5 @@
-﻿using Sprout.Core.SproutControlVMs;
+﻿using Sprout.Core.Services.ValueStore;
+using Sprout.Core.SproutControlVMs;
 using Sprout.Core.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -13,13 +14,18 @@ namespace Sprout.Core.Services.CPL
     public sealed class SproutPageLogicBridge : IDisposable
     {
         private readonly string _pageId;
+        private readonly IValueStoreFactory _valueStoreFactory;
         private PageLogicLoadContext? _loadContext;
         private CustomPageLogicBase? _instance;
         private readonly Dictionary<string, Action> _exposedMethods = new();
 
         public bool IsActive => _instance is not null;
 
-        public SproutPageLogicBridge(string pageId) => _pageId = pageId;
+        public SproutPageLogicBridge(string pageId, IValueStoreFactory valueStoreFactory)
+        {
+            _pageId = pageId;
+            _valueStoreFactory = valueStoreFactory;
+        }
 
         // ── Load / Hot-Reload ─────────────────────────────────────────
 
@@ -29,6 +35,7 @@ namespace Sprout.Core.Services.CPL
             {
                 _instance = liveDebugPage;
                 _instance.Page = pageContext;
+                _instance.ValueStoreFactory = _valueStoreFactory;
 
                 await _instance.OnLoadAsync();
                 return null; // null = success
@@ -51,6 +58,7 @@ namespace Sprout.Core.Services.CPL
                 var type = assembly.GetType($"DynamicPageLogic._{_pageId}.CustomPageLogic")!;
                 _instance = (CustomPageLogicBase)Activator.CreateInstance(type)!;
                 _instance.Page = pageContext;
+                _instance.ValueStoreFactory = _valueStoreFactory;
 
                 await _instance.OnLoadAsync();
                 return null; // null = success
