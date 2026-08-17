@@ -17,6 +17,9 @@ namespace Sprout.Core.ViewModels
         private string _sqlServerConnectionString;
 
         [ObservableProperty]
+        private string _duckDbConnectionString;
+
+        [ObservableProperty]
         private int _commandTimeout;
 
         [ObservableProperty]
@@ -34,6 +37,7 @@ namespace Sprout.Core.ViewModels
         {
             var settings = _configService.Load().Settings;
             SqlServerConnectionString = settings.SqlServerConnectionString;
+            DuckDbConnectionString = settings.DuckDbConnectionString;
             CommandTimeout = settings.CommandTimeout;
             LogSqlQueries = settings.LogSqlQueries;
         }
@@ -45,6 +49,7 @@ namespace Sprout.Core.ViewModels
             {
                 var config = _configService.Load();
                 config.Settings.SqlServerConnectionString = SqlServerConnectionString;
+                config.Settings.DuckDbConnectionString = DuckDbConnectionString;
                 config.Settings.CommandTimeout = CommandTimeout;
                 config.Settings.LogSqlQueries = LogSqlQueries;
                 _configService.Save(config);

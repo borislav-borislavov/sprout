@@ -138,7 +138,9 @@ namespace Sprout.Core.Factories
 
         private IDataAdapter CreateDuckDataAdapter(DuckDataAdapterConfig duckAdapterConfig)
         {
-            var connectionString = duckAdapterConfig.ConnectionString;
+            var connectionString = string.IsNullOrWhiteSpace(duckAdapterConfig.ConnectionString)
+                ? _configurationService.Load().Settings.DuckDbConnectionString
+                : duckAdapterConfig.ConnectionString;
 
             var dataAdapter = new DuckDataAdapter
             {
