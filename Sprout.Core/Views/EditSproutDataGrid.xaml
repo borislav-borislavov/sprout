@@ -160,7 +160,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Row">
+            <TabItem Header="Row" ToolTip="Open a page based on selected row">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
