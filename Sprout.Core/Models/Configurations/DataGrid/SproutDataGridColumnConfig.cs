@@ -45,6 +45,12 @@ namespace Sprout.Core.Models.Configurations.DataGrid
         /// shown when a row is selected (RowDetailsVisibilityMode = VisibleWhenSelected).
         /// </summary>
         public bool ShowInRowDetails { get; set; }
+
+        /// <summary>
+        /// A static literal applied to this column when a new row is inserted.
+        /// The value is converted to the bound DataColumn's type; an invalid literal throws when adding a row.
+        /// </summary>
+        public string DefaultValue { get; set; }
     }
 
     public enum ColumnType

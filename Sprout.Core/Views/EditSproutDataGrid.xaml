@@ -113,6 +113,7 @@
                                                     Width="80"/>
                             <DataGridCheckBoxColumn Header="Read Only" Binding="{Binding IsReadOnly, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
                             <DataGridCheckBoxColumn Header="Row Details" Binding="{Binding ShowInRowDetails, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+                            <DataGridTextColumn Header="Default Value" Binding="{Binding DefaultValue, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
