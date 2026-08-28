@@ -15,7 +15,7 @@ namespace Sprout.Core.SproutControlVMs
         [ObservableProperty]
         private string _text;
 
-        public SproutLabelVM(string name) : base(name)
+        public SproutLabelVM(string name, Guid pageId) : base(name, pageId)
         {
 
         }

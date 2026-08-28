@@ -16,13 +16,13 @@ namespace Sprout.Core.Factories
 {
     public class SproutComboFactory : BaseSproutControlFactory, ISproutComboFactory
     {
-        public SproutCombo Create(SproutComboConfig sproutComboConfig)
+        public SproutCombo Create(SproutComboConfig sproutComboConfig, Guid pageId)
         {
             var sproutCombo = new SproutCombo
             {
                 Name = sproutComboConfig.Name,
                 Config = sproutComboConfig,
-                VM = new SproutComboVM(sproutComboConfig.Name)
+                VM = new SproutComboVM(sproutComboConfig.Name, pageId)
             };
 
             sproutCombo.comboBox.DisplayMemberPath = sproutComboConfig.DisplayColumn;

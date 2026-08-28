@@ -27,13 +27,13 @@ namespace Sprout.Core.Factories
             _dataAdapterFactory = dataAdapterFactory;
         }
 
-        public SproutButton Create(SproutButtonConfig sproutButtonConfig)
+        public SproutButton Create(SproutButtonConfig sproutButtonConfig, Guid pageId)
         {
             var sproutButton = new SproutButton
             {
                 Name = sproutButtonConfig.Name,
                 Config = sproutButtonConfig,
-                VM = new SproutButtonVM(sproutButtonConfig.Name)
+                VM = new SproutButtonVM(sproutButtonConfig.Name, pageId)
             };
 
             sproutButton.ButtonContent = sproutButtonConfig.Content ?? string.Empty;

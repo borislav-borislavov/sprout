@@ -5,6 +5,6 @@ namespace Sprout.Core.Factories
 {
     public interface ISproutDatePickerFactory
     {
-        SproutDatePicker Create(SproutDatePickerConfig config);
+        SproutDatePicker Create(SproutDatePickerConfig config, Guid pageId);
     }
 }

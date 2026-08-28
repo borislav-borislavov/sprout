@@ -20,9 +20,10 @@ namespace Sprout.Core.SproutControlVMs
         /// </summary>
         public Guid OwnerPageID { get; set; }
 
-        public BaseSproutControlVM(string name)
+        public BaseSproutControlVM(string name, Guid ownerPageID)
         {
             Name = name;
+            OwnerPageID = ownerPageID;
         }
 
         public virtual void SetUpState<T>(T control) where T : UserControl

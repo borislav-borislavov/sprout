@@ -6,6 +6,6 @@ namespace Sprout.Core.Factories
 {
     public interface ISproutControlFactory
     {
-        UIElement GetControl(SproutControlConfig sControl, Dictionary<string, UIElement> controls, VMRegistry vmRegistry);
+        UIElement GetControl(SproutControlConfig sControl, Dictionary<string, UIElement> controls, VMRegistry vmRegistry, Guid pageId);
     }
 }

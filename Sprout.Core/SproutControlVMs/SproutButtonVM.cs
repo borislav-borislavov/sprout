@@ -18,7 +18,7 @@ namespace Sprout.Core.SproutControlVMs
         public Dictionary<string, IButtonAction> ButtonActions { get; } = [];
         public IDataAdapter DataAdapter { get; set; }
 
-        public SproutButtonVM(string name) : base(name)
+        public SproutButtonVM(string name, Guid pageId) : base(name, pageId)
         {
             
         }

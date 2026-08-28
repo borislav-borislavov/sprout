@@ -29,7 +29,7 @@ namespace Sprout.Core.Views
         public void InitializeControls(SproutPageVM vm)
         {
             //step 1 - generate UI controls
-            this.Content = _sproutControlFactory.GetControl(vm.PageConfig.Root, _controls, vm.VMRegistry);
+            this.Content = _sproutControlFactory.GetControl(vm.PageConfig.Root, _controls, vm.VMRegistry, vm.PageConfig.ID);
 
             //step 1.1 Register extra VMs (all other VMs are registered in the SproutControlFactory)
             vm.RegisterExtraVMs();

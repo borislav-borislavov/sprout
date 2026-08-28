@@ -14,7 +14,7 @@ namespace Sprout.Core.Factories
 {
     public class SproutCheckBoxFactory : BaseSproutControlFactory, ISproutCheckBoxFactory
     {
-        public SproutCheckBox Create(SproutCheckBoxConfig config)
+        public SproutCheckBox Create(SproutCheckBoxConfig config, Guid pageId)
         {
             var sproutCheckBox = new SproutCheckBox
             {
@@ -66,7 +66,7 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutCheckBox, config);
 
-            var vm = new SproutCheckBoxVM(sproutCheckBox.Name);
+            var vm = new SproutCheckBoxVM(sproutCheckBox.Name, pageId);
             vm.SetUpState(sproutCheckBox);
 
             if (!string.IsNullOrEmpty(config.Binding))

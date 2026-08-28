@@ -35,13 +35,13 @@ namespace Sprout.Core.Factories
             _dialogService = dialogService;
         }
 
-        public SproutDataGrid Create(SproutDataGridConfig sproutGridConfig)
+        public SproutDataGrid Create(SproutDataGridConfig sproutGridConfig, Guid pageId)
         {
             var sproutDataGrid = new SproutDataGrid
             {
                 Name = sproutGridConfig.Name,
                 Config = sproutGridConfig,
-                VM = new SproutDataGridVM(sproutGridConfig.Name, _configurationService, _dialogService)
+                VM = new SproutDataGridVM(sproutGridConfig.Name, _configurationService, _dialogService, pageId)
             };
             sproutDataGrid.VM.Grid = sproutDataGrid;
 

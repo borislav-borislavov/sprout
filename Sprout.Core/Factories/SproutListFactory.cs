@@ -14,8 +14,7 @@ namespace Sprout.Core.Factories
 {
     public class SproutListFactory : BaseSproutControlFactory, ISproutListFactory
     {
-        public SproutList Create(SproutListConfig config,
-            UIElement? itemTemplateRoot)
+        public SproutList Create(SproutListConfig config, UIElement? itemTemplateRoot, Guid pageId)
         {
             var sproutList = new SproutList
             {
@@ -92,7 +91,7 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutList, config);
 
-            var vm = new SproutListVM(sproutList.Name);
+            var vm = new SproutListVM(sproutList.Name, pageId);
             vm.SetUpState(sproutList);
 
             return sproutList;

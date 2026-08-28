@@ -12,7 +12,7 @@ namespace Sprout.Core.Factories
 {
     public class GridFactory : BaseSproutControlFactory, IGridFactory
     {
-        public Grid Create(GridConfig gridConfig)
+        public Grid Create(GridConfig gridConfig, Guid pageId)
         {
             var grid = new Grid();
 

@@ -5,6 +5,6 @@ namespace Sprout.Core.Factories
 {
     public interface IGridFactory
     {
-        Grid Create(GridConfig gridConfig);
+        Grid Create(GridConfig gridConfig, Guid pageId);
     }
 }

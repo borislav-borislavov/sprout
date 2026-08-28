@@ -16,7 +16,7 @@ namespace Sprout.Core.Factories
 {
     public class SproutLabelFactory : BaseSproutControlFactory, ISproutLabelFactory
     {
-        public SproutLabel Create(SproutLabelConfig config, VMRegistry vmRegistry)
+        public SproutLabel Create(SproutLabelConfig config, VMRegistry vmRegistry, Guid pageId)
         {
             var sproutLabel = new SproutLabel
             {
@@ -96,7 +96,7 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutLabel, config);
 
-            var vm = new SproutLabelVM(sproutLabel.Name);
+            var vm = new SproutLabelVM(sproutLabel.Name, pageId);
             vm.SetUpState(sproutLabel);
             vm.Text = config.Text;
 

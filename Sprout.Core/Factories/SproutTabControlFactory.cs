@@ -9,7 +9,7 @@ namespace Sprout.Core.Factories
 {
     public class SproutTabControlFactory : BaseSproutControlFactory, ISproutTabControlFactory
     {
-        public SproutTabControl Create(SproutTabControlConfig config)
+        public SproutTabControl Create(SproutTabControlConfig config, Guid pageId)
         {
             var sproutTabControl = new SproutTabControl
             {
@@ -48,7 +48,7 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutTabControl, config);
 
-            var vm = new SproutTabControlVM(sproutTabControl.Name);
+            var vm = new SproutTabControlVM(sproutTabControl.Name, pageId);
             sproutTabControl.VM = vm;
 
             return sproutTabControl;

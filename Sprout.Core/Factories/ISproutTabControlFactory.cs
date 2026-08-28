@@ -5,6 +5,6 @@ namespace Sprout.Core.Factories
 {
     public interface ISproutTabControlFactory
     {
-        SproutTabControl Create(SproutTabControlConfig config);
+        SproutTabControl Create(SproutTabControlConfig config, Guid pageId);
     }
 }

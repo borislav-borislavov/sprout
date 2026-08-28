@@ -16,13 +16,13 @@ namespace Sprout.Core.Factories
 {
     public class SproutTextBoxFactory : BaseSproutControlFactory, ISproutTextBoxFactory
     {
-        public SproutTextBox Create(SproutTextBoxConfig config, VMRegistry vmRegistry)
+        public SproutTextBox Create(SproutTextBoxConfig config, VMRegistry vmRegistry, Guid pageId)
         {
             var sproutTextBox = new SproutTextBox
             {
                 Name = config.Name,
                 Config = config,
-                VM = new SproutTextBoxVM(config.Name)
+                VM = new SproutTextBoxVM(config.Name, pageId)
             };
 
             if (config.Height.HasValue)

@@ -6,6 +6,6 @@ namespace Sprout.Core.Factories
 {
     public interface ISproutListFactory
     {
-        SproutList Create(SproutListConfig config, UIElement? itemTemplateRoot);
+        SproutList Create(SproutListConfig config, UIElement? itemTemplateRoot, Guid pageId);
     }
 }

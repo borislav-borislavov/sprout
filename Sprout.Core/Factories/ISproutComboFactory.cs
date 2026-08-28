@@ -5,6 +5,6 @@ namespace Sprout.Core.Factories
 {
     public interface ISproutComboFactory
     {
-        SproutCombo Create(SproutComboConfig config);
+        SproutCombo Create(SproutComboConfig config, Guid pageId);
     }
 }

@@ -22,8 +22,8 @@ namespace Sprout.Core.SproutControlVMs
 
         public IEnumerable<DataProviderDependency> Dependencies { get; set; } = new List<DataProviderDependency>();
 
-        public SproutTextBoxVM(string name) 
-            : base(name)
+        public SproutTextBoxVM(string name, Guid pageId) 
+            : base(name, pageId)
         {
             
         }

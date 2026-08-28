@@ -16,7 +16,7 @@ namespace Sprout.Core.SproutControlVMs
 
         private string _outputDateFormat = "yyyy-MM-dd";
 
-        public SproutDatePickerVM(string name) : base(name)
+        public SproutDatePickerVM(string name, Guid pageId) : base(name, pageId)
         {
             
         }

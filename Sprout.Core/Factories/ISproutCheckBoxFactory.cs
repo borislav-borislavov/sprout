@@ -5,6 +5,6 @@ namespace Sprout.Core.Factories
 {
     public interface ISproutCheckBoxFactory
     {
-        SproutCheckBox Create(SproutCheckBoxConfig config);
+        SproutCheckBox Create(SproutCheckBoxConfig config, Guid pageId);
     }
 }

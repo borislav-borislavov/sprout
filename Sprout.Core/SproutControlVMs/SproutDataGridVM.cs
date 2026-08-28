@@ -60,7 +60,7 @@ namespace Sprout.Core.SproutControlVMs
         /// </summary>
         public event EventHandler<SproutGridColumnLayout> ColumnLayoutChanged;
 
-        public SproutDataGridVM(string name, IConfigurationService configurationService, IDialogService dialogService) : base(name)
+        public SproutDataGridVM(string name, IConfigurationService configurationService, IDialogService dialogService, Guid ownerPageID) : base(name, ownerPageID)
         {
             _configurationService = configurationService;
             _dialogService = dialogService;

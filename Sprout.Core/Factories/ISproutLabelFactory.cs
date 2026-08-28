@@ -6,6 +6,6 @@ namespace Sprout.Core.Factories
 {
     public interface ISproutLabelFactory
     {
-        SproutLabel Create(SproutLabelConfig config, VMRegistry vmRegistry);
+        SproutLabel Create(SproutLabelConfig config, VMRegistry vmRegistry, Guid pageId);
     }
 }

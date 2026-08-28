@@ -52,9 +52,9 @@ namespace Sprout.Core.Factories
             _sproutTabControlFactory = sproutTabControlFactory;
         }
 
-        public UIElement GetControl(SproutControlConfig sControl, Dictionary<string, UIElement> controls, VMRegistry vmRegistry)
+        public UIElement GetControl(SproutControlConfig sControl, Dictionary<string, UIElement> controls, VMRegistry vmRegistry, Guid pageId)
         {
-            var control = GetControlInternal(sControl, controls, vmRegistry);
+            var control = GetControlInternal(sControl, controls, vmRegistry, pageId);
 
             if (control is ISproutControl sproutControl)
             {
@@ -79,24 +79,24 @@ namespace Sprout.Core.Factories
             return control;
         }
 
-        private FrameworkElement GetControlInternal(SproutControlConfig sControl, Dictionary<string, UIElement> controls, VMRegistry vmRegistry)
+        private FrameworkElement GetControlInternal(SproutControlConfig sControl, Dictionary<string, UIElement> controls, VMRegistry vmRegistry, Guid pageId)
         {
             switch (sControl)
             {
                 case GridConfig gridConfig:
                     {
-                        var grid = _gridFactory.Create(gridConfig);
+                        var grid = _gridFactory.Create(gridConfig, pageId);
 
                         foreach (var childConfig in gridConfig.Children)
                         {
-                            grid.Children.Add(GetControl(childConfig, controls, vmRegistry));
+                            grid.Children.Add(GetControl(childConfig, controls, vmRegistry, pageId));
                         }
 
                         return grid;
                     }
                 case SproutTabControlConfig sproutTabControlConfig:
                     {
-                        var sproutTabControl = _sproutTabControlFactory.Create(sproutTabControlConfig);
+                        var sproutTabControl = _sproutTabControlFactory.Create(sproutTabControlConfig, pageId);
 
                         foreach (var tabConfig in sproutTabControlConfig.Tabs)
                         {
@@ -107,7 +107,7 @@ namespace Sprout.Core.Factories
 
                             if (tabConfig.Child != null)
                             {
-                                tabItem.Content = GetControl(tabConfig.Child, controls, vmRegistry);
+                                tabItem.Content = GetControl(tabConfig.Child, controls, vmRegistry, pageId);
                             }
 
                             sproutTabControl.tabControl.Items.Add(tabItem);
@@ -117,11 +117,11 @@ namespace Sprout.Core.Factories
                     }
                 case SproutBorderConfig sproutBorderConfig:
                     {
-                        var sproutBorder = _sproutBorderFactory.Create(sproutBorderConfig);
+                        var sproutBorder = _sproutBorderFactory.Create(sproutBorderConfig, pageId);
 
                         if (sproutBorderConfig.Child != null)
                         {
-                            sproutBorder.border.Child = GetControl(sproutBorderConfig.Child, controls, vmRegistry);
+                            sproutBorder.border.Child = GetControl(sproutBorderConfig.Child, controls, vmRegistry, pageId);
                         }
 
                         return sproutBorder;
@@ -132,25 +132,25 @@ namespace Sprout.Core.Factories
 
                         if (sproutListConfig.Child != null)
                         {
-                            itemTemplateRoot = GetControl(sproutListConfig.Child, new Dictionary<string, UIElement>(), vmRegistry);
+                            itemTemplateRoot = GetControl(sproutListConfig.Child, new Dictionary<string, UIElement>(), vmRegistry, pageId);
                         }
 
-                        return _sproutListFactory.Create(sproutListConfig, itemTemplateRoot);
+                        return _sproutListFactory.Create(sproutListConfig, itemTemplateRoot, pageId);
                     }
                 case SproutButtonConfig sproutButtonConfig:
-                    return _sproutButtonFactory.Create(sproutButtonConfig);
+                    return _sproutButtonFactory.Create(sproutButtonConfig, pageId);
                 case SproutDataGridConfig sproutDataGridConfig:
-                    return _sproutDataGridFactory.Create(sproutDataGridConfig);
+                    return _sproutDataGridFactory.Create(sproutDataGridConfig, pageId);
                 case SproutComboConfig sproutComboConfig:
-                    return _sproutComboFactory.Create(sproutComboConfig);
+                    return _sproutComboFactory.Create(sproutComboConfig, pageId);
                 case SproutTextBoxConfig sproutTextBoxConfig:
-                    return _sproutTextBoxFactory.Create(sproutTextBoxConfig, vmRegistry);
+                    return _sproutTextBoxFactory.Create(sproutTextBoxConfig, vmRegistry, pageId);
                 case SproutCheckBoxConfig sproutCheckBoxConfig:
-                    return _sproutCheckBoxFactory.Create(sproutCheckBoxConfig);
+                    return _sproutCheckBoxFactory.Create(sproutCheckBoxConfig, pageId);
                 case SproutDatePickerConfig sproutDatePickerConfig:
-                    return _sproutDatePickerFactory.Create(sproutDatePickerConfig);
+                    return _sproutDatePickerFactory.Create(sproutDatePickerConfig, pageId);
                 case SproutLabelConfig sproutLabelConfig:
-                    return _sproutLabelFactory.Create(sproutLabelConfig, vmRegistry);
+                    return _sproutLabelFactory.Create(sproutLabelConfig, vmRegistry, pageId);
                 default:
                     throw new NotImplementedException();
             }

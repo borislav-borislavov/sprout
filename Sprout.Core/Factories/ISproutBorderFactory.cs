@@ -5,6 +5,6 @@ namespace Sprout.Core.Factories
 {
     public interface ISproutBorderFactory
     {
-        SproutBorder Create(SproutBorderConfig config);
+        SproutBorder Create(SproutBorderConfig config, Guid pageId);
     }
 }

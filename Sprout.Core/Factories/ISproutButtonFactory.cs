@@ -5,6 +5,6 @@ namespace Sprout.Core.Factories
 {
     public interface ISproutButtonFactory
     {
-        SproutButton Create(SproutButtonConfig sproutButtonConfig);
+        SproutButton Create(SproutButtonConfig sproutButtonConfig, Guid pageId);
     }
 }

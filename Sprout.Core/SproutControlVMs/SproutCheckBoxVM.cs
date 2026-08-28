@@ -20,7 +20,7 @@ namespace Sprout.Core.SproutControlVMs
 
         public IEnumerable<DataProviderDependency> Dependencies { get; set; } = new List<DataProviderDependency>();
 
-        public SproutCheckBoxVM(string name) : base(name)
+        public SproutCheckBoxVM(string name, Guid pageId) : base(name, pageId)
         {
             
         }

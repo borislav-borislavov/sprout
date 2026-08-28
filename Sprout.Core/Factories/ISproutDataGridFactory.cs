@@ -5,6 +5,6 @@ namespace Sprout.Core.Factories
 {
     public interface ISproutDataGridFactory
     {
-        SproutDataGrid Create(SproutDataGridConfig config);
+        SproutDataGrid Create(SproutDataGridConfig config, Guid pageId);
     }
 }

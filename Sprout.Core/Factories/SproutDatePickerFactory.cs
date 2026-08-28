@@ -9,13 +9,13 @@ namespace Sprout.Core.Factories
 {
     public class SproutDatePickerFactory : BaseSproutControlFactory, ISproutDatePickerFactory
     {
-        public SproutDatePicker Create(SproutDatePickerConfig config)
+        public SproutDatePicker Create(SproutDatePickerConfig config, Guid pageId)
         {
             var sproutDatePicker = new SproutDatePicker
             {
                 Name = config.Name,
                 Config = config,
-                VM = new SproutDatePickerVM(config.Name)
+                VM = new SproutDatePickerVM(config.Name, pageId)
             };
 
             if (config.Height.HasValue)

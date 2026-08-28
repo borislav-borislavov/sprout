@@ -11,7 +11,7 @@ namespace Sprout.Core.Factories
 {
     public class SproutBorderFactory : BaseSproutControlFactory, ISproutBorderFactory
     {
-        public SproutBorder Create(SproutBorderConfig config)
+        public SproutBorder Create(SproutBorderConfig config, Guid pageId)
         {
             var sproutBorder = new SproutBorder
             {
@@ -76,7 +76,7 @@ namespace Sprout.Core.Factories
 
             SetPositionInGrid(sproutBorder, config);
 
-            var vm = new SproutBorderVM(sproutBorder.Name);
+            var vm = new SproutBorderVM(sproutBorder.Name, pageId);
             sproutBorder.VM = vm;
 
             return sproutBorder;

@@ -20,7 +20,7 @@ namespace Sprout.Core.SproutControlVMs
         [ObservableProperty]
         private IDataAdapter _dataAdapter;
 
-        public SproutComboVM(string name) : base(name)
+        public SproutComboVM(string name, Guid pageId) : base(name, pageId)
         {
             
         }

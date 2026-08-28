@@ -21,7 +21,7 @@ namespace Sprout.Core.SproutControlVMs
         [ObservableProperty]
         private object _selected;
 
-        public SproutListVM(string name) : base(name)
+        public SproutListVM(string name, Guid pageId) : base(name, pageId)
         {
 
         }
