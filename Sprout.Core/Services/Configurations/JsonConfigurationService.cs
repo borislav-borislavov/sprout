@@ -1,7 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Sprout.Core.Common;
+using Sprout.Core.Features.LogFeature;
 using Sprout.Core.Models.Configurations;
+using Sprout.Core.Services.Dialog;
 using Sprout.Core.Windows;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -11,23 +15,75 @@ namespace Sprout.Core.Services.Configurations
     public class JsonConfigurationService : IConfigurationService
     {
         private readonly string _seedPath;
+        private readonly ILogger _logger;
+        private readonly IDialogService _dialogService;
 
         private string Passphrase => "EatLessSalt";
+        private static SproutConfiguration? _cachedConfig;
+
         public bool Encrypt { get; set; } = true;
 
-        public JsonConfigurationService(string seedPath)
+        public JsonConfigurationService(string seedPath, ILogger logger, IDialogService dialogService)
         {
             _seedPath = seedPath;
+            _logger = logger;
+            _dialogService = dialogService;
         }
 
-        public SproutConfiguration Load()
-        {
-            var configFilePath = GetSeedFilePath();
+        #region File changed tracker
+        private static long lastUsn = 0;
+        private static ulong _lastFrn = 0;
+        private static bool _usnCrashed = false;
 
-            if (!File.Exists(configFilePath)) return new();
+        private bool IsFileChanged(string filePath)
+        {
+            //if for some reason this fieature crashed it is better to always load the file so that the app runs properly.
+            if (_usnCrashed) return true;
+
+            var result = false;
 
             try
             {
+                using UsnJournalReader _usnJournalReader = new();
+                var (usn, fileReferenceNumber, reason) = _usnJournalReader.GetUsnRecord(filePath);
+
+                if (fileReferenceNumber != _lastFrn) // Different file entirely (deleted+recreated, or you're pointing at the wrong file)
+                {
+                    result = true;
+                }
+                else if (usn != lastUsn) // Same file, but it changed — check `reason` for what kind of change
+                {
+                    result = true;
+                }
+
+                lastUsn = usn;
+                _lastFrn = fileReferenceNumber;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _usnCrashed = true;
+                _logger.Log($"USN Journal crashed: {ex}");
+                return true;
+            }
+        } 
+        #endregion
+
+        public SproutConfiguration Load()
+        {
+            string configFilePath = string.Empty;
+            try
+            {
+                configFilePath = GetSeedFilePath();
+
+                if (!File.Exists(configFilePath)) return new();
+
+                if (!IsFileChanged(configFilePath))
+                {
+                    return _cachedConfig;
+                }
+
                 string json = string.Empty;
                 if (SeedFileCrypto.IsEncrypted(configFilePath))
                 {
@@ -44,9 +100,9 @@ namespace Sprout.Core.Services.Configurations
                     Formatting = Formatting.Indented
                 };
 
-                var debug = JsonConvert.DeserializeObject<SproutConfiguration>(json, settings);
+                _cachedConfig = JsonConvert.DeserializeObject<SproutConfiguration>(json, settings) ?? new SproutConfiguration();
 
-                foreach (var page in debug.Pages)
+                foreach (var page in _cachedConfig.Pages)
                 {
                     if (page.Root == null) continue;
 
@@ -54,20 +110,22 @@ namespace Sprout.Core.Services.Configurations
                         throw new Exception("For now only the grid is supported as a root");
                 }
 
-                return debug;
+                return _cachedConfig;
             }
             catch (Exception ex)
             {
-                //TODO: logging
+                _logger.Log($"Failed to load configuration {configFilePath}: {ex}");
                 return new();
             }
         }
 
         public bool Save(SproutConfiguration sproutConfiguration)
         {
+            string configFilePath = string.Empty;
+
             try
             {
-                var configFilePath = GetSeedFilePath();
+                configFilePath = GetSeedFilePath();
 
                 var settings = new JsonSerializerSettings
                 {
@@ -75,7 +133,7 @@ namespace Sprout.Core.Services.Configurations
                     Formatting = Formatting.Indented
                 };
 
-                string json = Newtonsoft.Json.JsonConvert.SerializeObject(sproutConfiguration, settings);
+                var json = JsonConvert.SerializeObject(sproutConfiguration, settings);
 
                 if (Encrypt)
                 {
@@ -88,7 +146,7 @@ namespace Sprout.Core.Services.Configurations
             }
             catch (Exception ex)
             {
-                //TODO: logging
+                _logger.Log($"Failed to save configuration {configFilePath}: {ex}");
                 return false;
             }
         }
@@ -100,9 +158,9 @@ namespace Sprout.Core.Services.Configurations
 
             var seedVaultPath = Path.Combine(Environment.CurrentDirectory, "SeedVault");
             Directory.CreateDirectory(seedVaultPath);
-            var alwaysAsk = File.Exists(Path.Combine(seedVaultPath, "AlwaysAsk.txt"));
+            var alwaysAsk = File.Exists(Path.Combine(seedVaultPath, Const.AlwaysAsk));
 
-            var mainSeed = Path.Combine(seedVaultPath, "main.seed");
+            var mainSeed = Path.Combine(seedVaultPath, Const.DefaultSeedFileName);
 
             if (!alwaysAsk && File.Exists(mainSeed)) return mainSeed;
 
@@ -124,7 +182,7 @@ namespace Sprout.Core.Services.Configurations
             }
 
             //if there is one nested in a folder main seed
-            var mainSeeds = allSeeds.Where(s => string.Equals(s.FileName, "main.seed", StringComparison.InvariantCultureIgnoreCase));
+            var mainSeeds = allSeeds.Where(s => string.Equals(s.FileName, Const.DefaultSeedFileName, StringComparison.InvariantCultureIgnoreCase));
             if (!alwaysAsk && mainSeeds.Count() == 1)
             {
                 return mainSeeds.First().FilePath;

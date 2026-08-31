@@ -32,5 +32,12 @@ namespace Sprout.Core.Common
             public const string WhereFilter = "{!whereFilter}";
             public const string AndFilter = "{!andFilter}";
         }
+
+        public const string LogFileName = "SproutLog.txt";
+
+        ///When this file is created inside the seed vault, the app will always ask for a seed file to be selected instead of using the default main.seed file.
+        public const string AlwaysAsk = "AlwaysAsk.txt";
+
+        public const string DefaultSeedFileName = "main.seed";
     }
 }

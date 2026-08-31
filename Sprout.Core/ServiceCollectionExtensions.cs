@@ -15,6 +15,7 @@ using Sprout.Core.Common;
 using Sprout.Core.Services.Jobs;
 using Sprout.Core.Services.Updates;
 using Sprout.Core.Services.ValueStore;
+using Sprout.Core.Features.LogFeature;
 
 namespace Sprout.Core
 {
@@ -25,7 +26,12 @@ namespace Sprout.Core
             services.AddHttpClient();
 
             //Services
-            services.AddTransient<IConfigurationService, JsonConfigurationService>(x => new JsonConfigurationService(AppArgs.SeedPath));
+            services.AddSingleton<ILogger, Logger>();
+            services.AddTransient<IConfigurationService, JsonConfigurationService>(sp => new JsonConfigurationService(
+                AppArgs.SeedPath,
+                sp.GetRequiredService<ILogger>(),
+                sp.GetRequiredService<IDialogService>())
+            );
             services.AddTransient<INavigationService, NavigationService>();
             services.AddTransient<IDialogService, DialogService>();
             services.AddTransient<IClipboardService, ClipboardService>();
