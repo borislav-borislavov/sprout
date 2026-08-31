@@ -27,12 +27,17 @@ namespace Sprout.Core
         public static void Start()
         {
             AppArgs.Parse();
-
+            Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             var services = new ServiceCollection();
             services.AddCoreServices();
 
             var serviceProvider = services.BuildServiceProvider();
             Application.Current.Exit += (_, _) => serviceProvider.Dispose();
+
+            //This line makes sure that the ConfigurationService loads before the JobSchedule singleton locks it in.
+            //This is problematic because in some cases it will ask the user to pick a .seed but the dialog can't be displayed from a non STA trhead
+            //which leads to all jobs to always fail. Calling this first allowes the ConfigurationService to load and cache its seed file path from a STA thread.
+            serviceProvider.GetRequiredService<IConfigurationService>().Load();
 
             serviceProvider.GetRequiredService<IJobScheduler>().Start();
 

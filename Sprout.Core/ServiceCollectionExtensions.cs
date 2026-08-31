@@ -55,6 +55,7 @@ namespace Sprout.Core
             services.AddTransient<ManageDataAdapterVM>();
             services.AddTransient<ManageUsingsVM>();
             services.AddTransient<ScriptEditorVM>();
+            services.AddTransient<SeedPickerVM>();
 
             //Views
             services.AddTransient<MainView>();
@@ -71,6 +72,7 @@ namespace Sprout.Core
             services.AddTransient<ManageDataAdapterWindow>();
             services.AddTransient<ManageUsingsWindow>();
             services.AddTransient<ScriptEditor>();
+            services.AddTransient<SeedPicker>();
 
             //Factories
             services.AddTransient<ISproutControlFactory, SproutControlFactory>();

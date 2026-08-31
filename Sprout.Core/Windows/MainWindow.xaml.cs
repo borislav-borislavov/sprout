@@ -31,9 +31,17 @@ namespace Sprout.Core.Windows
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 
-            e.Cancel = result != MessageBoxResult.Yes;
+            if (result != MessageBoxResult.Yes)
+            {
+                e.Cancel = true;
+            }
 
             base.OnClosing(e);
+
+            if (!e.Cancel)
+            {
+                Application.Current.Shutdown();
+            }
         }
     }
 }
