@@ -1,3 +1,5 @@
+using Sprout.Core.Common;
+using Sprout.Core.Services.Configurations;
 using System.Collections.Concurrent;
 using System.IO;
 
@@ -8,11 +10,25 @@ namespace Sprout.Core.Services.ValueStore
         private readonly string _rootPath;
         private readonly ConcurrentDictionary<string, IValueStore> _stores = new(StringComparer.OrdinalIgnoreCase);
 
-        public ValueStoreFactory(string rootPath = null)
+        public ValueStoreFactory(string? rootPath = null)
         {
-            _rootPath = string.IsNullOrEmpty(rootPath)
-                ? Path.Combine(Environment.CurrentDirectory, "ValueStore")
-                : rootPath;
+            if (!string.IsNullOrEmpty(rootPath))
+            {
+                _rootPath = rootPath;
+                return;
+            }
+
+            if (string.IsNullOrEmpty(AppArgs.SeedPath))
+            {
+                _rootPath = Path.Combine(Environment.CurrentDirectory, "ValueStore");
+                return;
+            }
+
+            var seedDir = Path.GetDirectoryName(AppArgs.SeedPath);
+            var seedName = Path.GetFileNameWithoutExtension(AppArgs.SeedPath);
+            var seedFolder = Path.Combine(seedDir, $"{seedName}.store");
+            Directory.CreateDirectory(seedFolder);
+            _rootPath = seedFolder;
         }
 
         public IValueStore Get(string category)

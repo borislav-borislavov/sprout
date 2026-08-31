@@ -1,10 +1,9 @@
 ﻿using Sprout.Core.Behaviours;
 using Sprout.Core.Features.ButtonActions;
 using Sprout.Core.Features.ButtonActions.GridActions;
+using Sprout.Core.Features.DataGridPresetsFeature;
 using Sprout.Core.Models;
-using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.DataGrid;
-using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Models.DataAdapters.Filters;
 using Sprout.Core.Services.Clipboard;
 using Sprout.Core.Services.Configurations;
@@ -26,13 +25,19 @@ namespace Sprout.Core.Factories
         private readonly IDataAdapterFactory _dataAdapterFactory;
         private readonly IConfigurationService _configurationService;
         private readonly IDialogService _dialogService;
+        private readonly IGridFilterPresetService _filterPresetService;
 
-        public SproutDataGridFactory(IClipboardService clipboardService, IDataAdapterFactory dataAdapterFactory, IConfigurationService configurationService, IDialogService dialogService)
+        public SproutDataGridFactory(IClipboardService clipboardService,
+            IDataAdapterFactory dataAdapterFactory,
+            IConfigurationService configurationService,
+            IDialogService dialogService,
+            IGridFilterPresetService filterPresetService)
         {
             _clipboardService = clipboardService;
             _dataAdapterFactory = dataAdapterFactory;
             _configurationService = configurationService;
             _dialogService = dialogService;
+            _filterPresetService = filterPresetService;
         }
 
         public SproutDataGrid Create(SproutDataGridConfig sproutGridConfig, Guid pageId)
@@ -190,7 +195,7 @@ namespace Sprout.Core.Factories
                                 new Binding(nameof(IFilter.StartValue))
                                 {
                                     Source = filter,
-                                    Mode = BindingMode.OneWayToSource,
+                                    Mode = BindingMode.TwoWay,
                                     UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
                                 });
                         }
@@ -212,6 +217,7 @@ namespace Sprout.Core.Factories
                                 new Binding(nameof(IFilter.StartValue))
                                 {
                                     Source = filter,
+                                    Mode = BindingMode.TwoWay,
                                     UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
                                 });
                         }
@@ -225,6 +231,8 @@ namespace Sprout.Core.Factories
             }
 
             SetupVM(sproutDataGrid);
+
+            sproutDataGrid.VM.InitializeFilterPresets(_filterPresetService);
 
             sproutDataGrid.VM.RegisterGridColumnLayout();
 

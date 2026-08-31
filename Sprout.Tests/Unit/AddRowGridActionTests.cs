@@ -30,7 +30,7 @@ namespace Sprout.Tests.Unit
                 DataProvider = new FakeDataProvider { Data = data }
             };
 
-            var vm = new SproutDataGridVM(GridName, null, null)
+            var vm = new SproutDataGridVM(GridName, null, null, Guid.NewGuid())
             {
                 DataAdapter = dataAdapter
             };

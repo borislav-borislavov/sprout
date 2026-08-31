@@ -51,15 +51,6 @@
                     <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                 </Button>
 
-                <!--<Button x:Name="btnSave"
-                        ToolTip="Save grid changes"
-                        Style="{StaticResource FlatRoundButtonStyle}"
-                        Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
-                        HorizontalAlignment="Left"
-                        Margin="2">
-                    <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
-                </Button>-->
-
                 <Button x:Name="btnSave"
                     ToolTip="Save grid changes"
                     Visibility="{Binding Config.ShowSave, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Converter={StaticResource BoolToVis}}"
@@ -202,7 +193,62 @@
                         Margin="2">
                         <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
                     </Button>
-                    
+
+                    <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
+
+                    <ComboBox x:Name="cmbFilterPresets"
+                              x:FieldModifier="public"
+                              ToolTip="Presets"
+                              ItemsSource="{Binding VM.FilterPresets, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}}"
+                              SelectedItem="{Binding VM.SelectedFilterPreset, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}, Mode=TwoWay}"
+                              DisplayMemberPath="DisplayName"
+                              MinWidth="140"
+                              VerticalAlignment="Center"
+                              Margin="2"/>
+
+                    <Button
+                        x:Name="btnSaveFilterPreset"
+                        x:FieldModifier="public"
+                        ToolTip="Save current filter values as a preset"
+                        Command="{Binding VM.PromptSaveFilterPresetCommand, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}}"
+                        Style="{StaticResource FlatRoundButtonStyle}"
+                        HorizontalAlignment="Left"
+                        Margin="2">
+                        <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
+                    </Button>
+
+                    <Button
+                        x:Name="btnSetDefaultFilterPreset"
+                        x:FieldModifier="public"
+                        ToolTip="Set the selected preset as default (applied on page start)"
+                        Command="{Binding VM.SetSelectedFilterPresetAsDefaultCommand, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}}"
+                        Style="{StaticResource FlatRoundButtonStyle}"
+                        HorizontalAlignment="Left"
+                        Margin="2">
+                        <TextBlock Text="&#xE735;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
+                    </Button>
+
+                    <Button
+                        x:Name="btnDeleteFilterPreset"
+                        x:FieldModifier="public"
+                        ToolTip="Delete the selected preset"
+                        Command="{Binding VM.DeleteSelectedFilterPresetCommand, RelativeSource={RelativeSource AncestorType=local:SproutDataGrid}}"
+                        Style="{StaticResource FlatRoundButtonStyle}"
+                        HorizontalAlignment="Left"
+                        Margin="2">
+                        <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
+                    </Button>
+
+                    <Rectangle Width="1" Height="20" Fill="Gray" Margin="5,0"/>
+
+                    <Button
+                        ToolTip="Column settings"
+                        Style="{StaticResource FlatRoundButtonStyle}"
+                        Click="btnColumnSettings_Click"
+                        Margin="2">
+                        <TextBlock Text="&#xF579;" FontFamily="Segoe MDL2 Assets" FontSize="23"/>
+                    </Button>
+
                 </ToolBar>
             </Border>
 

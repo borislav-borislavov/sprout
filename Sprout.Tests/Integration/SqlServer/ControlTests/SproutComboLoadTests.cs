@@ -79,7 +79,7 @@ namespace Sprout.Tests.Integration.SqlServer.ControlTests
             var vmRegistry = new VMRegistry();
 
             //Act
-            var control = _serviceProvider.GetRequiredService<ISproutControlFactory>().GetControl(config, [], vmRegistry);
+            var control = _serviceProvider.GetRequiredService<ISproutControlFactory>().GetControl(config, [], vmRegistry, Guid.NewGuid());
 
             //Assert
             var combo = control as SproutCombo;

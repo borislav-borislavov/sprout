@@ -15,6 +15,7 @@ using Sprout.Core.Common;
 using Sprout.Core.Services.Jobs;
 using Sprout.Core.Services.Updates;
 using Sprout.Core.Services.ValueStore;
+using Sprout.Core.Features.DataGridPresetsFeature;
 using Sprout.Core.Features.LogFeature;
 
 namespace Sprout.Core
@@ -26,7 +27,7 @@ namespace Sprout.Core
             services.AddHttpClient();
 
             //Services
-            services.AddSingleton<ILogger, Logger>();
+            services.AddSingleton<ILogger, FileLogger>();
             services.AddTransient<IConfigurationService, JsonConfigurationService>(sp => new JsonConfigurationService(
                 AppArgs.SeedPath,
                 sp.GetRequiredService<ILogger>(),
@@ -47,6 +48,7 @@ namespace Sprout.Core
             services.AddSingleton<IJobScheduler, JobScheduler>();
             services.AddTransient<IUpdateService, GitHubUpdateService>();
             services.AddSingleton<IValueStoreFactory, ValueStoreFactory>(x => new ValueStoreFactory());
+            services.AddSingleton<IGridFilterPresetService, GridFilterPresetService>();
 
             //ViewModels
             services.AddTransient<LoginVM>();

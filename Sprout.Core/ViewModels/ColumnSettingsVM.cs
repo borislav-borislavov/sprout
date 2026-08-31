@@ -85,7 +85,8 @@ namespace Sprout.Core.ViewModels
                 var item = new ColumnSettingItemVM
                 {
                     Key = column.Key,
-                    IsVisible = column.IsVisible
+                    IsVisible = column.IsVisible,
+                    Width = column.Width
                 };
                 item.PropertyChanged += OnColumnItemPropertyChanged;
                 Columns.Add(item);
@@ -168,7 +169,8 @@ namespace Sprout.Core.ViewModels
                     .Select(c => new SproutGridColumnState
                     {
                         Key = c.Key,
-                        IsVisible = c.IsVisible
+                        IsVisible = c.IsVisible,
+                        Width = c.Width
                     })
                     .ToList()
             };
@@ -187,5 +189,7 @@ namespace Sprout.Core.ViewModels
 
         [ObservableProperty]
         private bool _isVisible = true;
+
+        public double? Width { get; set; }
     }
 }

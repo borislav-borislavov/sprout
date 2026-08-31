@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Sprout.Core.Features.ButtonActions;
+using Sprout.Core.Features.DataGridPresetsFeature;
 using Sprout.Core.Messages;
 using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations.DataGrid;
@@ -10,7 +11,10 @@ using Sprout.Core.Models.DataAdapters.DataProviders;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
 using Sprout.Core.Views.Controls;
+using Sprout.Core.Windows;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -98,6 +102,222 @@ namespace Sprout.Core.SproutControlVMs
                 observableDataProvider.PropertyChanged += ObservableDataProvider_PropertyChanged;
             }
         }
+
+        #region Filter presets
+        private IGridFilterPresetService _filterPresetService;
+        private bool _isLoadingFilterPresets;
+
+        public ObservableCollection<FilterPresetItem> FilterPresets { get; } = [];
+
+        private FilterPresetItem _selectedFilterPreset;
+
+        public FilterPresetItem SelectedFilterPreset
+        {
+            get => _selectedFilterPreset;
+            set
+            {
+                if (!SetProperty(ref _selectedFilterPreset, value) || _isLoadingFilterPresets || value == null)
+                    return;
+
+                if (value.IsNone)
+                {
+                    ClearFilterPreset();
+                }
+                else
+                {
+                    ApplyFilterPreset(value.Name);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Hooks the preset service into this VM and applies the default preset. OwnerPageID is
+        /// assigned in the constructor, before the initial data load - so the preset values
+        /// participate in the first query exactly like the filters' configured DefaultValue.
+        /// </summary>
+        public void InitializeFilterPresets(IGridFilterPresetService filterPresetService)
+        {
+            _filterPresetService = filterPresetService;
+
+            LoadFilterPresets();
+        }
+
+        public void LoadFilterPresets(string presetToSelect = null)
+        {
+            var collection = _filterPresetService.GetCollection(OwnerPageID, Name);
+
+            presetToSelect ??= SelectedFilterPreset is { IsNone: false }
+                ? SelectedFilterPreset.Name
+                : collection.SelectedPresetName;
+
+            _isLoadingFilterPresets = true;
+
+            try
+            {
+                FilterPresets.Clear();
+                FilterPresets.Add(new FilterPresetItem("None", isNone: true));
+
+                foreach (var presetName in collection.Presets.Keys.OrderBy(name => name))
+                {
+                    FilterPresets.Add(new FilterPresetItem(presetName)
+                    {
+                        IsDefault = presetName == collection.SelectedPresetName
+                    });
+                }
+
+                SelectedFilterPreset = FilterPresets.FirstOrDefault(item => item.Name == presetToSelect)
+                    ?? FilterPresets[0];
+            }
+            finally
+            {
+                _isLoadingFilterPresets = false;
+            }
+
+            if (SelectedFilterPreset is { IsNone: false })
+            {
+                ApplyFilterPreset(SelectedFilterPreset.Name);
+            }
+        }
+
+        /// <summary>
+        /// Applies the named preset's filter values and, when captured, its column layout.
+        /// </summary>
+        public void ApplyFilterPreset(string presetName)
+        {
+            var collection = _filterPresetService.GetCollection(OwnerPageID, Name);
+
+            if (!collection.Presets.TryGetValue(presetName, out var preset))
+                return;
+
+            var filters = DataAdapter.DataProvider.Filters;
+
+            foreach (var (filterTitle, state) in preset.Filters)
+            {
+                if (!filters.TryGetValue(filterTitle, out var filter))
+                    continue;
+
+                filter.StartValue = state.Start;
+
+                if (filter.IsRange)
+                {
+                    filter.EndValue = state.End;
+                }
+            }
+
+            if (preset.ColumnLayout != null)
+            {
+                ApplyColumnLayout(preset.ColumnLayout);
+            }
+
+        }
+
+        /// <summary>
+        /// Clears all filter values without changing the configured default preset.
+        /// </summary>
+        public void ClearFilterPreset()
+        {
+            foreach (var filter in DataAdapter.DataProvider.Filters.Values)
+            {
+                filter.StartValue = null;
+                filter.EndValue = null;
+            }
+        }
+
+        /// <summary>
+        /// Saves the current filter values and column layout under the given preset name.
+        /// </summary>
+        public void SaveFilterPreset(string presetName)
+        {
+            var preset = new GridFilterPreset
+            {
+                Filters = DataAdapter.DataProvider.Filters.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => new FilterValueState
+                    {
+                        Start = kvp.Value.StartValue?.ToString(),
+                        End = kvp.Value.EndValue?.ToString()
+                    }),
+                ColumnLayout = Grid?.GetCurrentLayout()
+            };
+
+            _filterPresetService.SavePreset(OwnerPageID, Name, presetName, preset);
+            LoadFilterPresets(presetName);
+        }
+
+        /// <summary>
+        /// Prompts for a preset name and saves the current filter values under it.
+        /// </summary>
+        [RelayCommand]
+        private void PromptSaveFilterPreset()
+        {
+            var dialog = new TextInputWindow(
+                "Save Filter Preset",
+                "Preset name:",
+                SelectedFilterPreset is { IsNone: false } selectedPreset
+                    ? selectedPreset.Name
+                    : string.Empty)
+            {
+                Owner = Window.GetWindow(Grid)
+            };
+
+            if (dialog.ShowDialog() != true || string.IsNullOrWhiteSpace(dialog.Value))
+                return;
+
+            SaveFilterPreset(dialog.Value.Trim());
+        }
+
+        [RelayCommand]
+        private void SetSelectedFilterPresetAsDefault()
+        {
+            if (SelectedFilterPreset is not { IsNone: false } selectedPreset)
+                return;
+
+            _filterPresetService.SetDefaultPreset(OwnerPageID, Name, selectedPreset.Name);
+
+            foreach (var preset in FilterPresets)
+            {
+                preset.IsDefault = preset.Name == selectedPreset.Name;
+            }
+        }
+
+        [RelayCommand]
+        private void DeleteSelectedFilterPreset()
+        {
+            if (SelectedFilterPreset is not { IsNone: false } selectedPreset)
+                return;
+
+            var result = _dialogService.ShowMessage($"Are you sure you want to delete {selectedPreset.Name}", DialogButton.YesNo);
+
+            if (result != DialogResult.Yes) return;
+
+            try
+            {
+                _filterPresetService.DeletePreset(OwnerPageID, Name, selectedPreset.Name);
+                LoadFilterPresets();
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// True when a default preset is configured and it carries a column layout.
+        /// Used to skip the globally persisted column layout, which would otherwise
+        /// fight with the layout restored by the preset.
+        /// </summary>
+        private bool SelectedFilterPresetHasColumnLayout()
+        {
+            if (_filterPresetService == null)
+                return false;
+
+            var collection = _filterPresetService.GetCollection(OwnerPageID, Name);
+
+            return collection.SelectedPresetName != null
+                && collection.Presets.TryGetValue(collection.SelectedPresetName, out var preset)
+                && preset.ColumnLayout != null;
+        }
+        #endregion
 
         private void ObservableDataProvider_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -244,7 +464,9 @@ namespace Sprout.Core.SproutControlVMs
 
         /// <summary>
         /// Restores any persisted column layout for the given grid and keeps it in sync with
-        /// the configuration when the user changes it.
+        /// the configuration when the user changes it. When filter presets are enabled, the
+        /// restore is skipped when the default preset carries its own column layout - applying
+        /// the preset would overwrite it anyway.
         /// </summary>
         public void RegisterGridColumnLayout()
         {
@@ -255,7 +477,12 @@ namespace Sprout.Core.SproutControlVMs
 
             if (settings.GridColumnLayouts.TryGetValue(gridName, out var layout))
             {
-                ApplyColumnLayout(layout);
+                //Runs after InitializeFilterPresets, so the default preset (and its layout)
+                //is already applied at this point.
+                if (!SelectedFilterPresetHasColumnLayout())
+                {
+                    ApplyColumnLayout(layout);
+                }
             }
 
             ColumnLayoutChanged += (_, updatedLayout) =>

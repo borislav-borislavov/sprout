@@ -44,7 +44,7 @@ namespace Sprout.Tests
             var vmRegistry = new VMRegistry();
 
             //Act
-            var control = _controlFactory.GetControl(config, [], vmRegistry);
+            var control = _controlFactory.GetControl(config, [], vmRegistry, Guid.NewGuid());
 
             //Assert
             var sproutTextBox = control as SproutTextBox;
@@ -75,7 +75,7 @@ namespace Sprout.Tests
             var vmRegistry = new VMRegistry();
 
             //Act
-            var control = _controlFactory.GetControl(config, [], vmRegistry);
+            var control = _controlFactory.GetControl(config, [], vmRegistry, Guid.NewGuid());
 
             //Assert
             var sproutButton = control as SproutButton;
@@ -121,7 +121,7 @@ namespace Sprout.Tests
             var vmRegistry = new VMRegistry();
 
             //Act
-            var control = _controlFactory.GetControl(config, [], vmRegistry);
+            var control = _controlFactory.GetControl(config, [], vmRegistry, Guid.NewGuid());
 
             //Assert
             var sproutCombo = control as SproutCombo;

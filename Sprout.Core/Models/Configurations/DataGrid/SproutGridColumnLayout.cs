@@ -4,7 +4,7 @@ namespace Sprout.Core.Models.Configurations.DataGrid
 {
     /// <summary>
     /// Persisted user customization of a <see cref="SproutDataGridConfig"/>'s columns:
-    /// their order, visibility and the number of frozen (locked) leading columns.
+    /// their order, visibility, width and the number of frozen (locked) leading columns.
     /// </summary>
     public class SproutGridColumnLayout
     {
@@ -31,5 +31,10 @@ namespace Sprout.Core.Models.Configurations.DataGrid
         /// Whether the column is visible.
         /// </summary>
         public bool IsVisible { get; set; } = true;
+
+        /// <summary>
+        /// The rendered column width in device-independent pixels.
+        /// </summary>
+        public double? Width { get; set; }
     }
 }

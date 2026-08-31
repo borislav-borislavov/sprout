@@ -77,6 +77,8 @@ namespace Sprout.Core.Services.Configurations
             {
                 configFilePath = GetSeedFilePath();
 
+                AppArgs.SeedPath = configFilePath;
+
                 if (!File.Exists(configFilePath)) return new();
 
                 if (!IsFileChanged(configFilePath))

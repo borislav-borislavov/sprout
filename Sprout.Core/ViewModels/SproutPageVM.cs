@@ -52,7 +52,7 @@ namespace Sprout.Core.ViewModels
         /// <summary>
         /// The starting args that a page receives when started as a child page
         /// </summary>
-        public SproutPageInternalVM SproutPageInternalVM { get; } = new();
+        public SproutPageInternalVM SproutPageInternalVM { get; }
 
         public VMRegistry VMRegistry { get; } = new();
 
@@ -82,7 +82,10 @@ namespace Sprout.Core.ViewModels
             IValueStoreFactory valueStoreFactory)
         {
             PageConfig = pageConfig;
-            SproutPageInternalVM.Data = args?.Parameter;
+            SproutPageInternalVM = new SproutPageInternalVM(pageConfig.ID)
+            {
+                Data = args?.Parameter
+            };
             _dialogService = dialogService;
             _actionMessageService = actionMessageService;
             _dataAdapterFactory = dataAdapterFactory;
@@ -96,11 +99,6 @@ namespace Sprout.Core.ViewModels
             {
                 DynamicViewInstance = new SproutPage(_configurationService, _sproutControlFactory) { DataContext = this };
                 DynamicViewInstance.InitializeControls(this);
-
-                foreach (var controlVM in VMRegistry.ViewModels.Values)
-                {
-                    controlVM.OwnerPageID = PageConfig.ID;
-                }
 
                 _host = new SproutPageLogicBridge($"{PageConfig.ID.ToString().Replace("-", "")}", valueStoreFactory);
 

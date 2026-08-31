@@ -69,7 +69,7 @@ namespace Sprout.Core.Views.Controls
             => ColumnKeys.TryGetValue(column, out var key) ? key : column?.Header?.ToString();
 
         /// <summary>
-        /// Applies a persisted column layout (visibility, order and frozen count) to the grid.
+        /// Applies a persisted column layout (visibility, order, width and frozen count) to the grid.
         /// </summary>
         public void ApplyColumnLayout(SproutGridColumnLayout layout)
         {
@@ -81,6 +81,11 @@ namespace Sprout.Core.Views.Controls
                 if (state != null)
                 {
                     col.Visibility = state.IsVisible ? Visibility.Visible : Visibility.Collapsed;
+
+                    if (state.Width is > 0 && double.IsFinite(state.Width.Value))
+                    {
+                        col.Width = new DataGridLength(state.Width.Value);
+                    }
                 }
             }
 
@@ -110,7 +115,7 @@ namespace Sprout.Core.Views.Controls
                 .ToList();
 
         /// <summary>
-        /// Builds a layout snapshot describing the grid's current column visibility, order and frozen count.
+        /// Builds a layout snapshot describing the grid's current column visibility, order, width and frozen count.
         /// </summary>
         public SproutGridColumnLayout GetCurrentLayout()
             => new()
@@ -121,7 +126,8 @@ namespace Sprout.Core.Views.Controls
                     .Select(c => new SproutGridColumnState
                     {
                         Key = GetColumnKey(c),
-                        IsVisible = c.Visibility == Visibility.Visible
+                        IsVisible = c.Visibility == Visibility.Visible,
+                        Width = c.ActualWidth
                     })
                     .ToList()
             };
@@ -138,7 +144,8 @@ namespace Sprout.Core.Views.Controls
                     .Select(c => new SproutGridColumnState
                     {
                         Key = c.BindingPath ?? c.Header,
-                        IsVisible = true
+                        IsVisible = true,
+                        Width = c.Width
                     })
                     .ToList()
             };
