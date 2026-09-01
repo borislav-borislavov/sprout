@@ -1,3 +1,4 @@
+using Sprout.Core.Common;
 using Sprout.Core.Services.Dialog;
 using System;
 using System.Diagnostics;
@@ -15,7 +16,6 @@ namespace Sprout.Core.Services.Updates
 {
     public class GitHubUpdateService : IUpdateService
     {
-        private const string LatestReleaseUrl = "https://api.github.com/repos/borislav-borislavov/sprout/releases/latest";
         private const string OldExecutableSuffix = ".old";
 
         private readonly IHttpClientFactory _httpClientFactory;
@@ -41,8 +41,7 @@ namespace Sprout.Core.Services.Updates
                 }
 
                 var currentVersionStr = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly()!.Location).FileVersion;
-                //var currentVersion = Assembly.GetEntryAssembly()?.GetName().Version;
-                
+
                 if (currentVersionStr == null)
                 {
                     _dialogService.ShowError("Unable to determine the current Sprout version.");
@@ -51,35 +50,43 @@ namespace Sprout.Core.Services.Updates
 
                 var currentVersion = Version.Parse(currentVersionStr);
 
-                using var client = CreateClient();
+                var testClient = _httpClientFactory.CreateClient();
+                var latestUrl = await testClient.GetStringAsync("https://github.com/borislav-borislavov/sprout/releases/download/registry/latest.txt");
 
-                var release = await client.GetFromJsonAsync<GitHubRelease>(LatestReleaseUrl);
-                if (release?.TagName == null)
+                if (string.IsNullOrEmpty(latestUrl))
                 {
-                    _dialogService.ShowError("The latest GitHub release does not have a version tag.");
+                    _dialogService.ShowError($"The release version 'https://github.com/borislav-borislavov/sprout/releases/download/registry/latest.txt' is not valid.");
                     return;
                 }
 
-                if (!Version.TryParse(release.TagName.TrimStart('v', 'V'), out var latestVersion))
+                var versionWip = latestUrl.StartFrom("download/", true);
+
+                if (string.IsNullOrEmpty(versionWip))
                 {
-                    _dialogService.ShowError($"The release version '{release.TagName}' is not valid.");
+                    _dialogService.ShowError($"The release version '{versionWip}' is not valid.");
                     return;
                 }
+
+                versionWip = versionWip.StopAt("/");
+
+                if (string.IsNullOrEmpty(versionWip))
+                {
+                    _dialogService.ShowError($"The release version '{versionWip}' is not valid.");
+                    return;
+                }
+
+                if (!Version.TryParse(versionWip, out var latestVersion))
+                {
+                    _dialogService.ShowError($"The release version '{versionWip}' is not valid.");
+                    return;
+                }
+
 
                 if (latestVersion <= currentVersion)
                 {
                     _dialogService.ShowMessage(
                         $"Sprout is up to date. You are running version {currentVersionStr}.",
                         "No updates available");
-                    return;
-                }
-
-                var asset = release.Assets?.FirstOrDefault(a =>
-                    a.Name?.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) == true);
-
-                if (asset?.BrowserDownloadUrl == null)
-                {
-                    _dialogService.ShowError("The latest GitHub release does not contain a Sprout executable.");
                     return;
                 }
 
@@ -94,7 +101,7 @@ namespace Sprout.Core.Services.Updates
                 }
 
                 var downloadPath = exePath + ".update";
-                await DownloadAsync(client, asset.BrowserDownloadUrl, downloadPath);
+                await DownloadAsync(testClient, latestUrl, downloadPath);
 
                 ApplyUpdate(exePath, downloadPath);
             }
@@ -102,14 +109,6 @@ namespace Sprout.Core.Services.Updates
             {
                 _dialogService.ShowError($"Unable to check for updates.{Environment.NewLine}{ex.Message}");
             }
-        }
-
-        private HttpClient CreateClient()
-        {
-            var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Sprout", "1.0"));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
-            return client;
         }
 
         private static async Task DownloadAsync(HttpClient client, string url, string destinationPath)
@@ -166,22 +165,5 @@ namespace Sprout.Core.Services.Updates
             }
         }
 
-        private class GitHubRelease
-        {
-            [JsonPropertyName("tag_name")]
-            public string? TagName { get; set; }
-
-            [JsonPropertyName("assets")]
-            public GitHubAsset[]? Assets { get; set; }
-        }
-
-        private class GitHubAsset
-        {
-            [JsonPropertyName("name")]
-            public string? Name { get; set; }
-
-            [JsonPropertyName("browser_download_url")]
-            public string? BrowserDownloadUrl { get; set; }
-        }
     }
 }
