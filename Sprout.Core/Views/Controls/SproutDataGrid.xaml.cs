@@ -174,6 +174,7 @@ namespace Sprout.Core.Views.Controls
                 {
                     TextBlock tb => tb.Text,
                     ContentPresenter cp => cp.Content?.ToString(),
+                    TextBox textBox => textBox.Text,
                     _ => content?.ToString()
                 };
 
