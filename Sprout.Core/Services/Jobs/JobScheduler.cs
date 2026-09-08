@@ -3,13 +3,15 @@ using Quartz.Impl;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.CPL;
+using Sprout.Core.Services.ValueStore;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
 namespace Sprout.Core.Services.Jobs
 {
-    public sealed class JobScheduler(IConfigurationService configurationService) : IJobScheduler
+    public sealed class JobScheduler(IConfigurationService configurationService, IValueStoreFactory _valueStoreFactory) : IJobScheduler
     {
         private const string SchedulerContextKey = "SproutJobScheduler";
 
@@ -138,6 +140,13 @@ namespace Sprout.Core.Services.Jobs
 
             if (liveDebugJob.PageId == jobID)
             {
+                liveDebugJob.JobConfig = new SproutJobConfiguration
+                {
+                    ID = jobID,
+                    Script = "// live debug job",
+                    IsScheduleEnabled = false
+                };
+                liveDebugJob.ValueStoreFactory = _valueStoreFactory;
                 liveDebugJob.ExecuteAsync(_shutdown.Token).GetAwaiter().GetResult();
                 return;
             }
@@ -189,7 +198,13 @@ namespace Sprout.Core.Services.Jobs
                 var assembly = loadContext.LoadFromStream(stream);
                 var jobType = assembly.GetType($"DynamicJob._{job.ID:N}.Job", throwOnError: true)!;
                 var instance = (BaseSproutJob)Activator.CreateInstance(jobType)!;
-                await instance.ExecuteAsync(cancellationToken).ConfigureAwait(false);
+                instance.JobConfig = job;
+                instance.ValueStoreFactory = _valueStoreFactory;
+                var debugValue = await instance.ExecuteAsync(cancellationToken).ConfigureAwait(false);
+
+#if DEBUG
+                Debug.WriteLine($"Job {job.Name} -> {debugValue}");
+#endif
 
                 lock (entry.SyncRoot)
                     entry.State = entry.ScheduleEnabled ? JobRunState.Scheduled : JobRunState.Idle;

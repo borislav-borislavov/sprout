@@ -85,7 +85,7 @@ namespace Sprout.Tests.Jobs
                     await File.WriteAllTextAsync(@"{{marker}}", "ran", cancellationToken);
                 }
                 """);
-            using var scheduler = new JobScheduler(new InMemoryConfigurationService(new SproutConfiguration { Jobs = [job] }));
+            using var scheduler = new JobScheduler(new InMemoryConfigurationService(new SproutConfiguration { Jobs = [job] }), null);
 
             try
             {
@@ -113,7 +113,7 @@ namespace Sprout.Tests.Jobs
                     throw new InvalidOperationException("boom");
                 }
                 """);
-            using var scheduler = new JobScheduler(new InMemoryConfigurationService(new SproutConfiguration { Jobs = [job] }));
+            using var scheduler = new JobScheduler(new InMemoryConfigurationService(new SproutConfiguration { Jobs = [job] }), null);
 
             await scheduler.RunAsync(job.ID);
 
@@ -131,7 +131,7 @@ namespace Sprout.Tests.Jobs
                     await Task.Delay(TimeSpan.FromMinutes(5), cancellationToken);
                 }
                 """);
-            using var scheduler = new JobScheduler(new InMemoryConfigurationService(new SproutConfiguration { Jobs = [job] }));
+            using var scheduler = new JobScheduler(new InMemoryConfigurationService(new SproutConfiguration { Jobs = [job] }), null);
 
             var run = scheduler.RunAsync(job.ID);
 
@@ -153,7 +153,7 @@ namespace Sprout.Tests.Jobs
             var job = CreateJob("// noop");
             job.IsScheduleEnabled = true;
             job.CronExpression = "0 0/2 * * * ?";
-            using var scheduler = new JobScheduler(new InMemoryConfigurationService(new SproutConfiguration { Jobs = [job] }));
+            using var scheduler = new JobScheduler(new InMemoryConfigurationService(new SproutConfiguration { Jobs = [job] }), null);
 
             scheduler.Start();
 
@@ -169,7 +169,7 @@ namespace Sprout.Tests.Jobs
             var job = CreateJob("// noop");
             job.IsScheduleEnabled = true;
             job.CronExpression = "not a cron";
-            using var scheduler = new JobScheduler(new InMemoryConfigurationService(new SproutConfiguration { Jobs = [job] }));
+            using var scheduler = new JobScheduler(new InMemoryConfigurationService(new SproutConfiguration { Jobs = [job] }), null);
 
             scheduler.Start();
 

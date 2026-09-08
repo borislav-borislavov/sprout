@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.Wordprocessing;
 using Sprout.Core.Common;
 using Sprout.Core.Services.Configurations;
 using System.Collections.Concurrent;
@@ -8,7 +9,6 @@ namespace Sprout.Core.Services.ValueStore
     public class ValueStoreFactory : IValueStoreFactory
     {
         private readonly string _rootPath;
-        private readonly ConcurrentDictionary<string, IValueStore> _stores = new(StringComparer.OrdinalIgnoreCase);
 
         public ValueStoreFactory(string? rootPath = null)
         {
@@ -38,7 +38,7 @@ namespace Sprout.Core.Services.ValueStore
 
             var safeName = SanitizeFileName(category);
 
-            return _stores.GetOrAdd(safeName, name => new JsonValueStore(Path.Combine(_rootPath, $"{name}.json")));
+            return new JsonValueStore(Path.Combine(_rootPath, $"{safeName}.json"));
         }
 
         private static string SanitizeFileName(string category)

@@ -9,9 +9,9 @@ namespace Sprout.Core.Services.Jobs
         public bool IsLiveDebug { get; set; }
         public Guid PageId { get; set; } = Guid.NewGuid();
 
-        public override Task ExecuteAsync(CancellationToken cancellationToken)
+        public override Task<string> ExecuteAsync(CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(string.Empty);
         }
     }
 }
