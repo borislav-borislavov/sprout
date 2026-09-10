@@ -12,6 +12,8 @@ namespace Sprout.Core.Windows
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static bool ForceClose { get; set; } = false;
+
         public MainWindow(MainView mainView)
         {
             InitializeComponent();
@@ -25,6 +27,12 @@ namespace Sprout.Core.Windows
 
         protected override void OnClosing(CancelEventArgs e)
         {
+            if (ForceClose)
+            {
+                base.OnClosing(e);
+                return;
+            }
+
             var result = MessageBox.Show(
                 "Are you sure you want to close Sprout?",
                 "Confirm Exit",

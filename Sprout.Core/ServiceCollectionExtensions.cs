@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Sprout.Core.Factories;
+using Sprout.Core.Features.SproutAppFeature;
 using Sprout.Core.Services.ActionMessageService;
 using Sprout.Core.Services.Clipboard;
 using Sprout.Core.Services.Configurations;
@@ -49,6 +50,7 @@ namespace Sprout.Core
             services.AddTransient<IUpdateService, GitHubUpdateService>();
             services.AddSingleton<IValueStoreFactory, ValueStoreFactory>(x => new ValueStoreFactory());
             services.AddSingleton<IGridFilterPresetService, GridFilterPresetService>();
+            services.AddSingleton<ISproutAppService, SproutAppService>();
 
             //ViewModels
             services.AddTransient<LoginVM>();

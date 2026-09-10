@@ -1,0 +1,29 @@
+﻿using Sprout.Core.Windows;
+using System.Diagnostics;
+using System.IO;
+using System.Windows;
+
+namespace Sprout.Core.Features.SproutAppFeature;
+
+public class SproutAppService : ISproutAppService
+{
+    public void CloseApp(bool force)
+    {
+        MainWindow.ForceClose = force;
+        //this prompts the user to close the app and it should be done automatically
+        Application.Current.Dispatcher.Invoke(() => Application.Current.Shutdown());
+    }
+
+    public void StartApp()
+    {
+        string exePath = Process.GetCurrentProcess().MainModule?.FileName
+            ?? throw new InvalidOperationException("Unable to determine the executable path.");
+
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = exePath,
+            WorkingDirectory = Path.GetDirectoryName(exePath)!,
+            UseShellExecute = true
+        });
+    }
+}
