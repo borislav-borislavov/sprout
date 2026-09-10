@@ -141,6 +141,14 @@
                                 </StackPanel>
                             </MenuItem.Header>
                         </MenuItem>
+
+                        <MenuItem x:Name="menuExportTable" ToolTip="Copy To Clipboard As Microsoft Word Table">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="MS Word Table" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
                     </MenuItem>
                 </Menu>
 

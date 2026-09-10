@@ -9,6 +9,11 @@ namespace Sprout.Core.Services.Clipboard
             System.Windows.Clipboard.SetText(text);
         }
 
+        public void SetHtml(string html)
+        {
+            System.Windows.Clipboard.SetData(DataFormats.Html, html);
+        }
+
         public string GetText()
         {
             return System.Windows.Clipboard.GetText();

@@ -1,4 +1,5 @@
 ﻿using Sprout.Core.Behaviours;
+using Sprout.Core.Features.ButtonActionFeature.GridActions;
 using Sprout.Core.Features.ButtonActions;
 using Sprout.Core.Features.ButtonActions.GridActions;
 using Sprout.Core.Features.DataGridPresetsFeature;
@@ -257,6 +258,7 @@ namespace Sprout.Core.Factories
             sproutDataGrid.BindButtonAction(sproutDataGrid.btnRefresh, new RefreshDataGridAction(sproutDataGrid.Name));
             sproutDataGrid.BindButtonAction(sproutDataGrid.btnApplyFilters, new RefreshDataGridAction(sproutDataGrid.Name));
             sproutDataGrid.BindButtonAction(sproutDataGrid.menuExportExcel, new ExportToExcelGridAction(sproutDataGrid.Name));
+            sproutDataGrid.BindButtonAction(sproutDataGrid.menuExportTable, new ExportToTableGridAction(sproutDataGrid.Name, _clipboardService));
             sproutDataGrid.BindButtonAction(sproutDataGrid.btnRowPreview, new PreviewRowGridAction(sproutDataGrid.Name, _clipboardService));
             sproutDataGrid.BindButtonAction(sproutDataGrid.btnLocalSearch, new LocalSearchGridAction(sproutDataGrid.Name));
 
