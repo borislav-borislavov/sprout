@@ -16,7 +16,17 @@ namespace Sprout.Tests.Jobs
                 _configuration = configuration;
             }
 
+            public string GetIdentifier()
+            {
+                throw new NotImplementedException();
+            }
+
             public SproutConfiguration Load() => _configuration;
+
+            public SproutConfiguration LoadSpecific(string identifier)
+            {
+                throw new NotImplementedException();
+            }
 
             public bool Save(SproutConfiguration sproutConfiguration)
             {

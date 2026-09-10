@@ -30,6 +30,32 @@ namespace Sprout.Core.Services.Configurations
             _dialogService = dialogService;
         }
 
+        /// <summary>
+        /// Loads a specific file. Does not benefit from caching, file change tracking, seed picker etc.
+        /// </summary>
+        public SproutConfiguration LoadSpecific(string identifier)
+        {
+            string json = string.Empty;
+            if (SeedFileCrypto.IsEncrypted(identifier))
+            {
+                json = SeedFileCrypto.Decrypt(identifier, Passphrase);
+            }
+            else
+            {
+                json = File.ReadAllText(identifier, Encoding.UTF8);
+            }
+
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                Formatting = Formatting.Indented
+            };
+
+            var config = JsonConvert.DeserializeObject<SproutConfiguration>(json, settings) ?? new SproutConfiguration();
+
+            return config;
+        }
+
         #region File changed tracker
         private static long lastUsn = 0;
         private static ulong _lastFrn = 0;
@@ -67,7 +93,7 @@ namespace Sprout.Core.Services.Configurations
                 _logger.Log($"USN Journal crashed: {ex}");
                 return true;
             }
-        } 
+        }
         #endregion
 
         public SproutConfiguration Load()
@@ -75,44 +101,18 @@ namespace Sprout.Core.Services.Configurations
             string configFilePath = string.Empty;
             try
             {
-                configFilePath = GetSeedFilePath();
+                configFilePath = GetIdentifier();
 
                 AppArgs.SeedPath = configFilePath;
 
                 if (!File.Exists(configFilePath)) return new();
 
-                if (!IsFileChanged(configFilePath))
+                if (!IsFileChanged(configFilePath) && _cachedConfig != null)
                 {
                     return _cachedConfig;
                 }
 
-                string json = string.Empty;
-                if (SeedFileCrypto.IsEncrypted(configFilePath))
-                {
-                    json = SeedFileCrypto.Decrypt(configFilePath, Passphrase);
-                }
-                else
-                {
-                    json = File.ReadAllText(configFilePath, Encoding.UTF8);
-                }
-
-                var settings = new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.Auto,
-                    Formatting = Formatting.Indented
-                };
-
-                _cachedConfig = JsonConvert.DeserializeObject<SproutConfiguration>(json, settings) ?? new SproutConfiguration();
-
-                foreach (var page in _cachedConfig.Pages)
-                {
-                    if (page.Root == null) continue;
-
-                    if (page.Root is not GridConfig gridConfig)
-                        throw new Exception("For now only the grid is supported as a root");
-                }
-
-                return _cachedConfig;
+                return _cachedConfig = LoadSpecific(configFilePath);
             }
             catch (Exception ex)
             {
@@ -127,7 +127,7 @@ namespace Sprout.Core.Services.Configurations
 
             try
             {
-                configFilePath = GetSeedFilePath();
+                configFilePath = GetIdentifier();
 
                 var settings = new JsonSerializerSettings
                 {
@@ -153,7 +153,7 @@ namespace Sprout.Core.Services.Configurations
             }
         }
 
-        private string GetSeedFilePath()
+        public string GetIdentifier()
         {
             if (!string.IsNullOrEmpty(_seedPath))
                 return _seedPath;
