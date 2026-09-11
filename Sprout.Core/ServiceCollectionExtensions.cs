@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Sprout.Core.Common;
 using Sprout.Core.Factories;
+using Sprout.Core.Features.AppStateFeature;
 using Sprout.Core.Features.DataGridPresetsFeature;
 using Sprout.Core.Features.LogFeature;
 using Sprout.Core.Features.SeedFileUpdateFeature;
@@ -52,6 +53,7 @@ namespace Sprout.Core
             services.AddSingleton<IValueStoreFactory, ValueStoreFactory>(x => new ValueStoreFactory());
             services.AddSingleton<IGridFilterPresetService, GridFilterPresetService>();
             services.AddSingleton<ISproutAppService, SproutAppService>();
+            services.AddSingleton<IAppState, AppState>();
 
             //ViewModels
             services.AddTransient<LoginVM>();
