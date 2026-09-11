@@ -1,6 +1,5 @@
 ﻿using Sprout.Core.Common;
 using Sprout.Core.Features.AppStateFeature;
-﻿using Sprout.Core.Windows;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -26,7 +25,7 @@ public class SproutAppService : ISproutAppService
 
     public void StartApp()
     {
-        string exePath = Process.GetCurrentProcess().MainModule?.FileName
+        string exePath = GetExeFilePath()
             ?? throw new InvalidOperationException("Unable to determine the executable path.");
 
         Process.Start(new ProcessStartInfo
@@ -36,4 +35,7 @@ public class SproutAppService : ISproutAppService
             UseShellExecute = true
         });
     }
+
+    public string? GetExeFilePath() => Process.GetCurrentProcess().MainModule?.FileName;
+
 }

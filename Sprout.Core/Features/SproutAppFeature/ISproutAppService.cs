@@ -4,4 +4,5 @@ public interface ISproutAppService
 {
     void CloseApp(bool force);
     void StartApp();
+    string? GetExeFilePath();
 }
