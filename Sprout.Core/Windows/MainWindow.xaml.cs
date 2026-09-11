@@ -1,4 +1,6 @@
-﻿using Sprout.Core.Services.WindowSize;
+﻿using Sprout.Core.Common;
+using Sprout.Core.Features.AppStateFeature;
+using Sprout.Core.Services.WindowSize;
 using Sprout.Core.Views;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -12,12 +14,13 @@ namespace Sprout.Core.Windows
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static bool ForceClose { get; set; } = false;
+        private readonly IAppState _appState;
 
-        public MainWindow(MainView mainView)
+        public MainWindow(MainView mainView, IAppState appState)
         {
             InitializeComponent();
 
+            _appState = appState;
             Content = mainView;
             var fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly()!.Location).FileVersion;
             Title = string.IsNullOrWhiteSpace(fileVersion) ? "Sprout" : $"Sprout - v{fileVersion}";
@@ -27,9 +30,10 @@ namespace Sprout.Core.Windows
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            if (ForceClose)
+            if (_appState.Get<bool>(Const.AppState.ForceCloseApp))
             {
                 base.OnClosing(e);
+                Application.Current.Shutdown();
                 return;
             }
 

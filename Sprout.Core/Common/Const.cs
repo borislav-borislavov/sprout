@@ -39,5 +39,10 @@ namespace Sprout.Core.Common
         public const string AlwaysAsk = "AlwaysAsk.txt";
 
         public const string DefaultSeedFileName = "main.seed";
+
+        public static class AppState
+        {
+            public const string ForceCloseApp = nameof(ForceCloseApp);
+        }
     }
 }

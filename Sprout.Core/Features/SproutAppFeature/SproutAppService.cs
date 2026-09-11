@@ -1,3 +1,5 @@
+﻿using Sprout.Core.Common;
+using Sprout.Core.Features.AppStateFeature;
 ﻿using Sprout.Core.Windows;
 using System.Diagnostics;
 using System.IO;
@@ -7,9 +9,17 @@ namespace Sprout.Core.Features.SproutAppFeature;
 
 public class SproutAppService : ISproutAppService
 {
+    private readonly IAppState _appState;
+
+    public SproutAppService(IAppState appState)
+    {
+        _appState = appState;
+    }
+
     public void CloseApp(bool force)
     {
-        MainWindow.ForceClose = force;
+        _appState.Set(Const.AppState.ForceCloseApp, force);
+
         //this prompts the user to close the app and it should be done automatically
         Application.Current.Dispatcher.Invoke(() => Application.Current.Shutdown());
     }
