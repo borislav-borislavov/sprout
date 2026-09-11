@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Sprout.Core.Features.SeedFileUpdateFeature;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
@@ -13,6 +14,8 @@ namespace Sprout.Core.ViewModels
         private readonly IConfigurationService _configService;
         private readonly IDialogService _dialogService;
 
+        public static string[] SeedUpdateStrategies { get; } = ["None", "AdHoc"];
+
         [ObservableProperty]
         private string _sqlServerConnectionString;
 
@@ -25,6 +28,15 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private bool _logSqlQueries;
 
+        [ObservableProperty]
+        private string _version;
+
+        [ObservableProperty]
+        private string _selectedSeedUpdateStrategy;
+
+        [ObservableProperty]
+        private ObservableObject _selectedSeedUpdateViewModel;
+
         public SettingsVM(IConfigurationService configService, IDialogService dialogService)
         {
             _configService = configService;
@@ -35,16 +47,48 @@ namespace Sprout.Core.ViewModels
 
         private void Load()
         {
-            var settings = _configService.Load().Settings;
+            var config = _configService.Load();
+            var settings = config.Settings;
             SqlServerConnectionString = settings.SqlServerConnectionString;
             DuckDbConnectionString = settings.DuckDbConnectionString;
             CommandTimeout = settings.CommandTimeout;
             LogSqlQueries = settings.LogSqlQueries;
+            this.Version = config.Version;
+
+            if (config.SeedUpdateConfig is AdHocSeedUpdateConfig adHocConfig)
+            {
+                SelectedSeedUpdateStrategy = "AdHoc";
+                SelectedSeedUpdateViewModel = new AdHocSeedUpdateVM(adHocConfig);
+            }
+            else
+            {
+                SelectedSeedUpdateStrategy = "None";
+                SelectedSeedUpdateViewModel = null;
+            }
+        }
+
+        [RelayCommand]
+        private void InitializeStrategy()
+        {
+            if (SelectedSeedUpdateStrategy == "AdHoc")
+            {
+                SelectedSeedUpdateViewModel = new AdHocSeedUpdateVM(new AdHocSeedUpdateConfig());
+            }
+            else
+            {
+                SelectedSeedUpdateViewModel = null;
+            }
         }
 
         [RelayCommand]
         private void Save()
         {
+            if (!int.TryParse(this.Version, out _))
+            {
+                _dialogService.ShowError("Version must be a valid integer.");
+                return;
+            }
+
             try
             {
                 var config = _configService.Load();
@@ -52,6 +96,17 @@ namespace Sprout.Core.ViewModels
                 config.Settings.DuckDbConnectionString = DuckDbConnectionString;
                 config.Settings.CommandTimeout = CommandTimeout;
                 config.Settings.LogSqlQueries = LogSqlQueries;
+                config.Version = this.Version;
+
+                if (SelectedSeedUpdateViewModel is AdHocSeedUpdateVM adHocVM)
+                {
+                    config.SeedUpdateConfig = adHocVM.ToConfig();
+                }
+                else
+                {
+                    config.SeedUpdateConfig = null;
+                }
+
                 _configService.Save(config);
                 _dialogService.ShowMessage("Settings saved.", "Settings", DialogButton.OK, DialogImage.None);
             }

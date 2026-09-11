@@ -1,3 +1,4 @@
+using Sprout.Core.Features.SeedFileUpdateFeature;
 using Sprout.Core.Models.Configurations.DataGrid;
 
 namespace Sprout.Core.Models.Configurations
@@ -15,5 +16,7 @@ namespace Sprout.Core.Models.Configurations
         /// Persisted column layouts (visibility, order and frozen count) per SproutDataGrid, keyed by the grid name.
         /// </summary>
         public Dictionary<string, SproutGridColumnLayout> GridColumnLayouts { get; set; } = [];
+
+        public AdHocSeedUpdateConfig? FolderUpdate { get; set; }
     }
 }

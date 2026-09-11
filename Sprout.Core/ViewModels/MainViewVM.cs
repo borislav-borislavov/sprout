@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Sprout.Core.Factories;
+using Sprout.Core.Features.SeedFileUpdateFeature;
 using Sprout.Core.Messages;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.ActionMessageService;
@@ -27,6 +28,7 @@ namespace Sprout.Core.ViewModels
         private readonly ISproutPageVMFactory _sproutPageVMFactory;
         private readonly IVMFactory _vmFactory;
         private readonly IUpdateService _updateService;
+        private readonly ISeedUpdaterFactory _seedUpdaterFactory;
 
         [ObservableProperty]
         private ObservableCollection<SproutPageConfiguration> _pageConfigs;
@@ -55,7 +57,8 @@ namespace Sprout.Core.ViewModels
             IDialogService dialogService,
             ISproutPageVMFactory sproutPageVMFactory,
             IVMFactory vmFactory,
-            IUpdateService updateService)
+            IUpdateService updateService,
+            ISeedUpdaterFactory seedUpdaterFactory)
         {
             _configService = configService;
             _navigationService = navigationService;
@@ -63,6 +66,7 @@ namespace Sprout.Core.ViewModels
             _sproutPageVMFactory = sproutPageVMFactory;
             _vmFactory = vmFactory;
             _updateService = updateService;
+            _seedUpdaterFactory = seedUpdaterFactory;
             LoadMenuPages();
 
             Tabs.CollectionChanged += (_, e) =>
@@ -107,6 +111,25 @@ namespace Sprout.Core.ViewModels
             });
 
             OpenStartupPages();
+
+            Task.Run(() => CheckForSeedNewVersion());
+        }
+
+        private void CheckForSeedNewVersion()
+        {
+            try
+            {
+                var currentConfig = _configService.Load();
+
+                if (currentConfig.SeedUpdateConfig == null) return;
+
+                var seedUpdater = _seedUpdaterFactory.Create(currentConfig.SeedUpdateConfig);
+                seedUpdater.Update();
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError($"Failed to update seed file: {ex.Message}");
+            }
         }
 
         private void OpenStartupPages()

@@ -67,6 +67,7 @@ namespace Sprout.Core.Services.Api
 
         private async Task ProvideDataInternal()
         {
+            //The client does not have to be disposed because it is managed by the factory
             var client = _httpClientFactory.CreateClient();
 
             var token = await TryAcquireTokenAsync(client);

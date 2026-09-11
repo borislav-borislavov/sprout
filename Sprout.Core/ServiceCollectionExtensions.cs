@@ -1,23 +1,24 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Sprout.Core.Common;
 using Sprout.Core.Factories;
+using Sprout.Core.Features.DataGridPresetsFeature;
+using Sprout.Core.Features.LogFeature;
+using Sprout.Core.Features.SeedFileUpdateFeature;
 using Sprout.Core.Features.SproutAppFeature;
 using Sprout.Core.Services.ActionMessageService;
 using Sprout.Core.Services.Clipboard;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.Dialog;
-using Sprout.Core.Services.Login;
+using Sprout.Core.Services.Jobs;
 using Sprout.Core.Services.Logging;
+using Sprout.Core.Services.Login;
 using Sprout.Core.Services.Migration;
 using Sprout.Core.Services.Navigation;
+using Sprout.Core.Services.Updates;
+using Sprout.Core.Services.ValueStore;
 using Sprout.Core.ViewModels;
 using Sprout.Core.Views;
 using Sprout.Core.Windows;
-using Sprout.Core.Common;
-using Sprout.Core.Services.Jobs;
-using Sprout.Core.Services.Updates;
-using Sprout.Core.Services.ValueStore;
-using Sprout.Core.Features.DataGridPresetsFeature;
-using Sprout.Core.Features.LogFeature;
 
 namespace Sprout.Core
 {
@@ -97,6 +98,7 @@ namespace Sprout.Core
             services.AddTransient<ISproutListFactory, SproutListFactory>();
             services.AddTransient<ISproutTextBoxFactory, SproutTextBoxFactory>();
             services.AddTransient<ISproutTabControlFactory, SproutTabControlFactory>();
+            services.AddTransient<ISeedUpdaterFactory, SeedUpdaterFactory>();
 
         }
     }
