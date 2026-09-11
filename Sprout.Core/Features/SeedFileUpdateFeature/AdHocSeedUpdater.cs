@@ -23,7 +23,7 @@ namespace Sprout.Core.Features.SeedFileUpdateFeature
             _sproutAppService = sproutAppService;
         }
 
-        public async Task Update()
+        public async Task TryUpdate()
         {
             if (_updateConfig == null) return;
             if (string.IsNullOrEmpty(_updateConfig.FilePath)) return;

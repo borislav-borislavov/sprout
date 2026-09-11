@@ -2,6 +2,6 @@
 {
     public interface ISeedUpdater
     {
-        Task Update();
+        Task TryUpdate();
     }
 }

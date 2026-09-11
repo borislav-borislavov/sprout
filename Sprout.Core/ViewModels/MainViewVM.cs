@@ -124,7 +124,7 @@ namespace Sprout.Core.ViewModels
                 if (currentConfig.SeedUpdateConfig == null) return;
 
                 var seedUpdater = _seedUpdaterFactory.Create(currentConfig.SeedUpdateConfig);
-                seedUpdater.Update();
+                seedUpdater.TryUpdate();
             }
             catch (Exception ex)
             {
