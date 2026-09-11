@@ -45,9 +45,9 @@ namespace Sprout.Tests.Jobs
         public void JobCompiler_CompilesValidScript()
         {
             var job = CreateJob("""
-                public override async Task ExecuteAsync(CancellationToken cancellationToken)
+                public override async Task<string> ExecuteAsync(CancellationToken cancellationToken)
                 {
-                    await Task.CompletedTask;
+                    return string.Empty;
                 }
                 """);
             var compiler = new JobCompiler(job, new InMemoryConfigurationService(new SproutConfiguration { Jobs = [job] }));
@@ -90,9 +90,10 @@ namespace Sprout.Tests.Jobs
         {
             var marker = Path.Combine(Path.GetTempPath(), $"sprout_job_{Guid.NewGuid():N}.txt");
             var job = CreateJob($$"""
-                public override async Task ExecuteAsync(CancellationToken cancellationToken)
+                public override async Task<string> ExecuteAsync(CancellationToken cancellationToken)
                 {
                     await File.WriteAllTextAsync(@"{{marker}}", "ran", cancellationToken);
+                    return string.Empty;
                 }
                 """);
             using var scheduler = new JobScheduler(new InMemoryConfigurationService(new SproutConfiguration { Jobs = [job] }), null);
@@ -118,7 +119,7 @@ namespace Sprout.Tests.Jobs
         public async Task JobScheduler_RunAsync_CapturesJobFailure()
         {
             var job = CreateJob("""
-                public override Task ExecuteAsync(CancellationToken cancellationToken)
+                public override Task<string> ExecuteAsync(CancellationToken cancellationToken)
                 {
                     throw new InvalidOperationException("boom");
                 }
@@ -136,9 +137,10 @@ namespace Sprout.Tests.Jobs
         public async Task JobScheduler_Stop_CancelsRunningJob()
         {
             var job = CreateJob("""
-                public override async Task ExecuteAsync(CancellationToken cancellationToken)
+                public override async Task<string> ExecuteAsync(CancellationToken cancellationToken)
                 {
                     await Task.Delay(TimeSpan.FromMinutes(5), cancellationToken);
+                    return string.Empty;
                 }
                 """);
             using var scheduler = new JobScheduler(new InMemoryConfigurationService(new SproutConfiguration { Jobs = [job] }), null);
