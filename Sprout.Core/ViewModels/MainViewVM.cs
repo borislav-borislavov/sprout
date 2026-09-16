@@ -352,6 +352,7 @@ namespace Sprout.Core.ViewModels
             if (SelectedTab is not SproutPageVM selectedPageVM) return;
 
             var pageId = selectedPageVM.PageConfig.ID;
+            var tabIndex = Tabs.IndexOf(selectedPageVM);
 
             _navigationService.ShowEditPage(selectedPageVM.PageConfig, _configService, _dialogService);
 
@@ -375,7 +376,15 @@ namespace Sprout.Core.ViewModels
                 Parameter = vm.Data
             });
 
-            Tabs.Add(newTab);
+            if (tabIndex >= 0 && tabIndex <= Tabs.Count)
+            {
+                Tabs.Insert(tabIndex, newTab);
+            }
+            else
+            {
+                Tabs.Add(newTab);
+            }
+
             SelectedTab = newTab;
         }
 
@@ -415,6 +424,7 @@ namespace Sprout.Core.ViewModels
                 var compiler = new CustomPageLogicCompiler(selectedPageVM, _configService);
 
                 var pageId = selectedPageVM.PageConfig.ID;
+                var tabIndex = Tabs.IndexOf(selectedPageVM);
 
                 _navigationService.ShowScriptEditor(compiler);
 
@@ -439,7 +449,15 @@ namespace Sprout.Core.ViewModels
                     Parameter = vm.Data
                 });
 
-                Tabs.Add(newTab);
+                if (tabIndex >= 0 && tabIndex <= Tabs.Count)
+                {
+                    Tabs.Insert(tabIndex, newTab);
+                }
+                else
+                {
+                    Tabs.Add(newTab);
+                }
+
                 SelectedTab = newTab;
             }
             catch (Exception ex)
