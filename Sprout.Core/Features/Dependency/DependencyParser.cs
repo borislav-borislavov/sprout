@@ -54,6 +54,15 @@ namespace Sprout.Core.Models.Queries
             var dependency = new DataProviderDependency();
 
             dependency.RawDependency = text;
+            var openExtraIdx = text.IndexOf('[');
+            var closeExtraIdx = text.IndexOf(']');
+
+            if (openExtraIdx > -1 && closeExtraIdx > -1) //process [on-demand]
+            {
+                var rawExtras = text.Substring(openExtraIdx + 1, closeExtraIdx - openExtraIdx - 1);
+                text = text.Replace($"[{rawExtras}]", "");
+                SetExtraOptions(dependency, rawExtras);
+            }
 
             var chunks = text.Split('.', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
@@ -67,6 +76,18 @@ namespace Sprout.Core.Models.Queries
             dependency.PropertyPath = string.Join(".", chunks[1..]);
 
             return dependency;
+        }
+
+        private static void SetExtraOptions(DataProviderDependency dependency, string rawExtras)
+        {
+            var extras = rawExtras
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(x => x.ToLower());
+
+            if (extras.Any(e => e == "passive"))
+            {
+                dependency.IsPassive = true;
+            }
         }
 
         public static IEnumerable<string> GetScopes(this string text)

@@ -115,6 +115,8 @@ namespace Sprout.Core.ViewModels
                         {
                             foreach (var dependency in dependent.Dependencies)
                             {
+                                if (dependency.IsPassive) continue;
+
                                 if (dependency.ControlName == change.ControlName)
                                 {
                                     dependent.DepenencyChanged(dependency, VMRegistry);
@@ -128,6 +130,8 @@ namespace Sprout.Core.ViewModels
 
                             foreach (var dependency in dataAdapterHost.DataAdapter.DataProvider.Dependencies)
                             {
+                                if (dependency.IsPassive) continue;
+
                                 if (dependency.ControlName == change.ControlName)
                                 {
                                     dependencyHasChanged = true;
@@ -155,6 +159,8 @@ namespace Sprout.Core.ViewModels
                                 var dependencyHasChanged = false;
                                 foreach (var dependency in dataAdapter.Value.DataProvider.Dependencies)
                                 {
+                                    if (dependency.IsPassive) continue;
+
                                     if (dependency.ControlName == change.ControlName)
                                     {
                                         dependencyHasChanged = true;
@@ -278,6 +284,7 @@ namespace Sprout.Core.ViewModels
                     {
                         foreach (var dependency in dependent.Dependencies)
                         {
+                            if (dependency.IsPassive) continue;
                             dependent.DepenencyChanged(dependency, VMRegistry);
                         }
                     }

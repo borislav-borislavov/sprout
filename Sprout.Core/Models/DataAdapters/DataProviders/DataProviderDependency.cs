@@ -13,7 +13,13 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
 		public string ControlName { get; set; }
 		public string PropertyPath { get; internal set; }
 
-		public static readonly DependencyProperty ValueProperty =
+        /// <summary>
+        /// Supresses the reactivity of the dependency.
+        /// The value will be resolved but nothing will react to it.
+        /// </summary>
+        public bool IsPassive { get; internal set; }
+
+        public static readonly DependencyProperty ValueProperty =
 			DependencyProperty.Register(
 				name: nameof(Value),
 				propertyType: typeof(string),
@@ -26,5 +32,5 @@ namespace Sprout.Core.Models.DataAdapters.DataProviders
 			get => (string)GetValue(ValueProperty);
 			set => SetValue(ValueProperty, value);
 		}
-	}
+    }
 }
