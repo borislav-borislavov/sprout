@@ -3,5 +3,6 @@
     public interface ISeedUpdater
     {
         Task TryUpdate();
+        Task Publish();
     }
 }

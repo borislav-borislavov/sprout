@@ -77,5 +77,42 @@ namespace Sprout.Core.Features.SeedFileUpdateFeature
                 _dialogService.ShowMessage($"Failed to update seed file: {ex.Message}", "Update Failed", DialogButton.OK, DialogImage.Error);
             }
         }
+
+        public Task Publish()
+        {
+            if (_updateConfig == null) return Task.CompletedTask;
+
+            if (string.IsNullOrEmpty(_updateConfig.FilePath))
+            {
+                _dialogService.ShowError($"{nameof(_updateConfig.FilePath)} not set.");
+                return Task.CompletedTask;
+            }
+
+            var sourceFilePath = _configurationService.GetIdentifier();
+
+            if (!File.Exists(sourceFilePath))
+            {
+                _dialogService.ShowMessage($"The current seed file '{sourceFilePath}' does not exist.", "File Not Found", DialogButton.OK, DialogImage.Error);
+                return Task.CompletedTask;
+            }
+
+            try
+            {
+                var destinationDirectory = Path.GetDirectoryName(_updateConfig.FilePath);
+                if (!string.IsNullOrEmpty(destinationDirectory))
+                {
+                    Directory.CreateDirectory(destinationDirectory);
+                }
+
+                File.Copy(sourceFilePath, _updateConfig.FilePath, true);
+                _dialogService.ShowMessage("Done!");
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowMessage($"Failed to publish seed file: {ex.Message}", "Publish Failed", DialogButton.OK, DialogImage.Error);
+            }
+
+            return Task.CompletedTask;
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace Sprout.Core.ViewModels
 
         private readonly IConfigurationService _configService;
         private readonly IDialogService _dialogService;
+        private readonly ISeedUpdaterFactory _seedUpdaterFactory;
 
         public static string[] SeedUpdateStrategies { get; } = ["None", "AdHoc"];
 
@@ -37,10 +38,11 @@ namespace Sprout.Core.ViewModels
         [ObservableProperty]
         private ObservableObject _selectedSeedUpdateViewModel;
 
-        public SettingsVM(IConfigurationService configService, IDialogService dialogService)
+        public SettingsVM(IConfigurationService configService, IDialogService dialogService, ISeedUpdaterFactory seedUpdaterFactory)
         {
             _configService = configService;
             _dialogService = dialogService;
+            _seedUpdaterFactory = seedUpdaterFactory;
 
             Load();
         }
@@ -77,6 +79,26 @@ namespace Sprout.Core.ViewModels
             else
             {
                 SelectedSeedUpdateViewModel = null;
+            }
+        }
+
+        [RelayCommand]
+        private async Task PublishStrategy()
+        {
+            try
+            {
+                if (SelectedSeedUpdateViewModel is not AdHocSeedUpdateVM adHocVM)
+                {
+                    _dialogService.ShowError("Select and configure a seed update strategy before publishing.");
+                    return;
+                }
+
+                var updater = _seedUpdaterFactory.Create(adHocVM.ToConfig());
+                await updater.Publish();
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowMessage(ex.Message, "Error", DialogButton.OK, DialogImage.Error);
             }
         }
 

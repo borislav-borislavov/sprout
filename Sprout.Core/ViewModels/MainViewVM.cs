@@ -303,7 +303,7 @@ namespace Sprout.Core.ViewModels
                 return;
             }
 
-            var settingsVM = new SettingsVM(_configService, _dialogService);
+            var settingsVM = _vmFactory.Create<SettingsVM>(_configService, _dialogService, _seedUpdaterFactory);
             Tabs.Add(settingsVM);
             SelectedTab = settingsVM;
         }
