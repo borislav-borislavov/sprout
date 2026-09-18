@@ -151,13 +151,11 @@ namespace Sprout.Core.Services.SqlServer
             {
                 AttachParameters(cmd, sqlParams);
 
-                var sw = Stopwatch.StartNew();
                 var isNextResultFetched = false;
 
+                _sqlQueryLogger?.Log(cmd.CommandText, cmd.Parameters);
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
-                    sw.Stop();
-                    _sqlQueryLogger?.Log(nameof(SqlServerDataService), cmd.CommandText, cmd.Parameters, sw.Elapsed);
                     do
                     {
                         //This helped when you have an early return in a change command
@@ -281,14 +279,10 @@ namespace Sprout.Core.Services.SqlServer
                     await _connection.OpenAsync();
                 }
 
+                _sqlQueryLogger?.Log(cmd.CommandText, cmd.Parameters);
                 var dt = DataTableFactory.Create();
-
-                var sw = Stopwatch.StartNew();
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
-                    sw.Stop();
-                    _sqlQueryLogger?.Log(nameof(SqlServerDataService), cmd.CommandText, cmd.Parameters, sw.Elapsed);
-
                     if (reader.FieldCount == 0 && _dataAdapter.ParentType == typeof(SproutDataGridConfig))
                     {
                         throw new Exception($"Critical Error: Query of grid {_dataAdapter.Name} is not returning any columns!");

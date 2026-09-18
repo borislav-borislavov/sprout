@@ -155,12 +155,9 @@ namespace Sprout.Core.Services.Duck
                 cmd.Parameters.Add(p);
             }
 
-            var sw = Stopwatch.StartNew();
             var isNextResultFetched = false;
-
+            _sqlQueryLogger?.Log(cmd.CommandText, cmd.Parameters);
             using var reader = await cmd.ExecuteReaderAsync();
-            sw.Stop();
-            _sqlQueryLogger?.Log(nameof(DuckDbDataService), cmd.CommandText, cmd.Parameters, sw.Elapsed);
 
             do
             {
@@ -250,10 +247,8 @@ namespace Sprout.Core.Services.Duck
 
             var dt = DataTableFactory.Create();
 
-            var sw = Stopwatch.StartNew();
+            _sqlQueryLogger?.Log(cmd.CommandText, cmd.Parameters);
             using var reader = await Task.Run(() => cmd.ExecuteReaderAsync());
-            sw.Stop();
-            _sqlQueryLogger?.Log(nameof(DuckDbDataService), cmd.CommandText, cmd.Parameters, sw.Elapsed);
 
             if (reader.FieldCount == 0 && _duckDataAdapter.ParentType == typeof(SproutDataGridConfig))
             {

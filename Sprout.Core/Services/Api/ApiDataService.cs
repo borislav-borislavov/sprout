@@ -76,11 +76,8 @@ namespace Sprout.Core.Services.Api
 
             var url = BuildDataProviderUrl(_dataProvider.Text);
 
-            var sw = Stopwatch.StartNew();
+            _sqlQueryLogger?.Log(url);
             var response = await client.GetAsync(url);
-            sw.Stop();
-
-            _sqlQueryLogger?.Log(nameof(ApiDataService), url, null, sw.Elapsed);
 
             response.EnsureSuccessStatusCode();
 
@@ -159,8 +156,7 @@ namespace Sprout.Core.Services.Api
             var body = BuildBody(cmd, dataRow);
             var content = new StringContent(body, Encoding.UTF8, "application/json");
 
-            var sw = Stopwatch.StartNew();
-
+            _sqlQueryLogger?.Log(url);
             HttpResponseMessage response = cmd.Verb switch
             {
                 HttpVerb.GET => await client.GetAsync(url),
@@ -170,9 +166,6 @@ namespace Sprout.Core.Services.Api
                 HttpVerb.DELETE => await client.DeleteAsync(url),
                 _ => throw new NotSupportedException($"HTTP verb {cmd.Verb} is not supported.")
             };
-
-            sw.Stop();
-            _sqlQueryLogger?.Log(nameof(ApiDataService), url, null, sw.Elapsed);
 
             var changeResult = new ChangeResult();
             var responseJson = await response.Content.ReadAsStringAsync();

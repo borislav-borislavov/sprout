@@ -1,9 +1,13 @@
+using DuckDB.NET.Data;
+using Microsoft.Data.SqlClient;
 using Sprout.Core.Services.Configurations;
 using System;
 using System.Data.Common;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Sprout.Core.Services.Logging
 {
@@ -20,13 +24,14 @@ namespace Sprout.Core.Services.Logging
         private static readonly object _sync = new();
 
         private readonly IConfigurationService _configurationService;
+        private bool _isLoggingEnabled;
 
         public FileSqlQueryLogger(IConfigurationService configurationService)
         {
             _configurationService = configurationService;
         }
 
-        public void Log(string source, string commandText, DbParameterCollection parameters = null, TimeSpan duration = default)
+        public void Log(string commandText, DbParameterCollection parameters = null)
         {
             if (string.IsNullOrWhiteSpace(commandText))
                 return;
@@ -38,23 +43,10 @@ namespace Sprout.Core.Services.Logging
             {
                 var executableQuery = InlineParameters(commandText, parameters);
 
-                var builder = new StringBuilder();
-                builder.Append('[').Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")).Append(']');
-
-                if (!string.IsNullOrWhiteSpace(source))
-                    builder.Append(" [").Append(source).Append(']');
-
-                if (duration != default)
-                    builder.Append(" [").Append(duration.TotalMilliseconds.ToString("F2")).Append(" ms]");
-
-                builder.AppendLine();
-                builder.AppendLine(executableQuery.Trim());
-                builder.AppendLine(new string('-', 60));
-
                 lock (_sync)
                 {
                     RollOverIfNeeded();
-                    File.AppendAllText(GetLogFilePath(), builder.ToString(), Encoding.UTF8);
+                    File.AppendAllText(GetLogFilePath(), $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {executableQuery}{Environment.NewLine}", Encoding.UTF8);
                 }
             }
             catch
@@ -74,11 +66,27 @@ namespace Sprout.Core.Services.Logging
 
             var result = commandText;
 
+            var isDuckDb = false;
+            var isSqlServer = false;
+
+            if (parameters[0] is DuckDBParameter) isDuckDb = true;
+            if (parameters[0] is SqlParameter) isSqlServer = true;
+
+
             foreach (DbParameter p in parameters)
             {
-                var placeholder = p.ParameterName.StartsWith('@') || p.ParameterName.StartsWith('$') || p.ParameterName.StartsWith(':')
+                var placeholder = p.ParameterName;
+
+                if (isSqlServer)
+                {
+                    placeholder = p.ParameterName.StartsWith('@') || p.ParameterName.StartsWith('$') || p.ParameterName.StartsWith(':')
                     ? p.ParameterName
                     : "@" + p.ParameterName;
+                }
+                else if (isDuckDb)
+                {
+                    placeholder = $"${p.ParameterName}";
+                }
 
                 var literal = p.Value == null || p.Value == DBNull.Value
                     ? "NULL"
