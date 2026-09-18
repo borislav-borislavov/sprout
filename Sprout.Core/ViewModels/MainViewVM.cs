@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Sprout.Core.Factories;
 using Sprout.Core.Features.SeedFileUpdateFeature;
+using Sprout.Core.Features.SproutAppFeature;
 using Sprout.Core.Messages;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.ActionMessageService;
@@ -13,10 +14,13 @@ using Sprout.Core.Services.Dialog;
 using Sprout.Core.Services.Navigation;
 using Sprout.Core.Services.Updates;
 using Sprout.Core.Services.WindowSize;
+using Sprout.Core.Windows;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Sprout.Core.ViewModels
 {
@@ -29,6 +33,7 @@ namespace Sprout.Core.ViewModels
         private readonly IVMFactory _vmFactory;
         private readonly IUpdateService _updateService;
         private readonly ISeedUpdaterFactory _seedUpdaterFactory;
+        private readonly ISproutAppService _sproutAppService;
 
         [ObservableProperty]
         private ObservableCollection<SproutPageConfiguration> _pageConfigs;
@@ -58,7 +63,8 @@ namespace Sprout.Core.ViewModels
             ISproutPageVMFactory sproutPageVMFactory,
             IVMFactory vmFactory,
             IUpdateService updateService,
-            ISeedUpdaterFactory seedUpdaterFactory)
+            ISeedUpdaterFactory seedUpdaterFactory,
+            ISproutAppService sproutAppService)
         {
             _configService = configService;
             _navigationService = navigationService;
@@ -67,6 +73,7 @@ namespace Sprout.Core.ViewModels
             _vmFactory = vmFactory;
             _updateService = updateService;
             _seedUpdaterFactory = seedUpdaterFactory;
+            _sproutAppService = sproutAppService;
             LoadMenuPages();
 
             Tabs.CollectionChanged += (_, e) =>
@@ -288,6 +295,93 @@ namespace Sprout.Core.ViewModels
         }
 
         [RelayCommand]
+        private void CreateNewSeed(string? seedName = null)
+        {
+            var currentSeedPath = _configService.GetIdentifier();
+            var seedDirectory = GetSeedDirectory(currentSeedPath);
+            var initialValue = seedName ?? Path.GetFileNameWithoutExtension(currentSeedPath);
+
+            var inputWindow = new TextInputWindow("New Seed", "Seed file name:", initialValue)
+            {
+                Owner = Application.Current?.MainWindow
+            };
+
+            if (inputWindow.ShowDialog() != true)
+            {
+                return;
+            }
+
+            if (!TryBuildSeedPath(seedDirectory, inputWindow.Value, out var newSeedPath, out var errorMessage))
+            {
+                _dialogService.ShowError(errorMessage);
+                CreateNewSeed(inputWindow.Value);
+                return;
+            }
+
+            if (File.Exists(newSeedPath))
+            {
+                _dialogService.ShowError($"A seed with this name already exists!");
+                CreateNewSeed();
+                return;
+            }
+
+            if (!_configService.CreateNew(newSeedPath))
+            {
+                _dialogService.ShowError($"Failed to create seed file '{newSeedPath}'.");
+                return;
+            }
+
+            try
+            {
+                _sproutAppService.StartApp($"--seed \"{newSeedPath}\"");
+                _sproutAppService.CloseApp(true);
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowError($"Failed to restart Sprout with the new seed: {ex.Message}");
+            }
+        }
+
+        private static string GetSeedDirectory(string seedPath)
+        {
+            var directory = Path.GetDirectoryName(seedPath);
+            if (!string.IsNullOrWhiteSpace(directory))
+            {
+                return directory;
+            }
+
+            return Path.Combine(Environment.CurrentDirectory, "SeedVault");
+        }
+
+        private static bool TryBuildSeedPath(string seedDirectory, string inputValue, out string seedPath, out string errorMessage)
+        {
+            seedPath = string.Empty;
+            errorMessage = string.Empty;
+
+            var trimmed = inputValue.Trim();
+            if (string.IsNullOrWhiteSpace(trimmed))
+            {
+                errorMessage = "Seed file name cannot be empty.";
+                return false;
+            }
+
+            if (trimmed.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0
+                || trimmed.Contains(Path.DirectorySeparatorChar)
+                || trimmed.Contains(Path.AltDirectorySeparatorChar))
+            {
+                errorMessage = "Seed file name contains invalid characters.";
+                return false;
+            }
+
+            var fileName = Path.GetExtension(trimmed).Equals(".seed", StringComparison.OrdinalIgnoreCase)
+                ? trimmed
+                : $"{trimmed}.seed";
+
+            Directory.CreateDirectory(seedDirectory);
+            seedPath = Path.Combine(seedDirectory, fileName);
+            return true;
+        }
+
         private Task CheckForUpdatesAsync()
         {
             return _updateService.CheckForUpdatesAsync();

@@ -23,17 +23,24 @@ public class SproutAppService : ISproutAppService
         Application.Current.Dispatcher.Invoke(() => Application.Current.Shutdown());
     }
 
-    public void StartApp()
+    public void StartApp(string? arguments = null)
     {
         string exePath = GetExeFilePath()
             ?? throw new InvalidOperationException("Unable to determine the executable path.");
 
-        Process.Start(new ProcessStartInfo
+        var startInfo = new ProcessStartInfo
         {
             FileName = exePath,
             WorkingDirectory = Path.GetDirectoryName(exePath)!,
             UseShellExecute = true
-        });
+        };
+
+        if (!string.IsNullOrWhiteSpace(arguments))
+        {
+            startInfo.Arguments = arguments;
+        }
+
+        Process.Start(startInfo);
     }
 
     public string? GetExeFilePath() => Process.GetCurrentProcess().MainModule?.FileName;

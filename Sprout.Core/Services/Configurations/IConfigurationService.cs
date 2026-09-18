@@ -7,6 +7,7 @@ namespace Sprout.Core.Services.Configurations
         SproutConfiguration Load();
         SproutConfiguration LoadSpecific(string identifier);
         bool Save(SproutConfiguration sproutConfiguration);
+        bool CreateNew(string identifier);
         string GetIdentifier();
     }
 }

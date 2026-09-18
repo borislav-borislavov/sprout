@@ -33,6 +33,12 @@ namespace Sprout.Tests.Jobs
                 _configuration = sproutConfiguration;
                 return true;
             }
+
+            public bool CreateNew(string identifier)
+            {
+                _configuration = new SproutConfiguration();
+                return true;
+            }
         }
 
         private static SproutJobConfiguration CreateJob(string script) => new()

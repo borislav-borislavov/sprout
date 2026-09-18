@@ -121,28 +121,48 @@ public class JsonConfigurationService : IConfigurationService
 
     public bool Save(SproutConfiguration sproutConfiguration)
     {
-        string configFilePath = string.Empty;
-
         try
         {
-            configFilePath = GetIdentifier();
-
-            var json = JsonConvert.SerializeObject(sproutConfiguration, _serializationSettings);
-
-            if (Encrypt)
-            {
-                SeedFileCrypto.Encrypt(configFilePath, json, Passphrase);
-                return true;
-            }
-
-            File.WriteAllText(configFilePath, json, Encoding.UTF8);
-            return true;
+            return SaveInternal(GetIdentifier(), sproutConfiguration);
         }
         catch (Exception ex)
         {
-            _logger.Log($"Failed to save configuration {configFilePath}: {ex}");
+            _logger.Log($"Failed to save configuration {GetIdentifier()}: {ex}");
             return false;
         }
+    }
+
+    public bool CreateNew(string identifier)
+    {
+        try
+        {
+            return SaveInternal(identifier, new SproutConfiguration());
+        }
+        catch (Exception ex)
+        {
+            _logger.Log($"Failed to save configuration {identifier}: {ex}");
+            return false;
+        }
+    }
+
+    private bool SaveInternal(string identifier, SproutConfiguration sproutConfiguration)
+    {
+        var directory = Path.GetDirectoryName(identifier);
+        if (!string.IsNullOrWhiteSpace(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        var json = JsonConvert.SerializeObject(sproutConfiguration, _serializationSettings);
+
+        if (Encrypt)
+        {
+            SeedFileCrypto.Encrypt(identifier, json, Passphrase);
+            return true;
+        }
+
+        File.WriteAllText(identifier, json, Encoding.UTF8);
+        return true;
     }
 
     public string GetIdentifier()

@@ -3,6 +3,6 @@
 public interface ISproutAppService
 {
     void CloseApp(bool force);
-    void StartApp();
+    void StartApp(string? arguments = null);
     string? GetExeFilePath();
 }
