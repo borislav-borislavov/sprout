@@ -9,6 +9,9 @@ namespace Sprout.Core.Common
         public static Dictionary<string, string?> Args { get; private set; } = new();
 
         public static string SeedPath { get; set; }
+        public static string? JobIdRaw { get; private set; }
+        public static Guid? JobId { get; private set; }
+        public static bool JobIdParseFailed { get; private set; }
 
         public static void Parse()
         {
@@ -45,6 +48,24 @@ namespace Sprout.Core.Common
             {
                 // If the first argument is a .seed file, treat it as the seed path
                 SeedPath = Args.First().Key;
+            }
+
+            if (Args.TryGetValue("job", out var jobIdRaw))
+            {
+                JobIdRaw = jobIdRaw;
+                var parsedJobId = Guid.Empty;
+                var parsedSuccessfully = !string.IsNullOrWhiteSpace(jobIdRaw) && Guid.TryParse(jobIdRaw, out parsedJobId);
+
+                if (parsedSuccessfully)
+                {
+                    JobIdParseFailed = false;
+                    JobId = parsedJobId;
+                }
+                else
+                {
+                    JobIdParseFailed = true;
+                    JobId = null;
+                }
             }
         }
     }
