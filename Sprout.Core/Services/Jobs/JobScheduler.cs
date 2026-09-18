@@ -205,9 +205,11 @@ namespace Sprout.Core.Services.Jobs
 #if DEBUG
                 Debug.WriteLine($"Job {job.Name} -> {debugValue}");
 #endif
-
                 lock (entry.SyncRoot)
+                {
                     entry.State = entry.ScheduleEnabled ? JobRunState.Scheduled : JobRunState.Idle;
+                    entry.LastError = debugValue;
+                }
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {

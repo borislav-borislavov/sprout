@@ -103,6 +103,11 @@
                         <TextBlock Text="Name" Style="{StaticResource FieldLabel}"/>
                         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Padding="10,7" Margin="0,0,0,18"/>
 
+                        <TextBlock Text="ID" Style="{StaticResource FieldLabel}"/>
+                        <TextBox Text="{Binding ID, Mode=OneWay}" Padding="10,7" Margin="0,0,0,18"
+                                 IsReadOnly="True" Background="#F7F9FC" FontFamily="Consolas"
+                                 VerticalContentAlignment="Center" ToolTip="Copy the job ID"/>
+
                         <Border Background="#F7F9FC" CornerRadius="8" Padding="16" Margin="0,0,0,18">
                             <StackPanel>
                                 <CheckBox Content="Run on a schedule" IsChecked="{Binding IsScheduleEnabled}"
@@ -135,7 +140,7 @@
                             </Border>
                         </Grid>
 
-                        <TextBlock Text="{Binding LastError}" Foreground="#B91C1C" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                        <TextBlock Text="{Binding LastError}" TextWrapping="Wrap" Margin="0,0,0,16"/>
 
                         <WrapPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext}">
                             <Button Content="Run now" Command="{Binding RunCommand}" Style="{StaticResource ActionButton}" Background="#16A34A" Foreground="White"/>
