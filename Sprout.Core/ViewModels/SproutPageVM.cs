@@ -97,7 +97,7 @@ namespace Sprout.Core.ViewModels
 
             try
             {
-                DynamicViewInstance = new SproutPage(_configurationService, _sproutControlFactory) { DataContext = this };
+                DynamicViewInstance = new SproutPage(_configurationService, _sproutControlFactory, _dialogService) { DataContext = this };
                 DynamicViewInstance.InitializeControls(this);
 
                 _host = new SproutPageLogicBridge($"{PageConfig.ID.ToString().Replace("-", "")}", valueStoreFactory);

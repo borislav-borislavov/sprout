@@ -1,15 +1,10 @@
-﻿using Sprout.Core.Behaviours;
-using Sprout.Core.Factories;
-using Sprout.Core.Models;
-using Sprout.Core.Models.DataAdapters.Filters;
-using Sprout.Core.Models.Queries;
+﻿using Sprout.Core.Factories;
 using Sprout.Core.Services.Configurations;
 using Sprout.Core.Services.CPL;
+using Sprout.Core.Services.Dialog;
 using Sprout.Core.ViewModels;
-using Sprout.Core.Views.Controls;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace Sprout.Core.Views
 {
@@ -18,12 +13,14 @@ namespace Sprout.Core.Views
         public Dictionary<string, UIElement> _controls = [];
         private readonly IConfigurationService _configurationService;
         private readonly ISproutControlFactory _sproutControlFactory;
+        private readonly IDialogService _dialogService;
 
-        public SproutPage(IConfigurationService configurationService, ISproutControlFactory sproutControlFactory)
+        public SproutPage(IConfigurationService configurationService, ISproutControlFactory sproutControlFactory, IDialogService dialogService)
         {
             InitializeComponent();
             _configurationService = configurationService;
             _sproutControlFactory = sproutControlFactory;
+            _dialogService = dialogService;
         }
 
         public void InitializeControls(SproutPageVM vm)
@@ -61,7 +58,7 @@ namespace Sprout.Core.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Error");
+                _dialogService.ShowError(ex.ToString());
             }
         }
 
