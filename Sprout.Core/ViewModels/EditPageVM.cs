@@ -141,6 +141,7 @@ namespace Sprout.Core.ViewModels
                 sproutConfig.Pages.Insert(pageIndex, PageConfig);
 
                 _configService.Save(sproutConfig);
+                _dialogService.ShowMessage("Page saved successfully.");
             }
             catch (Exception ex)
             {

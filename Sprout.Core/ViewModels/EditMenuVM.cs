@@ -200,7 +200,7 @@ namespace Sprout.Core.ViewModels
                 .ToList();
 
             _configurationService.Save(_sproutConfig);
-
+            _dialogService.ShowMessage("Menu configuration saved successfully.");
             IsSaved = true;
         }
 
