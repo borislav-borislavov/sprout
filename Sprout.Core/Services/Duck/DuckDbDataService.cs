@@ -233,7 +233,7 @@ namespace Sprout.Core.Services.Duck
             {
                 await _connection.OpenAsync();
             }
-
+            
             using var cmd = _connection.CreateCommand();
             cmd.CommandText = result.QueryText;
 
