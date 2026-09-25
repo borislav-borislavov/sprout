@@ -1,0 +1,88 @@
+<Window x:Class="Sprout.Core.Features.ToastFeature.ToastWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Sprout.Core.Features.ToastFeature"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        SizeToContent="WidthAndHeight"
+        Topmost="True"
+        Focusable="False"
+        WindowStartupLocation="Manual">
+    <Grid HorizontalAlignment="Right"
+          VerticalAlignment="Top"
+          IsHitTestVisible="True">
+        <ItemsControl ItemsSource="{Binding Toasts}"
+                      d:DataContext="{d:DesignInstance Type=local:ToastWindowDesignData, IsDesignTimeCreatable=True}"
+                      HorizontalAlignment="Right"
+                      MaxWidth="360"
+                      IsHitTestVisible="True">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type local:ToastItemVM}">
+                    <Border Margin="0,0,0,5"
+
+                            CornerRadius="4"
+                            BorderThickness="1"
+                            BorderBrush="{Binding BorderBrush}"
+                            Background="{Binding BackgroundBrush}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{Binding Title}"
+                                           Visibility="{Binding TitleVisibility}"
+                                           FontWeight="SemiBold"
+                                           Padding="5,0,0,0"
+                                           Margin="0,0,0,-5"
+                                           Foreground="{Binding ForegroundBrush}" />
+
+                                <TextBlock Text="{Binding Message}"
+                                           TextWrapping="Wrap"
+                                           Padding="5,5,5,5"
+                                           Foreground="{Binding ForegroundBrush}"
+                                           MouseLeftButtonDown="MessageText_MouseLeftButtonDown"
+                                           Cursor="Hand" />
+                            </StackPanel>
+
+                            <Rectangle Grid.Column="1"
+                                       Width="1"
+                                       Fill="{Binding BorderBrush}"
+                                       HorizontalAlignment="Left"
+                                       />
+                            <Button Grid.Column="1"
+                                    MinWidth="24"
+                                    MinHeight="24"
+        
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Click="CloseToast_Click"
+                                    CommandParameter="{Binding}">
+                                <TextBlock Text="X"
+                                           Foreground="red"
+                                           FontSize="14"
+                                           
+                                           
+                                            />
+                            </Button>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</Window>
+

@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Sprout.Core.Common;
 using Sprout.Core.Factories;
+using Sprout.Core.Features.ToastFeature;
 using Sprout.Core.Models;
 using Sprout.Core.Models.Configurations;
 using Sprout.Core.Models.Configurations.Api;
@@ -42,6 +43,7 @@ namespace Sprout.Core.ViewModels
         private readonly IConfigurationService _configService;
         private readonly INavigationService _navigationService;
         private readonly IDialogService _dialogService;
+        private readonly IToastService _toastService;
         private readonly ISproutPageVMFactory _sproutPageVMFactory;
 
         public string[] AdapterTypes { get; set; } = ["SqlServer", "Duck", "Api"];
@@ -70,11 +72,13 @@ namespace Sprout.Core.ViewModels
         public EditPageVM(IConfigurationService configService,
             INavigationService navigationService,
             IDialogService dialogService,
+            IToastService toastService,
             ISproutPageVMFactory sproutPageVMFactory)
         {
             _configService = configService;
             _navigationService = navigationService;
             _dialogService = dialogService;
+            _toastService = toastService;
             _sproutPageVMFactory = sproutPageVMFactory;
 
 
@@ -141,7 +145,7 @@ namespace Sprout.Core.ViewModels
                 sproutConfig.Pages.Insert(pageIndex, PageConfig);
 
                 _configService.Save(sproutConfig);
-                _dialogService.ShowMessage("Page saved successfully.");
+                _toastService.ShowSuccess($"Saved successfully.", $"Page: {PageConfig.Title}");
             }
             catch (Exception ex)
             {

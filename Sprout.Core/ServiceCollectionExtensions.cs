@@ -5,6 +5,7 @@ using Sprout.Core.Features.AppStateFeature;
 using Sprout.Core.Features.DataGridPresetsFeature;
 using Sprout.Core.Features.LogFeature;
 using Sprout.Core.Features.SeedFileUpdateFeature;
+using Sprout.Core.Features.ToastFeature;
 using Sprout.Core.Features.SproutAppFeature;
 using Sprout.Core.Services.ActionMessageService;
 using Sprout.Core.Services.Clipboard;
@@ -52,6 +53,8 @@ namespace Sprout.Core
             services.AddTransient<IUpdateService, GitHubUpdateService>();
             services.AddSingleton<IValueStoreFactory, ValueStoreFactory>(x => new ValueStoreFactory());
             services.AddSingleton<IGridFilterPresetService, GridFilterPresetService>();
+            services.AddSingleton<ToastService>();
+            services.AddSingleton<IToastService>(sp => sp.GetRequiredService<ToastService>());
             services.AddSingleton<ISproutAppService, SproutAppService>();
             services.AddSingleton<IAppState, AppState>();
 
@@ -78,6 +81,7 @@ namespace Sprout.Core
             //TODO: Splash screen
             services.AddTransient<LoginWindow>();
             services.AddTransient<MainWindow>();
+            services.AddSingleton<ToastWindow>();
             services.AddTransient<EditLoginConfig>();
             services.AddTransient<EditMenu>();
             services.AddTransient<EditPage>();
