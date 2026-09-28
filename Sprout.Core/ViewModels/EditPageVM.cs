@@ -69,6 +69,8 @@ namespace Sprout.Core.ViewModels
 
         public ObservableCollection<SproutPageConfiguration> AllPages { get; set; }
 
+        public bool HasSaved { get; set; }
+
         public EditPageVM(IConfigurationService configService,
             INavigationService navigationService,
             IDialogService dialogService,
@@ -146,6 +148,7 @@ namespace Sprout.Core.ViewModels
 
                 _configService.Save(sproutConfig);
                 _toastService.ShowSuccess($"Saved successfully.", $"Page: {PageConfig.Title}");
+                HasSaved = true;
             }
             catch (Exception ex)
             {

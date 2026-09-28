@@ -12,7 +12,7 @@ namespace Sprout.Core.Services.Navigation
 
         bool ShowEditMenu();
 
-        void ShowEditPage(SproutPageConfiguration pageConfig, IConfigurationService configService, IDialogService dialogService);
+        bool ShowEditPage(SproutPageConfiguration pageConfig, IConfigurationService configService, IDialogService dialogService);
 
         bool ShowEditLoginConfig();
 

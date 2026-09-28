@@ -44,11 +44,12 @@ namespace Sprout.Core.Services.Navigation
             return editMenu.ViewModel.IsSaved;
         }
 
-        public void ShowEditPage(SproutPageConfiguration pageConfig, IConfigurationService configService, IDialogService dialogService)
+        public bool ShowEditPage(SproutPageConfiguration pageConfig, IConfigurationService configService, IDialogService dialogService)
         {
             var editPage = _serviceProvider.GetRequiredService<EditPage>();
             editPage.InitializeVM(pageConfig);
             editPage.ShowDialog();
+            return editPage.HasSaved;
         }
 
         public bool ShowEditLoginConfig()

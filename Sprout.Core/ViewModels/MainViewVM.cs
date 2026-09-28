@@ -448,7 +448,9 @@ namespace Sprout.Core.ViewModels
             var pageId = selectedPageVM.PageConfig.ID;
             var tabIndex = Tabs.IndexOf(selectedPageVM);
 
-            _navigationService.ShowEditPage(selectedPageVM.PageConfig, _configService, _dialogService);
+            var hasSaved = _navigationService.ShowEditPage(selectedPageVM.PageConfig, _configService, _dialogService);
+
+            if (!hasSaved) return;
 
             var vm = selectedPageVM.SproutPageInternalVM;
 

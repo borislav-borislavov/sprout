@@ -22,6 +22,16 @@ namespace Sprout.Core.Windows
     /// </summary>
     public partial class EditPage : Window
     {
+        public bool HasSaved
+        {
+            get
+            {
+                if (DataContext is not EditPageVM vm)
+                    return false;
+
+                return vm.HasSaved;
+            }
+        }
         public EditPage(EditPageVM vm)
         {
             InitializeComponent();
