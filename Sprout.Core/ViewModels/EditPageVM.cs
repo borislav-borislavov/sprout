@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Newtonsoft.Json;
 using Sprout.Core.Common;
 using Sprout.Core.Factories;
 using Sprout.Core.Features.ToastFeature;
@@ -154,6 +155,29 @@ namespace Sprout.Core.ViewModels
             {
                 _dialogService.ShowError(ex.Message);
             }
+        }
+
+        public bool ShouldClosePage()
+        {
+            var newPageConfigJson = JsonConvert.SerializeObject(PageConfig);
+
+            var sproutConfig = _configService.Load();
+            var oldPageConfig = sproutConfig.Pages.FirstOrDefault(p => p.ID == PageConfig.ID);
+            var oldPageConfigJson = JsonConvert.SerializeObject(oldPageConfig);
+
+            var hasChanges = newPageConfigJson != oldPageConfigJson;
+
+            if (hasChanges)
+            {
+                var result = _dialogService.ShowMessage($"All changes will be lost.{Environment.NewLine}Are you sure you want to close without saving?", "Unsaved Changes", DialogButton.YesNo);
+
+                if (result == DialogResult.No)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         [RelayCommand]

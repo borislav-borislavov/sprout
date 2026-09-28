@@ -61,7 +61,7 @@ public class JsonConfigurationService : IConfigurationService
 
     private bool IsFileChanged(string filePath)
     {
-        //if for some reason this fieature crashed it is better to always load the file so that the app runs properly.
+        //if for some reason this feature crashed it is better to always load the file so that the app runs properly.
         if (_usnCrashed) return true;
 
         var result = false;

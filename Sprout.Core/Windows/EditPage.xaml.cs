@@ -1,19 +1,9 @@
 ﻿using Sprout.Core.Models.Configurations;
 using Sprout.Core.Services.WindowSize;
 using Sprout.Core.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Sprout.Core.Windows
 {
@@ -26,18 +16,22 @@ namespace Sprout.Core.Windows
         {
             get
             {
-                if (DataContext is not EditPageVM vm)
+                if (_vm == null)
                     return false;
 
-                return vm.HasSaved;
+                return _vm.HasSaved;
             }
         }
+
+        private EditPageVM _vm;
+
         public EditPage(EditPageVM vm)
         {
             InitializeComponent();
 
             WindowScreenSizer.SizeToScreen(this);
 
+            _vm = vm;
             DataContext = vm;
         }
 
@@ -83,6 +77,23 @@ namespace Sprout.Core.Windows
                 throw new Exception($"ViewModel should be {nameof(EditPageVM)}");
 
             vm.Initialize(pageConfig);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            try
+            {
+                if (_vm.ShouldClosePage() == false)
+                {
+                    e.Cancel = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex}");
+            }
+
+            base.OnClosing(e);
         }
     }
 }
